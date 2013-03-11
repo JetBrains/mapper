@@ -1,0 +1,15 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
+  <div>
+    <h1>Todo List (<span ui:field="count"></span>)</h1>
+    <ul ui:field="children" class="{style.list}">
+    </ul>
+    <a ui:field="addNew" href="#">Add New</a>
+    <a ui:field="clearCompleted" href="#">Clear Completed</a>
+  </div>
+
+  <ui:style>
+    .list {
+      list-style-type: none;
+    }
+  </ui:style>
+</ui:UiBinder>
