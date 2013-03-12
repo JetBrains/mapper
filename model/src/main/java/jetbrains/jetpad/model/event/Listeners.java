@@ -89,7 +89,7 @@ public class Listeners<ListenerT> {
 
   private static class FireData<ListenerT> {
     //todo this is hack. nice to provide a better way of firing such events
-    //todo in case of nested events, we might send a merge events from several partsπ
+    //todo in case of nested events, we might send a merge events from several parts
     private int myDepth;
     private List<ListenerT> myToRemove;
     private List<ListenerT> myToAdd;
