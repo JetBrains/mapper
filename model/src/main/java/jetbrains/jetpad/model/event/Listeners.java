@@ -64,23 +64,13 @@ public class Listeners<ListenerT> {
         myFireData = new FireData<ListenerT>();
       }
       myFireData.myDepth++;
-
-      List<Throwable> exceptions = new ArrayList<Throwable>();
-      for (final ListenerT l : myListeners) {
-        if (myFireData.myToRemove != null && myFireData.myToRemove.contains(l)) continue;
-        try {
-          h.call(l);
-        } catch (Throwable t) {
-          exceptions.add(t);
+      Callbacks.call(myListeners, new Callbacks.Caller<ListenerT>() {
+        @Override
+        public void call(ListenerT callback) {
+          if (myFireData.myToRemove != null && myFireData.myToRemove.contains(callback)) return;
+          h.call(callback);
         }
-
-        if (!exceptions.isEmpty()) {
-          if (exceptions.size() == 1) {
-            throw new RuntimeException(exceptions.get(0));
-          }
-          throw new CompositeException(exceptions);
-        }
-      }
+      });
     } finally {
       myFireData.myDepth--;
       if (myFireData.myDepth == 0) {
@@ -103,14 +93,5 @@ public class Listeners<ListenerT> {
     private int myDepth;
     private List<ListenerT> myToRemove;
     private List<ListenerT> myToAdd;
-  }
-
-  private static class CompositeException extends RuntimeException {
-    private List<Throwable> myErrors = new ArrayList<Throwable>();
-
-    private CompositeException(List<Throwable> errors) {
-      super(errors.get(0));
-      myErrors.addAll(errors);
-    }
   }
 }
