@@ -40,9 +40,12 @@ public class CompositeRegistration implements Registration {
 
     myRemoving = true;
     try {
-      for (Registration r : myRegistrations) {
-        r.remove();
-      }
+      Callbacks.call(myRegistrations, new Callbacks.Caller<Registration>() {
+        @Override
+        public void call(Registration r) {
+          r.remove();
+        }
+      });
     } finally {
       myRemoving = false;
     }
