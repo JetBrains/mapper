@@ -23,9 +23,9 @@ import static org.junit.Assert.*;
 
 public class PropertySelectionTest {
   C2 c2 = new C2();
-  ReadableProperty<Integer> selProp = Properties.select(c2.ref, new Function<C1, ReadableProperty<Integer>>() {
+  ReadableProperty<Integer> selProp = Properties.select(c2.ref, new Selector<C1, ReadableProperty<Integer>>() {
     @Override
-    public ReadableProperty<Integer> apply(C1 s) {
+    public ReadableProperty<Integer> select(C1 s) {
       return s.value;
     }
   });

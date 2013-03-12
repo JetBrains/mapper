@@ -132,13 +132,13 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Function<SourceT, ReadableProperty<TargetT>> fun) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<SourceT, ReadableProperty<TargetT>> fun) {
     final Supplier<TargetT> calc = new Supplier<TargetT>() {
       @Override
       public TargetT get() {
         SourceT value = source.get();
         if (value == null) return null;
-        ReadableProperty<TargetT> prop = fun.apply(value);
+        ReadableProperty<TargetT> prop = fun.select(value);
         if (prop == null) return null;
         return prop.get();
       }
@@ -152,7 +152,7 @@ public class Properties {
 
       @Override
       protected void doAddListeners() {
-        myTargetProperty = source.get() == null ? null : fun.apply(source.get());
+        myTargetProperty = source.get() == null ? null : fun.select(source.get());
 
         final EventHandler<PropertyChangeEvent<TargetT>> targetHandler = new EventHandler<PropertyChangeEvent<TargetT>>() {
           @Override
@@ -168,7 +168,7 @@ public class Properties {
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
-              myTargetProperty = fun.apply(sourceValue);
+              myTargetProperty = fun.select(sourceValue);
             } else {
               myTargetProperty = null;
             }
