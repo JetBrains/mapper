@@ -47,7 +47,7 @@ public abstract class Mapper<SourceT, TargetT> {
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
   }
 
-  private void instantialSynchronizers() {
+  private void instantiateSynchronizers() {
     final List<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
     registerSynchronizers(new SynchronizersConfiguration() {
       @Override
@@ -98,7 +98,7 @@ public abstract class Mapper<SourceT, TargetT> {
 
     myMappingContext = ctx;
 
-    instantialSynchronizers();
+    instantiateSynchronizers();
 
     myMappingContext.register(this);
 

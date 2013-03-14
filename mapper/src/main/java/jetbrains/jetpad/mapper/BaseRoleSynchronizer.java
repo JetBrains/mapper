@@ -43,11 +43,10 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> implements RoleSynchronize
     Mapper<? extends SourceT, ? extends TargetT> result = null;
     for (MapperFactory<SourceT, TargetT> f : myMapperFactories) {
       result = f.createMapper(source);
-      if (result != null) {
-        break;
-      }
+      if (result != null) return result;
     }
-    return result;
+
+    throw new IllegalStateException("Can't create a mapper for " + source);
   }
 
   protected final void processMapper(Mapper<? extends SourceT, ? extends TargetT> mapper) {
