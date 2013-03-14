@@ -87,14 +87,13 @@ public class TransformingSynchronizerTest {
           public ReadableProperty<String> apply(String s) {
             return Properties.constant(s);
           }
-        }), getTarget()).
-        addMapperFactory(new MapperFactory<String, String>() {
-          @Override
-          public Mapper<? extends String, ? extends String> createMapper(String source) {
-            return new Mapper<String, String>(source, source) {
-            };
-          }
-        }));
+        }), getTarget(), new MapperFactory<String, String>() {
+        @Override
+        public Mapper<? extends String, ? extends String> createMapper(String source) {
+          return new Mapper<String, String>(source, source) {
+          };
+        }
+      }));
     }
   }
 }

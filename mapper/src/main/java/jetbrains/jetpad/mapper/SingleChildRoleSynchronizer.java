@@ -31,12 +31,14 @@ class SingleChildRoleSynchronizer<SourceT, TargetT> extends BaseRoleSynchronizer
   private WritableProperty<TargetT> myTargetProperty;
   private Registration myChildRegistration;
 
-  SingleChildRoleSynchronizer(Mapper<?, ?> mapper, ReadableProperty<SourceT> childProperty, final WritableProperty<TargetT> targetProperty) {
+  SingleChildRoleSynchronizer(Mapper<?, ?> mapper, ReadableProperty<SourceT> childProperty, final WritableProperty<TargetT> targetProperty, MapperFactory<SourceT, TargetT> factory) {
     if (childProperty == null || targetProperty == null) throw new NullPointerException();
 
     myTargetMapper = mapper.createChildProperty();
     myChildProperty = childProperty;
     myTargetProperty = targetProperty;
+
+    addMapperFactory(factory);
   }
 
   @Override

@@ -21,10 +21,11 @@ public class SimpleRoleSynchronizer<SourceT, TargetT> extends BaseCollectionRole
   private List<SourceT> mySource;
   private List<TargetT> myTarget;
 
-  SimpleRoleSynchronizer(Mapper<?, ?> mapper, List<SourceT> source, List<TargetT> target) {
+  SimpleRoleSynchronizer(Mapper<?, ?> mapper, List<SourceT> source, List<TargetT> target, MapperFactory<SourceT, TargetT> factory) {
     super(mapper);
     mySource = source;
     myTarget = target;
+    addMapperFactory(factory);
   }
 
   public void refresh() {

@@ -41,15 +41,18 @@ class TransformingObservableCollectionRoleSynchronizer<
   private Transformation<? super SourceT, ObservableList<MappedT>> mySourceTransformation;
 
   TransformingObservableCollectionRoleSynchronizer(
-    Mapper<?, ?> mapper,
-    SourceT source,
-    Transformer<? super SourceT, ObservableList<MappedT>> sourceTransformer,
-    List<? super TargetT> target) {
+      Mapper<?, ?> mapper,
+      SourceT source,
+      Transformer<? super SourceT, ObservableList<MappedT>> sourceTransformer,
+      List<? super TargetT> target,
+      MapperFactory<MappedT, TargetT> factory) {
     super(mapper);
 
     mySource = source;
     mySourceTransformer = sourceTransformer;
     myTarget = target;
+
+    addMapperFactory(factory);
   }
 
   protected void onAttach() {

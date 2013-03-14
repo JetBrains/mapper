@@ -24,12 +24,9 @@ class ItemMapper extends Mapper<Item, Item> {
 
   @Override
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
-    conf.add(Synchronizers.forObservableRole(this, getSource().observableChildren, getTarget().observableChildren)
-      .addMapperFactory(createMapperFactory()));
-    conf.add(Synchronizers.forSingleRole(this, getSource().signleChild, getTarget().signleChild)
-      .addMapperFactory(createMapperFactory()));
-    conf.add(mySimpleRole = Synchronizers.forSimpleRole(this, getSource().children, getTarget().children));
-    mySimpleRole.addMapperFactory(createMapperFactory());
+    conf.add(Synchronizers.forObservableRole(this, getSource().observableChildren, getTarget().observableChildren, createMapperFactory()));
+    conf.add(Synchronizers.forSingleRole(this, getSource().signleChild, getTarget().signleChild, createMapperFactory()));
+    conf.add(mySimpleRole = Synchronizers.forSimpleRole(this, getSource().children, getTarget().children, createMapperFactory()));
     conf.add(Synchronizers.forProperties(getSource().name, getTarget().name));
   }
 

@@ -31,13 +31,16 @@ class ObservableCollectionRoleSynchronizer<
   private Registration myCollectionRegistration;
 
   ObservableCollectionRoleSynchronizer(
-    Mapper<?, ?> mapper,
-    ObservableList<SourceT> source,
-    List<? super TargetT> target) {
+      Mapper<?, ?> mapper,
+      ObservableList<SourceT> source,
+      List<? super TargetT> target,
+      MapperFactory<SourceT, TargetT> factory) {
     super(mapper);
 
     mySource = source;
     myTarget = target;
+
+    addMapperFactory(factory);
   }
 
   protected void onAttach() {

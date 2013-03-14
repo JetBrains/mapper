@@ -72,13 +72,12 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
   @Override
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
     super.registerSynchronizers(conf);
-    conf.add(forObservableRole(this, getSource().items, withElementChildren(getTarget().children))
-      .addMapperFactory(new MapperFactory<TodoListItem, WithElement>() {
-        @Override
-        public Mapper<? extends TodoListItem, ? extends WithElement> createMapper(TodoListItem source) {
-          return new TodoListItemMapper(source);
-        }
-      }));
+    conf.add(forObservableRole(this, getSource().items, withElementChildren(getTarget().children), new MapperFactory<TodoListItem, WithElement>() {
+      @Override
+      public Mapper<? extends TodoListItem, ? extends WithElement> createMapper(TodoListItem source) {
+        return new TodoListItemMapper(source);
+      }
+    }));
 
     conf.add(forProperties(toStringOf(size(getSource().items)), innerTextOf(getTarget().count)));
   }

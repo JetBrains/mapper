@@ -32,8 +32,9 @@ public class Synchronizers {
     SimpleRoleSynchronizer<SourceT, TargetT> forSimpleRole(
       Mapper<?, ?> mapper,
       List<SourceT> source,
-      List<TargetT> target) {
-    return new SimpleRoleSynchronizer<SourceT, TargetT>(mapper, source, target);
+      List<TargetT> target,
+      MapperFactory<SourceT, TargetT> factory) {
+    return new SimpleRoleSynchronizer<SourceT, TargetT>(mapper, source, target, factory);
   }
 
   public static <
@@ -45,8 +46,9 @@ public class Synchronizers {
       Mapper<?, ?> mapper,
       SourceT source,
       Transformer<SourceT, ObservableList<MappedT>> transformer,
-      List<TargetItemT> target) {
-    return new TransformingObservableCollectionRoleSynchronizer<SourceT, MappedT, TargetT>(mapper, source, transformer, target);
+      List<TargetItemT> target,
+      MapperFactory<MappedT, TargetT> factory) {
+    return new TransformingObservableCollectionRoleSynchronizer<SourceT, MappedT, TargetT>(mapper, source, transformer, target, factory);
   }
 
   public static <
@@ -56,8 +58,9 @@ public class Synchronizers {
   RoleSynchronizer<SourceT, TargetT> forObservableRole(
       Mapper<?, ?> mapper,
       ObservableList<SourceT> source,
-      List<TargetItemT> target) {
-    return new ObservableCollectionRoleSynchronizer<SourceT, TargetT>(mapper, source, target);
+      List<TargetItemT> target,
+      MapperFactory<SourceT, TargetT> factory) {
+    return new ObservableCollectionRoleSynchronizer<SourceT, TargetT>(mapper, source, target, factory);
   }
 
   public static <
@@ -65,7 +68,8 @@ public class Synchronizers {
   RoleSynchronizer<SourceT, KindTargetT> forConstantRole(
       Mapper<?, ?> mapper,
       final SourceT source,
-      final List<TargetT> target) {
+      final List<TargetT> target,
+      MapperFactory<SourceT, KindTargetT> factory) {
     return new BaseCollectionRoleSynchronizer<SourceT, KindTargetT>(mapper) {
       @Override
       protected void onAttach() {
@@ -75,15 +79,16 @@ public class Synchronizers {
         target.add(getModifiableMappers().get(0).getTarget());
         processMapper(mapper);
       }
-    };
+    }.addMapperFactory(factory);
   }
 
   public static <SourceT, TargetT>
   RoleSynchronizer<SourceT, TargetT> forSingleRole(
       Mapper<?, ?> mapper,
       final ReadableProperty<SourceT> source,
-      final WritableProperty<TargetT> target) {
-    return new SingleChildRoleSynchronizer<SourceT, TargetT>(mapper, source, target);
+      final WritableProperty<TargetT> target,
+      MapperFactory<SourceT, TargetT> factory) {
+    return new SingleChildRoleSynchronizer<SourceT, TargetT>(mapper, source, target, factory);
   }
 
   public static <ValueT>
