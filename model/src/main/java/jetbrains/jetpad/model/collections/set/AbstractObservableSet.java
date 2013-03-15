@@ -48,15 +48,19 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
 
     beforeItemAdded(item);
     action.run();
-    if (myListeners != null) {
-      myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-        @Override
-        public void call(CollectionListener<ItemT> l) {
-          l.onItemAdded(new CollectionItemEvent<ItemT>(item, -1, true));
-        }
-      });
+
+    try {
+      if (myListeners != null) {
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemAdded(new CollectionItemEvent<ItemT>(item, -1, true));
+          }
+        });
+      }
+    } finally {
+      afterItemAdded(item);
     }
-    afterItemAdded(item);
   }
 
   protected void beforeItemAdded(ItemT item) {
@@ -71,15 +75,19 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
 
     beforeItemRemoved(item);
     action.run();
-    if (myListeners != null) {
-      myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-        @Override
-        public void call(CollectionListener<ItemT> l) {
-          l.onItemRemoved(new CollectionItemEvent<ItemT>(item, -1, false));
-        }
-      });
+
+    try {
+      if (myListeners != null) {
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemRemoved(new CollectionItemEvent<ItemT>(item, -1, false));
+          }
+        });
+      }
+    } finally {
+      afterItemRemoved(item);
     }
-    afterItemRemoved(item);
   }
 
   protected void beforeItemRemoved(ItemT item) {

@@ -41,18 +41,20 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
 
     beforeItemAdded(index, item);
-
     action.run();
-    if (myListeners != null) {
-      myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-        @Override
-        public void call(CollectionListener<ItemT> l) {
-          l.onItemAdded(new CollectionItemEvent<ItemT>(item, index, true));
-        }
-      });
-    }
 
-    afterItemAdded(index, item);
+    try {
+      if (myListeners != null) {
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemAdded(new CollectionItemEvent<ItemT>(item, index, true));
+          }
+        });
+      }
+    } finally {
+      afterItemAdded(index, item);
+    }
   }
 
   protected void beforeItemAdded(int index, ItemT item) {
@@ -66,15 +68,19 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
     beforeItemRemoved(index, item);
     action.run();
-    if (myListeners != null) {
-      myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-        @Override
-        public void call(CollectionListener<ItemT> l) {
-          l.onItemRemoved(new CollectionItemEvent<ItemT>(item, index, false));
-        }
-      });
+
+    try {
+      if (myListeners != null) {
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemRemoved(new CollectionItemEvent<ItemT>(item, index, false));
+          }
+        });
+      }
+    } finally {
+      afterItemRemoved(index, item);
     }
-    afterItemRemoved(index, item);
   }
 
   protected void beforeItemRemoved(int index, ItemT item) {
