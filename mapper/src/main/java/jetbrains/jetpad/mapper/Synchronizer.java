@@ -16,6 +16,8 @@
 package jetbrains.jetpad.mapper;
 
 public interface Synchronizer {
+  public static final Synchronizer[] EMPTY_ARRAY = new Synchronizer[0];
+
   void attach(SynchronizerContext ctx);
   void detach();
 }
