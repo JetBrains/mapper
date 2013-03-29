@@ -24,7 +24,7 @@ public abstract class BaseId {
 
   private static final Map<String, String> ourNamesMap = new HashMap<String, String>();
 
-  private static Random ourRandom = new Random();
+  private static final Random ourRandom = new Random();
 
   private static long getFirstPart(String s) {
     int index = s.indexOf(SEPARATOR);
