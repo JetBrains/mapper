@@ -15,27 +15,33 @@
  */
 package jetbrains.jetpad.model.id;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Coder {
-  private static final Map<Character, Integer> ourChToValue = new HashMap<Character, Integer>();
-  private static final Map<Integer, Character> ourValueToCh = new HashMap<Integer, Character>();
+  private static int ourBase = 0;
+  private static final int[] ourChToValue = new int[255];
+  private static final char[] ourValueToCh = new char[255];
+
+  static {
+    Arrays.fill(ourChToValue, 0, ourChToValue.length, -1);
+  }
 
   private Coder() {
   }
 
   private static void add(char ch) {
-    int index = Coder.ourChToValue.size();
-    ourChToValue.put(ch, index);
-    ourValueToCh.put(index, ch);
+    int index = ourBase++;
+    ourChToValue[ch] = index;
+    ourValueToCh[index] = ch;
   }
 
   public static String encode(long l) {
     StringBuilder result = new StringBuilder();
-    int base = Coder.ourChToValue.size();
+    int base = ourBase;
     do {
-      char ch = ourValueToCh.get((int) (l % base));
+      char ch = ourValueToCh[(int) (l % base)];
       result.insert(0, ch);
       l = l / base;
     } while (l != 0);
@@ -45,11 +51,12 @@ public class Coder {
 
   public static long decode(String s) {
     long l = 0;
-    int base = Coder.ourChToValue.size();
-    for (int i = 0; i < s.length(); i++) {
+    int base = ourBase;
+    int len = s.length();
+    for (int i = 0; i < len; i++) {
       char ch = s.charAt(i);
-      Integer val = ourChToValue.get(ch);
-      if (val == null) throw new IllegalStateException("Unknown character '" + ch + "'");
+      int val = ourChToValue[ch];
+      if (val == -1) throw new IllegalStateException("Unknown character '" + ch + "'");
       l = l * base + val;
       if (l < 0) throw new RuntimeException("Overflow");
     }
