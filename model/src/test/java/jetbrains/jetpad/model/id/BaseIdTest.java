@@ -33,11 +33,6 @@ public class BaseIdTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void incorrectCharInId() {
-    new MyId("aa aa");
-  }
-
-  @Test(expected = IllegalStateException.class)
   public void duplicateName() {
     new MyId("a$b", "newName1");
     new MyId("a$b", "newName2");
