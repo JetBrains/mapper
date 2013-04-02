@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.model.id;
 
+import com.google.common.base.Objects;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -26,21 +28,8 @@ public abstract class BaseId {
 
   private static final Random ourRandom = new Random();
 
-  private static long getFirstPart(String s) {
-    int index = s.indexOf(SEPARATOR);
-    if (index ==  -1) return Coder.decode(s);
-    return Coder.decode(s.substring(0, index));
-  }
+  private String myId;
 
-  private static long getSecondPart(String s) {
-    int index = s.indexOf(SEPARATOR);
-    if (index ==  -1) return 0;
-    return Coder.decode(s.substring(index + 1));
-  }
-
-  private long myId1;
-  private long myId2;
-  
   protected BaseId() {
     this(Math.abs(ourRandom.nextLong()), Math.abs(ourRandom.nextLong()), null);
   }
@@ -50,14 +39,7 @@ public abstract class BaseId {
   }
 
   protected BaseId(String id, String name) {
-    this(getFirstPart(id), getSecondPart(id), name);
-  }
-
-  private BaseId(long id1, long id2, String name) {
-    myId1 = id1;
-    myId2 = id2;
-
-    String id = getId();
+    myId = id;
     synchronized (ourNamesMap) {
       String oldName = ourNamesMap.get(id);
 
@@ -69,9 +51,12 @@ public abstract class BaseId {
     }
   }
 
+  private BaseId(long id1, long id2, String name) {
+    this(id2 == 0 ? Coder.encode(id1) : Coder.encode(id1) + SEPARATOR + Coder.encode(id2), name);
+  }
+
   public String getId() {
-    if (myId2 == 0) return Coder.encode(myId1);
-    return Coder.encode(myId1) + SEPARATOR + Coder.encode(myId2);
+    return myId;
   }
 
   public String getName() {
@@ -84,19 +69,15 @@ public abstract class BaseId {
   public boolean equals(Object obj) {
     if (obj == null) return false;
     if (obj.getClass() != getClass()) return false;
-    
+
     BaseId otherId = (BaseId) obj;
 
-    if (myId1 == otherId.myId1 && myId2 == otherId.myId2) {
-      return true;
-    }
-
-    return false;
+    return Objects.equal(getId(), otherId.getId());
   }
 
   @Override
   public int hashCode() {
-    return (int) (myId1 ^ (myId2 << 32));
+    return getId().hashCode();
   }
 
   @Override
