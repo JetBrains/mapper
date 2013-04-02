@@ -43,7 +43,7 @@ public class Coder {
     do {
       char ch = ourValueToCh[(int) (l % base)];
       result.insert(0, ch);
-      l = l / base;
+      l = l >> 6;
     } while (l != 0);
 
     return result.toString();
@@ -51,13 +51,12 @@ public class Coder {
 
   public static long decode(String s) {
     long l = 0;
-    int base = ourBase;
     int len = s.length();
     for (int i = 0; i < len; i++) {
       char ch = s.charAt(i);
       int val = ourChToValue[ch];
       if (val == -1) throw new IllegalStateException("Unknown character '" + ch + "'");
-      l = l * base + val;
+      l = (l << 6) + val;
       if (l < 0) throw new RuntimeException("Overflow");
     }
     return l;
@@ -75,6 +74,12 @@ public class Coder {
     }
     add('+');
     add('-');
+
+    if (ourBase != 64) throw new IllegalStateException();
+  }
+
+  public static void main(String[] args) {
+    System.out.println(3 << 6);
   }
 }
 
