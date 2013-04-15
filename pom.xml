@@ -16,4 +16,24 @@
 
     <module>samples/todo</module>
   </modules>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.java</include>
+          <include>**/*.gwt.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>jetbrains.open.source</id>
+      <name>JetBrains Open Source</name>
+      <url>http://repository.jetbrains.com/jetpad</url>
+    </repository>
+  </distributionManagement>
 </project>

@@ -9,6 +9,13 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
+  <parent>
+    <groupId>jetbrains.jetpad.mapper</groupId>
+    <artifactId>container</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
