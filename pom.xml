@@ -17,6 +17,7 @@
     <module>util/test</module>
     <module>util/base</module>
     <module>util/values</module>
+    <module>util/json</module>
 
     <module>samples/todo</module>
   </modules>
