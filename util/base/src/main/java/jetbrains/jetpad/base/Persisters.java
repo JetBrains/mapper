@@ -15,13 +15,6 @@
  */
 package jetbrains.jetpad.base;
 
-import com.google.common.base.Objects;
-import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
-import jetbrains.jetpad.model.property.BaseReadableProperty;
-import jetbrains.jetpad.model.property.Property;
-import jetbrains.jetpad.model.property.PropertyChangeEvent;
-
 public class Persisters {
   private static final Persister<String> STRING_PERSISTER = new Persister<String>() {
     @Override
@@ -58,6 +51,7 @@ public class Persisters {
       return "longPersister";
     }
   };
+
   private static final Persister<Boolean> BOOLEAN_PERSISTER = new Persister<Boolean>() {
     @Override
     public Boolean deserialize(String value) {
@@ -178,41 +172,5 @@ public class Persisters {
         return "doublePersister[default = " + defaultValue + "]";
       }
     };
-  }
-
-  public static <ValueT> Property<ValueT> fromStringProp(final Property<String> prop, final Persister<ValueT> persister) {
-    class MyProperty extends BaseReadableProperty<ValueT> implements Property<ValueT> {
-      @Override
-      public ValueT get() {
-        return persister.deserialize(prop.get());
-      }
-
-      @Override
-      public void set(ValueT value) {
-        prop.set(persister.serialize(value));
-      }
-
-      @Override
-      public Registration addHandler(final EventHandler<PropertyChangeEvent<ValueT>> handler) {
-        return prop.addHandler(new EventHandler<PropertyChangeEvent<String>>() {
-          @Override
-          public void onEvent(PropertyChangeEvent<String> event) {
-            ValueT oldValue = persister.deserialize(event.getOldValue());
-            ValueT newValue = persister.deserialize(event.getNewValue());
-
-            if (Objects.equal(oldValue, newValue)) return;
-
-            handler.onEvent(new PropertyChangeEvent<ValueT>(oldValue, newValue));
-          }
-        });
-      }
-
-      @Override
-      public String getPropExpr() {
-        return "fromStringProp(" + prop.getPropExpr() + ", " + persister + ")";
-      }
-    }
-
-    return new MyProperty();
   }
 }

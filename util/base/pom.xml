@@ -16,14 +16,6 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <dependencies>
-    <dependency>
-      <groupId>jetbrains.jetpad</groupId>
-      <artifactId>model</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>
