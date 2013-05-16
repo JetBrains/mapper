@@ -23,20 +23,18 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> implements RoleSynchronize
   }
 
   @Override
-  public final RoleSynchronizer<SourceT, TargetT> addMapperFactory(MapperFactory<SourceT, TargetT> factory) {
+  public final void addMapperFactory(MapperFactory<SourceT, TargetT> factory) {
     MapperFactory[] newMapperFactories = new MapperFactory[myMapperFactories.length + 1];
     System.arraycopy(myMapperFactories, 0, newMapperFactories, 0, myMapperFactories.length);
     newMapperFactories[newMapperFactories.length - 1] = factory;
     myMapperFactories = newMapperFactories;
-    return this;
   }
 
-  public final RoleSynchronizer<SourceT, TargetT> addMapperProcessor(MapperProcessor<SourceT, TargetT> processor) {
+  public final void addMapperProcessor(MapperProcessor<SourceT, TargetT> processor) {
     MapperProcessor[] newMapperProcessors = new MapperProcessor[myMapperProcessors.length + 1];
     System.arraycopy(myMapperProcessors, 0, newMapperProcessors, 0, myMapperProcessors.length);
     newMapperProcessors[newMapperProcessors.length - 1] = processor;
     myMapperProcessors = newMapperProcessors;
-    return this;
   }
 
   protected final Mapper<? extends SourceT, ? extends TargetT> createMapper(SourceT source) {

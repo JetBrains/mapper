@@ -70,7 +70,7 @@ public class Synchronizers {
       final SourceT source,
       final List<TargetT> target,
       MapperFactory<SourceT, KindTargetT> factory) {
-    return new BaseCollectionRoleSynchronizer<SourceT, KindTargetT>(mapper) {
+    BaseCollectionRoleSynchronizer<SourceT, KindTargetT> result = new BaseCollectionRoleSynchronizer<SourceT, KindTargetT>(mapper) {
       @Override
       protected void onAttach() {
         super.onAttach();
@@ -79,7 +79,9 @@ public class Synchronizers {
         target.add(getModifiableMappers().get(0).getTarget());
         processMapper(mapper);
       }
-    }.addMapperFactory(factory);
+    };
+    result.addMapperFactory(factory);
+    return result;
   }
 
   public static <SourceT, TargetT>

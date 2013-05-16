@@ -24,6 +24,6 @@ import java.util.List;
 public interface RoleSynchronizer<SourceT, TargetT> extends Synchronizer {
   List<Mapper<? extends SourceT, ? extends TargetT>> getMappers();
 
-  RoleSynchronizer<SourceT, TargetT> addMapperFactory(MapperFactory<SourceT, TargetT> factory);
-  RoleSynchronizer<SourceT, TargetT> addMapperProcessor(MapperProcessor<SourceT, TargetT> processor);
+  void addMapperFactory(MapperFactory<SourceT, TargetT> factory);
+  void addMapperProcessor(MapperProcessor<SourceT, TargetT> processor);
 }
