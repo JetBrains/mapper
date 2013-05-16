@@ -1026,4 +1026,150 @@ public class Transformers {
       }
     };
   }
+
+
+  public static <ItemT>
+  Transformer<ReadableProperty<ItemT>, ObservableCollection<ItemT>> propertyToCollection() {
+    return new BaseTransformer<ReadableProperty<ItemT>, ObservableCollection<ItemT>>() {
+      @Override
+      public Transformation<ReadableProperty<ItemT>, ObservableCollection<ItemT>> transform(ReadableProperty<ItemT> from) {
+        return transform(from, new ObservableHashSet<ItemT>());
+      }
+
+      @Override
+      public Transformation<ReadableProperty<ItemT>, ObservableCollection<ItemT>> transform(final ReadableProperty<ItemT> from, final ObservableCollection<ItemT> to) {
+        if (!to.isEmpty()) throw new IllegalStateException();
+
+        final Runnable sync = new Runnable() {
+          @Override
+          public void run() {
+            if (!to.isEmpty() && from.get() == to.iterator().next()) return;
+            to.clear();
+            if (from.get() != null) {
+              to.add(from.get());
+            }
+          }
+        };
+        sync.run();
+
+        final Registration r = from.addHandler(new EventHandler<PropertyChangeEvent<ItemT>>() {
+          @Override
+          public void onEvent(PropertyChangeEvent<ItemT> event) {
+            sync.run();
+          }
+        });
+
+        return new Transformation<ReadableProperty<ItemT>, ObservableCollection<ItemT>>() {
+          @Override
+          public ReadableProperty<ItemT> getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableCollection<ItemT> getTarget() {
+            return to;
+          }
+
+          @Override
+          public void dispose() {
+            r.remove();
+          }
+        };
+      }
+    };
+  }
+
+  public static <TargetT, SourceT>
+  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> select(final Function<SourceT, TargetT> function) {
+    return new BaseTransformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
+      @Override
+      public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(ObservableCollection<SourceT> from) {
+        return transform(from, new ObservableHashSet<TargetT>());
+      }
+
+      @Override
+      public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(final ObservableCollection<SourceT> from, final ObservableCollection<TargetT> to) {
+        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<SourceT> event) {
+            to.add(function.apply(event.getItem()));
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<SourceT> event) {
+            to.remove(function.apply(event.getItem()));
+          }
+        };
+
+        for (SourceT source: from) {
+          to.add(function.apply(source));
+        }
+        final Registration fromRegistration = from.addListener(fromListener);
+
+        return new Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
+          @Override
+          public ObservableCollection<SourceT> getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableCollection<TargetT> getTarget() {
+            return to;
+          }
+
+          @Override
+          public void dispose() {
+            fromRegistration.remove();
+          }
+        };
+      }
+    };
+  }
+
+  public static <TargetT, SourceT>
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> selectList(final Function<SourceT, TargetT> function) {
+    return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
+      @Override
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {
+        return transform(from, new ObservableArrayList<TargetT>());
+      }
+
+      @Override
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<SourceT> event) {
+            to.add(event.getIndex(), function.apply(event.getItem()));
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<SourceT> event) {
+            to.remove(event.getIndex());
+          }
+        };
+
+        for (SourceT source: from) {
+          to.add(function.apply(source));
+        }
+        final Registration fromRegistration = from.addListener(fromListener);
+
+        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
+          @Override
+          public ObservableList<SourceT> getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableList<TargetT> getTarget() {
+            return to;
+          }
+
+          @Override
+          public void dispose() {
+            fromRegistration.remove();
+          }
+        };
+      }
+    };
+  }
 }
