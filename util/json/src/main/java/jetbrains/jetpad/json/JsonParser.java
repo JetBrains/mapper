@@ -67,7 +67,7 @@ public class JsonParser {
     throw new JsonParsingException();
   }
 
-  private static JsonObject parseObject(JsonLexer lexer) {
+  static JsonObject parseObject(JsonLexer lexer) {
     JsonObject result = new JsonObject();
     lexer.readToken(JsonTokenKind.LEFT_BRACE);
 

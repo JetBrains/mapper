@@ -25,6 +25,16 @@ public class JsonReader {
     myJsonLexer = new InputStreamJsonLexer(inputStream);
   }
 
+  public JsonObject readObject() throws IOException {
+    JsonObject object = null;
+    try {
+      object = JsonParser.parseObject(myJsonLexer);
+    } catch (RuntimeIOException e) {
+      throw e.getOrigin();
+    }
+    return object;
+  }
+
   public JsonArray readArray() throws IOException {
     JsonArray array = null;
     try {
