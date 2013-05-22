@@ -23,6 +23,7 @@ public class Color {
   public static final Color VERY_LIGHT_GRAY = new Color(210, 210, 210);
   public static final Color GRAY = new Color(128, 128, 128);
   public static final Color RED = new Color(255, 0, 0);
+  public static final Color LIGHT_GREEN= new Color(210, 255, 210);
   public static final Color GREEN = new Color(0, 255, 0);
   public static final Color DARK_GREEN = new Color(0, 128, 0);
   public static final Color BLUE = new Color(0, 0, 255);
