@@ -21,7 +21,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class StringConversionTest extends BaseTestCase {
+public class StringConversionTest {
   @Test
   public void emptyObject() {
     assertToString(new JsonObject(), "{}");
