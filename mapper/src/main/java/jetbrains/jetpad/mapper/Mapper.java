@@ -194,7 +194,9 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   private void checkCanRemove(Mapper<?, ?> item) {
-    if (item.myParent != this) throw new IllegalArgumentException();
+    if (item.myParent != this) {
+      throw new IllegalArgumentException();
+    }
   }
 
   private class ChildProperty<MapperT extends Mapper<?, ?>> extends ValueProperty<MapperT> implements ChildContainer {
@@ -247,6 +249,7 @@ public abstract class Mapper<SourceT, TargetT> {
     public boolean add(MapperT item) {
       if (contains(item)) return false;
       checkCanAdd(item);
+      addChild(item);
       return super.add(item);
     }
 
@@ -254,6 +257,7 @@ public abstract class Mapper<SourceT, TargetT> {
     public boolean remove(Object item) {
       if (!contains(item)) return false;
       checkCanRemove((Mapper<?, ?>) item);
+      removeChild((Mapper<?, ?>) item);
       return super.remove(item);
     }
 
