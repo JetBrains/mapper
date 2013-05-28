@@ -167,7 +167,7 @@ public abstract class Mapper<SourceT, TargetT> {
     return result;
   }
 
-  public final <MapperT extends Mapper<?, ?>>ObservableSet<MapperT> createChildSet() {
+  public final <MapperT extends Mapper<?, ?>> ObservableSet<MapperT> createChildSet() {
     ChildSet<MapperT> result = new ChildSet<MapperT>();
     addChildContainer(result);
     return result;
