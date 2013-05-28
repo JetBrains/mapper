@@ -17,6 +17,7 @@ package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
+import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
@@ -181,15 +182,25 @@ public abstract class Mapper<SourceT, TargetT> {
     child.myParent = null;
   }
 
+  private void checkCanAdd(Mapper<?, ?> item) {
+    if (item.myParent != null) throw new IllegalArgumentException();
+  }
+
+  private void checkCanRemove(Mapper<?, ?> item) {
+    if (item.myParent != this) throw new IllegalArgumentException();
+  }
+
   private class ChildProperty<MapperT extends Mapper<?, ?>> extends ValueProperty<MapperT> implements ChildContainer {
     @Override
     public void set(MapperT value) {
       MapperT oldValue = get();
       if (oldValue != null) {
+        checkCanRemove(oldValue);
         removeChild(oldValue);
       }
       super.set(value);
       if (value != null) {
+        checkCanAdd(value);
         addChild(value);
       }
     }
@@ -204,7 +215,7 @@ public abstract class Mapper<SourceT, TargetT> {
   private class ChildList<MapperT extends Mapper<?, ?>> extends ObservableArrayList<MapperT> implements ChildContainer {
     @Override
     public void add(int index, final MapperT item) {
-      if (((Mapper<?, ?>) item).myParent != null) throw new IllegalArgumentException();
+      checkCanAdd(item);
       super.add(index, item);
       addChild(item);
     }
@@ -212,7 +223,7 @@ public abstract class Mapper<SourceT, TargetT> {
     @Override
     public MapperT remove(int index) {
       MapperT item = get(index);
-      if (((Mapper<?, ?>) item).myParent != Mapper.this) throw new IllegalArgumentException();
+      checkCanRemove(item);
       super.remove(index);
       removeChild(item);
       return item;
@@ -221,6 +232,18 @@ public abstract class Mapper<SourceT, TargetT> {
     @Override
     public List<Mapper<?, ?>> getChildren() {
       return new ArrayList<Mapper<?, ?>>(this);
+    }
+  }
+
+  private class ChildSet<MapperT extends Mapper<?, ?>> extends ObservableHashSet<MapperT> {
+    @Override
+    public boolean add(MapperT mapperT) {
+      return super.add(mapperT);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+      return super.remove(o);
     }
   }
 
