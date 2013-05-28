@@ -18,6 +18,7 @@ package jetbrains.jetpad.mapper;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
+import jetbrains.jetpad.model.collections.set.ObservableSet;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
@@ -166,6 +167,12 @@ public abstract class Mapper<SourceT, TargetT> {
     return result;
   }
 
+  public final <MapperT extends Mapper<?, ?>>ObservableSet<MapperT> createChildSet() {
+    ChildSet<MapperT> result = new ChildSet<MapperT>();
+    addChildContainer(result);
+    return result;
+  }
+
   public final <MapperT extends Mapper<?, ?>> Property<MapperT> createChildProperty() {
     ChildProperty<MapperT> result = new ChildProperty<MapperT>();
     addChildContainer(result);
@@ -235,15 +242,24 @@ public abstract class Mapper<SourceT, TargetT> {
     }
   }
 
-  private class ChildSet<MapperT extends Mapper<?, ?>> extends ObservableHashSet<MapperT> {
+  private class ChildSet<MapperT extends Mapper<?, ?>> extends ObservableHashSet<MapperT> implements ChildContainer {
     @Override
-    public boolean add(MapperT mapperT) {
-      return super.add(mapperT);
+    public boolean add(MapperT item) {
+      if (contains(item)) return false;
+      checkCanAdd(item);
+      return super.add(item);
     }
 
     @Override
-    public boolean remove(Object o) {
-      return super.remove(o);
+    public boolean remove(Object item) {
+      if (!contains(item)) return false;
+      checkCanRemove((Mapper<?, ?>) item);
+      return super.remove(item);
+    }
+
+    @Override
+    public List<Mapper<?, ?>> getChildren() {
+      return new ArrayList<Mapper<?, ?>>(this);
     }
   }
 
