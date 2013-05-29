@@ -58,11 +58,10 @@ public class Listeners<ListenerT> {
 
   public void fire(final ListenerCaller<ListenerT> h) {
     if (myListeners == null) return;
-
+    if (myFireData == null) {
+      myFireData = new FireData<ListenerT>();
+    }
     try {
-      if (myFireData == null) {
-        myFireData = new FireData<ListenerT>();
-      }
       myFireData.myDepth++;
       Callbacks.call(myListeners, new Callbacks.Caller<ListenerT>() {
         @Override
