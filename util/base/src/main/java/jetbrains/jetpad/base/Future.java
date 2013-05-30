@@ -3,7 +3,7 @@ package jetbrains.jetpad.base;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AsyncImpl<ItemT> implements Async<ItemT> {
+public class Future<ItemT> implements Async<ItemT> {
   private ItemT mySuccessItem = null;
   private boolean mySucceeded = false;
 
