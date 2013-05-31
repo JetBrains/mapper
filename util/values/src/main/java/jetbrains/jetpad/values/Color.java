@@ -31,6 +31,7 @@ public class Color {
   public static final Color LIGHT_BLUE = new Color(210, 210, 255);
   public static final Color YELLOW = new Color(255, 255, 0);
   public static final Color LIGHT_YELLOW = new Color(255, 255, 128);
+  public static final Color VERY_LIGHT_YELLOW = new Color(255, 255, 210);
   public static final Color MAGENTA = new Color(255, 0, 255);
   public static final Color DARK_MAGENTA = new Color(128, 0, 128);
   public static final Color CYAN = new Color(0, 255, 255);
