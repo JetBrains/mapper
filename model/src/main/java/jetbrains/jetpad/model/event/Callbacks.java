@@ -17,13 +17,12 @@ public class Callbacks {
       } catch (Throwable t) {
         exceptions.add(t);
       }
-
-      if (!exceptions.isEmpty()) {
-        if (exceptions.size() == 1) {
-          throw new RuntimeException(exceptions.get(0));
-        }
-        throw new CallbackException(exceptions);
+    }
+    if (!exceptions.isEmpty()) {
+      if (exceptions.size() == 1) {
+        throw new RuntimeException(exceptions.get(0));
       }
+      throw new CallbackException(exceptions);
     }
   }
 }
