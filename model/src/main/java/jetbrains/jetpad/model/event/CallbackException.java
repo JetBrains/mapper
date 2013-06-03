@@ -3,10 +3,10 @@ package jetbrains.jetpad.model.event;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompositeException extends RuntimeException {
+public class CallbackException extends RuntimeException {
   private List<Throwable> myThrowables = new ArrayList<Throwable>();
 
-  public CompositeException(List<Throwable> errors) {
+  public CallbackException(List<Throwable> errors) {
     super(errors.get(0));
     myThrowables.addAll(errors);
   }

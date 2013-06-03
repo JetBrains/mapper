@@ -22,7 +22,7 @@ public class Callbacks {
         if (exceptions.size() == 1) {
           throw new RuntimeException(exceptions.get(0));
         }
-        throw new CompositeException(exceptions);
+        throw new CallbackException(exceptions);
       }
     }
   }
