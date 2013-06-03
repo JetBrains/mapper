@@ -26,13 +26,4 @@ public class Callbacks {
       }
     }
   }
-
-  private static class CompositeException extends RuntimeException {
-    private List<Throwable> myErrors = new ArrayList<Throwable>();
-
-    private CompositeException(List<Throwable> errors) {
-      super(errors.get(0));
-      myErrors.addAll(errors);
-    }
-  }
 }
