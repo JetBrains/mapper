@@ -22,7 +22,7 @@ import jetbrains.jetpad.model.event.Listeners;
 import jetbrains.jetpad.model.event.Registration;
 
 public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT> {
-  private Listeners<EventHandler<PropertyChangeEvent<ValueT>>> myHandlers;
+  private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
   private ValueT myValue;
 
   public ValueProperty() {
@@ -50,9 +50,9 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
 
   protected void fireEvents(final PropertyChangeEvent<ValueT> event) {
     if (myHandlers != null) {
-      myHandlers.fire(new ListenerCaller<EventHandler<PropertyChangeEvent<ValueT>>>() {
+      myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
         @Override
-        public void call(EventHandler<PropertyChangeEvent<ValueT>> l) {
+        public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
           l.onEvent(event);
         }
       });
@@ -60,9 +60,9 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
   }
 
   @Override
-  public Registration addHandler(EventHandler<PropertyChangeEvent<ValueT>> handler) {
+  public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<EventHandler<PropertyChangeEvent<ValueT>>>();
+      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>();
     }
 
     final Registration reg = myHandlers.add(handler);

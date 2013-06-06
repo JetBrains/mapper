@@ -36,7 +36,7 @@ public class UnmodifiableObservableSet<ElementT> extends UnmodifiableSet<Element
   }
 
   @Override
-  public Registration addHandler(EventHandler<CollectionItemEvent<ElementT>> handler) {
+  public Registration addHandler(EventHandler<? super CollectionItemEvent<ElementT>> handler) {
     return getWrappedSet().addHandler(handler);
   }
 

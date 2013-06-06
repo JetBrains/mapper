@@ -101,7 +101,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   }
 
   @Override
-  public Registration addHandler(final EventHandler<CollectionItemEvent<ItemT>> handler) {
+  public Registration addHandler(final EventHandler<? super CollectionItemEvent<ItemT>> handler) {
     final CollectionListener<ItemT> listener = new CollectionAdapter<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<ItemT> event) {

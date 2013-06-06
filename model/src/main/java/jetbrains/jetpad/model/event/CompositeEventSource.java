@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompositeEventSource<EventT> implements EventSource<EventT> {
-  private Listeners<EventHandler<EventT>> myHandlers = new Listeners<EventHandler<EventT>>();
+  private Listeners<EventHandler<? super EventT>> myHandlers = new Listeners<EventHandler<? super EventT>>();
   private List<EventSource<? extends EventT>> myEventSources = new ArrayList<EventSource<? extends EventT>>();
   private List<Registration> myRegistrations = new ArrayList<Registration>();
 
@@ -38,7 +38,7 @@ public class CompositeEventSource<EventT> implements EventSource<EventT> {
   }
 
   @Override
-  public Registration addHandler(final EventHandler<EventT> handler) {
+  public Registration addHandler(final EventHandler<? super EventT> handler) {
     if (myHandlers.isEmpty()) {
       for (EventSource<? extends EventT> src : myEventSources) {
         addHandlerTo(src);
@@ -64,9 +64,9 @@ public class CompositeEventSource<EventT> implements EventSource<EventT> {
     myRegistrations.add(src.addHandler(new EventHandler<PartEventT>() {
       @Override
       public void onEvent(final PartEventT event) {
-        myHandlers.fire(new ListenerCaller<EventHandler<EventT>>() {
+        myHandlers.fire(new ListenerCaller<EventHandler<? super EventT>>() {
           @Override
-          public void call(EventHandler<EventT> item) {
+          public void call(EventHandler<? super EventT> item) {
             item.onEvent(event);
           }
         });

@@ -47,7 +47,7 @@ public class SingleItemCollectionProperty<ItemT> implements Property<ItemT> {
   }
 
   @Override
-  public Registration addHandler(final EventHandler<PropertyChangeEvent<ItemT>> handler) {
+  public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ItemT>> handler) {
     return myCollection.addListener(new CollectionAdapter<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<ItemT> event) {

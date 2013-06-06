@@ -98,7 +98,7 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
   }
 
   @Override
-  public Registration addHandler(EventHandler<CollectionItemEvent<TargetT>> collectionItemEventEventHandler) {
+  public Registration addHandler(EventHandler<? super CollectionItemEvent<TargetT>> collectionItemEventEventHandler) {
     throw new UnsupportedOperationException();
   }
 }

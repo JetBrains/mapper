@@ -16,19 +16,19 @@
 package jetbrains.jetpad.model.event;
 
 public class SimpleEventSource<EventT> implements EventSource<EventT> {
-  private Listeners<EventHandler<EventT>> myListeners = new Listeners<EventHandler<EventT>>();
+  private Listeners<EventHandler<? super EventT>> myListeners = new Listeners<EventHandler<? super EventT>>();
 
   public void fire(final EventT event) {
-    myListeners.fire(new ListenerCaller<EventHandler<EventT>>() {
+    myListeners.fire(new ListenerCaller<EventHandler<? super EventT>>() {
       @Override
-      public void call(EventHandler<EventT> l) {
+      public void call(EventHandler<? super EventT> l) {
         l.onEvent(event);
       }
     });
   }
 
   @Override
-  public Registration addHandler(EventHandler<EventT> handler) {
+  public Registration addHandler(EventHandler<? super EventT> handler) {
     return myListeners.add(handler);
   }
 }

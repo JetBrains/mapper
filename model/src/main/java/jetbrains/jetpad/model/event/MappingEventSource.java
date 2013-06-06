@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.event;
 import com.google.common.base.Function;
 
 public class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
-  private Listeners<EventHandler<TargetEventT>> myHandlers = new Listeners<EventHandler<TargetEventT>>();
+  private Listeners<EventHandler<? super TargetEventT>> myHandlers = new Listeners<EventHandler<? super TargetEventT>>();
   private EventSource<SourceEventT> mySourceEventSource;
   private Function<SourceEventT, TargetEventT> myFunction;
 
@@ -30,15 +30,15 @@ public class MappingEventSource<SourceEventT, TargetEventT> implements EventSour
   }
 
   @Override
-  public Registration addHandler(final EventHandler<TargetEventT> handler) {
+  public Registration addHandler(final EventHandler<? super TargetEventT> handler) {
     if (myHandlers.isEmpty()) {
       mySourceHandler = mySourceEventSource.addHandler(new EventHandler<SourceEventT>() {
         @Override
         public void onEvent(SourceEventT item) {
           final TargetEventT targetEvent = myFunction.apply(item);
-          myHandlers.fire(new ListenerCaller<EventHandler<TargetEventT>>() {
+          myHandlers.fire(new ListenerCaller<EventHandler<? super TargetEventT>>() {
             @Override
-            public void call(EventHandler<TargetEventT> item) {
+            public void call(EventHandler<? super TargetEventT> item) {
               item.onEvent(targetEvent);
             }
           });

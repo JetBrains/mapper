@@ -31,7 +31,7 @@ public class ReadOnlyProperty<ValueT> extends BaseReadableProperty<ValueT> {
   }
 
   @Override
-  public Registration addHandler(EventHandler<PropertyChangeEvent<ValueT>> handler) {
+  public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     return myProperty.addHandler(handler);
   }
 

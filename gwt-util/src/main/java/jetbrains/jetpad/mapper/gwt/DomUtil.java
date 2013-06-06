@@ -131,7 +131,7 @@ public class DomUtil {
     return new Property<String>() {
       private String myValue;
       private boolean myEditing;
-      private Listeners<EventHandler<PropertyChangeEvent<String>>> myListeners = new Listeners<EventHandler<PropertyChangeEvent<String>>>();
+      private Listeners<EventHandler<? super PropertyChangeEvent<String>>> myListeners = new Listeners<EventHandler<? super PropertyChangeEvent<String>>>();
       private InputElement myEditor = DOM.createInputText().cast();
 
       {
@@ -208,16 +208,16 @@ public class DomUtil {
         }
 
         final PropertyChangeEvent<String> event = new PropertyChangeEvent<String>(oldValue,  value);
-        myListeners.fire(new ListenerCaller<EventHandler<PropertyChangeEvent<String>>>() {
+        myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<String>>>() {
           @Override
-          public void call(EventHandler<PropertyChangeEvent<String>> l) {
+          public void call(EventHandler<? super PropertyChangeEvent<String>> l) {
             l.onEvent(event);
           }
         });
       }
 
       @Override
-      public Registration addHandler(EventHandler<PropertyChangeEvent<String>> handler) {
+      public Registration addHandler(EventHandler<? super PropertyChangeEvent<String>> handler) {
         return myListeners.add(handler);
       }
 
@@ -231,7 +231,7 @@ public class DomUtil {
   public static Property<Boolean> checkbox(final InputElement element) {
     return new Property<Boolean>() {
       private boolean myHasListener;
-      private Listeners<EventHandler<PropertyChangeEvent<Boolean>>> myListeners = new Listeners<EventHandler<PropertyChangeEvent<Boolean>>>();
+      private Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>> myListeners = new Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>>();
 
       @Override
       public Boolean get() {
@@ -244,15 +244,15 @@ public class DomUtil {
       }
 
       @Override
-      public Registration addHandler(EventHandler<PropertyChangeEvent<Boolean>> handler) {
+      public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
         if (myListeners.isEmpty() && !myHasListener) {
           $(element).change(new Function() {
             @Override
             public boolean f(Event e) {
               final PropertyChangeEvent<Boolean> event = new PropertyChangeEvent<Boolean>(!element.isChecked(), element.isChecked());
-              myListeners.fire(new ListenerCaller<EventHandler<PropertyChangeEvent<Boolean>>>() {
+              myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<Boolean>>>() {
                 @Override
-                public void call(EventHandler<PropertyChangeEvent<Boolean>> l) {
+                public void call(EventHandler<? super PropertyChangeEvent<Boolean>> l) {
                   l.onEvent(event);
                 }
               });

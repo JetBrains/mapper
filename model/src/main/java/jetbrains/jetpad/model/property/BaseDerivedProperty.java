@@ -22,7 +22,7 @@ import jetbrains.jetpad.model.event.Listeners;
 import jetbrains.jetpad.model.event.Registration;
 
 public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<ValueT> {
-  private Listeners<EventHandler<PropertyChangeEvent<ValueT>>> myHandlers;
+  private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
   private ValueT myOldValue;
 
   protected BaseDerivedProperty(ValueT initialValue) {
@@ -41,9 +41,9 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
     myOldValue = newValue;
 
     if (myHandlers != null) {
-      myHandlers.fire(new ListenerCaller<EventHandler<PropertyChangeEvent<ValueT>>>() {
+      myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
         @Override
-        public void call(EventHandler<PropertyChangeEvent<ValueT>> item) {
+        public void call(EventHandler<? super PropertyChangeEvent<ValueT>> item) {
           item.onEvent(event);
         }
       });
@@ -51,9 +51,9 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
   }
 
   @Override
-  public Registration addHandler(final EventHandler<PropertyChangeEvent<ValueT>> handler) {
+  public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<EventHandler<PropertyChangeEvent<ValueT>>>();
+      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>();
     }
     if (myHandlers.isEmpty()) {
       myOldValue = get();

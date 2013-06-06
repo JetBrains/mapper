@@ -380,7 +380,7 @@ public class Properties {
       }
 
       @Override
-      public Registration addHandler(final EventHandler<PropertyChangeEvent<TargetT>> handler) {
+      public Registration addHandler(final EventHandler<? super PropertyChangeEvent<TargetT>> handler) {
         return prop.addHandler(new EventHandler<PropertyChangeEvent<SourceT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
@@ -416,7 +416,7 @@ public class Properties {
       }
 
       @Override
-      public Registration addHandler(EventHandler<PropertyChangeEvent<ValueT>> handler) {
+      public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
         return Registration.EMPTY;
       }
 
