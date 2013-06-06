@@ -33,7 +33,7 @@ public class Properties {
       @Override
       public Boolean apply(Boolean s) {
         if (s == null) {
-          s = false;
+          return null;
         }
         return !s;
       }
@@ -93,7 +93,15 @@ public class Properties {
     return new DerivedProperty<Boolean>(op1, op2) {
       @Override
       public Boolean get() {
-        return op1.get() && op2.get();
+        Boolean b1 = op1.get();
+        Boolean b2 = op2.get();
+        if (b1 == null) {
+          return andWithNull(b2);
+        }
+        if (b2 == null) {
+          return andWithNull(b1);
+        }
+        return b1 && b2;
       }
 
       @Override
@@ -103,11 +111,26 @@ public class Properties {
     };
   }
 
+  private static Boolean andWithNull(Boolean b) {
+    if (b == null || b) {
+      return null;
+    }
+    return false;
+  }
+
   public static ReadableProperty<Boolean> or(final ReadableProperty<Boolean> op1, final ReadableProperty<Boolean> op2) {
     return new DerivedProperty<Boolean>(op1, op2) {
       @Override
       public Boolean get() {
-        return op1.get() || op2.get();
+        Boolean b1 = op1.get();
+        Boolean b2 = op2.get();
+        if (b1 == null) {
+          return orWithNull(b2);
+        }
+        if (b2 == null) {
+          return orWithNull(b1);
+        }
+        return b1 || b2;
       }
 
       @Override
@@ -115,6 +138,13 @@ public class Properties {
         return "(" + op1.getPropExpr() + " || " + op2.getPropExpr() + ")";
       }
     };
+  }
+
+  private static Boolean orWithNull(Boolean b) {
+    if (b == null || !b) {
+      return null;
+    }
+    return true;
   }
 
   public static ReadableProperty<Integer> add(final ReadableProperty<Integer> p1, final ReadableProperty<Integer> p2) {
