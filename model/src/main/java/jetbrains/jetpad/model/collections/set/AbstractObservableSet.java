@@ -47,9 +47,11 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     if (!canAdd(item)) throw new IllegalArgumentException();
 
     beforeItemAdded(item);
-    action.run();
 
+    boolean success = false;
     try {
+      action.run();
+      success = true;
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
@@ -59,14 +61,14 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
         });
       }
     } finally {
-      afterItemAdded(item);
+      afterItemAdded(item, success);
     }
   }
 
   protected void beforeItemAdded(ItemT item) {
   }
 
-  protected void afterItemAdded(ItemT item) {
+  protected void afterItemAdded(ItemT item, boolean success) {
   }
 
 
@@ -74,9 +76,11 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     if (!canRemove(item)) throw new IllegalArgumentException();
 
     beforeItemRemoved(item);
-    action.run();
 
+    boolean success = false;
     try {
+      action.run();
+      success = true;
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
@@ -86,14 +90,14 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
         });
       }
     } finally {
-      afterItemRemoved(item);
+      afterItemRemoved(item, success);
     }
   }
 
   protected void beforeItemRemoved(ItemT item) {
   }
 
-  protected void afterItemRemoved(ItemT item) {
+  protected void afterItemRemoved(ItemT item, boolean success) {
   }
 
   @Override

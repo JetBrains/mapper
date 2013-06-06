@@ -39,11 +39,12 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   protected final void add(final int index, final ItemT item, Runnable action) {
     if (!canAdd(index, item)) throw new IllegalArgumentException();
 
-
     beforeItemAdded(index, item);
-    action.run();
 
+    boolean success = false;
     try {
+      action.run();
+      success = true;
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
@@ -53,23 +54,25 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
         });
       }
     } finally {
-      afterItemAdded(index, item);
+      afterItemAdded(index, item, success);
     }
   }
 
   protected void beforeItemAdded(int index, ItemT item) {
   }
 
-  protected void afterItemAdded(int index, ItemT item) {
+  protected void afterItemAdded(int index, ItemT item, boolean success) {
   }
 
   protected final void remove(final int index, final ItemT item, Runnable action) {
     if (!canRemove(index, item)) throw new IllegalArgumentException();
 
     beforeItemRemoved(index, item);
-    action.run();
 
+    boolean success = false;
     try {
+      action.run();
+      success = true;
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
@@ -79,14 +82,14 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
         });
       }
     } finally {
-      afterItemRemoved(index, item);
+      afterItemRemoved(index, item, success);
     }
   }
 
   protected void beforeItemRemoved(int index, ItemT item) {
   }
 
-  protected void afterItemRemoved(int index, ItemT item) {
+  protected void afterItemRemoved(int index, ItemT item, boolean success) {
   }
 
   public Registration addListener(CollectionListener<ItemT> listener) {
