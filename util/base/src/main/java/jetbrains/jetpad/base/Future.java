@@ -10,10 +10,10 @@ public class Future<ItemT> implements Async<ItemT> {
   private Throwable myFailureThrowable = null;
   private boolean myFailed = false;
 
-  private List<Handler<ItemT>> mySuccessHandlers = new ArrayList<Handler<ItemT>>();
+  private List<Handler<? super ItemT>> mySuccessHandlers = new ArrayList<Handler<? super ItemT>>();
   private List<Handler<Throwable>> myFailureHandlers = new ArrayList<Handler<Throwable>>();
 
-  public Async<ItemT> onSuccess(Handler<ItemT> handler) {
+  public Async<ItemT> onSuccess(Handler<? super ItemT> handler) {
     if (mySucceeded) {
       handler.handle(mySuccessItem);
     } else {
@@ -34,7 +34,7 @@ public class Future<ItemT> implements Async<ItemT> {
   public void success(ItemT item) {
     if (alreadyHandled()) throw new IllegalStateException();
 
-    for (Handler<ItemT> handler: mySuccessHandlers) {
+    for (Handler<? super ItemT> handler: mySuccessHandlers) {
       handler.handle(item);
     }
     clearHandlers();
