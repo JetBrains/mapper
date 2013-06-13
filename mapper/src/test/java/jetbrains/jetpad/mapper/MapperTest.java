@@ -19,6 +19,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class MapperTest {
   private Item source = createItemTree();
   private ItemMapper mapper;
@@ -78,17 +80,32 @@ public class MapperTest {
 
   @Test
   public void singleChildSet() {
-    source.signleChild.set(new Item());
+    source.singleChild.set(new Item());
 
     assertMapped();
   }
 
   @Test
   public void singleChildSetToNull() {
-    source.signleChild.set(new Item());
-    source.signleChild.set(null);
+    source.singleChild.set(new Item());
+    source.singleChild.set(null);
 
     assertMapped();
+  }
+
+  @Test
+  public void rolesAreCleanedOnDetach() {
+    assertFalse(target.observableChildren.isEmpty());
+    assertFalse(target.children.isEmpty());
+    assertFalse(target.transformedChildren.isEmpty());
+    assertNotNull(target.name.get());
+
+    mapper.detachRoot();
+
+    assertTrue(target.observableChildren.isEmpty());
+    assertTrue(target.children.isEmpty());
+    assertTrue(target.transformedChildren.isEmpty());
+    assertNull(target.name.get());
   }
 
   private void assertMapped() {
@@ -104,6 +121,7 @@ public class MapperTest {
       child.name.set("child" + i);
       result.observableChildren.add(child);
       result.children.add(child);
+      result.transformedChildren.add(child);
     }
 
     return result;

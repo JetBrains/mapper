@@ -27,7 +27,8 @@ import java.util.List;
 class Item {
   public final ObservableList<Item> observableChildren = new ObservableArrayList<Item>();
   public final List<Item> children = new ArrayList<Item>();
-  public final Property<Item> signleChild = new ValueProperty<Item>();
+  public final ObservableList<Item> transformedChildren = new ObservableArrayList<Item>();
+  public final Property<Item> singleChild = new ValueProperty<Item>();
   public final Property<String> name = new ValueProperty<String>();
 
   Item() {
@@ -35,7 +36,7 @@ class Item {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(name.get(), observableChildren, children);
+    return Objects.hashCode(name.get(), observableChildren, children, transformedChildren, singleChild.get());
   }
 
   @Override
@@ -48,11 +49,12 @@ class Item {
     return Objects.equal(name.get(), otherItem.name.get())
       && observableChildren.equals(otherItem.observableChildren)
       && children.equals(otherItem.children)
-      && Objects.equal(signleChild.get(), otherItem.signleChild.get());
+      && transformedChildren.equals(otherItem.transformedChildren)
+      && Objects.equal(singleChild.get(), otherItem.singleChild.get());
   }
 
   @Override
   public String toString() {
-    return "Item " + name.get() + " : " + observableChildren;
+    return "Item " + name.get();
   }
 }

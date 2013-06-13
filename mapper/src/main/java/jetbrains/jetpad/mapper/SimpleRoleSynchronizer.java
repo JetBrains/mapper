@@ -47,4 +47,10 @@ public class SimpleRoleSynchronizer<SourceT, TargetT> extends BaseCollectionRole
     super.onAttach();
     refresh();
   }
+
+  @Override
+  protected void onDetach() {
+    super.onDetach();
+    myTarget.clear();
+  }
 }

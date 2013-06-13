@@ -112,6 +112,7 @@ public class Synchronizers {
       @Override
       public void detach() {
         myRegistration.remove();
+        target.set(null);
       }
     };
   }
@@ -132,6 +133,7 @@ public class Synchronizers {
       @Override
       public void detach() {
         myRegistration.remove();
+        target.set(null);
       }
     };
   }
