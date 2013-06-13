@@ -22,12 +22,12 @@ class DifferenceBuilder<ItemT> {
   private List<ItemT> mySourceList;
   private List<ItemT> myTargetList;
 
-  public DifferenceBuilder(List<ItemT> sourceList, List<ItemT> targetList) {
+  DifferenceBuilder(List<ItemT> sourceList, List<ItemT> targetList) {
     mySourceList = sourceList;
     myTargetList = targetList;
   }
 
-  public List<DifferenceItem> build() {
+  List<DifferenceItem> build() {
     List<DifferenceItem> result = new ArrayList<DifferenceItem>();
 
     List<ItemT> sourceContent = mySourceList;
@@ -75,40 +75,29 @@ class DifferenceBuilder<ItemT> {
     return result;
   }
 
-  public class DifferenceItem {
-    private int myIndex;
-    private ItemT myItem;
-    private boolean myAdd;
+  class DifferenceItem {
+    final int index;
+    final ItemT item;
+    final boolean isAdd;
 
     private DifferenceItem(int index, ItemT item, boolean add) {
-      myIndex = index;
-      myItem = item;
-      myAdd = add;
+      this.index = index;
+      this.item = item;
+      isAdd = add;
     }
 
-    public int getIndex() {
-      return myIndex;
-    }
 
-    public ItemT getItem() {
-      return myItem;
-    }
-
-    public boolean isAdd() {
-      return myAdd;
-    }
-    
     public void apply(List<ItemT> items) {
-      if (myAdd) {
-        items.add(myIndex, myItem);
+      if (isAdd) {
+        items.add(index, item);
       } else {
-        items.remove(myIndex);
+        items.remove(index);
       }
     }
 
     @Override
     public String toString() {
-      return (myAdd ? "add" : "remove") + " " + myItem + "@" + myIndex;
+      return (isAdd ? "add" : "remove") + " " + item + "@" + index;
     }
   }
 }
