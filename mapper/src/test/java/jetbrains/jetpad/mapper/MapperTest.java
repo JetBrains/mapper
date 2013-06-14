@@ -98,14 +98,12 @@ public class MapperTest {
     assertFalse(target.observableChildren.isEmpty());
     assertFalse(target.children.isEmpty());
     assertFalse(target.transformedChildren.isEmpty());
-    assertNotNull(target.name.get());
 
     mapper.detachRoot();
 
     assertTrue(target.observableChildren.isEmpty());
     assertTrue(target.children.isEmpty());
     assertTrue(target.transformedChildren.isEmpty());
-    assertNull(target.name.get());
   }
 
   private void assertMapped() {

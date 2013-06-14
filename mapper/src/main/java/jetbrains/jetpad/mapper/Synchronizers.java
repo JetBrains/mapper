@@ -112,28 +112,28 @@ public class Synchronizers {
       @Override
       public void detach() {
         myRegistration.remove();
-        target.set(null);
       }
     };
   }
-
 
   public static <ValueT>
   Synchronizer forProperties(final Property<ValueT> source, final Property<ValueT> target) {
     if (source == null || target == null) throw new NullPointerException();
 
     return new Synchronizer() {
+      private ValueT myOldValue;
       private Registration myRegistration;
 
       @Override
       public void attach(SynchronizerContext ctx) {
+        myOldValue = source.get();
         myRegistration = PropertyBinding.bind(source, target);
       }
 
       @Override
       public void detach() {
         myRegistration.remove();
-        target.set(null);
+        target.set(myOldValue);
       }
     };
   }
