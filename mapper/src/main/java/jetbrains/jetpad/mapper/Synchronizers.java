@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Synchronizers {
   public static <SourceT, TargetT>
-    SimpleRoleSynchronizer<SourceT, TargetT> forSimpleRole(
+  SimpleRoleSynchronizer<SourceT, TargetT> forSimpleRole(
       Mapper<?, ?> mapper,
       List<SourceT> source,
       List<TargetT> target,
