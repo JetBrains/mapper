@@ -128,17 +128,17 @@ public abstract class Mapper<SourceT, TargetT> {
 
     onDetach();
 
+    if (mySynchronizers != null) {
+      for (final Synchronizer s : mySynchronizers) {
+        s.detach();
+      }
+    }
+
     if (myChildContainers != null) {
       for (ChildContainer c : myChildContainers) {
         for (Mapper<?, ?> cc : c.getChildren()) {
           cc.detach();
         }
-      }
-    }
-
-    if (mySynchronizers != null) {
-      for (final Synchronizer s : mySynchronizers) {
-        s.detach();
       }
     }
 
