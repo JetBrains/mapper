@@ -4,92 +4,66 @@ import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ListListenersTest {
-  private CollectionListener<Integer> badListener = new CollectionListener<Integer>() {
-    @Override
-    public void onItemAdded(CollectionItemEvent<Integer> event) {
-      throw new RuntimeException();
-    }
-    @Override
-    public void onItemRemoved(CollectionItemEvent<Integer> event) {
-      throw new RuntimeException();
-    }
-  };
-
+public class ListListenersTest extends ListenersTestCase {
   @Test
   public void badAddListener() {
-    final int[] num = new int[]{0, 0};
-
-    ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
+    final ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
       @Override
       protected void beforeItemAdded(int index, Integer item) {
-        num[0]++;
+        beforeHappened = true;
       }
-
       @Override
       protected void afterItemAdded(int index, Integer item, boolean success) {
-        num[0]++;
-        if (success) {
-          num[1]++;
-        }
+        afterHappened = true;
+        successful = success;
       }
     };
     list.addListener(badListener);
 
-    boolean exceptionOccurred = false;
-    try {
-      list.add(0);
-    } catch (RuntimeException e) {
-      exceptionOccurred = true;
-    }
+    doTestAction(new Runnable() {
+      @Override
+      public void run() {
+        list.add(0);
+      }
+    });
 
-    assertTrue(exceptionOccurred);
-    assertEquals(1, num[1]);
-    assertTrue(num[0] == 2);
-    assertTrue(list.size() == 1);
+    assertTrue(successful);
+    assertEquals(1, list.size());
   }
 
   @Test
   public void badRemoveListener() {
-    final int[] num = new int[]{0, 0};
-
-    ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
+    final ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
       @Override
       protected void beforeItemRemoved(int index, Integer item) {
-        num[0]++;
+        beforeHappened = true;
       }
-
       @Override
       protected void afterItemRemoved(int index, Integer item, boolean success) {
-        num[0]++;
-        if (success) {
-          num[1]++;
-        }
+        afterHappened = true;
+        successful = success;
       }
     };
     list.add(0);
     list.addListener(badListener);
 
-    boolean exceptionOccurred = false;
-    try {
-      list.remove(0);
-    } catch (RuntimeException e) {
-      exceptionOccurred = true;
-    }
+    doTestAction(new Runnable() {
+      @Override
+      public void run() {
+        list.remove(0);
+      }
+    });
 
-    assertTrue(exceptionOccurred);
-    assertTrue(num[0] == 2);
-    assertEquals(1, num[1]);
-    assertTrue(list.size() == 0);
+    assertTrue(successful);
+    assertTrue(list.isEmpty());
   }
 
   @Test
   public void addFailure() {
-    final int[] num = new int[]{0, 0};
-
-    ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
+    final ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
       @Override
       public void add(int index, Integer item) {
         add(index, item, new Runnable() {
@@ -99,40 +73,32 @@ public class ListListenersTest {
           }
         });
       }
-
       @Override
       protected void beforeItemAdded(int index, Integer item) {
-        num[0]++;
+        beforeHappened = true;
       }
-
       @Override
       protected void afterItemAdded(int index, Integer item, boolean success) {
-        num[0]++;
-        if (success) {
-          num[1]++;
-        }
+        afterHappened = true;
+        successful = success;
       }
     };
     list.addListener(badListener);
 
-    boolean exceptionOccurred = false;
-    try {
-      list.add(0);
-    } catch (IllegalStateException e) {
-      exceptionOccurred = true;
-    }
+    doTestAction(new Runnable() {
+      @Override
+      public void run() {
+        list.add(0);
+      }
+    });
 
-    assertTrue(exceptionOccurred);
-    assertEquals(0, num[1]);
-    assertTrue(num[0] == 2);
+    assertFalse(successful);
     assertTrue(list.isEmpty());
   }
 
   @Test
   public void removeFailure() {
-    final int[] num = new int[]{0, 0};
-
-    ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
+    final ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
       @Override
       public Integer remove(int index) {
         Integer result = get(index);
@@ -144,33 +110,28 @@ public class ListListenersTest {
         });
         return result;
       }
-
       @Override
       protected void beforeItemRemoved(int index, Integer item) {
-        num[0]++;
+        beforeHappened = true;
       }
 
       @Override
       protected void afterItemRemoved(int index, Integer item, boolean success) {
-        num[0]++;
-        if (success) {
-          num[1]++;
-        }
+        afterHappened = true;
+        successful = success;
       }
     };
     list.add(0);
     list.addListener(badListener);
 
-    boolean exceptionOccurred = false;
-    try {
-      list.remove(0);
-    } catch (IllegalStateException e) {
-      exceptionOccurred = true;
-    }
+    doTestAction(new Runnable() {
+      @Override
+      public void run() {
+        list.remove(0);
+      }
+    });
 
-    assertTrue(exceptionOccurred);
-    assertTrue(num[0] == 2);
-    assertEquals(0, num[1]);
+    assertFalse(successful);
     assertEquals(1, list.size());
   }
 }
