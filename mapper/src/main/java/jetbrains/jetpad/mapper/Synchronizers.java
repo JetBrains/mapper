@@ -94,7 +94,7 @@ public class Synchronizers {
   }
 
   public static <ValueT>
-  Synchronizer forProperties(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
+  Synchronizer forProps1Way(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
     return new Synchronizer() {
       private Registration myRegistration;
 
@@ -117,7 +117,7 @@ public class Synchronizers {
   }
 
   public static <ValueT>
-  Synchronizer forProperties(final Property<ValueT> source, final Property<ValueT> target) {
+  Synchronizer forProps2Way(final Property<ValueT> source, final Property<ValueT> target) {
     if (source == null || target == null) throw new NullPointerException();
 
     return new Synchronizer() {
@@ -138,7 +138,7 @@ public class Synchronizers {
     };
   }
 
-  public static <ValueT> Synchronizer forProperty(final ReadableProperty<ValueT> property, final Runnable sync) {
+  public static <ValueT> Synchronizer forProp(final ReadableProperty<ValueT> property, final Runnable sync) {
     return new Synchronizer() {
       private Registration myRegistration;
 
