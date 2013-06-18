@@ -23,7 +23,7 @@ import jetbrains.jetpad.mapper.Synchronizers;
 import jetbrains.jetpad.samples.todo.model.TodoListItem;
 
 import static com.google.gwt.query.client.GQuery.$;
-import static jetbrains.jetpad.mapper.Synchronizers.forProps1Way;
+import static jetbrains.jetpad.mapper.Synchronizers.forProperty;
 import static jetbrains.jetpad.mapper.gwt.DomUtil.*;
 
 class TodoListItemMapper extends Mapper<TodoListItem, TodoListItemView> {
@@ -45,8 +45,8 @@ class TodoListItemMapper extends Mapper<TodoListItem, TodoListItemView> {
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
     super.registerSynchronizers(conf);
 
-    conf.add(Synchronizers.forProps2Way(getSource().text, editableTextOf(getTarget().text)));
-    conf.add(Synchronizers.forProps2Way(getSource().completed, checkbox(getTarget().checkbox)));
-    conf.add(forProps1Way(getSource().completed, hasClass(getTarget().text, "completed")));
+    conf.add(Synchronizers.forProperties(getSource().text, editableTextOf(getTarget().text)));
+    conf.add(Synchronizers.forProperties(getSource().completed, checkbox(getTarget().checkbox)));
+    conf.add(forProperty(getSource().completed, hasClass(getTarget().text, "completed")));
   }
 }
