@@ -42,6 +42,11 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
     return transform(from, createTo());
   }
 
+  protected boolean filter(ItemT item) {
+    Boolean b = myFilterBy.apply(item).get();
+    return b != null && b;
+  }
+
   @Override
   public Transformation<CollectionS, CollectionT> transform(final CollectionS from, final CollectionT to) {
     return new Transformation<CollectionS, CollectionT>() {
@@ -51,7 +56,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
       {
         for (ItemT item : from) {
           watch(item);
-          if (myFilterBy.apply(item).get()) {
+          if (filter(item)) {
             to.add(item);
           }
         }
@@ -61,7 +66,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
           public void onItemAdded(CollectionItemEvent<ItemT> event) {
             ItemT item = event.getItem();
             watch(item);
-            if (myFilterBy.apply(item).get()) {
+            if (filter(item)) {
               add(item, from, to);
             }
           }
@@ -70,7 +75,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
           public void onItemRemoved(CollectionItemEvent<ItemT> event) {
             ItemT item = event.getItem();
             unwatch(item);
-            if (myFilterBy.apply(item).get()) {
+            if (filter(item)) {
               to.remove(item);
             }
           }

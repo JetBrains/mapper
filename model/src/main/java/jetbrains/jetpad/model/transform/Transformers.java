@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -186,7 +187,7 @@ public class Transformers {
             index = count;
             break;
           }
-          if (filterBy.apply(current).get()) {
+          if (filter(current)) {
             count++;
           }
         }
@@ -204,7 +205,7 @@ public class Transformers {
     return new BaseFilterTransformer<ItemT, CollectionT, ObservableCollection<ItemT>>(filterBy) {
       @Override
       protected void add(ItemT item, CollectionT from, ObservableCollection<ItemT> to) {
-        if (filterBy.apply(item).get()) {
+        if (filter(item)) {
           to.add(item);
         }
       }
@@ -245,7 +246,7 @@ public class Transformers {
                 if (!exists(item)) return;
                 for (Iterator<TargetT> i = to.iterator(); i.hasNext(); ) {
                   TargetT t = i.next();
-                  if (checker.apply(t).equals(item)) {
+                  if (Objects.equal(checker.apply(t), item)) {
                     i.remove();
                     return;
                   }
@@ -271,7 +272,7 @@ public class Transformers {
 
           private boolean exists(SourceT item) {
             for (TargetT t: to) {
-              if (checker.apply(t).equals(item)) return true;
+              if (Objects.equal(checker.apply(t), item)) return true;
             }
             return false;
           }
