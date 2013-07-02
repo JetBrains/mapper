@@ -13,9 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.base;
+package jetbrains.jetpad.geometry;
 
-public interface Async<ItemT> {
-  Async<ItemT> onSuccess(Handler<? super ItemT> successHandler);
-  Async<ItemT> onFailure(Handler<Throwable> failureHandler);
+import org.junit.Assert;
+import org.junit.Test;
+
+public class DoubleVectorOperationsTest {
+  private static final double EPS = 0.0001;
+
+  @Test
+  public void simpleRotation() {
+    DoubleVector v = new DoubleVector(1, 0);
+
+    DoubleVector delta = new DoubleVector(0, 1).subtract(v.rotate(Math.PI / 2));
+    Assert.assertTrue(delta.length() < EPS);
+  }
 }

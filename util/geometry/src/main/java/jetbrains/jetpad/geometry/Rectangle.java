@@ -1,0 +1,109 @@
+/*
+ * Copyright 2012-2013 JetBrains s.r.o
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package jetbrains.jetpad.geometry;
+
+public class Rectangle {
+  public final Vector origin;
+  public final Vector dimension;
+
+  public Rectangle(Vector origin, Vector dimension) {
+    this.origin = origin;
+    this.dimension = dimension;
+  }
+
+  public Rectangle(int x, int y, int width, int height) {
+    this(new Vector(x, y), new Vector(width, height));
+  }
+
+  public Rectangle add(Vector v) {
+    return new Rectangle(origin.add(v), dimension);
+  }
+
+  public Rectangle sub(Vector v) {
+    return new Rectangle(origin.sub(v), dimension);
+  }
+
+  public boolean contains(Rectangle r) {
+    return contains(r.origin) && contains(r.origin.add(r.dimension));
+  }
+
+  public boolean contains(Vector v) {
+    return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y;
+  }
+
+  public Rectangle union(Rectangle rect) {
+    Vector newOrigin = origin.min(rect.origin);
+    Vector corner = origin.add(dimension);
+    Vector rectCorner = rect.origin.add(rect.dimension);
+    Vector newCorner = corner.max(rectCorner);
+    Vector newDimension = newCorner.sub(newOrigin);
+    return new Rectangle(newOrigin, newDimension);
+  }
+
+  public boolean intersects(Rectangle rect) {
+    Vector t1 = origin;
+    Vector t2 = origin.add(dimension);
+    Vector r1 = rect.origin;
+    Vector r2 = rect.origin.add(rect.dimension);
+    return r2.x >= t1.x && t2.x >= r1.x && r2.y >= t1.y && t2.y >= r1.y;
+  }
+
+  public boolean innerIntersects(Rectangle rect) {
+    Vector t1 = origin;
+    Vector t2 = origin.add(dimension);
+    Vector r1 = rect.origin;
+    Vector r2 = rect.origin.add(rect.dimension);
+    return r2.x > t1.x && t2.x > r1.x && r2.y > t1.y && t2.y > r1.y;
+  }
+
+  public Rectangle changeDimension(Vector dim) {
+    return new Rectangle(origin, dim);
+  }
+
+  public double distance(Vector to) {
+    return toDoubleRectangle().distance(to.toDoubleVector());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Rectangle)) return false;
+
+    Rectangle otherRect = (Rectangle) obj;
+    return origin.equals(otherRect.origin) && dimension.equals(otherRect.dimension);
+  }
+
+  public DoubleRectangle toDoubleRectangle() {
+    return new DoubleRectangle(origin.toDoubleVector(), dimension.toDoubleVector());
+  }
+
+  public Vector center() {
+    return origin.add(new Vector(dimension.x / 2, dimension.y / 2));
+  }
+
+  public Segment[] getBoundSegments() {
+    Vector c1 = origin;
+    Vector c2 = origin.add(new Vector(dimension.x, 0));
+    Vector c3 = origin.add(new Vector(dimension.x, dimension.y));
+    Vector c4 = origin.add(new Vector(0, dimension.y));
+    return new Segment[]{new Segment(c1, c2), new Segment(c2, c3), new Segment(c3, c4), new Segment(c4, c1)};
+  }
+
+  @Override
+  public String toString() {
+    return origin + " - " + dimension;
+  }
+
+}

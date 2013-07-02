@@ -18,6 +18,7 @@
     <module>util/base</module>
     <module>util/values</module>
     <module>util/json</module>
+    <module>util/geometry</module>
 
     <module>samples/todo</module>
   </modules>
