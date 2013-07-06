@@ -609,7 +609,7 @@ public class Properties {
           }
           result.append(v.getPropExpr());
         }
-
+        result.append(")");
         return result.toString();
       }
     };
