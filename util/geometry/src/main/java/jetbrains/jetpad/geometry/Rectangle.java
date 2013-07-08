@@ -94,11 +94,12 @@ public class Rectangle {
   }
 
   public Segment[] getBoundSegments() {
-    Vector c1 = origin;
-    Vector c2 = origin.add(new Vector(dimension.x, 0));
-    Vector c3 = origin.add(new Vector(dimension.x, dimension.y));
-    Vector c4 = origin.add(new Vector(0, dimension.y));
-    return new Segment[]{new Segment(c1, c2), new Segment(c2, c3), new Segment(c3, c4), new Segment(c4, c1)};
+    Vector[] p = getBoundPoints();
+    return new Segment[]{new Segment(p[0], p[1]), new Segment(p[1], p[2]), new Segment(p[2], p[3]), new Segment(p[3], p[0])};
+  }
+
+  public Vector[] getBoundPoints() {
+    return new Vector[]{origin, origin.add(new Vector(dimension.x, 0)), origin.add(dimension), origin.add(new Vector(0, dimension.y))};
   }
 
   @Override
