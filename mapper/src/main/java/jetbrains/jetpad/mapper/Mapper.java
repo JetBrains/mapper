@@ -23,6 +23,7 @@ import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,7 +125,9 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   final void detach() {
-    if (myMappingContext == null) throw new IllegalStateException();
+    if (myMappingContext == null) {
+      throw new IllegalStateException();
+    }
 
     onDetach();
 
@@ -154,29 +157,31 @@ public abstract class Mapper<SourceT, TargetT> {
   protected void onDetach() {
   }
 
-  private void addChildContainer(ChildContainer c) {
+  private void registerChildContainer(ChildContainer c) {
     ChildContainer[] newChildContainers = new ChildContainer[myChildContainers.length + 1];
     System.arraycopy(myChildContainers, 0, newChildContainers, 0, myChildContainers.length);
     newChildContainers[newChildContainers.length - 1] = c;
     myChildContainers = newChildContainers;
   }
 
+  private void unregisterChildContainer(ChildContainer c) {
+    int index = Arrays.asList(myChildContainers).indexOf(c);
+    ChildContainer[] newContainer = new ChildContainer[myChildContainers.length - 1];
+    System.arraycopy(myChildContainers, 0, newContainer, 0, index);
+    System.arraycopy(myChildContainers, index + 1, newContainer, index, myChildContainers.length - index - 1);
+    myChildContainers = newContainer;
+  }
+
   public final <MapperT extends Mapper<?, ?>> ObservableList<MapperT> createChildList() {
-    ChildList<MapperT> result = new ChildList<MapperT>();
-    addChildContainer(result);
-    return result;
+    return new ChildList<MapperT>();
   }
 
   public final <MapperT extends Mapper<?, ?>> ObservableSet<MapperT> createChildSet() {
-    ChildSet<MapperT> result = new ChildSet<MapperT>();
-    addChildContainer(result);
-    return result;
+    return new ChildSet<MapperT>();
   }
 
   public final <MapperT extends Mapper<?, ?>> Property<MapperT> createChildProperty() {
-    ChildProperty<MapperT> result = new ChildProperty<MapperT>();
-    addChildContainer(result);
-    return result;
+    return new ChildProperty<MapperT>();
   }
 
   private void addChild(Mapper<?, ?> child) {
@@ -202,6 +207,13 @@ public abstract class Mapper<SourceT, TargetT> {
   private class ChildProperty<MapperT extends Mapper<?, ?>> extends ValueProperty<MapperT> implements ChildContainer {
     @Override
     public void set(MapperT value) {
+      if (get() == null && value != null) {
+        registerChildContainer(this);
+      }
+      if (get() != null && value == null) {
+        unregisterChildContainer(this);
+      }
+
       MapperT oldValue = get();
       if (oldValue != null) {
         checkCanRemove(oldValue);
@@ -225,6 +237,11 @@ public abstract class Mapper<SourceT, TargetT> {
     @Override
     public void add(int index, final MapperT item) {
       checkCanAdd(item);
+
+      if (isEmpty()) {
+        registerChildContainer(this);
+      }
+
       super.add(index, item);
       addChild(item);
     }
@@ -235,6 +252,11 @@ public abstract class Mapper<SourceT, TargetT> {
       checkCanRemove(item);
       super.remove(index);
       removeChild(item);
+
+      if (isEmpty()) {
+        unregisterChildContainer(this);
+      }
+
       return item;
     }
 
@@ -248,6 +270,11 @@ public abstract class Mapper<SourceT, TargetT> {
     @Override
     public boolean add(MapperT item) {
       if (contains(item)) return false;
+
+      if (isEmpty()) {
+        registerChildContainer(this);
+      }
+
       checkCanAdd(item);
       addChild(item);
       return super.add(item);
@@ -258,6 +285,11 @@ public abstract class Mapper<SourceT, TargetT> {
       if (!contains(item)) return false;
       checkCanRemove((Mapper<?, ?>) item);
       removeChild((Mapper<?, ?>) item);
+
+      if (isEmpty()) {
+        registerChildContainer(this);
+      }
+
       return super.remove(item);
     }
 
