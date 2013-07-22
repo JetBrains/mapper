@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.json;
 
-import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
