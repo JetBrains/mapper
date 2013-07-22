@@ -47,15 +47,33 @@ abstract class JsonLexer {
 
     setTokenStart();
 
-    if (isDigit(getCurrent()) || getCurrent() == '-') {
-      readNumber();
-      myTokenKind = JsonTokenKind.NUMBER;
-      return;
-    }
-
     if (getCurrent() == '"') {
       readString();
       myTokenKind = JsonTokenKind.STRING;
+      return;
+    }
+
+    if (getCurrent() == ',') {
+      myTokenKind = JsonTokenKind.COMMA;
+      advance();
+      return;
+    }
+
+    if (getCurrent() == '[') {
+      myTokenKind = JsonTokenKind.LEFT_BRACKET;
+      advance();
+      return;
+    }
+
+    if (getCurrent() == ']') {
+      myTokenKind = JsonTokenKind.RIGHT_BRACKET;
+      advance();
+      return;
+    }
+
+    if (isDigit(getCurrent()) || getCurrent() == '-') {
+      readNumber();
+      myTokenKind = JsonTokenKind.NUMBER;
       return;
     }
 
@@ -69,21 +87,7 @@ abstract class JsonLexer {
       advance();
       return;
     }
-    if (getCurrent() == '[') {
-      myTokenKind = JsonTokenKind.LEFT_BRACKET;
-      advance();
-      return;
-    }
-    if (getCurrent() == ']') {
-      myTokenKind = JsonTokenKind.RIGHT_BRACKET;
-      advance();
-      return;
-    }
-    if (getCurrent() == ',') {
-      myTokenKind = JsonTokenKind.COMMA;
-      advance();
-      return;
-    }
+
     if (getCurrent() == ':') {
       myTokenKind = JsonTokenKind.COLON;
       advance();
@@ -161,7 +165,7 @@ abstract class JsonLexer {
         } else if (getCurrent() == 'u') {
           advance();
           for (int i = 0; i < 4; i++) {
-            if (!(isHexDigist(getCurrent()))) {
+            if (!(isHexDigit(getCurrent()))) {
               throw new JsonParsingException();
             }
             advance();
@@ -212,17 +216,8 @@ abstract class JsonLexer {
     return ch >= '0' && ch <= '9';
   }
 
-  private boolean isHexDigist(int ch) {
-    if (isDigit(ch)) {
-      return true;
-    }
-    if (ch >= 'a' && ch <= 'f') {
-      return true;
-    }
-    if (ch >= 'A' && ch <= 'F') {
-      return true;
-    }
-    return false;
+  private boolean isHexDigit(int ch) {
+    return isDigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
   }
 
   protected abstract int getCurrent();

@@ -29,12 +29,24 @@ public class JsonParser {
   }
 
   private static JsonValue parseValue(JsonLexer lexer) {
-    if (lexer.tokenKind() == JsonTokenKind.LEFT_BRACE) {
-      return parseObject(lexer);
+    if (lexer.tokenKind() == JsonTokenKind.STRING) {
+      String value = lexer.tokenText();
+      lexer.next();
+      return new JsonString(getLiteralText(value));
     }
 
     if (lexer.tokenKind() == JsonTokenKind.LEFT_BRACKET) {
       return parseArray(lexer);
+    }
+
+    if (lexer.tokenKind() == JsonTokenKind.NUMBER) {
+      double value = Double.parseDouble(lexer.tokenText());
+      lexer.next();
+      return new JsonNumber(value);
+    }
+
+    if (lexer.tokenKind() == JsonTokenKind.LEFT_BRACE) {
+      return parseObject(lexer);
     }
 
     if (lexer.tokenKind() == JsonTokenKind.NULL) {
@@ -50,18 +62,6 @@ public class JsonParser {
     if (lexer.tokenKind() == JsonTokenKind.FALSE) {
       lexer.next();
       return new JsonBoolean(false);
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.NUMBER) {
-      double value = Double.parseDouble(lexer.tokenText());
-      lexer.next();
-      return new JsonNumber(value);
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.STRING) {
-      String value = lexer.tokenText();
-      lexer.next();
-      return new JsonString(getLiteralText(value));
     }
 
     throw new JsonParsingException();
