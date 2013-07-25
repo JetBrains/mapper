@@ -8,9 +8,6 @@ import jetbrains.jetpad.json.JsonObject;
 import jetbrains.jetpad.json.JsonString;
 import jetbrains.jetpad.json.JsonValue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class Serializers {
   static class IntegerSerializer extends NumericSerializer<Integer> {
     IntegerSerializer() {
@@ -118,21 +115,76 @@ class Serializers {
   }
 
   static class StringSerializer extends ComputedSizeSerializer<String> {
+    private static final byte UTF8_ID = 0;
+    private static final byte UTF16_ID = 1;
     StringSerializer(Serializer<Integer> intSerializer) {
       super(intSerializer);
     }
 
     @Override
     protected void doWrite(String data) {
-      write(data.getBytes());
+      int length = data.length();
+      int[] chars = new int[length];
+      boolean utf8 = true;
+      for (int i = 0; i < length; i++) {
+        int k = (int) data.charAt(i);
+        chars[i] = k;
+        if (k > 255) {
+          utf8 = false;
+        }
+      }
+      byte[] result = utf8 ? writeUtf8(chars) : writeUtf16(chars);
+      write(result);
+    }
+
+    private byte[] writeUtf8(int[] data) {
+      byte[] buffer = new byte[data.length + 1];
+      buffer[0] = UTF8_ID;
+      for (int i = 1; i < buffer.length; i++) {
+        buffer[i] = (byte)data[i - 1];
+      }
+      return buffer;
+    }
+
+    private byte[] writeUtf16(int[] data) {
+      byte[] buffer = new byte[2*data.length + 1];
+      buffer[0] = UTF16_ID;
+      for (int i = 1; i < buffer.length; i += 2) {
+        buffer[i] = (byte) (data[i - 1] >> 8);
+        buffer[i + 1] = (byte) data[i - 1];
+      }
+      return buffer;
     }
 
     @Override
     protected String doRead(byte[] input, int size) {
-      byte[] content = new byte[size];
-      System.arraycopy(input, getPosition(), content, 0, size);
-      incPosition(size);
+      byte encodingId = input[incPosition()];
+      char[] content;
+      if (encodingId == UTF8_ID) {
+        content = readUtf8(input, size - 1);
+      } else if (encodingId == UTF16_ID) {
+        content = readUtf16(input, size - 1);
+      } else {
+        throw new JsonSerializationException();
+      }
       return new String(content);
+    }
+
+    private char[] readUtf8(byte[] input, int size) {
+      char[] buffer = new char[size];
+      for (int i = 0; i < size; i++) {
+        buffer[i] = (char)input[incPosition()];
+      }
+      return buffer;
+    }
+
+    private char[] readUtf16(byte[] input, int size) {
+      int length = size / 2;
+      char[] buffer = new char[length];
+      for (int i = 0; i < length; i += 2) {
+        buffer[i] = (char) ((input[incPosition()] & 0xFF) << 8 | (input[incPosition()] & 0xFF));
+      }
+      return buffer;
     }
   }
 
@@ -160,35 +212,46 @@ class Serializers {
     }
   }
 
-  static class NumberSerializer extends ComputedSizeSerializer<JsonNumber> {
+  static class NumberSerializer extends Serializer<JsonNumber> {
     private static final byte INT_ID = 0;
     private static final byte DOUBLE_ID = 1;
 
+    private Serializer<Integer> myIntSerializer;
     private Serializer<Double> myDoubleSerializer;
     NumberSerializer(Serializer<Integer> intSerializer, Serializer<Double> doubleSerializer) {
-      super(5, intSerializer);
+      super(5);
+      myIntSerializer = intSerializer;
       myDoubleSerializer = doubleSerializer;
     }
 
     @Override
-    protected void doWrite(JsonNumber data) {
+    byte[] write(JsonNumber data) {
       double value = data.getDoubleValue();
+      byte[] content;
+      byte contentId;
       if (value == (int)value) {
-        write(INT_ID);
-        write(getIntSerializer().write((int)value));
+        contentId = INT_ID;
+        content = myIntSerializer.write((int) value);
       } else {
-        write(DOUBLE_ID);
-        write(myDoubleSerializer.write(value));
+        contentId = DOUBLE_ID;
+        content = myDoubleSerializer.write(value);
       }
+      byte[] buffer = new byte[2 + content.length];
+      buffer[0] = getId();
+      buffer[1] = contentId;
+      System.arraycopy(content, 0, buffer, 2, content.length);
+      setPosition(buffer.length);
+      return buffer;
     }
 
     @Override
-    protected JsonNumber doRead(byte[] input, int size) {
+    JsonNumber read(byte[] input, int position) {
+      setPosition(position);
       byte type = input[incPosition()];
       double value;
       if (type == INT_ID) {
-        value = getIntSerializer().read(input, getPosition());
-        setPosition(getIntSerializer().getPosition());
+        value = myIntSerializer.read(input, getPosition());
+        setPosition(myIntSerializer.getPosition());
       } else if (type == DOUBLE_ID) {
         value = myDoubleSerializer.read(input, getPosition());
         setPosition(myDoubleSerializer.getPosition());
@@ -240,19 +303,19 @@ class Serializers {
 
     @Override
     protected void doWrite(JsonArray data) {
-      for (JsonValue value: data.getValues()) {
+      for (JsonValue value: data) {
         writeValue(value);
       }
     }
 
     @Override
     protected JsonArray doRead(byte[] input, int size) {
-      List<JsonValue> values = new ArrayList<JsonValue>();
+      JsonArray array = new JsonArray();
       int end = getPosition() + size;
       while (getPosition() < end) {
-        values.add(readValue(input));
+        array.add(readValue(input));
       }
-      return new JsonArray(values);
+      return array;
     }
 
     @Override

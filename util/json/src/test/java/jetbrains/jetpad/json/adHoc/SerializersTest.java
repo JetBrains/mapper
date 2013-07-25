@@ -78,12 +78,12 @@ public class SerializersTest {
     testArray(new JsonNumber(1));
     testArray(new JsonNumber(1), new JsonBoolean(true), new JsonNull(), new JsonString("abc"));
     testArray(new JsonArray());
-    testArray(new JsonString("a"), new JsonArray(new JsonNull(), new JsonNumber(5.4)));
-    testArray(new JsonString("a"), new JsonArray(new JsonNull(), new JsonArray(new JsonString("q")), new JsonNumber(5.4)));
+    testArray(new JsonString("a"), createArray(new JsonNull(), new JsonNumber(5.4)));
+    testArray(new JsonString("a"), createArray(new JsonNull(), createArray(new JsonString("q")), new JsonNumber(5.4)));
   }
 
   private void testArray(JsonValue... values) {
-    JsonArray data = new JsonArray(values);
+    JsonArray data = createArray(values);
     byte[] s = myContext.write(data);
     JsonValue value = myContext.read(s);
     assertTrue(value instanceof JsonArray);
@@ -100,8 +100,8 @@ public class SerializersTest {
     JsonObject object = new JsonObject();
     object.put("abc", new JsonString("xyz"));
     JsonObject o2 = new JsonObject();
-    o2.put("s", new JsonArray(new JsonBoolean(false), new JsonObject()));
-    object.put("q", new JsonArray(new JsonNumber(563.32111), o2, new JsonString("k")));
+    o2.put("s", createArray(new JsonBoolean(false), new JsonObject()));
+    object.put("q", createArray(new JsonNumber(563.32111), o2, new JsonString("k")));
     testObject(object);
   }
 
@@ -110,5 +110,13 @@ public class SerializersTest {
     JsonValue value = myContext.read(s);
     assertTrue(value instanceof JsonObject);
     assertEquals(data.toString(), value.toString());
+  }
+
+  private JsonArray createArray(JsonValue... values) {
+    JsonArray array = new JsonArray();
+    for (JsonValue value: values) {
+      array.add(value);
+    }
+    return array;
   }
 }

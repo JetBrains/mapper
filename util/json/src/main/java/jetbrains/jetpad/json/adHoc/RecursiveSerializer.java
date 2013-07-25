@@ -20,9 +20,6 @@ abstract class RecursiveSerializer<T> extends ComputedSizeSerializer<T> {
 
   protected JsonValue readValue(byte[] input) {
     Serializer serializer = myContext.getSerializer(input, getPosition());
-    if (serializer instanceof RecursiveSerializer) {
-      serializer = ((RecursiveSerializer) serializer).createInstance(myContext);
-    }
     JsonValue value = (JsonValue) serializer.read(input, getPosition() + 1);
     setPosition(serializer.getPosition());
     return value;
