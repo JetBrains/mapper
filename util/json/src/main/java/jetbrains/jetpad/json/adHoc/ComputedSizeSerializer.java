@@ -2,7 +2,7 @@ package jetbrains.jetpad.json.adHoc;
 
 
 abstract class ComputedSizeSerializer<T> extends Serializer<T> {
-  private static final int DEFAULT_BUFFER_SIZE = 50;
+  static final int DEFAULT_BUFFER_SIZE = 50;
   private static final int MAX_BUFFER_LENGTH = Integer.MAX_VALUE;
 
   private byte[] myBuffer;
@@ -56,11 +56,6 @@ abstract class ComputedSizeSerializer<T> extends Serializer<T> {
     ensureCanWrite(bytes.length);
     System.arraycopy(bytes, 0, myBuffer, getPosition(), bytes.length);
     incPosition(bytes.length);
-  }
-
-  protected void write(byte b) {
-    ensureCanWrite(1);
-    myBuffer[incPosition()] = b;
   }
 
   private void ensureCanWrite(int size) {

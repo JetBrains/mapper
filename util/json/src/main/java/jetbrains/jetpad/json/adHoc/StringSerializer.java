@@ -48,11 +48,11 @@ class StringSerializer extends ComputedSizeSerializer<String> {
   }
 
   private byte[] writeUtf16(int[] data) {
-    byte[] buffer = new byte[2*data.length + 1];
+    byte[] buffer = new byte[2 * data.length + 1];
     buffer[0] = UTF16_ID;
-    for (int i = 1; i < buffer.length; i += 2) {
-      buffer[i] = (byte) (data[i - 1] >> 8);
-      buffer[i + 1] = (byte) data[i - 1];
+    for (int i = 1, j = 0; i < buffer.length; i += 2, j++) {
+      buffer[i] = (byte) (data[j] >> 8);
+      buffer[i + 1] = (byte) data[j];
     }
     return buffer;
   }
@@ -66,9 +66,10 @@ class StringSerializer extends ComputedSizeSerializer<String> {
   }
 
   private char[] readUtf16(byte[] input, int size) {
+    if (size % 2 != 0) throw new JsonSerializationException();
     int length = size / 2;
     char[] buffer = new char[length];
-    for (int i = 0; i < length; i += 2) {
+    for (int i = 0; i < length; i++) {
       buffer[i] = (char) ((input[incPosition()] & 0xFF) << 8 | (input[incPosition()] & 0xFF));
     }
     return buffer;

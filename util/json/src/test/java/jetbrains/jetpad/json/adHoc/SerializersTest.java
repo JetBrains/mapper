@@ -45,6 +45,7 @@ public class SerializersTest {
     testString("abc");
     testString("a\nbc");
     testString("\\u000a abc");
+    testString(new String(new char[] {(char)52, (char)256, (char)65535}));
   }
 
   private void testString(String data) {
@@ -80,6 +81,15 @@ public class SerializersTest {
     testArray(new JsonArray());
     testArray(new JsonString("a"), createArray(new JsonNull(), new JsonNumber(5.4)));
     testArray(new JsonString("a"), createArray(new JsonNull(), createArray(new JsonString("q")), new JsonNumber(5.4)));
+  }
+
+  @Test
+  public void longBuffer() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < ComputedSizeSerializer.DEFAULT_BUFFER_SIZE; i++) {
+      sb.append('a');
+    }
+    testArray(new JsonString("a"), createArray(new JsonNull(), createArray(new JsonString(sb.toString())), new JsonNumber(5.4)));
   }
 
   private void testArray(JsonValue... values) {
