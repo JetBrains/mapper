@@ -3,7 +3,7 @@ package jetbrains.jetpad.json.adHoc;
 import jetbrains.jetpad.json.JsonArray;
 import jetbrains.jetpad.json.JsonValue;
 
-public class JsonArraySerializer extends RecursiveSerializer<JsonArray> {
+class JsonArraySerializer extends RecursiveSerializer<JsonArray> {
   JsonArraySerializer(JsonSerializationContext context) {
     super(7, context);
   }
