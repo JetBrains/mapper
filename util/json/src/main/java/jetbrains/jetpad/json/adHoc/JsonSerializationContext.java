@@ -16,20 +16,20 @@ public class JsonSerializationContext {
   private Map<Byte, Serializer> mySerializers = new HashMap<Byte, Serializer>();
 
   public JsonSerializationContext() {
-    Serializers.IntegerSerializer integerSerializer = new Serializers.IntegerSerializer();
+    IntegerSerializer integerSerializer = new IntegerSerializer();
     register(Integer.class, integerSerializer);
 
-    Serializers.StringSerializer stringSerializer = new Serializers.StringSerializer(integerSerializer);
+    StringSerializer stringSerializer = new StringSerializer(integerSerializer);
     register(String.class, stringSerializer);
 
-    register(JsonNull.class, new Serializers.NullSerializer());
-    register(JsonBoolean.class, new Serializers.BooleanSerializer());
+    register(JsonNull.class, new JsonNullSerializer());
+    register(JsonBoolean.class, new JsonBooleanSerializer());
 
-    register(JsonString.class, new Serializers.JsonStringSerializer(stringSerializer));
-    register(JsonNumber.class, new Serializers.NumberSerializer(integerSerializer, new Serializers.DoubleSerializer()));
+    register(JsonString.class, new JsonStringSerializer(stringSerializer));
+    register(JsonNumber.class, new JsonNumberSerializer(integerSerializer, new DoubleSerializer()));
 
-    register(JsonObject.class, new Serializers.ObjectSerializer(this));
-    register(JsonArray.class, new Serializers.ArraySerializer(this));
+    register(JsonObject.class, new JsonObjectSerializer(this));
+    register(JsonArray.class, new JsonArraySerializer(this));
   }
 
   <T> void register(Class<T> type, Serializer<T> serializer) {

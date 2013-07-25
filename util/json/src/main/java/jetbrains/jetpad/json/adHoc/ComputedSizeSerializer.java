@@ -63,10 +63,6 @@ abstract class ComputedSizeSerializer<T> extends Serializer<T> {
     myBuffer[incPosition()] = b;
   }
 
-  protected Serializer<Integer> getIntSerializer() {
-    return myIntSerializer;
-  }
-
   private void ensureCanWrite(int size) {
     int deficit = getPosition() + size - myBuffer.length;
     if (deficit <= 0) return;
