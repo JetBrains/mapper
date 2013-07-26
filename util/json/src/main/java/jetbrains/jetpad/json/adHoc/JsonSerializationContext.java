@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JsonSerializationContext {
-  private Map<Class, Byte> myRegistrations = new HashMap<Class, Byte>();
-  private Map<Byte, Serializer> mySerializers = new HashMap<Byte, Serializer>();
+  private Map<Byte, Serializer> mySerializersById = new HashMap<Byte, Serializer>();
+  private Map<Class, Serializer> mySerializersByClass = new HashMap<Class, Serializer>();
 
   public JsonSerializationContext() {
     IntegerSerializer integerSerializer = new IntegerSerializer();
@@ -33,13 +33,13 @@ public class JsonSerializationContext {
   }
 
   <T> void register(Class<T> type, Serializer<T> serializer) {
-    if (myRegistrations.containsKey(type)) throw new IllegalStateException("double register serializer for " + type);
+    if (mySerializersByClass.containsKey(type)) throw new IllegalStateException("double register serializer for " + type);
 
-    byte id = serializer.hasId() ? serializer.getId() : (byte) myRegistrations.size();
-    if (mySerializers.containsKey(id)) throw new IllegalStateException("duplicate serializer id " + id);
+    byte id = serializer.hasId() ? serializer.getId() : (byte) mySerializersByClass.size();
+    if (mySerializersById.containsKey(id)) throw new IllegalStateException("duplicate serializer id " + id);
 
-    myRegistrations.put(type, id);
-    mySerializers.put(id, serializer);
+    mySerializersByClass.put(type, serializer);
+    mySerializersById.put(id, serializer);
   }
 
   public JsonValue read(byte[] input) {
@@ -50,18 +50,18 @@ public class JsonSerializationContext {
   }
 
   public byte[] write(JsonValue value) {
-    Byte type = myRegistrations.get(value.getClass());
-    if (type == null) throw new JsonSerializationException("unregistered class " + value.getClass());
-    return mySerializers.get(type).write(value);
+    Serializer serializer = mySerializersByClass.get(value.getClass());
+    if (serializer == null) throw new JsonSerializationException("unregistered class " + value.getClass());
+    return serializer.write(value);
   }
 
   Serializer getSerializer(byte[] input, int offset) {
-    byte type = input[offset];
-    if (!mySerializers.containsKey(type)) throw new JsonSerializationException("offset=" + offset + ", type=" + type);
-    return mySerializers.get(type);
+    byte id = input[offset];
+    if (!mySerializersById.containsKey(id)) throw new JsonSerializationException("offset=" + offset + ", id=" + id);
+    return mySerializersById.get(id);
   }
 
   <T> Serializer<T> getSerializer(Class<T> type) {
-    return mySerializers.get(myRegistrations.get(type));
+    return mySerializersByClass.get(type);
   }
 }
