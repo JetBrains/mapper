@@ -31,17 +31,21 @@ import static org.junit.Assert.assertTrue;
 public class SerializersTest {
   private JsonSerializationContext myContext = new JsonSerializationContext();
 
+  private JsonValue read(byte[] s) {
+    return myContext.read(s, 0, s.length);
+  }
+
   @Test
   public void nullValue() {
     byte[] s = myContext.write(new JsonNull());
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonNull);
   }
 
   @Test
   public void falseValue() {
     byte[] s = myContext.write(new JsonBoolean(false));
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonBoolean);
     assertFalse(((JsonBoolean) value).getBooleanValue());
   }
@@ -49,7 +53,7 @@ public class SerializersTest {
   @Test
   public void trueValue() {
     byte[] s = myContext.write(new JsonBoolean(true));
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonBoolean);
     assertTrue(((JsonBoolean) value).getBooleanValue());
   }
@@ -65,7 +69,7 @@ public class SerializersTest {
 
   private void testString(String data) {
     byte[] s = myContext.write(new JsonString(data));
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonString);
     assertEquals(data, ((JsonString) value).getStringValue());
   }
@@ -83,7 +87,7 @@ public class SerializersTest {
 
   private void testNumber(double data) {
     byte[] s = myContext.write(new JsonNumber(data));
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonNumber);
     assertEquals(data, ((JsonNumber) value).getDoubleValue(), 0.000001f);
   }
@@ -110,7 +114,7 @@ public class SerializersTest {
   private void testArray(JsonValue... values) {
     JsonArray data = createArray(values);
     byte[] s = myContext.write(data);
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonArray);
     assertEquals(data.toString(), value.toString());
   }
@@ -132,7 +136,7 @@ public class SerializersTest {
 
   private void testObject(JsonObject data) {
     byte[] s = myContext.write(data);
-    JsonValue value = myContext.read(s);
+    JsonValue value = read(s);
     assertTrue(value instanceof JsonObject);
     assertEquals(data.toString(), value.toString());
   }

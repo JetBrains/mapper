@@ -57,10 +57,10 @@ public class JsonSerializationContext {
     mySerializersById.put(id, serializer);
   }
 
-  public JsonValue read(byte[] input) {
-    Serializer serializer = getSerializer(input, 0);
-    JsonValue value = (JsonValue) serializer.read(input, 1);
-    if (serializer.getPosition() != input.length) throw new JsonSerializationException();
+  public JsonValue read(byte[] input, int offset, int length) {
+    Serializer serializer = getSerializer(input, offset);
+    JsonValue value = (JsonValue) serializer.read(input, offset + 1);
+    if (serializer.getPosition() != length + offset) throw new JsonSerializationException();
     return value;
   }
 
