@@ -51,6 +51,12 @@ public class RectangleTest {
   }
 
   @Test
+  public void intersection() {
+    assertEquals(new Rectangle(1, 1, 1, 1), new Rectangle(0, 0, 2, 2).intersect(new Rectangle(1, 1, 2, 2)));
+    assertEquals(new Rectangle(1, 1, 2, 2), new Rectangle(0, 0, 3, 3).intersect(new Rectangle(1, 1, 2, 2)));
+  }
+
+  @Test
   public void union() {
     assertEquals(new Rectangle(0, 0, 3, 3), new Rectangle(0, 0, 1, 1).union(new Rectangle(2, 2, 1, 1)));
   }

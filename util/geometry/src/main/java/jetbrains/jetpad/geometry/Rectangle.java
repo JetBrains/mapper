@@ -61,6 +61,20 @@ public class Rectangle {
     return r2.x >= t1.x && t2.x >= r1.x && r2.y >= t1.y && t2.y >= r1.y;
   }
 
+  public Rectangle intersect(Rectangle r) {
+    if (!intersects(r)) throw new IllegalStateException();
+
+    Vector to = origin;
+    Vector ro = r.origin;
+    Vector io = to.max(ro);
+
+    Vector too = origin.add(dimension);
+    Vector roo = r.origin.add(r.dimension);
+    Vector ioo = too.min(roo);
+
+    return new Rectangle(io, ioo.sub(io));
+  }
+
   public boolean innerIntersects(Rectangle rect) {
     Vector t1 = origin;
     Vector t2 = origin.add(dimension);
