@@ -20,9 +20,9 @@ import org.junit.Test;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class CoderTest {
+public class Base64URLSafeCoderTest {
   @Test
   public void encodeAndDecode() {
-    assertThat(239l, equalTo(Coder.decode(Coder.encode(239l))));
+    assertThat(239l, equalTo(Base64URLSafeCoder.decode(Base64URLSafeCoder.encode(239l))));
   }
 }

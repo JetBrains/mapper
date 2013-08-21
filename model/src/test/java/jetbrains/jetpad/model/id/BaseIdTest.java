@@ -24,9 +24,9 @@ public class BaseIdTest {
 
   @Test
   public void idEquality() {
-    MyId id1 = new MyId("abc$def");
-    MyId id2 = new MyId("abc$defz");
-    MyId id3 = new MyId("abc$def");
+    MyId id1 = new MyId("abc.def");
+    MyId id2 = new MyId("abc.defz");
+    MyId id3 = new MyId("abc.def");
 
     assertEquals(id1, id3);
     assertFalse(id2.equals(id3));
@@ -34,16 +34,16 @@ public class BaseIdTest {
 
   @Test(expected = IllegalStateException.class)
   public void duplicateName() {
-    new MyId("a$b", "newName1");
-    new MyId("a$b", "newName2");
+    new MyId("a.b", "newName1");
+    new MyId("a.b", "newName2");
   }
 
   @Test
   public void nameDiscovery () {
-    new MyId("a$b", "newName1");
-    MyId id2 = new MyId("a$b");
+    new MyId("a.b", "newName1");
+    MyId id2 = new MyId("a.b");
 
-    assertEquals("newName1 [a$b]", id2.toString());
+    assertEquals("newName1 [a.b]", id2.toString());
   }
 
 
