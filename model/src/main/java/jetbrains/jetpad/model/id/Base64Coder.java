@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Coder {
+public class Base64Coder {
   private static int ourBase = 0;
   private static final int[] ourChToValue = new int[255];
   private static final char[] ourValueToCh = new char[255];
@@ -28,7 +28,7 @@ public class Coder {
     Arrays.fill(ourChToValue, 0, ourChToValue.length, -1);
   }
 
-  private Coder() {
+  private Base64Coder() {
   }
 
   private static void add(char ch) {

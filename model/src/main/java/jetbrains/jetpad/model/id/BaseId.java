@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseId {
-  private static final char SEPARATOR = '$';
+  private static final char SEPARATOR = '.';
 
   private static final Map<String, String> ourNamesMap = new HashMap<String, String>();
 
@@ -52,7 +52,7 @@ public abstract class BaseId {
   }
 
   private BaseId(long id1, long id2, String name) {
-    this(id2 == 0 ? Coder.encode(id1) : Coder.encode(id1) + SEPARATOR + Coder.encode(id2), name);
+    this(getEncodedId(id1, id2), name);
   }
 
   public String getId() {
@@ -89,5 +89,9 @@ public abstract class BaseId {
       }
       return getId();
     }
+  }
+
+  public static String getEncodedId(long id1, long id2) {
+    return id2 == 0 ? Base64URLSafeCoder.encode(id1) : Base64URLSafeCoder.encode(id1) + SEPARATOR + Base64URLSafeCoder.encode(id2);
   }
 }
