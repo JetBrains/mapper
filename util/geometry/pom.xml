@@ -18,6 +18,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>jetbrains.jetpad.util</groupId>
+      <artifactId>values</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
       <groupId>jetbrains.jetpad</groupId>
       <artifactId>test</artifactId>
       <version>1.0-SNAPSHOT</version>

@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.geometry;
 
+import jetbrains.jetpad.values.Range;
+
 public class Rectangle {
   public final Vector origin;
   public final Vector dimension;
@@ -89,6 +91,14 @@ public class Rectangle {
 
   public double distance(Vector to) {
     return toDoubleRectangle().distance(to.toDoubleVector());
+  }
+
+  public Range<Integer> xRange() {
+    return new Range<Integer>(origin.x, origin.x + dimension.x);
+  }
+
+  public Range<Integer> yRange() {
+    return new Range<Integer>(origin.y, origin.y + dimension.y);
   }
 
   @Override
