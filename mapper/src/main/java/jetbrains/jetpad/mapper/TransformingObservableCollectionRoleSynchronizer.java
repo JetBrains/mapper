@@ -32,7 +32,6 @@ class TransformingObservableCollectionRoleSynchronizer<
 
   private SourceT mySource;
 
-  //todo transformer seems to be redundant here. Nice to move into a separate class
   private Transformer<? super SourceT, ObservableList<MappedT>> mySourceTransformer;
   private List<? super TargetT> myTarget;
 
