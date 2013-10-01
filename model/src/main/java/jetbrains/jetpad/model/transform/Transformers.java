@@ -57,8 +57,13 @@ public class Transformers {
     final Comparator<ItemT> comparator = new Comparator<ItemT>() {
       @Override
       public int compare(ItemT i1, ItemT i2) {
-        ValueT v1 = propSpec.apply(i1).get();
-        ValueT v2 = propSpec.apply(i2).get();
+        ReadableProperty<ValueT> p1 = propSpec.apply(i1);
+        ReadableProperty<ValueT> p2 = propSpec.apply(i2);
+
+        if (p1 == null || p2 == null) throw new NullPointerException();
+
+        ValueT v1 = p1.get();
+        ValueT v2 = p2.get();
 
         if (v1 == null || v2 == null) {
           if (v1 == v2) return 0;
