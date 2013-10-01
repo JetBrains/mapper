@@ -104,7 +104,6 @@ public class Transformers {
               }
             }
             if (needMove) {
-              //todo this is kind of hack. we don't call before listeners
               myCollectionListener.onItemRemoved(new CollectionItemEvent<ItemT>(item, -1, false));
               myCollectionListener.onItemAdded(new CollectionItemEvent<ItemT>(item, -1, true));
             }
