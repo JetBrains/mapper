@@ -3,5 +3,6 @@
     "-//Google Inc.//DTD Google Web Toolkit 2.0//EN"
     "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd"
 >
-<module><source path=""></source>
+<module>
+  <source path=""/>
 </module>
