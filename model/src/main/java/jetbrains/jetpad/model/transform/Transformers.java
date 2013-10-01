@@ -80,7 +80,7 @@ public class Transformers {
 
       private void watch(final ItemT item, final ObservableList<ItemT> to) {
         ReadableProperty<ValueT> property = propSpec.apply(item);
-
+        if (property == null) throw new NullPointerException();
         myListeners.put(item, property.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<ValueT> event) {
