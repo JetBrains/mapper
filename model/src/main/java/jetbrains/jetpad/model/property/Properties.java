@@ -477,7 +477,7 @@ public class Properties {
     });
   }
 
-  private static <ItemT, T> ReadableProperty<T> simplePropertyWithCollection(
+  public static <ItemT, T> ReadableProperty<T> simplePropertyWithCollection(
         final ObservableCollection<ItemT> collection,
         final ReadableProperty<ItemT> item,
         final Supplier<T> supplier) {
