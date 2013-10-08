@@ -16,6 +16,20 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava-gwt</artifactId>
+      <version>13.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
