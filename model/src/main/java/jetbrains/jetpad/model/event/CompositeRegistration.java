@@ -34,6 +34,10 @@ public class CompositeRegistration implements Registration {
     return this;
   }
 
+  public boolean isEmpty() {
+    return myRegistrations.isEmpty();
+  }
+
   @Override
   public void remove() {
     if (myRemoved || myRemoving) throw new IllegalStateException();
