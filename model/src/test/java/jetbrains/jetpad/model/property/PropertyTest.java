@@ -18,8 +18,10 @@ package jetbrains.jetpad.model.property;
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.event.EventHandler;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class PropertyTest {
   @Test
@@ -35,16 +37,12 @@ public class PropertyTest {
 
     prop.set("xyz");
 
-    final Property<Boolean> listenerCalled = new ValueProperty<Boolean>(false);
-    derived.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
-      @Override
-      public void onEvent(PropertyChangeEvent<Integer> item) {
-        listenerCalled.set(true);
-      }
-    });
+    EventHandler<PropertyChangeEvent<Integer>> handler = mock(EventHandler.class);
 
+    derived.addHandler(handler);
 
     prop.set("");
-    assertTrue(listenerCalled.get());
+
+    verify(handler).onEvent(new PropertyChangeEvent<Integer>(3, 0));
   }
 }
