@@ -48,4 +48,26 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
       l.onItemRemoved(this);
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    CollectionItemEvent that = (CollectionItemEvent) o;
+
+    if (myAdded != that.myAdded) return false;
+    if (myIndex != that.myIndex) return false;
+    if (myItem != null ? !myItem.equals(that.myItem) : that.myItem != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myItem != null ? myItem.hashCode() : 0;
+    result = 31 * result + (myAdded ? 1 : 0);
+    result = 31 * result + myIndex;
+    return result;
+  }
 }

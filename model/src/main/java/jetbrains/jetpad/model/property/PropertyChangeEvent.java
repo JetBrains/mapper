@@ -36,4 +36,24 @@ public class PropertyChangeEvent<ValueT> {
   public String toString() {
     return myOldValue + " -> " + myNewValue;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    PropertyChangeEvent that = (PropertyChangeEvent) o;
+
+    if (myNewValue != null ? !myNewValue.equals(that.myNewValue) : that.myNewValue != null) return false;
+    if (myOldValue != null ? !myOldValue.equals(that.myOldValue) : that.myOldValue != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myOldValue != null ? myOldValue.hashCode() : 0;
+    result = 31 * result + (myNewValue != null ? myNewValue.hashCode() : 0);
+    return result;
+  }
 }
