@@ -4,7 +4,6 @@ import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ListListenersTest extends ListenersTestCase {
@@ -13,12 +12,11 @@ public class ListListenersTest extends ListenersTestCase {
     final ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
       @Override
       protected void beforeItemAdded(int index, Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemAdded(int index, Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     list.addListener(badListener);
@@ -30,8 +28,8 @@ public class ListListenersTest extends ListenersTestCase {
       }
     });
 
-    assertTrue(successful);
     assertEquals(1, list.size());
+    assertions(true);
   }
 
   @Test
@@ -39,12 +37,11 @@ public class ListListenersTest extends ListenersTestCase {
     final ObservableArrayList<Integer> list = new ObservableArrayList<Integer>() {
       @Override
       protected void beforeItemRemoved(int index, Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemRemoved(int index, Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     list.add(0);
@@ -57,8 +54,8 @@ public class ListListenersTest extends ListenersTestCase {
       }
     });
 
-    assertTrue(successful);
     assertTrue(list.isEmpty());
+    assertions(true);
   }
 
   @Test
@@ -75,12 +72,11 @@ public class ListListenersTest extends ListenersTestCase {
       }
       @Override
       protected void beforeItemAdded(int index, Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemAdded(int index, Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     list.addListener(badListener);
@@ -92,8 +88,8 @@ public class ListListenersTest extends ListenersTestCase {
       }
     });
 
-    assertFalse(successful);
     assertTrue(list.isEmpty());
+    assertions(false);
   }
 
   @Test
@@ -112,13 +108,11 @@ public class ListListenersTest extends ListenersTestCase {
       }
       @Override
       protected void beforeItemRemoved(int index, Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
-
       @Override
       protected void afterItemRemoved(int index, Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     list.add(0);
@@ -131,7 +125,7 @@ public class ListListenersTest extends ListenersTestCase {
       }
     });
 
-    assertFalse(successful);
     assertEquals(1, list.size());
+    assertions(false);
   }
 }

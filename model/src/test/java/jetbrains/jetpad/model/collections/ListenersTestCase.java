@@ -1,14 +1,14 @@
 package jetbrains.jetpad.model.collections;
 
-import org.junit.After;
 import org.junit.Before;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ListenersTestCase {
-  protected boolean beforeHappened = false;
-  protected boolean afterHappened = false;
-  protected boolean successful = false;
+  private boolean beforeHappened = false;
+  private boolean afterHappened = false;
+  private boolean successful = false;
   private boolean exceptionOccurred = false;
 
   protected final CollectionListener<Integer> badListener = new CollectionListener<Integer>() {
@@ -30,11 +30,20 @@ public class ListenersTestCase {
     exceptionOccurred = false;
   }
 
-  @After
-  public void tearDown() {
+  protected void assertions(boolean expectedSuccess) {
+    assertEquals(expectedSuccess, successful);
     assertTrue(exceptionOccurred);
     assertTrue(beforeHappened);
     assertTrue(afterHappened);
+  }
+
+  protected void beforeAction() {
+    beforeHappened = true;
+  }
+
+  protected void afterAction(boolean success) {
+    afterHappened = true;
+    successful = success;
   }
 
   protected void doTestAction(Runnable r) {

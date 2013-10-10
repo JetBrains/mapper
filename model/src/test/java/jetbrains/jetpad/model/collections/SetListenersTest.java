@@ -4,7 +4,6 @@ import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class SetListenersTest extends ListenersTestCase {
@@ -13,12 +12,11 @@ public class SetListenersTest extends ListenersTestCase {
     final ObservableHashSet<Integer> set = new ObservableHashSet<Integer>() {
       @Override
       protected void beforeItemAdded(Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemAdded(Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     set.addListener(badListener);
@@ -30,8 +28,8 @@ public class SetListenersTest extends ListenersTestCase {
       }
     });
 
-    assertTrue(successful);
     assertEquals(1, set.size());
+    assertions(true);
   }
 
   @Test
@@ -39,12 +37,11 @@ public class SetListenersTest extends ListenersTestCase {
     final ObservableHashSet<Integer> set = new ObservableHashSet<Integer>() {
       @Override
       protected void beforeItemRemoved(Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemRemoved(Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     set.add(0);
@@ -57,8 +54,8 @@ public class SetListenersTest extends ListenersTestCase {
       }
     });
 
-    assertTrue(successful);
     assertTrue(set.isEmpty());
+    assertions(true);
   }
 
   @Test
@@ -74,15 +71,13 @@ public class SetListenersTest extends ListenersTestCase {
         });
         return true;
       }
-
       @Override
       protected void beforeItemAdded(Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemAdded(Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     set.addListener(badListener);
@@ -94,8 +89,8 @@ public class SetListenersTest extends ListenersTestCase {
       }
     });
 
-    assertFalse(successful);
     assertTrue(set.isEmpty());
+    assertions(false);
   }
 
   @Test
@@ -113,12 +108,11 @@ public class SetListenersTest extends ListenersTestCase {
       }
       @Override
       protected void beforeItemRemoved(Integer item) {
-        beforeHappened = true;
+        beforeAction();
       }
       @Override
       protected void afterItemRemoved(Integer item, boolean success) {
-        afterHappened = true;
-        successful = success;
+        afterAction(success);
       }
     };
     set.add(0);
@@ -131,7 +125,7 @@ public class SetListenersTest extends ListenersTestCase {
       }
     });
 
-    assertFalse(successful);
     assertEquals(1, set.size());
+    assertions(false);
   }
 }
