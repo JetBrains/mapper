@@ -1,101 +1,52 @@
+/*
+ * Copyright 2012-2013 JetBrains s.r.o
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package jetbrains.jetpad.model.collections;
 
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
-import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SetListenersTest extends ListenersTestCase {
-  @Test
-  public void badAddListener() {
-    final ObservableHashSet<Integer> set = new ObservableHashSet<Integer>() {
-      @Override
-      protected void beforeItemAdded(Integer item) {
-        beforeAction();
-      }
-      @Override
-      protected void afterItemAdded(Integer item, boolean success) {
-        afterAction(success);
-      }
-    };
-    set.addListener(badListener);
-
-    doTestAction(new Runnable() {
-      @Override
-      public void run() {
-        set.add(0);
-      }
-    });
-
-    assertEquals(1, set.size());
-    assertions(true);
+  @Override
+  protected MyCollection createCollection() {
+    return new TestObservableHashSet();
   }
 
-  @Test
-  public void badRemoveListener() {
-    final ObservableHashSet<Integer> set = new ObservableHashSet<Integer>() {
-      @Override
-      protected void beforeItemRemoved(Integer item) {
-        beforeAction();
-      }
-      @Override
-      protected void afterItemRemoved(Integer item, boolean success) {
-        afterAction(success);
-      }
-    };
-    set.add(0);
-    set.addListener(badListener);
-
-    doTestAction(new Runnable() {
-      @Override
-      public void run() {
-        set.remove(0);
-      }
-    });
-
-    assertTrue(set.isEmpty());
-    assertions(true);
+  @Override
+  protected MyCollection createThrowingOnAddCollection() {
+    return new TestObservableHashSet() {
+        @Override
+        public boolean add(Integer integer) {
+          add(integer, new Runnable() {
+            @Override
+            public void run() {
+              throw new IllegalStateException();
+            }
+          });
+          return true;
+        }
+      };
   }
 
-  @Test
-  public void addFailure() {
-    final ObservableHashSet<Integer> set = new ObservableHashSet<Integer>() {
-      @Override
-      public boolean add(Integer integer) {
-        add(integer, new Runnable() {
-          @Override
-          public void run() {
-            throw new IllegalStateException();
-          }
-        });
-        return true;
-      }
-      @Override
-      protected void beforeItemAdded(Integer item) {
-        beforeAction();
-      }
-      @Override
-      protected void afterItemAdded(Integer item, boolean success) {
-        afterAction(success);
-      }
-    };
-    set.addListener(badListener);
-
-    doTestAction(new Runnable() {
-      @Override
-      public void run() {
-        set.add(0);
-      }
-    });
-
-    assertTrue(set.isEmpty());
-    assertions(false);
-  }
-
-  @Test
-  public void removeFailure() {
-    final ObservableHashSet<Integer> set = new ObservableHashSet<Integer>() {
+  @Override
+  protected MyCollection createThrowingOnRemoveCollection() {
+    return new TestObservableHashSet() {
       @Override
       public boolean remove(Object integer) {
         remove((Integer) integer, new Runnable() {
@@ -106,26 +57,62 @@ public class SetListenersTest extends ListenersTestCase {
         });
         return true;
       }
-      @Override
-      protected void beforeItemRemoved(Integer item) {
-        beforeAction();
-      }
-      @Override
-      protected void afterItemRemoved(Integer item, boolean success) {
-        afterAction(success);
-      }
     };
-    set.add(0);
-    set.addListener(badListener);
+  }
 
-    doTestAction(new Runnable() {
-      @Override
-      public void run() {
-        set.remove(0);
-      }
-    });
+  private static class TestObservableHashSet extends ObservableHashSet<Integer> implements MyCollection {
+    private int beforeItemAddedCalled;
+    private int afterItemAddedCalled;
+    private int beforeItemRemovedCalled;
+    private int afterItemRemovedCalled;
+    private boolean successful;
 
-    assertEquals(1, set.size());
-    assertions(false);
+    @Override
+    protected void beforeItemAdded(Integer item) {
+      beforeItemAddedCalled++;
+    }
+
+    @Override
+    protected void afterItemAdded(Integer item, boolean success) {
+      afterItemAddedCalled++;
+      successful = success;
+    }
+
+    @Override
+    protected void beforeItemRemoved(Integer item) {
+      beforeItemRemovedCalled++;
+    }
+
+    @Override
+    protected void afterItemRemoved(Integer item, boolean success) {
+      afterItemRemovedCalled++;
+      successful = success;
+    }
+
+    @Override
+    public void verifyLastSuccess(boolean expected) {
+      assertEquals(expected, successful);
+    }
+
+    @Override
+    public void verifyBeforeAfter() {
+      assertEquals(afterItemAddedCalled, beforeItemAddedCalled);
+      assertEquals(afterItemRemovedCalled, beforeItemRemovedCalled);
+    }
+
+    @Override
+    public int getBeforeItemAddedCallsNumber() {
+      return beforeItemAddedCalled;
+    }
+
+    @Override
+    public int getBeforeItemRemovedCallsNumber() {
+      return beforeItemRemovedCalled;
+    }
+
+    @Override
+    public void assertContentEquals(Integer... expected) {
+      assertEquals(new HashSet<Integer>(Arrays.asList(expected)), this);
+    }
   }
 }
