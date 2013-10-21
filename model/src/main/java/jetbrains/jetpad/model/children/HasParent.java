@@ -23,7 +23,9 @@ public class HasParent<ParentT, SiblingT> {
   final DelayedValueProperty<ParentT> myParent = new DelayedValueProperty<ParentT>();
   PositionData<? extends SiblingT> myPositionData;
 
-  public final ReadableProperty<ParentT> parent = new ReadOnlyProperty<ParentT>(myParent);
+  public ReadableProperty<ParentT> parent() {
+    return myParent;
+  }
 
   public Position<? extends SiblingT> getPosition() {
     if (myPositionData == null) throw new IllegalStateException();
