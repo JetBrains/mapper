@@ -57,7 +57,7 @@ public class Listeners<ListenerT> {
   }
 
   public void fire(final ListenerCaller<ListenerT> h) {
-    if (myListeners == null) return;
+    if (isEmpty()) return;
     if (myFireData == null) {
       myFireData = new FireData<ListenerT>();
     }
