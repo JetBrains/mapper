@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 public class CompositesTest {
   private TestComposite root = new TestComposite();
@@ -88,6 +86,36 @@ public class CompositesTest {
   @Test
   public void prevLeaves() {
     assertEquals(Arrays.asList(leaf12, leaf11), asList(Composites.prevLeaves(leaf21)));
+  }
+
+  @Test
+  public void simpleAncestors() {
+    assertEquals(Arrays.asList(child1, root), Composites.toList(Composites.ancestors(leaf11)));
+  }
+
+  @Test
+  public void sameParentIsBefore() {
+    assertTrue(Composites.isBefore(leaf11, leaf12));
+  }
+
+  @Test
+  public void differentParentsIsBefore() {
+    assertTrue(Composites.isBefore(leaf11, leaf22));
+  }
+
+  @Test
+  public void itemsNotBeforeItself() {
+    assertFalse(Composites.isBefore(leaf11, leaf11));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void oneAncestorOfOtherInIsBefore() {
+    Composites.isBefore(root, leaf11);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void differentTreesInIsBefore() {
+    Composites.isBefore(root, new TestComposite());
   }
 
   private List<TestComposite> asList(Iterable<TestComposite> it) {

@@ -1,6 +1,9 @@
 package jetbrains.jetpad.model.children;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 public class Composites {
   public static <CompositeT extends Composite<CompositeT>> boolean isNonCompositeChild(CompositeT c) {
@@ -66,12 +69,12 @@ public class Composites {
     return prevLeaf(parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT>>  Iterable<CompositeT> ancestors(final CompositeT current) {
+  public static <CompositeT extends Composite<CompositeT>> Iterable<CompositeT> ancestors(final CompositeT current) {
     return new Iterable<CompositeT>() {
       @Override
       public Iterator<CompositeT> iterator() {
         return new Iterator<CompositeT>() {
-          private CompositeT myCurrent = current;
+          private CompositeT myCurrent = current.parent().get();
 
           @Override
           public boolean hasNext() {
@@ -80,8 +83,9 @@ public class Composites {
 
           @Override
           public CompositeT next() {
+            CompositeT result = myCurrent;
             myCurrent = myCurrent.parent().get();
-            return myCurrent;
+            return result;
           }
 
           @Override
@@ -149,5 +153,41 @@ public class Composites {
         };
       }
     };
+  }
+
+  public static <CompositeT extends Composite<CompositeT>> boolean isBefore(CompositeT c1, CompositeT c2) {
+    if (c1 == c2) return false;
+
+    List<CompositeT> c1a = reverseAncestors(c1);
+    List<CompositeT> c2a = reverseAncestors(c2);
+
+    if (c1a.get(0) != c2a.get(0)) throw new IllegalArgumentException("Items are in different trees");
+
+    int commonLength = Math.min(c1a.size(), c2a.size());
+    for (int i = 1; i < commonLength; i++) {
+      CompositeT prevAncestor = c1a.get(i - 1);
+      if (c1a.get(i) != c2a.get(i)) {
+        int c1aIndex = prevAncestor.children().indexOf(c1a.get(i));
+        int c2aIndex = prevAncestor.children().indexOf(c2a.get(i));
+        return c1aIndex < c2aIndex;
+      }
+    }
+
+    throw new IllegalArgumentException("One parameter is an ancestor of the other");
+  }
+
+  private static <CompositeT extends Composite<CompositeT>> List<CompositeT> reverseAncestors(CompositeT c) {
+    List<CompositeT> result = toList(ancestors(c));
+    Collections.reverse(result);
+    result.add(c);
+    return result;
+  }
+
+  static <ItemT> List<ItemT> toList(Iterable<ItemT> it) {
+    List<ItemT> result = new ArrayList<ItemT>();
+    for (ItemT i : it) {
+      result.add(i);
+    }
+    return result;
   }
 }
