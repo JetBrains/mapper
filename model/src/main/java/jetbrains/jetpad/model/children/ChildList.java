@@ -63,10 +63,10 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
     ChildT item = get(index);
     if (item.parent().get() != myParent) throw new IllegalArgumentException();
 
+    super.remove(index);
+
     item.myParent.set(null);
     item.myPositionData = null;
-
-    super.remove(index);
 
     item.myParent.flush();
 
