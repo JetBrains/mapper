@@ -90,6 +90,62 @@ public class Transformers {
     };
   }
 
+  public static <SourceT, TargetT>
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> listMap(final Transformer<SourceT, TargetT> transformer) {
+    return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
+      @Override
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {
+        return transform(from, new ObservableArrayList<TargetT>());
+      }
+
+      @Override
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+        final List<Registration> itemRegistrations = new ArrayList<Registration>();
+
+        final Registration reg = from.addListener(new CollectionListener<SourceT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<SourceT> event) {
+            final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getItem());
+            to.add(event.getIndex(), transformation.getTarget());
+            itemRegistrations.add(event.getIndex(), new Registration() {
+              @Override
+              public void remove() {
+                transformation.dispose();
+              }
+            });
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<SourceT> event) {
+            to.remove(event.getIndex());
+            itemRegistrations.remove(event.getIndex()).remove();
+          }
+        });
+
+        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
+          @Override
+          public ObservableList<SourceT> getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableList<TargetT> getTarget() {
+            return to;
+          }
+
+          @Override
+          public void dispose() {
+            for (Registration r : itemRegistrations) {
+              r.remove();
+            }
+            reg.remove();
+          }
+        };
+      }
+    };
+
+  }
+
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>>
   Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
