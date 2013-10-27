@@ -33,6 +33,64 @@ import jetbrains.jetpad.model.property.ReadableProperty;
 import java.util.*;
 
 public class Transformers {
+  public static <ItemT> Transformer<ItemT, ItemT> identity() {
+    return new BaseTransformer<ItemT, ItemT>() {
+      @Override
+      public Transformation<ItemT, ItemT> transform(final ItemT from) {
+        return new Transformation<ItemT, ItemT>() {
+          @Override
+          public ItemT getSource() {
+            return from;
+          }
+
+          @Override
+          public ItemT getTarget() {
+            return from;
+          }
+
+          @Override
+          public void dispose() {
+          }
+        };
+      }
+
+      @Override
+      public Transformation<ItemT, ItemT> transform(ItemT from, ItemT to) {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  public static <SourceT, TargetT> Transformer<SourceT, TargetT> fromFun(final Function<SourceT, TargetT> f) {
+    return new BaseTransformer<SourceT, TargetT>() {
+      @Override
+      public Transformation<SourceT, TargetT> transform(final SourceT from) {
+        final TargetT target = f.apply(from);
+        return new Transformation<SourceT, TargetT>() {
+          @Override
+          public SourceT getSource() {
+            return from;
+          }
+
+          @Override
+          public TargetT getTarget() {
+            return target;
+          }
+
+          @Override
+          public void dispose() {
+          }
+        };
+      }
+
+      @Override
+      public Transformation<SourceT, TargetT> transform(SourceT from, TargetT to) {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>>
   Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
     return sortBy(propSpec, Order.ASCENDING);
@@ -50,7 +108,6 @@ public class Transformers {
       }
     });
   }
-
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT>
   Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Comparator<ValueT> cmp) {
@@ -554,35 +611,6 @@ public class Transformers {
             sourceRegistration.remove();
           }
         };
-      }
-    };
-  }
-
-
-  public static <ItemT> Transformer<ItemT, ItemT> identity() {
-    return new BaseTransformer<ItemT, ItemT>() {
-      @Override
-      public Transformation<ItemT, ItemT> transform(final ItemT from) {
-        return new Transformation<ItemT, ItemT>() {
-          @Override
-          public ItemT getSource() {
-            return from;
-          }
-
-          @Override
-          public ItemT getTarget() {
-            return from;
-          }
-
-          @Override
-          public void dispose() {
-          }
-        };
-      }
-
-      @Override
-      public Transformation<ItemT, ItemT> transform(ItemT from, ItemT to) {
-        throw new UnsupportedOperationException();
       }
     };
   }
