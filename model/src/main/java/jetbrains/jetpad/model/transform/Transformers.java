@@ -143,9 +143,7 @@ public class Transformers {
         };
       }
     };
-
   }
-
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>>
   Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
