@@ -28,7 +28,7 @@ public class PropertySelectionTest {
     public ReadableProperty<Integer> select(C1 s) {
       return s.value;
     }
-  });
+  }, 30);
   boolean changed = false;
 
   private void addListener() {
@@ -42,7 +42,7 @@ public class PropertySelectionTest {
 
   @Test
   public void initialValue() {
-    assertNull(selProp.get());
+    assertEquals(30, (int) selProp.get());
   }
 
   @Test

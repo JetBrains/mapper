@@ -162,12 +162,17 @@ public class Properties {
     };
   }
 
+
   public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<SourceT, ReadableProperty<TargetT>> fun) {
+    return select(source, fun, null);
+  }
+
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
     final Supplier<TargetT> calc = new Supplier<TargetT>() {
       @Override
       public TargetT get() {
         SourceT value = source.get();
-        if (value == null) return null;
+        if (value == null) return nullValue;
         ReadableProperty<TargetT> prop = fun.select(value);
         if (prop == null) return null;
         return prop.get();
