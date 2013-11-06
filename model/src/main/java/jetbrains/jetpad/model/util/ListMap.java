@@ -160,7 +160,6 @@ public class ListMap<K, V> {
     return -1;
   }
 
-  //index is doubled(0, 2, 4...)
   private void removeAt(int index) {
     if (myData.length == 2) {
       myData = EMPTY_ARRAY;
