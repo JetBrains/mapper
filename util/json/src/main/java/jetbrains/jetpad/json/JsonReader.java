@@ -26,7 +26,7 @@ public class JsonReader {
   }
 
   public JsonObject readObject() throws IOException {
-    JsonObject object = null;
+    JsonObject object;
     try {
       object = JsonParser.parseObject(myJsonLexer);
     } catch (RuntimeIOException e) {
