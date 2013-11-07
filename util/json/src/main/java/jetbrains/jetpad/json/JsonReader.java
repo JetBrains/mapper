@@ -36,7 +36,7 @@ public class JsonReader {
   }
 
   public JsonArray readArray() throws IOException {
-    JsonArray array = null;
+    JsonArray array;
     try {
       array = JsonParser.parseArray(myJsonLexer);
     } catch (RuntimeIOException e) {
