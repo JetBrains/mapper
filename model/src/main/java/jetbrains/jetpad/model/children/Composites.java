@@ -161,7 +161,9 @@ public class Composites {
     List<CompositeT> c1a = reverseAncestors(c1);
     List<CompositeT> c2a = reverseAncestors(c2);
 
-    if (c1a.get(0) != c2a.get(0)) throw new IllegalArgumentException("Items are in different trees");
+    if (c1a.get(0) != c2a.get(0)) {
+      throw new IllegalArgumentException("Items are in different trees");
+    }
 
     int commonLength = Math.min(c1a.size(), c2a.size());
     for (int i = 1; i < commonLength; i++) {
