@@ -27,6 +27,12 @@ public class CompositesTest {
   }
 
   @Test
+  public void removeFromParent() {
+    Composites.removeFromParent(leaf11);
+    assertEquals(Arrays.asList(leaf12), child1.children());
+  }
+
+  @Test
   public void firstLeaf() {
     assertSame(leaf11, Composites.firstLeaf(root));
   }

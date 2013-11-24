@@ -6,6 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Composites {
+  public static <CompositeT extends Composite<CompositeT>> void removeFromParent(CompositeT c) {
+    CompositeT parent = c.parent().get();
+    if (parent == null) return;
+    parent.children().remove(c);
+  }
+
   public static <CompositeT extends Composite<CompositeT>> boolean isNonCompositeChild(CompositeT c) {
     if (c.parent().get() == null) return false;
     return c.parent().get().children().indexOf(c) == -1;
