@@ -22,66 +22,74 @@ import java.util.List;
 public class Listeners<ListenerT> {
   private List<ListenerT> myListeners;
   private FireData<ListenerT> myFireData;
+  private final Object myLock = new Object();
 
   public boolean isEmpty() {
-    if (myListeners == null) return true;
-    return myListeners.isEmpty();
+    synchronized (myLock) {
+      if (myListeners == null) return true;
+      return myListeners.isEmpty();
+    }
   }
 
   public Registration add(final ListenerT l) {
-    if (myFireData != null) {
-      if (myFireData.myToAdd == null) {
-        myFireData.myToAdd = new ArrayList<ListenerT>(1);
-      }
-      myFireData.myToAdd.add(l);
-    } else {
-      if (myListeners == null) {
-        myListeners = new ArrayList<ListenerT>(1);
-      }
-      myListeners.add(l);
-    }
-
-    return new Registration() {
-      @Override
-      public void remove() {
-        if (myFireData != null) {
-          if (myFireData.myToRemove == null) {
-            myFireData.myToRemove = new ArrayList<ListenerT>(1);
-          }
-          myFireData.myToRemove.add(l);
-        } else {
-          myListeners.remove(l);
+    synchronized (myLock) {
+      if (myFireData != null) {
+        if (myFireData.myToAdd == null) {
+          myFireData.myToAdd = new ArrayList<ListenerT>(1);
         }
+        myFireData.myToAdd.add(l);
+      } else {
+        if (myListeners == null) {
+          myListeners = new ArrayList<ListenerT>(1);
+        }
+        myListeners.add(l);
       }
-    };
+      return new Registration() {
+        @Override
+        public void remove() {
+          synchronized (myLock) {
+            if (myFireData != null) {
+              if (myFireData.myToRemove == null) {
+                myFireData.myToRemove = new ArrayList<ListenerT>(1);
+              }
+              myFireData.myToRemove.add(l);
+            } else {
+              myListeners.remove(l);
+            }
+          }
+        }
+      };
+    }
   }
 
   public void fire(final ListenerCaller<ListenerT> h) {
-    if (isEmpty()) return;
-    if (myFireData == null) {
-      myFireData = new FireData<ListenerT>();
-    }
-    try {
-      myFireData.myDepth++;
-      Callbacks.call(myListeners, new Callbacks.Caller<ListenerT>() {
-        @Override
-        public void call(ListenerT callback) {
-          if (myFireData.myToRemove != null && myFireData.myToRemove.contains(callback)) return;
-          h.call(callback);
+    synchronized (myLock) {
+      if (isEmpty()) return;
+      if (myFireData == null) {
+        myFireData = new FireData<ListenerT>();
+      }
+      try {
+        myFireData.myDepth++;
+        Callbacks.call(myListeners, new Callbacks.Caller<ListenerT>() {
+          @Override
+          public void call(ListenerT callback) {
+            if (myFireData.myToRemove != null && myFireData.myToRemove.contains(callback)) return;
+            h.call(callback);
+          }
+        });
+      } finally {
+        myFireData.myDepth--;
+        if (myFireData.myDepth == 0) {
+          if (myFireData.myToRemove != null) {
+            myListeners.removeAll(myFireData.myToRemove);
+            myFireData.myToRemove = null;
+          }
+          if (myFireData.myToAdd != null) {
+            myListeners.addAll(myFireData.myToAdd);
+            myFireData.myToAdd = null;
+          }
+          myFireData = null;
         }
-      });
-    } finally {
-      myFireData.myDepth--;
-      if (myFireData.myDepth == 0) {
-        if (myFireData.myToRemove != null) {
-          myListeners.removeAll(myFireData.myToRemove);
-          myFireData.myToRemove = null;
-        }
-        if (myFireData.myToAdd != null) {
-          myListeners.addAll(myFireData.myToAdd);
-          myFireData.myToAdd = null;
-        }
-        myFireData = null;
       }
     }
   }
