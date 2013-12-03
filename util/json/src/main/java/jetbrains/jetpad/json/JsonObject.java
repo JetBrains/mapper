@@ -69,6 +69,14 @@ public class JsonObject extends JsonValue {
     return value.getDoubleValue();
   }
 
+  public long getLong(String key) {
+    JsonNumber value = (JsonNumber) get(key);
+    if (value == null) {
+      return 0;
+    }
+    return value.getLongValue();
+  }
+
   public boolean getBoolean(String key) {
     JsonBoolean value = (JsonBoolean) get(key);
     if (value == null) {
