@@ -21,7 +21,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
-import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -675,35 +674,5 @@ public class Properties {
         return "" + p.get();
       }
     };
-  }
-
-  private static abstract class SimpleCollectionProperty<ItemT, ValueT> extends BaseDerivedProperty<ValueT> {
-    private ObservableCollection<ItemT> myCollection;
-    private Registration myRegistration;
-
-    protected SimpleCollectionProperty(ObservableCollection<ItemT> collection, ValueT initialValue) {
-      super(initialValue);
-      myCollection = collection;
-    }
-
-    @Override
-    protected void doAddListeners() {
-      myRegistration = myCollection.addListener(new CollectionListener<ItemT>() {
-        @Override
-        public void onItemAdded(CollectionItemEvent<ItemT> event) {
-          somethingChanged();
-        }
-
-        @Override
-        public void onItemRemoved(CollectionItemEvent<ItemT> event) {
-          somethingChanged();
-        }
-      });
-    }
-
-    @Override
-    protected void doRemoveListeners() {
-      myRegistration.remove();
-    }
   }
 }
