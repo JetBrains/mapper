@@ -99,6 +99,8 @@ public abstract class Mapper<SourceT, TargetT> {
     if (myMappingContext != null) throw new IllegalStateException("Mapper is already attached");
     if (myDetached) throw new IllegalStateException("Mapper can't be reused because it was already detached");
 
+    onBeforeAttach(ctx);
+
     myMappingContext = ctx;
 
     instantiateSynchronizers();
@@ -149,6 +151,9 @@ public abstract class Mapper<SourceT, TargetT> {
 
     myMappingContext = null;
     myDetached = true;
+  }
+
+  protected void onBeforeAttach(MappingContext ctx) {
   }
 
   protected void onAttach(MappingContext ctx) {
