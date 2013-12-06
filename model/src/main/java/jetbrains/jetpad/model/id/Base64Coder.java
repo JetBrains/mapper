@@ -82,4 +82,3 @@ public class Base64Coder {
     System.out.println(3 << 6);
   }
 }
-

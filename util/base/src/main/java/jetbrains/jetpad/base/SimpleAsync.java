@@ -77,4 +77,3 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
     return mySucceeded || myFailed;
   }
 }
-
