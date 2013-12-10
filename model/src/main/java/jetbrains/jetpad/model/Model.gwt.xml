@@ -6,5 +6,6 @@
 <module>
   <source path="" />
 
-  <inherits name="com.google.common.base.Base" />
+  <inherits name="com.google.common.base.Base"/>
+  <inherits name="jetbrains.jetpad.base.Base"/>
 </module>

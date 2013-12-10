@@ -15,13 +15,15 @@
  */
 package jetbrains.jetpad.base;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ThrowableCollectionException extends RuntimeException {
-  private List<Throwable> myThrowables;
+  private List<Throwable> myThrowables = new ArrayList<Throwable>();
 
   public ThrowableCollectionException(List<Throwable> throwables) {
-    myThrowables = throwables;
+    super(throwables.get(0));
+    myThrowables.addAll(throwables);
   }
 
   public List<Throwable> getThrowables() {
