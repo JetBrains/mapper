@@ -16,7 +16,6 @@
 package jetbrains.jetpad.geometry;
 
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 
 public class Rectangle {
   public final Vector origin;
@@ -95,11 +94,11 @@ public class Rectangle {
   }
 
   public Range<Integer> xRange() {
-    return Ranges.closed(origin.x, origin.x + dimension.x);
+    return Range.closed(origin.x, origin.x + dimension.x);
   }
 
   public Range<Integer> yRange() {
-    return Ranges.closed(origin.y, origin.y + dimension.y);
+    return Range.closed(origin.y, origin.y + dimension.y);
   }
 
   @Override
