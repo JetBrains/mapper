@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.children;
+package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.geometry.Rectangle;
-import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Collections;

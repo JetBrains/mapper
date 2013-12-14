@@ -1,4 +1,4 @@
-package jetbrains.jetpad.model.children;
+package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.geometry.Rectangle;
 
