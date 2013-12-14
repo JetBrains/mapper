@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.children;
 
+import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
@@ -365,5 +366,35 @@ public class Composites {
       if (isFocusable(cv)) return cv;
     }
     return null;
+  }
+
+  public static <ViewT extends HasBounds> boolean isAbove(ViewT upper, ViewT lower) {
+    Rectangle upperBounds = upper.getBounds();
+    Rectangle lowerBounds = lower.getBounds();
+    return upperBounds.origin.y + upperBounds.dimension.y <= lowerBounds.origin.y;
+  }
+
+  public static <ViewT extends HasBounds> boolean isBelow(ViewT lower, ViewT upper) {
+    return isAbove(upper, lower);
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT homeElement(ViewT cell) {
+    ViewT current = cell;
+    while (true) {
+      ViewT prev = Composites.prevFocusable(current);
+      if (prev == null || isAbove(prev, cell)) return current;
+      current = prev;
+    }
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT endElement(ViewT cell) {
+    ViewT current = cell;
+    while (true) {
+      ViewT next = Composites.nextFocusable(current);
+      if (next == null || isBelow(next, cell)) return current;
+      current = next;
+    }
   }
 }
