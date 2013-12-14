@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.model.children;
 
+import jetbrains.jetpad.model.collections.list.ObservableList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -288,16 +290,16 @@ public class Composites {
   }
 
   public static <ViewT extends Composite<ViewT> & HasVisibility>
-  boolean isVisible(ViewT c) {
-    if (!c.visible().get()) return false;
-    ViewT parent = c.parent().get();
+  boolean isVisible(ViewT v) {
+    if (!v.visible().get()) return false;
+    ViewT parent = v.parent().get();
     if (parent == null) return true;
     return isVisible(parent);
   }
 
   public static <ViewT extends Composite<ViewT> & HasFocusability>
-  ViewT focusableParent(ViewT c) {
-    ViewT parent = c.parent().get();
+  ViewT focusableParent(ViewT v) {
+    ViewT parent = v.parent().get();
     if (parent == null) return null;
     if (parent.focusable().get()) return parent;
     return focusableParent(parent);
@@ -305,15 +307,63 @@ public class Composites {
 
 
   public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  boolean isFocusable(ViewT c) {
-    if (!c.focusable().get()) return false;
+  boolean isFocusable(ViewT v) {
+    if (!v.focusable().get()) return false;
 
-    ViewT current = c;
+    ViewT current = v;
     while (current != null) {
       if (!current.visible().get()) return false;
       current = current.parent().get();
     }
 
     return true;
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  ViewT firstFocusableLeaf(ViewT v) {
+    List<ViewT> children = v.children();
+    if (children.isEmpty() && v.focusable().get()) {
+      return v;
+    } else {
+      for (int i = 0; i < children.size(); i++) {
+        ViewT cv = children.get(i);
+        if (cv.visible().get()) {
+          return firstFocusable(cv);
+        }
+      }
+    }
+    return null;
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  ViewT lastFocusableLeaf(ViewT v) {
+    List<ViewT> children = v.children();
+    if (children.isEmpty() && v.focusable().get()) {
+      return v;
+    } else {
+      for (int i = children.size() - 1; i >= 0; i--) {
+        ViewT cv = children.get(i);
+        if (cv.visible().get()) {
+          return firstFocusable(cv);
+        }
+      }
+    }
+    return null;
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  ViewT nextFocusable(ViewT v) {
+    for (ViewT cv : Composites.nextLeaves(v)) {
+      if (isFocusable(cv)) return cv;
+    }
+    return null;
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  ViewT prevFocusable(ViewT v) {
+    for (ViewT cv : Composites.prevLeaves(v)) {
+      if (isFocusable(cv)) return cv;
+    }
+    return null;
   }
 }
