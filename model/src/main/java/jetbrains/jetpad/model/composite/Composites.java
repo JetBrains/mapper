@@ -23,18 +23,21 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Composites {
-  public static <CompositeT extends Composite<CompositeT>> void removeFromParent(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  void removeFromParent(CompositeT c) {
     CompositeT parent = c.parent().get();
     if (parent == null) return;
     parent.children().remove(c);
   }
 
-  public static <CompositeT extends Composite<CompositeT>> boolean isNonCompositeChild(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  boolean isNonCompositeChild(CompositeT c) {
     if (c.parent().get() == null) return false;
     return c.parent().get().children().indexOf(c) == -1;
   }
 
-  public static <CompositeT extends Composite<CompositeT>> CompositeT nextSibling(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT nextSibling(CompositeT c) {
     CompositeT parent = c.parent().get();
     if (parent == null) return null;
     if (isNonCompositeChild(c)) return null;
@@ -45,7 +48,8 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT>> CompositeT prevSibling(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT prevSibling(CompositeT c) {
     CompositeT parent = c.parent().get();
     if (parent == null) return null;
     if (isNonCompositeChild(c)) return null;
@@ -56,17 +60,20 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT>> CompositeT firstLeaf(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT firstLeaf(CompositeT c) {
     if (c.children().isEmpty()) return c;
     return firstLeaf(c.children().get(0));
   }
 
-  public static <CompositeT extends Composite<CompositeT>> CompositeT lastLeaf(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT lastLeaf(CompositeT c) {
     if (c.children().isEmpty()) return c;
     return lastLeaf(c.children().get(c.children().size() - 1));
   }
 
-  public static <CompositeT extends Composite<CompositeT>> CompositeT nextLeaf(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT nextLeaf(CompositeT c) {
     CompositeT nextSibling = nextSibling(c);
     if (nextSibling != null) {
       return firstLeaf(nextSibling);
@@ -79,7 +86,8 @@ public class Composites {
     return nextLeaf(parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT>> CompositeT prevLeaf(CompositeT c) {
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT prevLeaf(CompositeT c) {
     CompositeT prevSibling = prevSibling(c);
     if (prevSibling != null) {
       return lastLeaf(prevSibling);
@@ -92,7 +100,8 @@ public class Composites {
     return prevLeaf(parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT>> Iterable<CompositeT> ancestors(final CompositeT current) {
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> ancestors(final CompositeT current) {
     return new Iterable<CompositeT>() {
       @Override
       public Iterator<CompositeT> iterator() {
@@ -120,7 +129,8 @@ public class Composites {
     };
   }
 
-  public static <CompositeT extends Composite<CompositeT>> Iterable<CompositeT> nextLeaves(final CompositeT current) {
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> nextLeaves(final CompositeT current) {
     return new Iterable<CompositeT>() {
       @Override
       public Iterator<CompositeT> iterator() {
@@ -149,7 +159,8 @@ public class Composites {
     };
   }
 
-  public static <CompositeT extends Composite<CompositeT>> Iterable<CompositeT> prevLeaves(final CompositeT current) {
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> prevLeaves(final CompositeT current) {
     return new Iterable<CompositeT>() {
       @Override
       public Iterator<CompositeT> iterator() {
@@ -178,7 +189,8 @@ public class Composites {
     };
   }
 
-  public static <CompositeT extends Composite<CompositeT>> boolean isBefore(CompositeT c1, CompositeT c2) {
+  public static <CompositeT extends Composite<CompositeT>>
+  boolean isBefore(CompositeT c1, CompositeT c2) {
     if (c1 == c2) return false;
 
     List<CompositeT> c1a = reverseAncestors(c1);
@@ -201,13 +213,15 @@ public class Composites {
     throw new IllegalArgumentException("One parameter is an ancestor of the other");
   }
 
-  public static <CompositeT extends Composite<CompositeT>> boolean isDescendant(CompositeT ancestor, CompositeT descendant) {
+  public static <CompositeT extends Composite<CompositeT>>
+  boolean isDescendant(CompositeT ancestor, CompositeT descendant) {
     if (ancestor == descendant) return true;
     if (descendant.parent().get() == null) return false;
     return isDescendant(ancestor, descendant.parent().get());
   }
 
-  private static <CompositeT extends Composite<CompositeT>> List<CompositeT> reverseAncestors(CompositeT c) {
+  private static <CompositeT extends Composite<CompositeT>>
+  List<CompositeT> reverseAncestors(CompositeT c) {
     List<CompositeT> result = toList(ancestors(c));
     Collections.reverse(result);
     result.add(c);
