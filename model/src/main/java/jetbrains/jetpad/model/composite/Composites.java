@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.geometry.Rectangle;
+import jetbrains.jetpad.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -409,5 +410,59 @@ public class Composites {
       if (next == null || isBelow(next, cell)) return current;
       current = next;
     }
+  }
+
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT upperFocusable(ViewT v, int xOffset) {
+    ViewT current = prevFocusable(v);
+    ViewT bestMatch = null;
+
+    while (current != null) {
+      if (bestMatch != null && Composites.isAbove(current, bestMatch)) {
+        break;
+      }
+
+      if (bestMatch != null) {
+        if (distanceTo(bestMatch, xOffset) > distanceTo(current, xOffset)) {
+          bestMatch = current;
+        }
+      } else if (Composites.isAbove(current, v)) {
+        bestMatch = current;
+      }
+
+      current = prevFocusable(current);
+    }
+
+    return bestMatch;
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT lowerFocusable(ViewT v, int xOffset) {
+    ViewT current = nextFocusable(v);
+    ViewT bestMatch = null;
+
+    while (current != null) {
+      if (bestMatch != null && Composites.isBelow(current, bestMatch)) {
+        break;
+      }
+
+      if (bestMatch != null) {
+        if (distanceTo(bestMatch, xOffset) > distanceTo(current, xOffset)) {
+          bestMatch = current;
+        }
+      } else if (Composites.isBelow(current, v)) {
+        bestMatch = current;
+      }
+
+      current = nextFocusable(current);
+    }
+
+    return bestMatch;
+  }
+
+  public static <ViewT extends HasBounds> double distanceTo(ViewT c, int x) {
+    Rectangle bounds = c.getBounds();
+    return bounds.distance(new Vector(x, bounds.origin.y));
   }
 }
