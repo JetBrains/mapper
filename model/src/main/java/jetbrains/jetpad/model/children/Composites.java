@@ -302,4 +302,18 @@ public class Composites {
     if (parent.focusable().get()) return parent;
     return focusableParent(parent);
   }
+
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  boolean isFocusable(ViewT c) {
+    if (!c.focusable().get()) return false;
+
+    ViewT current = c;
+    while (current != null) {
+      if (!current.visible().get()) return false;
+      current = current.parent().get();
+    }
+
+    return true;
+  }
 }
