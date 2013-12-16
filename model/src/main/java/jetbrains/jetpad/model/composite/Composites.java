@@ -497,5 +497,4 @@ public class Composites {
 
     return result;
   }
-
 }
