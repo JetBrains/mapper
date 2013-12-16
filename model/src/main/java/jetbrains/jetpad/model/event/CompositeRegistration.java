@@ -34,6 +34,13 @@ public class CompositeRegistration implements Registration {
     return this;
   }
 
+  public CompositeRegistration add(Registration... rs) {
+    for (Registration r : rs) {
+      add(r);
+    }
+    return this;
+  }
+
   public boolean isEmpty() {
     return myRegistrations.isEmpty();
   }
