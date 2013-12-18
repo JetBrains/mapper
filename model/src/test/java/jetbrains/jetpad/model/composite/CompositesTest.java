@@ -20,6 +20,8 @@ import jetbrains.jetpad.model.children.HasParent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.composite.Composite;
 import jetbrains.jetpad.model.composite.Composites;
+import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -143,6 +145,30 @@ public class CompositesTest {
     Composites.isBefore(root, new TestComposite());
   }
 
+  @Test
+  public void isFirstChildEverythingVisible() {
+    assertTrue(Composites.isFirstChild(leaf11));
+    assertFalse(Composites.isFirstChild(leaf12));
+  }
+
+  @Test
+  public void isFirstChildFirstInvisible() {
+    leaf11.visible().set(false);
+
+    assertTrue(Composites.isFirstChild(leaf12));
+  }
+
+  @Test
+  public void isLastChildEverythingVisible() {
+    assertFalse(Composites.isLastChild(leaf11));
+    assertTrue(Composites.isLastChild(leaf12));
+  }
+
+  @Test
+  public void isLastChildLastInvisible() {
+    assertTrue(Composites.isLastChild(leaf12));
+  }
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<TestComposite>();
     for (TestComposite v : it) {
@@ -151,12 +177,20 @@ public class CompositesTest {
     return result;
   }
 
-  private class TestComposite extends HasParent<TestComposite, TestComposite> implements Composite<TestComposite> {
+  private class TestComposite
+      extends HasParent<TestComposite, TestComposite>
+      implements Composite<TestComposite>, HasVisibility {
     private ObservableList<TestComposite> myChildren = new ChildList<TestComposite, TestComposite>(this);
+    private Property<Boolean> myVisible = new ValueProperty<Boolean>(true);
 
     @Override
     public List<TestComposite> children() {
       return myChildren;
+    }
+
+    @Override
+    public Property<Boolean> visible() {
+      return myVisible;
     }
   }
 }
