@@ -236,6 +236,18 @@ public class CompositesTest {
     assertSame(root, Composites.focusableParent(leaf11));
   }
 
+  @Test
+  public void isFocusableSimpleCase() {
+    assertTrue(Composites.isFocusable(leaf11));
+  }
+
+  @Test
+  public void isFocusableParentInvisible() {
+    child1.visible().set(false);
+
+    assertFalse(Composites.isFocusable(leaf11));
+  }
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<TestComposite>();
     for (TestComposite v : it) {
