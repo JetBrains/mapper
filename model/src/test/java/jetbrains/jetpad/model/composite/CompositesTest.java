@@ -248,6 +248,13 @@ public class CompositesTest {
     assertFalse(Composites.isFocusable(leaf11));
   }
 
+  @Test
+  public void isDescendant() {
+    assertTrue(Composites.isDescendant(root, leaf11));
+    assertFalse(Composites.isDescendant(leaf11, root));
+    assertFalse(Composites.isDescendant(leaf11, leaf12));
+  }
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<TestComposite>();
     for (TestComposite v : it) {
