@@ -335,38 +335,6 @@ public class Composites {
   }
 
   public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  ViewT firstFocusableLeaf(ViewT v) {
-    List<ViewT> children = v.children();
-    if (children.isEmpty() && v.focusable().get()) {
-      return v;
-    } else {
-      for (int i = 0; i < children.size(); i++) {
-        ViewT cv = children.get(i);
-        if (cv.visible().get()) {
-          return firstFocusable(cv);
-        }
-      }
-    }
-    return null;
-  }
-
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  ViewT lastFocusableLeaf(ViewT v) {
-    List<ViewT> children = v.children();
-    if (children.isEmpty() && v.focusable().get()) {
-      return v;
-    } else {
-      for (int i = children.size() - 1; i >= 0; i--) {
-        ViewT cv = children.get(i);
-        if (cv.visible().get()) {
-          return firstFocusable(cv);
-        }
-      }
-    }
-    return null;
-  }
-
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
   ViewT nextFocusable(ViewT v) {
     for (ViewT cv : Composites.nextLeaves(v)) {
       if (isFocusable(cv)) return cv;
