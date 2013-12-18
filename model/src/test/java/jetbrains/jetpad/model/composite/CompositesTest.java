@@ -169,6 +169,45 @@ public class CompositesTest {
     assertTrue(Composites.isLastChild(leaf12));
   }
 
+  @Test
+  public void firstFocusableSimple() {
+    assertSame(leaf11, Composites.firstFocusable(root));
+  }
+
+  @Test
+  public void firstFocusableFirstLeafNonFocusable() {
+    leaf11.focusable().set(false);
+
+    assertSame(leaf12, Composites.firstFocusable(root));
+  }
+
+  @Test
+  public void firstFocusableFirstLeafInvisible() {
+    leaf11.visible().set(false);
+
+    assertSame(leaf12, Composites.firstFocusable(root));
+  }
+
+  @Test
+  public void lastFocusableSimple() {
+    assertSame(leaf22, Composites.lastFocusable(root));
+  }
+
+  @Test
+  public void lastFocusableLastLeafNonFocusable() {
+    leaf22.focusable().set(false);
+
+    assertSame(leaf21, Composites.lastFocusable(root));
+  }
+
+  @Test
+  public void lastFocusableLastLeafInvisible() {
+    leaf22.visible().set(false);
+
+    assertSame(leaf21, Composites.lastFocusable(root));
+  }
+
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<TestComposite>();
     for (TestComposite v : it) {
@@ -179,9 +218,10 @@ public class CompositesTest {
 
   private class TestComposite
       extends HasParent<TestComposite, TestComposite>
-      implements Composite<TestComposite>, HasVisibility {
+      implements Composite<TestComposite>, HasVisibility, HasFocusability {
     private ObservableList<TestComposite> myChildren = new ChildList<TestComposite, TestComposite>(this);
     private Property<Boolean> myVisible = new ValueProperty<Boolean>(true);
+    private Property<Boolean> myFocusable = new ValueProperty<Boolean>(true);
 
     @Override
     public List<TestComposite> children() {
@@ -191,6 +231,11 @@ public class CompositesTest {
     @Override
     public Property<Boolean> visible() {
       return myVisible;
+    }
+
+    @Override
+    public Property<Boolean> focusable() {
+      return myFocusable;
     }
   }
 }
