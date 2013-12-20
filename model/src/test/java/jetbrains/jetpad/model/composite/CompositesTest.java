@@ -255,6 +255,40 @@ public class CompositesTest {
     assertFalse(Composites.isDescendant(leaf11, leaf12));
   }
 
+  @Test
+  public void nestFocusableSimple() {
+    assertSame(leaf12, Composites.nextFocusable(leaf11));
+  }
+
+  @Test
+  public void nestFocusableNoNext() {
+    assertNull(Composites.nextFocusable(leaf22));
+  }
+
+  @Test
+  public void nestFocusableNextUnfocusable() {
+    leaf12.focusable().set(false);
+
+    assertSame(leaf21, Composites.nextFocusable(leaf11));
+  }
+
+  @Test
+  public void prevFocusableSimple() {
+    assertSame(leaf11, Composites.prevFocusable(leaf12));
+  }
+
+  @Test
+  public void prevFocusableNoPrev() {
+    assertNull(Composites.prevFocusable(leaf11));
+  }
+
+  @Test
+  public void prevFocusablePrevUnfocusable() {
+    leaf12.focusable().set(false);
+
+    assertSame(leaf11, Composites.prevFocusable(leaf21));
+  }
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<TestComposite>();
     for (TestComposite v : it) {
