@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import jetbrains.jetpad.geometry.Rectangle;
+import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.children.ChildList;
 import jetbrains.jetpad.model.children.HasParent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -32,13 +34,13 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class CompositesTest {
-  private TestComposite root = new TestComposite();
-  private TestComposite child1 = new TestComposite();
-  private TestComposite leaf11 = new TestComposite();
-  private TestComposite leaf12 = new TestComposite();
-  private TestComposite child2 = new TestComposite();
-  private TestComposite leaf21 = new TestComposite();
-  private TestComposite leaf22 = new TestComposite();
+  private TestComposite root = create(0, 0, 2, 2);
+  private TestComposite child1 = create(0, 0, 2, 1);
+  private TestComposite leaf11 = create(0, 0, 1, 1);
+  private TestComposite leaf12 = create(1, 0, 1, 1);
+  private TestComposite child2 = create(0, 1, 2, 1);
+  private TestComposite leaf21 = create(0, 1, 1, 1);
+  private TestComposite leaf22 = create(1, 1, 1, 1);
 
   @Before
   public void init() {
@@ -289,6 +291,45 @@ public class CompositesTest {
     assertSame(leaf11, Composites.prevFocusable(leaf21));
   }
 
+  @Test
+  public void isAbove() {
+    assertTrue(Composites.isAbove(create(0, 0, 1, 1), create(1, 1, 1, 1)));
+    assertFalse(Composites.isAbove(create(0, 0, 1, 1), create(0, 0, 2, 2)));
+  }
+
+  @Test
+  public void isBelow() {
+    assertTrue(Composites.isBelow(create(1, 1, 1, 1), create(0, 0, 1, 1)));
+  }
+
+  @Test
+  public void homeElement() {
+    assertSame(leaf11, Composites.homeElement(leaf12));
+  }
+
+  @Test
+  public void endElement() {
+    assertSame(leaf12, Composites.endElement(leaf11));
+  }
+
+  @Test
+  public void upperFocusable() {
+    assertSame(leaf11, Composites.upperFocusable(leaf22, 0));
+    assertSame(leaf12, Composites.upperFocusable(leaf21, 10));
+  }
+
+  @Test
+  public void lowerFocusable() {
+    assertSame(leaf21, Composites.lowerFocusable(leaf12, 0));
+    assertSame(leaf22, Composites.lowerFocusable(leaf12, 10));
+  }
+
+  @Test
+  public void findClosest() {
+    assertSame(leaf11, Composites.findClosest(root, new Vector(0, 0)));
+    assertSame(leaf12, Composites.findClosest(root, new Vector(1000, 0)));
+  }
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<TestComposite>();
     for (TestComposite v : it) {
@@ -297,12 +338,19 @@ public class CompositesTest {
     return result;
   }
 
+  private TestComposite create(int x, int y, int width, int height) {
+    TestComposite composite = new TestComposite();
+    composite.setBounds(new Rectangle(x, y, width, height));
+    return composite;
+  }
+
   private class TestComposite
       extends HasParent<TestComposite, TestComposite>
-      implements Composite<TestComposite>, HasVisibility, HasFocusability {
+      implements Composite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
     private ObservableList<TestComposite> myChildren = new ChildList<TestComposite, TestComposite>(this);
     private Property<Boolean> myVisible = new ValueProperty<Boolean>(true);
     private Property<Boolean> myFocusable = new ValueProperty<Boolean>(true);
+    private Rectangle myBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
 
     @Override
     public List<TestComposite> children() {
@@ -317,6 +365,15 @@ public class CompositesTest {
     @Override
     public Property<Boolean> focusable() {
       return myFocusable;
+    }
+
+    @Override
+    public Rectangle getBounds() {
+      return myBounds;
+    }
+
+    public void setBounds(Rectangle rect) {
+      myBounds = rect;
     }
   }
 }
