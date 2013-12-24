@@ -17,11 +17,12 @@ package jetbrains.jetpad.model.id;
 
 import com.google.common.base.Objects;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public abstract class BaseId {
+public abstract class BaseId implements Serializable {
   private static final char SEPARATOR = '.';
 
   private static final Map<String, String> ourNamesMap = new HashMap<String, String>();
