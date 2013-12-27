@@ -22,6 +22,10 @@ public class DoubleRectangle {
   public final DoubleVector origin;
   public final DoubleVector dimension;
 
+  public DoubleRectangle(double x, double y, double w, double h) {
+    this(new DoubleVector(x, y), new DoubleVector(w, h));
+  }
+
   public DoubleRectangle(DoubleVector origin, DoubleVector dimension) {
     this.origin = origin;
     this.dimension = dimension;
