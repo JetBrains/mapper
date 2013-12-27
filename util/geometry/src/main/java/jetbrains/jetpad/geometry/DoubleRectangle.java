@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.geometry;
 
+import com.google.common.collect.Range;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,14 @@ public class DoubleRectangle {
 
   public double getHeight() {
     return dimension.y;
+  }
+
+  public Range<Double> xRange() {
+    return Range.closed(origin.x, origin.x + dimension.x);
+  }
+
+  public Range<Double> yRange() {
+    return Range.closed(origin.y, origin.y + dimension.y);
   }
 
   public boolean contains(DoubleVector v) {
