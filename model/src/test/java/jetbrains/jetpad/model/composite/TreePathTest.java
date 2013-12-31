@@ -31,5 +31,4 @@ public class TreePathTest {
     assertEquals(new TreePath<TestComposite>(child1), new TreePath<TestComposite>(child1));
     assertNotEquals(new TreePath<TestComposite>(child2), new TreePath<TestComposite>(child1));
   }
-
 }
