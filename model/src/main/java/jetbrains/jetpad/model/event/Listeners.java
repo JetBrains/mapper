@@ -60,7 +60,7 @@ public class Listeners<ListenerT> {
     beforeFire();
     try {
       for (ListenerT l : myListeners) {
-        if (myFireData.myToRemove != null && myFireData.myToRemove.contains(l)) continue;
+        if (isRemoved(l)) continue;
         try {
           h.call(l);
         } catch (Throwable t) {
@@ -70,6 +70,10 @@ public class Listeners<ListenerT> {
     } finally {
       afterFire();
     }
+  }
+
+  private boolean isRemoved(ListenerT l) {
+    return myFireData.myToRemove != null && myFireData.myToRemove.contains(l);
   }
 
   private void beforeFire() {
