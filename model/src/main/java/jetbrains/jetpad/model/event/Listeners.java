@@ -57,11 +57,8 @@ public class Listeners<ListenerT> {
 
   public void fire(final ListenerCaller<ListenerT> h) {
     if (isEmpty()) return;
-    if (myFireData == null) {
-      myFireData = new FireData<ListenerT>();
-    }
+    beforeFire();
     try {
-      myFireData.myDepth++;
       for (ListenerT l : myListeners) {
         if (myFireData.myToRemove != null && myFireData.myToRemove.contains(l)) continue;
         try {
@@ -71,18 +68,29 @@ public class Listeners<ListenerT> {
         }
       }
     } finally {
-      myFireData.myDepth--;
-      if (myFireData.myDepth == 0) {
-        if (myFireData.myToRemove != null) {
-          myListeners.removeAll(myFireData.myToRemove);
-          myFireData.myToRemove = null;
-        }
-        if (myFireData.myToAdd != null) {
-          myListeners.addAll(myFireData.myToAdd);
-          myFireData.myToAdd = null;
-        }
-        myFireData = null;
+      afterFire();
+    }
+  }
+
+  private void beforeFire() {
+    if (myFireData == null) {
+      myFireData = new FireData<ListenerT>();
+    }
+    myFireData.myDepth++;
+  }
+
+  private void afterFire() {
+    myFireData.myDepth--;
+    if (myFireData.myDepth == 0) {
+      if (myFireData.myToRemove != null) {
+        myListeners.removeAll(myFireData.myToRemove);
+        myFireData.myToRemove = null;
       }
+      if (myFireData.myToAdd != null) {
+        myListeners.addAll(myFireData.myToAdd);
+        myFireData.myToAdd = null;
+      }
+      myFireData = null;
     }
   }
 
