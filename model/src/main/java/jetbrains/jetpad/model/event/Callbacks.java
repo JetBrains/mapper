@@ -26,6 +26,23 @@ public class Callbacks {
     void call(CallbackT callback);
   }
 
+  public static void handleException(Throwable t) {
+    if (isInUnitTests(t)) throw new RuntimeException(t);
+    t.printStackTrace();
+  }
+
+  private static boolean isInUnitTests(Throwable t) {
+    for (StackTraceElement e : t.getStackTrace()) {
+      if (e.getClassName().startsWith("org.junit.runner.JUnitCore")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @deprecated Do Not Use This Method. It substantially complicated debugging
+   */
   public static <CallbackT> void call(Iterable<CallbackT> callbacks, Caller<CallbackT> caller) {
     List<Throwable> exceptions = new ArrayList<Throwable>();
     for (final CallbackT c : callbacks) {
