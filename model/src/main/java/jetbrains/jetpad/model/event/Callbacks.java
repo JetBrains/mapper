@@ -42,7 +42,7 @@ public class Callbacks {
   private static boolean isInUnitTests(Throwable t) {
     if (ourForceProduction) return false;
     for (StackTraceElement e : t.getStackTrace()) {
-      if (e.getClassName().startsWith("org.junit.runner.JUnitCore")) {
+      if (e.getClassName().startsWith("org.junit.runners")) {
         return true;
       }
     }
