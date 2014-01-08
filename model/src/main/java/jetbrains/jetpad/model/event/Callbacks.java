@@ -22,8 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Callbacks {
-  public static interface Caller<CallbackT> {
-    void call(CallbackT callback);
+  private static boolean ourForceProduction;
+
+  public static void asInProduction(Runnable r) {
+    if (ourForceProduction) throw new IllegalStateException();
+    ourForceProduction = true;
+    try {
+      r.run();
+    } finally {
+      ourForceProduction = false;
+    }
   }
 
   public static void handleException(Throwable t) {
@@ -32,31 +40,12 @@ public class Callbacks {
   }
 
   private static boolean isInUnitTests(Throwable t) {
+    if (ourForceProduction) return false;
     for (StackTraceElement e : t.getStackTrace()) {
       if (e.getClassName().startsWith("org.junit.runner.JUnitCore")) {
         return true;
       }
     }
     return false;
-  }
-
-  /**
-   * @deprecated Do Not Use This Method. It substantially complicated debugging
-   */
-  public static <CallbackT> void call(Iterable<CallbackT> callbacks, Caller<CallbackT> caller) {
-    List<Throwable> exceptions = new ArrayList<Throwable>();
-    for (final CallbackT c : callbacks) {
-      try {
-        caller.call(c);
-      } catch (Throwable t) {
-        exceptions.add(t);
-      }
-    }
-    if (!exceptions.isEmpty()) {
-      if (exceptions.size() == 1) {
-        throw new RuntimeException(exceptions.get(0));
-      }
-      throw new ThrowableCollectionException(exceptions);
-    }
   }
 }

@@ -62,13 +62,14 @@ public class Listeners<ListenerT> {
     }
     try {
       myFireData.myDepth++;
-      Callbacks.call(myListeners, new Callbacks.Caller<ListenerT>() {
-        @Override
-        public void call(ListenerT callback) {
-          if (myFireData.myToRemove != null && myFireData.myToRemove.contains(callback)) return;
-          h.call(callback);
+      for (ListenerT l : myListeners) {
+        if (myFireData.myToRemove != null && myFireData.myToRemove.contains(l)) continue;
+        try {
+          h.call(l);
+        } catch (Throwable t) {
+          Callbacks.handleException(t);
         }
-      });
+      }
     } finally {
       myFireData.myDepth--;
       if (myFireData.myDepth == 0) {
