@@ -51,12 +51,13 @@ public class CompositeRegistration implements Registration {
 
     myRemoving = true;
     try {
-      Callbacks.call(myRegistrations, new Callbacks.Caller<Registration>() {
-        @Override
-        public void call(Registration r) {
+      for (Registration r : myRegistrations) {
+        try {
           r.remove();
+        } catch (Throwable t) {
+          Callbacks.handleException(t);
         }
-      });
+      }
     } finally {
       myRemoving = false;
     }
