@@ -17,8 +17,6 @@ package jetbrains.jetpad.model.event;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class Listeners<ListenerT> {
@@ -32,10 +30,10 @@ public class Listeners<ListenerT> {
 
   public Registration add(final ListenerT l) {
     if (myFireData != null) {
-      if (myFireData.myToAdd == null) {
-        myFireData.myToAdd = new ArrayList<ListenerT>(1);
+      if (myFireData.toAdd == null) {
+        myFireData.toAdd = new ArrayList<ListenerT>(1);
       }
-      myFireData.myToAdd.add(l);
+      myFireData.toAdd.add(l);
     } else {
       if (myListeners == null) {
         myListeners = new ArrayList<ListenerT>(1);
@@ -46,10 +44,10 @@ public class Listeners<ListenerT> {
       @Override
       public void remove() {
         if (myFireData != null) {
-          if (myFireData.myToRemove == null) {
-            myFireData.myToRemove = new ArrayList<ListenerT>(1);
+          if (myFireData.toRemove == null) {
+            myFireData.toRemove = new ArrayList<ListenerT>(1);
           }
-          myFireData.myToRemove.add(l);
+          myFireData.toRemove.add(l);
         } else {
           myListeners.remove(l);
         }
@@ -75,34 +73,34 @@ public class Listeners<ListenerT> {
   }
 
   private boolean isRemoved(ListenerT l) {
-    return myFireData.myToRemove != null && myFireData.myToRemove.contains(l);
+    return myFireData.toRemove != null && myFireData.toRemove.contains(l);
   }
 
   private void beforeFire() {
     if (myFireData == null) {
       myFireData = new FireData<ListenerT>();
     }
-    myFireData.myDepth++;
+    myFireData.depth++;
   }
 
   private void afterFire() {
-    myFireData.myDepth--;
-    if (myFireData.myDepth == 0) {
-      if (myFireData.myToRemove != null) {
-        myListeners.removeAll(myFireData.myToRemove);
-        myFireData.myToRemove = null;
+    myFireData.depth--;
+    if (myFireData.depth == 0) {
+      if (myFireData.toRemove != null) {
+        myListeners.removeAll(myFireData.toRemove);
+        myFireData.toRemove = null;
       }
-      if (myFireData.myToAdd != null) {
-        myListeners.addAll(myFireData.myToAdd);
-        myFireData.myToAdd = null;
+      if (myFireData.toAdd != null) {
+        myListeners.addAll(myFireData.toAdd);
+        myFireData.toAdd = null;
       }
       myFireData = null;
     }
   }
 
   private static class FireData<ListenerT> {
-    private int myDepth;
-    private List<ListenerT> myToRemove;
-    private List<ListenerT> myToAdd;
+    private int depth;
+    private List<ListenerT> toRemove;
+    private List<ListenerT> toAdd;
   }
 }
