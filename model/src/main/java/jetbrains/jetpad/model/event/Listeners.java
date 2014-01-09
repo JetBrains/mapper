@@ -57,12 +57,6 @@ public class Listeners<ListenerT> {
     };
   }
 
-  /**
-   * Fires events supporting add/remove of listeners during firing process.
-   *
-   * Warning: if you don't need such support just use listeners. By doing this, you improve performance and reduce
-   * stack depth, streamlining debug.
-   */
   public void fire(final ListenerCaller<ListenerT> h) {
     if (isEmpty()) return;
     beforeFire();
@@ -78,11 +72,6 @@ public class Listeners<ListenerT> {
     } finally {
       afterFire();
     }
-  }
-
-  public Iterable<ListenerT> listeners() {
-    if (isEmpty()) return Collections.emptyList();
-    return myListeners;
   }
 
   private boolean isRemoved(ListenerT l) {
