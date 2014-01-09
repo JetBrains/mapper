@@ -28,16 +28,20 @@ import java.util.AbstractList;
 public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> implements ObservableList<ItemT> {
   private Listeners<CollectionListener<ItemT>> myListeners;
 
-  protected boolean canAdd(int index, ItemT item) {
-    return true;
+  /**
+   * Check whether we can add item at index and if not so, throw and exception
+   */
+  protected void checkAdd(int index, ItemT item) {
   }
 
-  protected boolean canRemove(int index, ItemT item) {
-    return true;
+  /**
+   * Check whether we can remove item at index and if not so, throw and exception
+   */
+  protected void checkRemove(int index, ItemT item) {
   }
 
   protected final void add(final int index, final ItemT item, Runnable action) {
-    if (!canAdd(index, item)) throw new IllegalArgumentException();
+    checkAdd(index, item);
 
     beforeItemAdded(index, item);
 
@@ -65,7 +69,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   protected final void remove(final int index, final ItemT item, Runnable action) {
-    if (!canRemove(index, item)) throw new IllegalArgumentException();
+    checkRemove(index, item);
 
     beforeItemRemoved(index, item);
 
