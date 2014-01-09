@@ -18,6 +18,11 @@ package jetbrains.jetpad.model.event;
 
 public class Callbacks {
   private static boolean ourForceProduction;
+  private static SimpleEventSource<Throwable> ourEventSource = new SimpleEventSource<Throwable>();
+
+  public static EventSource<Throwable> callbackExceptions() {
+    return ourEventSource;
+  }
 
   public static void asInProduction(Runnable r) {
     if (ourForceProduction) throw new IllegalStateException();
@@ -31,6 +36,7 @@ public class Callbacks {
 
   public static void handleException(Throwable t) {
     if (isInUnitTests(t)) throw new RuntimeException(t);
+    ourEventSource.fire(t);
     t.printStackTrace();
   }
 
@@ -43,4 +49,7 @@ public class Callbacks {
     }
     return false;
   }
+
+
+
 }
