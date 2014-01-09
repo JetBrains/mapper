@@ -16,11 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 
-import jetbrains.jetpad.base.ThrowableCollectionException;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Callbacks {
   private static boolean ourForceProduction;
 
