@@ -52,6 +52,8 @@ public class FlattenPropertyListTest {
 
   @Test
   public void dispose() {
+    trans.dispose();
+
     assertList();
   }
 
