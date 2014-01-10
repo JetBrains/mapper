@@ -144,6 +144,10 @@ public class Transformers {
       }
     };
   }
+  public static <SourceT, TargetT>
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> listMap(final Function<SourceT, TargetT> f) {
+    return listMap(fromFun(f));
+  }
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>>
   Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
