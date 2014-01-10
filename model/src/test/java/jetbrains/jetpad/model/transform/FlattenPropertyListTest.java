@@ -50,6 +50,11 @@ public class FlattenPropertyListTest {
     assertList("a", "c");
   }
 
+  @Test
+  public void dispose() {
+    assertList();
+  }
+
   private void assertList(String... vals) {
     assertEquals(Arrays.asList(vals), flattenedList);
   }
