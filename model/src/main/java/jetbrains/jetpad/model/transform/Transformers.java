@@ -27,6 +27,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
@@ -587,6 +588,67 @@ public class Transformers {
           current = iterator.next();
         }
         return resultIndex;
+      }
+    };
+  }
+
+  public static <ValueT>
+  Transformer<ObservableList<Property<ValueT>>, ObservableList<ValueT>> flattenPropertyList() {
+    return new BaseTransformer<ObservableList<Property<ValueT>>, ObservableList<ValueT>>() {
+      @Override
+      public Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>> transform(ObservableList<Property<ValueT>> from) {
+        return transform(from, new ObservableArrayList<ValueT>());
+      }
+
+      @Override
+      public Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>> transform(final ObservableList<Property<ValueT>> from, final ObservableList<ValueT> to) {
+        final List<Registration> propRegistrations = new ArrayList<Registration>();
+        CollectionAdapter<Property<ValueT>> listener = new CollectionAdapter<Property<ValueT>>() {
+          @Override
+          public void onItemAdded(final CollectionItemEvent<Property<ValueT>> listEvent) {
+            propRegistrations.add(listEvent.getIndex(), listEvent.getItem().addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+              @Override
+              public void onEvent(PropertyChangeEvent<ValueT> propEvent) {
+                int index = from.indexOf(listEvent.getItem());
+                to.set(index, propEvent.getNewValue());
+              }
+            }));
+            to.add(listEvent.getIndex(), listEvent.getItem().get());
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<Property<ValueT>> listEvent) {
+            propRegistrations.remove(listEvent.getIndex()).remove();
+            to.remove(listEvent.getIndex());
+          }
+        };
+
+        for (int i = 0; i < from.size(); i++) {
+          listener.onItemAdded(new CollectionItemEvent<Property<ValueT>>(from.get(i), i, true));
+        }
+
+        final Registration reg = from.addListener(listener);
+        return new Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>>() {
+          @Override
+          public ObservableList<Property<ValueT>> getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableList<ValueT> getTarget() {
+            return to;
+          }
+
+          @Override
+          public void dispose() {
+            reg.remove();
+            for (Registration r : propRegistrations) {
+              r.remove();
+            }
+            propRegistrations.clear();
+            to.clear();
+          }
+        };
       }
     };
   }
