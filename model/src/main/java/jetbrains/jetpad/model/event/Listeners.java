@@ -86,13 +86,13 @@ public class Listeners<ListenerT> {
   private void afterFire() {
     myFireData.depth--;
     if (myFireData.depth == 0) {
-      if (myFireData.toRemove != null) {
-        myListeners.removeAll(myFireData.toRemove);
-        myFireData.toRemove = null;
-      }
       if (myFireData.toAdd != null) {
         myListeners.addAll(myFireData.toAdd);
         myFireData.toAdd = null;
+      }
+      if (myFireData.toRemove != null) {
+        myListeners.removeAll(myFireData.toRemove);
+        myFireData.toRemove = null;
       }
       myFireData = null;
     }
@@ -102,5 +102,10 @@ public class Listeners<ListenerT> {
     private int depth;
     private List<ListenerT> toRemove;
     private List<ListenerT> toAdd;
+  }
+
+  //for test
+  int size() {
+    return myListeners == null ? 0 : myListeners.size();
   }
 }
