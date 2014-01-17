@@ -34,6 +34,9 @@ public class Listeners<ListenerT> {
         myFireData.toAdd = new ArrayList<ListenerT>(1);
       }
       myFireData.toAdd.add(l);
+      if (myFireData.toRemove != null) {
+        myFireData.toRemove.remove(l);
+      }
     } else {
       if (myListeners == null) {
         myListeners = new ArrayList<ListenerT>(1);
@@ -48,6 +51,9 @@ public class Listeners<ListenerT> {
             myFireData.toRemove = new ArrayList<ListenerT>(1);
           }
           myFireData.toRemove.add(l);
+          if (myFireData.toAdd != null) {
+            myFireData.toAdd.remove(l);
+          }
         } else {
           myListeners.remove(l);
         }
@@ -98,14 +104,13 @@ public class Listeners<ListenerT> {
     }
   }
 
+  int size() {
+    return myListeners == null ? 0 : myListeners.size();
+  }
+
   private static class FireData<ListenerT> {
     private int depth;
     private List<ListenerT> toRemove;
     private List<ListenerT> toAdd;
-  }
-
-  //for test
-  int size() {
-    return myListeners == null ? 0 : myListeners.size();
   }
 }

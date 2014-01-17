@@ -15,42 +15,65 @@
  */
 package jetbrains.jetpad.model.event;
 
-import jetbrains.jetpad.base.Value;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ListenersTest {
+  private Listeners<Listener> myListeners;
+  private boolean myInnerListenerCalled;
+
+  @Before
+  public void setup() {
+    myListeners = new Listeners<Listener>();
+    myInnerListenerCalled = false;
+  }
+
   @Test
   public void addAndRemoveRegistrationInFire() {
-    final Listeners<Listener> listeners = new Listeners<Listener>();
-    final Value<Boolean> innerListenerCalled = new Value<Boolean>(false);
-
-    listeners.add(new Listener() {
+    myListeners.add(new Listener() {
       @Override
       public void act() {
-        Registration r = listeners.add(new Listener() {
-          @Override
-          public void act() {
-            innerListenerCalled.set(true);
-          }
-        });
-        r.remove();
+        myListeners.add(createInnerListener()).remove();
       }
     });
+    fireAndCheck(1);
+  }
 
-    assertEquals(1, listeners.size());
+  @Test
+  public void addRemoveAddInFire() {
+    myListeners.add(new Listener() {
+      @Override
+      public void act() {
+        Listener l = createInnerListener();
+        myListeners.add(l).remove();
+        myListeners.add(l);
+      }
+    });
+    fireAndCheck(2);
+  }
 
-    listeners.fire(new ListenerCaller<Listener>() {
+  private void fireAndCheck(int expectedListenersSize) {
+    assertEquals(1, myListeners.size());
+    myListeners.fire(new ListenerCaller<Listener>() {
       @Override
       public void call(Listener l) {
         l.act();
       }
     });
+    assertEquals(expectedListenersSize, myListeners.size());
+    assertFalse(myInnerListenerCalled);
+  }
 
-    assertFalse(innerListenerCalled.get());
-    assertEquals(1, listeners.size());
+  private Listener createInnerListener() {
+    return new Listener() {
+      @Override
+      public void act() {
+        myInnerListenerCalled = true;
+      }
+    };
   }
 
   private static interface Listener {
