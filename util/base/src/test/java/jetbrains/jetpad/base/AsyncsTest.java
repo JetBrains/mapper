@@ -101,6 +101,15 @@ public class AsyncsTest {
     }), null);
   }
 
+  @Test
+  public void parallelSuccess() {
+    assertAsyncEquals(Asyncs.parallel(Asyncs.constant(1), Asyncs.constant(2)), null);
+  }
+
+  @Test
+  public void parallelFailure() {
+    assertAsyncEquals(Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())), null);
+  }
 
 
   private void assertFailure(Async<?> async) {

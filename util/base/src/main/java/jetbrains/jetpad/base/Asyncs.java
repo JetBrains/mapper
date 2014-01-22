@@ -17,6 +17,9 @@ package jetbrains.jetpad.base;
 
 import com.google.common.base.Function;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Asyncs {
 
   public static <ValueT> Async<ValueT> constant(ValueT val) {
@@ -91,6 +94,44 @@ public class Asyncs {
         return second;
       }
     });
+  }
+
+  public static Async<Void> parallel(final Async<?>... asyncs) {
+    final SimpleAsync<Void> result = new SimpleAsync<Void>();
+    final Value<Integer> completed = new Value<Integer>(0);
+    final List<Throwable> exceptions = new ArrayList<Throwable>();
+
+    final Runnable checkTermination = new Runnable() {
+      @Override
+      public void run() {
+        if (completed.get() == asyncs.length) {
+          if (!exceptions.isEmpty()) {
+            result.failure(new ThrowableCollectionException(exceptions));
+          } else {
+            result.success(null);
+          }
+        }
+      }
+    };
+
+    for (Async<?> a : asyncs) {
+      a.onFailure(new Handler<Throwable>() {
+        @Override
+        public void handle(Throwable item) {
+          completed.set(completed.get() + 1);
+          exceptions.add(item);
+          checkTermination.run();
+        }
+      });
+      a.onSuccess(new Handler<Object>() {
+        @Override
+        public void handle(Object item) {
+          completed.set(completed.get() + 1);
+          checkTermination.run();
+        }
+      });
+    }
+    return result;
   }
 
 }
