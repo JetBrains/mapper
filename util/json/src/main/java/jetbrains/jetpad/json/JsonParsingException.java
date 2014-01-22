@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.json;
 
-class JsonParsingException extends RuntimeException {
+public class JsonParsingException extends RuntimeException {
   public JsonParsingException() {
   }
 }
