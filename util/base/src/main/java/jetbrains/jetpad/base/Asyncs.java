@@ -134,19 +134,4 @@ public class Asyncs {
     }
     return result;
   }
-
-  public static <ResultT> AsyncCallback<ResultT> adapt(final SimpleAsync<ResultT> async) {
-    return new AsyncCallback<ResultT>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        async.failure(caught);
-      }
-
-      @Override
-      public void onSuccess(ResultT result) {
-        async.success(result);
-      }
-    };
-  }
-
 }

@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,5 +77,19 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
 
   private boolean alreadyHandled() {
     return mySucceeded || myFailed;
+  }
+
+  public AsyncCallback<ItemT> getCallback() {
+    return new AsyncCallback<ItemT>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        failure(caught);
+      }
+
+      @Override
+      public void onSuccess(ItemT result) {
+        success(result);
+      }
+    };
   }
 }
