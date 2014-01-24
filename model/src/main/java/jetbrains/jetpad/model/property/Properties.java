@@ -675,4 +675,28 @@ public class Properties {
       }
     };
   }
+
+  public static <ValueT> Property<ValueT> property(final ReadableProperty<ValueT> read, final WritableProperty<ValueT> write) {
+    return new Property<ValueT>() {
+      @Override
+      public String getPropExpr() {
+        return read.getPropExpr();
+      }
+
+      @Override
+      public ValueT get() {
+        return read.get();
+      }
+
+      @Override
+      public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
+        return read.addHandler(handler);
+      }
+
+      @Override
+      public void set(ValueT value) {
+        write.set(value);
+      }
+    };
+  }
 }
