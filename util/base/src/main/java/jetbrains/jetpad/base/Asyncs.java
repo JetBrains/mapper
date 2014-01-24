@@ -18,6 +18,7 @@ package jetbrains.jetpad.base;
 import com.google.common.base.Function;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,15 @@ public class Asyncs {
     final SimpleAsync<ValueT> result = new SimpleAsync<ValueT>();
     result.failure(t);
     return result;
+  }
+
+  public static <ResultT> Async<Void> toVoid(Async<ResultT> a) {
+    return map(a, new Function<ResultT, Void>() {
+      @Override
+      public Void apply(ResultT input) {
+        return null;
+      }
+    });
   }
 
   public static <SourceT, TargetT> Async<TargetT> map(Async<SourceT> async, final Function<SourceT, TargetT> f) {
