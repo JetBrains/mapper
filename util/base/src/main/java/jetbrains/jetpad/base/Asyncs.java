@@ -20,6 +20,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class Asyncs {
@@ -108,6 +110,10 @@ public class Asyncs {
   }
 
   public static Async<Void> parallel(final Async<?>... asyncs) {
+    return parallel(Arrays.asList(asyncs));
+  }
+
+  public static Async<Void> parallel(final Collection<? extends Async<?>> asyncs) {
     final SimpleAsync<Void> result = new SimpleAsync<Void>();
     final Value<Integer> completed = new Value<Integer>(0);
     final List<Throwable> exceptions = new ArrayList<Throwable>();
@@ -115,7 +121,7 @@ public class Asyncs {
     final Runnable checkTermination = new Runnable() {
       @Override
       public void run() {
-        if (completed.get() == asyncs.length) {
+        if (completed.get() == asyncs.size()) {
           if (!exceptions.isEmpty()) {
             result.failure(new ThrowableCollectionException(exceptions));
           } else {
