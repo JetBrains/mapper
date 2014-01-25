@@ -16,6 +16,7 @@
 package jetbrains.jetpad.base;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -109,6 +110,31 @@ public class AsyncsTest {
   @Test
   public void parallelFailure() {
     assertAsyncEquals(Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())), null);
+  }
+
+  @Test
+  public void untilSuccess() {
+    assertAsyncEquals(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+      @Override
+      public Async<Integer> get() {
+        return Asyncs.<Integer>constant(1);
+      }
+    }), 1);
+  }
+
+  @Test
+  public void untilSuccessWithFailures() {
+    assertAsyncEquals(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+      private int myCounter;
+
+      @Override
+      public Async<Integer> get() {
+        if (myCounter++ < 10) {
+          return Asyncs.<Integer>failure(new RuntimeException());
+        }
+        return Asyncs.<Integer>constant(1);
+      }
+    }), 1);
   }
 
 

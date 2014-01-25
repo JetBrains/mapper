@@ -16,9 +16,8 @@
 package jetbrains.jetpad.base;
 
 import com.google.common.base.Function;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.common.base.Supplier;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -148,6 +147,28 @@ public class Asyncs {
         }
       });
     }
+    return result;
+  }
+
+  public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
+    final SimpleAsync<ResultT> result = new SimpleAsync<ResultT>();
+    Async<ResultT> async = s.get();
+    async.onSuccess(new Handler<ResultT>() {
+      @Override
+      public void handle(ResultT item) {
+        result.success(item);
+      }
+    }).onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        untilSuccess(s).onSuccess(new Handler<ResultT>() {
+          @Override
+          public void handle(ResultT item) {
+            result.success(item);
+          }
+        });
+      }
+    });
     return result;
   }
 }
