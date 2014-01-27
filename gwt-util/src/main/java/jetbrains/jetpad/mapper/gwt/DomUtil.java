@@ -21,6 +21,7 @@ import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.query.client.Function;
+import com.google.gwt.query.client.css.TakesCssValue;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -287,14 +288,27 @@ public class DomUtil {
     };
   }
 
-  public static WritableProperty<Boolean> hasAttribute(final Element el, final String attr, String value) {
+  public static WritableProperty<Boolean> hasAttribute(final Element el, final String attr, final String value) {
     return new WritableProperty<Boolean>() {
       @Override
-      public void set(Boolean value) {
-        if (value) {
+      public void set(Boolean val) {
+        if (val) {
           $(el).attr(attr, value);
         } else {
           $(el).removeAttr(attr);
+        }
+      }
+    };
+  }
+
+  public static WritableProperty<Boolean> hasCssValue(final Element el, final TakesCssValue<?> css, final String value) {
+    return new WritableProperty<Boolean>() {
+      @Override
+      public void set(Boolean val) {
+        if (val) {
+          $(el).css(css, value);
+        } else {
+          $(el).css(css, null);
         }
       }
     };
