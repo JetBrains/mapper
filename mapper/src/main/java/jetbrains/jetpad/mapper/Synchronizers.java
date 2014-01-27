@@ -217,4 +217,22 @@ public class Synchronizers {
       }
     };
   }
+
+  public static Synchronizer composite(final Synchronizer... syncs) {
+    return new Synchronizer() {
+      @Override
+      public void attach(SynchronizerContext ctx) {
+        for (Synchronizer s : syncs) {
+          s.attach(ctx);
+        }
+      }
+
+      @Override
+      public void detach() {
+        for (Synchronizer s : syncs) {
+          s.detach();
+        }
+      }
+    };
+  }
 }
