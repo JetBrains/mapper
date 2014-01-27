@@ -286,4 +286,17 @@ public class DomUtil {
       }
     };
   }
+
+  public static WritableProperty<Boolean> hasAttribute(final Element el, final String attr, String value) {
+    return new WritableProperty<Boolean>() {
+      @Override
+      public void set(Boolean value) {
+        if (value) {
+          $(el).attr(attr, value);
+        } else {
+          $(el).removeAttr(attr);
+        }
+      }
+    };
+  }
 }
