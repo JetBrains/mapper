@@ -459,8 +459,8 @@ public class Properties {
   }
 
   public static <ItemT> ReadableProperty<Integer> indexOf(
-        final ObservableList<ItemT> collection,
-        final ReadableProperty<ItemT> item) {
+      final ObservableList<ItemT> collection,
+      final ReadableProperty<ItemT> item) {
     return simplePropertyWithCollection(collection, item, new Supplier<Integer>() {
       @Override
       public Integer get() {
@@ -470,8 +470,8 @@ public class Properties {
   }
 
   public static <ItemT> ReadableProperty<Boolean> contains(
-        final ObservableCollection<ItemT> collection,
-        final ReadableProperty<ItemT> item) {
+      final ObservableCollection<ItemT> collection,
+      final ReadableProperty<ItemT> item) {
     return simplePropertyWithCollection(collection, item, new Supplier<Boolean>() {
       @Override
       public Boolean get() {
@@ -481,9 +481,9 @@ public class Properties {
   }
 
   public static <ItemT, T> ReadableProperty<T> simplePropertyWithCollection(
-        final ObservableCollection<ItemT> collection,
-        final ReadableProperty<ItemT> item,
-        final Supplier<T> supplier) {
+      final ObservableCollection<ItemT> collection,
+      final ReadableProperty<ItemT> item,
+      final Supplier<T> supplier) {
 
     return new BaseDerivedProperty<T>(supplier.get()) {
       private Registration myRegistration;
