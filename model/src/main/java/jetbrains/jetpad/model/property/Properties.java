@@ -586,6 +586,10 @@ public class Properties {
     };
   }
 
+  public static <ValueT> ReadableProperty<ValueT> ifProp(final ReadableProperty<Boolean> cond, final ValueT ifTrue, final ValueT ifFalse) {
+    return ifProp(cond, constant(ifTrue), constant(ifFalse));
+  }
+
   public static <ValueT> ReadableProperty<ValueT> firstNotNull(final ReadableProperty<ValueT>... values) {
     return new DerivedProperty<ValueT>(values) {
       @Override
