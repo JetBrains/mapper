@@ -28,7 +28,7 @@ import jetbrains.jetpad.model.event.Registration;
 
 public class Properties {
   public static ReadableProperty<Boolean> not(ReadableProperty<Boolean> prop) {
-    return transform(prop, new Function<Boolean, Boolean>() {
+    return map(prop, new Function<Boolean, Boolean>() {
       @Override
       public Boolean apply(Boolean s) {
         if (s == null) {
@@ -40,7 +40,7 @@ public class Properties {
   }
 
   public static <ValueT> ReadableProperty<Boolean> notNull(ReadableProperty<ValueT> prop) {
-    return transform(prop, new Function<ValueT, Boolean>() {
+    return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT v) {
         return v != null;
@@ -49,7 +49,7 @@ public class Properties {
   }
 
   public static <ValueT> ReadableProperty<Boolean> isNull(ReadableProperty<ValueT> prop) {
-    return transform(prop, new Function<ValueT, Boolean>() {
+    return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT v) {
         return v == null;
@@ -160,7 +160,6 @@ public class Properties {
       }
     };
   }
-
 
   public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<SourceT, ReadableProperty<TargetT>> fun) {
     return select(source, fun, null);
@@ -323,7 +322,7 @@ public class Properties {
   }
 
   public static <ValueT> ReadableProperty<Boolean> same(final ReadableProperty<ValueT> prop, final ValueT value) {
-    return transform(prop, new Function<ValueT, Boolean>() {
+    return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT s) {
         return s == value;
@@ -332,7 +331,7 @@ public class Properties {
   }
 
   public static <ValueT> ReadableProperty<Boolean> equals(final ReadableProperty<ValueT> prop, final ValueT value) {
-    return transform(prop, new Function<ValueT, Boolean>() {
+    return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT s) {
         return Objects.equal(value, s);
@@ -362,7 +361,7 @@ public class Properties {
     return not(equals(p1, p2));
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> transform(final ReadableProperty<SourceT> prop, final Function<SourceT, TargetT> f) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> map(final ReadableProperty<SourceT> prop, final Function<SourceT, TargetT> f) {
     return new DerivedProperty<TargetT>(prop) {
       @Override
       public TargetT get() {
@@ -376,7 +375,7 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> Property<TargetT> transform(final Property<SourceT> prop, final Function<SourceT, TargetT> sToT, final Function<TargetT, SourceT> tToS) {
+  public static <SourceT, TargetT> Property<TargetT> map(final Property<SourceT> prop, final Function<SourceT, TargetT> sToT, final Function<TargetT, SourceT> tToS) {
     class TransformedProperty implements Property<TargetT> {
       @Override
       public TargetT get() {
