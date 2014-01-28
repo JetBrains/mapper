@@ -313,4 +313,17 @@ public class DomUtil {
       }
     };
   }
+
+  public static WritableProperty<Boolean> visibilityOf(final Element el) {
+    return new WritableProperty<Boolean>() {
+      @Override
+      public void set(Boolean value) {
+        if (value) {
+          $(el).show();
+        } else {
+          $(el).hide();
+        }
+      }
+    };
+  }
 }
