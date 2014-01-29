@@ -329,6 +329,15 @@ public class DomUtil {
     };
   }
 
+  public static WritableProperty<Boolean> cssValue(final Element el, final TakesCssValue<?> css, String value) {
+    return new WritableProperty<Boolean>() {
+      @Override
+      public void set(Boolean value) {
+        $(el).css(css, value);
+      }
+    };
+  }
+
   public static WritableProperty<Boolean> hasCssValue(final Element el, final TakesCssValue<?> css, final String value) {
     return new WritableProperty<Boolean>() {
       @Override
