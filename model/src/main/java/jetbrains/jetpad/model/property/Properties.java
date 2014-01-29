@@ -590,6 +590,19 @@ public class Properties {
     return ifProp(cond, constant(ifTrue), constant(ifFalse));
   }
 
+  public static <ValueT> WritableProperty<Boolean> ifProp(final WritableProperty<ValueT> cond, final ValueT ifTrue, final ValueT ifFalse) {
+    return new WritableProperty<Boolean>() {
+      @Override
+      public void set(Boolean value) {
+        if (value) {
+          cond.set(ifTrue);
+        } else {
+          cond.set(ifFalse);
+        }
+      }
+    };
+  }
+
   public static <ValueT> ReadableProperty<ValueT> firstNotNull(final ReadableProperty<ValueT>... values) {
     return new DerivedProperty<ValueT>(values) {
       @Override
