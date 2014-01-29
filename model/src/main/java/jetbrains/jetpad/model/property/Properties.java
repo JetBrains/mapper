@@ -715,4 +715,15 @@ public class Properties {
       }
     };
   }
+
+  public static <ValueT> WritableProperty<ValueT> compose(final WritableProperty<? super ValueT>... props) {
+    return new WritableProperty<ValueT>() {
+      @Override
+      public void set(ValueT value) {
+        for (WritableProperty<? super ValueT> wp : props) {
+          wp.set(value);
+        }
+      }
+    };
+  }
 }
