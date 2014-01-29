@@ -307,6 +307,15 @@ public class DomUtil {
     };
   }
 
+  public static WritableProperty<String> attribute(final Element el, final String attr) {
+    return new WritableProperty<String>() {
+      @Override
+      public void set(String value) {
+        $(el).attr(attr, value);
+      }
+    };
+  }
+
   public static WritableProperty<Boolean> hasAttribute(final Element el, final String attr, final String value) {
     return new WritableProperty<Boolean>() {
       @Override
