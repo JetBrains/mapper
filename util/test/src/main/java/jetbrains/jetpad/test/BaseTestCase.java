@@ -30,8 +30,4 @@ public abstract class BaseTestCase {
   static {
     System.setProperty(TEST_MODE_PROPERTY, TEST_MODE_ON);
   }
-
-  public static boolean isTestModeOn() {
-    return TEST_MODE_ON.equals(System.getProperty(TEST_MODE_PROPERTY));
-  }
 }
