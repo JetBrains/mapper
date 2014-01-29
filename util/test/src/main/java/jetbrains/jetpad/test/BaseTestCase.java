@@ -20,6 +20,7 @@ import org.junit.Rule;
 
 public abstract class BaseTestCase {
   private static final String TEST_MODE_PROPERTY = "jetbrains.jetpad.testMode";
+  private static final String TEST_MODE_ON = "1";
 
   @Rule
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
@@ -27,6 +28,10 @@ public abstract class BaseTestCase {
   public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
 
   static {
-    System.setProperty(TEST_MODE_PROPERTY, "1");
+    System.setProperty(TEST_MODE_PROPERTY, TEST_MODE_ON);
+  }
+
+  public static boolean isTestModeOn() {
+    return TEST_MODE_ON.equals(System.getProperty(TEST_MODE_PROPERTY));
   }
 }
