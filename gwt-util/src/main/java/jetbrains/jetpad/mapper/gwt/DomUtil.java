@@ -24,6 +24,8 @@ import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.css.TakesCssValue;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Timer;
+import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
@@ -230,7 +232,7 @@ public class DomUtil {
 
   public static Property<Boolean> checkbox(final InputElement element) {
     return new Property<Boolean>() {
-      private boolean myHasListener;
+      private Registration myTimerRegistration;
       private Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>> myListeners = new Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>>();
 
       @Override
@@ -244,24 +246,41 @@ public class DomUtil {
       }
 
       @Override
-      public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
-        if (myListeners.isEmpty() && !myHasListener) {
-          $(element).change(new Function() {
+      public Registration addHandler(final EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
+        if (myListeners.isEmpty()) {
+          final Value<Boolean> value = new Value<Boolean>(element.isChecked());
+          final Timer timer = new Timer() {
             @Override
-            public boolean f(Event e) {
-              final PropertyChangeEvent<Boolean> event = new PropertyChangeEvent<Boolean>(!element.isChecked(), element.isChecked());
-              myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<Boolean>>>() {
-                @Override
-                public void call(EventHandler<? super PropertyChangeEvent<Boolean>> l) {
-                  l.onEvent(event);
-                }
-              });
-              return false;
+            public void run() {
+              final boolean currentValue = element.isChecked();
+              if (currentValue != value.get()) {
+                myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<Boolean>>>() {
+                  @Override
+                  public void call(EventHandler<? super PropertyChangeEvent<Boolean>> l) {
+                    l.onEvent(new PropertyChangeEvent<Boolean>(value.get(), currentValue));
+                  }
+                });
+                value.set(currentValue);
+              }
             }
-          });
-          myHasListener = true;
+          };
+          timer.scheduleRepeating(100);
+          myTimerRegistration = new Registration() {
+            @Override
+            public void remove() {
+              timer.cancel();
+            }
+          };
         }
-        return myListeners.add(handler);
+        final Registration reg = myListeners.add(handler);
+        return new Registration() {
+          @Override
+          public void remove() {
+            reg.remove();
+            myTimerRegistration.remove();
+            myTimerRegistration = null;
+          }
+        };
       }
 
       @Override
