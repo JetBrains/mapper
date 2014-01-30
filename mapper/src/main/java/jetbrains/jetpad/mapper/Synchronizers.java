@@ -21,6 +21,7 @@ import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
+import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.Registration;
 import jetbrains.jetpad.model.property.*;
 import jetbrains.jetpad.model.transform.Transformer;
@@ -232,6 +233,27 @@ public class Synchronizers {
         for (Synchronizer s : syncs) {
           s.detach();
         }
+      }
+    };
+  }
+
+  public static Synchronizer forEventSource(EventSource<?> src, final Runnable r) {
+    return new Synchronizer() {
+      private Registration myReg;
+
+      @Override
+      public void attach(SynchronizerContext ctx) {
+        myReg = src.addHandler(new EventHandler<Object>() {
+          @Override
+          public void onEvent(Object event) {
+            r.run();
+          }
+        });
+      }
+
+      @Override
+      public void detach() {
+        myReg.remove();
       }
     };
   }
