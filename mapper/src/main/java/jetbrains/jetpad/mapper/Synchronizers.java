@@ -140,26 +140,7 @@ public class Synchronizers {
   }
 
   public static <ValueT> Synchronizer forProperty(final ReadableProperty<ValueT> property, final Runnable sync) {
-    return new Synchronizer() {
-      private Registration myRegistration;
-
-      @Override
-      public void attach(SynchronizerContext ctx) {
-        sync.run();
-
-        myRegistration = property.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
-          @Override
-          public void onEvent(PropertyChangeEvent<ValueT> item) {
-            sync.run();
-          }
-        });
-      }
-
-      @Override
-      public void detach() {
-        myRegistration.remove();
-      }
-    };
+    return forEventSource(property, sync);
   }
 
   public static <ElementT> Synchronizer forCollection(
@@ -237,7 +218,7 @@ public class Synchronizers {
     };
   }
 
-  public static Synchronizer forEventSource(EventSource<?> src, final Runnable r) {
+  public static Synchronizer forEventSource(final EventSource<?> src, final Runnable r) {
     return new Synchronizer() {
       private Registration myReg;
 
