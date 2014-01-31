@@ -18,7 +18,7 @@ package jetbrains.jetpad.mapper;
 import java.util.*;
 
 public final class MappingContext {
-  private Map<Object, Object> myMappers = new HashMap<Object, Object>();
+  private Map<Object, Object> myMappers = new IdentityHashMap<Object, Object>();
   private Map<Mapper<?, ?>, Runnable> myOnDispose = new HashMap<Mapper<?, ?>, Runnable>();
 
   public MappingContext() {
