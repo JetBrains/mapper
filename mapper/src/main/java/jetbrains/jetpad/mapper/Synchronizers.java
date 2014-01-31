@@ -224,6 +224,7 @@ public class Synchronizers {
 
       @Override
       public void attach(SynchronizerContext ctx) {
+        r.run();
         myReg = src.addHandler(new EventHandler<Object>() {
           @Override
           public void onEvent(Object event) {
