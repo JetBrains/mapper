@@ -45,7 +45,9 @@ public final class MappingContext {
 
   protected void unregister(Mapper<?, ?> mapper) {
     Object source = mapper.getSource();
-    assert myMappers.containsKey(source);
+    if (!myMappers.containsKey(source)) {
+      throw new IllegalStateException();
+    }
     Object ms = myMappers.get(source);
     if (ms instanceof Set) {
       Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
