@@ -47,8 +47,10 @@ class ObservableCollectionRoleSynchronizer<
     super.onAttach();
 
     new MapperUpdater().update(mySource);
-    for (Mapper<? extends SourceT, ? extends TargetT> m : getModifiableMappers()) {
-      myTarget.add(m.getTarget());
+    List<Mapper<? extends SourceT, ? extends TargetT>> modifiableMappers = getModifiableMappers();
+    for (int i = 0; i < modifiableMappers.size(); i++) {
+      Mapper<? extends SourceT, ? extends TargetT> m = modifiableMappers.get(i);
+      myTarget.add(i, m.getTarget());
     }
 
     myCollectionRegistration = mySource.addListener(new CollectionAdapter<SourceT>() {
