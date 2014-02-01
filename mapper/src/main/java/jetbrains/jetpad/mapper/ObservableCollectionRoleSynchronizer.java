@@ -46,11 +46,14 @@ class ObservableCollectionRoleSynchronizer<
   protected void onAttach() {
     super.onAttach();
 
+    if (!myTarget.isEmpty()) {
+      throw new IllegalArgumentException("Target Collection Should Be Empty");
+    }
+
     new MapperUpdater().update(mySource);
     List<Mapper<? extends SourceT, ? extends TargetT>> modifiableMappers = getModifiableMappers();
-    for (int i = 0; i < modifiableMappers.size(); i++) {
-      Mapper<? extends SourceT, ? extends TargetT> m = modifiableMappers.get(i);
-      myTarget.add(i, m.getTarget());
+    for (Mapper<? extends SourceT, ? extends TargetT> m : modifiableMappers) {
+      myTarget.add(m.getTarget());
     }
 
     myCollectionRegistration = mySource.addListener(new CollectionAdapter<SourceT>() {
