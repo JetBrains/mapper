@@ -34,7 +34,7 @@ class TestComposite
   private Rectangle myBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
 
   @Override
-  public List<TestComposite> children() {
+  public ObservableList<TestComposite> children() {
     return myChildren;
   }
 

@@ -15,11 +15,12 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
 import java.util.List;
 
 public interface Composite<CompositeT extends Composite<CompositeT>> {
   ReadableProperty<CompositeT> parent();
-  List<CompositeT> children();
+  ObservableList<CompositeT> children();
 }
