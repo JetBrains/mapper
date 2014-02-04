@@ -28,15 +28,15 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Mapper<SourceT, TargetT> {
-  private static final ChildContainer[] EMPTY_CONTAINERS = new ChildContainer[0];
+  private static final Object[] EMPTY_PATS = new Object[0];
 
   private SourceT mySource;
   private TargetT myTarget;
   private MappingContext myMappingContext;
   private boolean myDetached;
-  private Synchronizer[] mySynchronizers;
+
+  private Object[] myParts = EMPTY_PATS;
   private Mapper<?, ?> myParent;
-  private ChildContainer[] myChildContainers = EMPTY_CONTAINERS;
 
   public Mapper(SourceT source, TargetT target) {
     mySource = source;
@@ -51,16 +51,12 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   private void instantiateSynchronizers() {
-    final List<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
     registerSynchronizers(new SynchronizersConfiguration() {
       @Override
       public void add(Synchronizer sync) {
-        synchronizers.add(sync);
+        addPart(sync);
       }
     });
-    if (!synchronizers.isEmpty()) {
-      mySynchronizers = synchronizers.toArray(new Synchronizer[synchronizers.size()]);
-    }
   }
 
   public final boolean isAttached() {
@@ -107,8 +103,9 @@ public abstract class Mapper<SourceT, TargetT> {
 
     myMappingContext.register(this);
 
-    if (mySynchronizers != null) {
-      for (final Synchronizer s : mySynchronizers) {
+    for (Object part : myParts) {
+      if (part instanceof Synchronizer) {
+        Synchronizer s = (Synchronizer) part;
         s.attach(new SynchronizerContext() {
           @Override
           public MappingContext getMappingContext() {
@@ -133,16 +130,15 @@ public abstract class Mapper<SourceT, TargetT> {
 
     onDetach();
 
-    if (mySynchronizers != null) {
-      for (final Synchronizer s : mySynchronizers) {
+    for (Object part : myParts) {
+      if (part instanceof Synchronizer) {
+        Synchronizer s = (Synchronizer) part;
         s.detach();
       }
-    }
-
-    if (myChildContainers != null) {
-      for (ChildContainer c : myChildContainers) {
-        for (Mapper<?, ?> cc : c.getChildren()) {
-          cc.detach();
+      if (part instanceof ChildContainer) {
+        ChildContainer cc = (ChildContainer) part;
+        for (Mapper<?, ?> m : cc.getChildren()) {
+          m.detach();
         }
       }
     }
@@ -162,19 +158,19 @@ public abstract class Mapper<SourceT, TargetT> {
   protected void onDetach() {
   }
 
-  private void registerChildContainer(ChildContainer c) {
-    ChildContainer[] newChildContainers = new ChildContainer[myChildContainers.length + 1];
-    System.arraycopy(myChildContainers, 0, newChildContainers, 0, myChildContainers.length);
-    newChildContainers[newChildContainers.length - 1] = c;
-    myChildContainers = newChildContainers;
+  private void addPart(Object o) {
+    Object[] newParts = new Object[myParts.length + 1];
+    System.arraycopy(myParts, 0, newParts, 0, myParts.length);
+    newParts[newParts.length - 1] = o;
+    myParts = newParts;
   }
 
-  private void unregisterChildContainer(ChildContainer c) {
-    int index = Arrays.asList(myChildContainers).indexOf(c);
-    ChildContainer[] newContainer = new ChildContainer[myChildContainers.length - 1];
-    System.arraycopy(myChildContainers, 0, newContainer, 0, index);
-    System.arraycopy(myChildContainers, index + 1, newContainer, index, myChildContainers.length - index - 1);
-    myChildContainers = newContainer;
+  private void removePart(Object o) {
+    int index = Arrays.asList(myParts).indexOf(o);
+    Object[] newParts = new Object[myParts.length - 1];
+    System.arraycopy(myParts, 0, newParts, 0, index);
+    System.arraycopy(myParts, index + 1, newParts, index, myParts.length - index - 1);
+    myParts = newParts;
   }
 
   public final <MapperT extends Mapper<?, ?>> ObservableList<MapperT> createChildList() {
@@ -213,10 +209,10 @@ public abstract class Mapper<SourceT, TargetT> {
     @Override
     public void set(MapperT value) {
       if (get() == null && value != null) {
-        registerChildContainer(this);
+        addPart(this);
       }
       if (get() != null && value == null) {
-        unregisterChildContainer(this);
+        removePart(this);
       }
 
       MapperT oldValue = get();
@@ -244,7 +240,7 @@ public abstract class Mapper<SourceT, TargetT> {
       checkCanAdd(item);
 
       if (isEmpty()) {
-        registerChildContainer(this);
+        addPart(this);
       }
 
       super.add(index, item);
@@ -259,7 +255,7 @@ public abstract class Mapper<SourceT, TargetT> {
       removeChild(item);
 
       if (isEmpty()) {
-        unregisterChildContainer(this);
+        removePart(this);
       }
 
       return item;
@@ -277,7 +273,7 @@ public abstract class Mapper<SourceT, TargetT> {
       if (contains(item)) return false;
 
       if (isEmpty()) {
-        registerChildContainer(this);
+        addPart(this);
       }
 
       checkCanAdd(item);
@@ -292,7 +288,7 @@ public abstract class Mapper<SourceT, TargetT> {
       removeChild((Mapper<?, ?>) item);
 
       if (isEmpty()) {
-        registerChildContainer(this);
+        removePart(this);
       }
 
       return super.remove(item);
