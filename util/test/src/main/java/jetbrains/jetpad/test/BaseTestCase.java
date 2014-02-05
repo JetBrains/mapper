@@ -21,18 +21,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class BaseTestCase {
-  private static final String TEST_MODE_PROPERTY = "jetbrains.jetpad.testMode";
-  private static final String TEST_MODE_ON = "1";
   private static Level ourLevel;
 
   @Rule
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
   @ClassRule
   public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
-
-  static {
-    System.setProperty(TEST_MODE_PROPERTY, TEST_MODE_ON);
-  }
 
   @BeforeClass
   public static void turnLoggingOff() {
