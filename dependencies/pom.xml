@@ -18,6 +18,7 @@
     <gwtquery.version>1.4.0</gwtquery.version>
     <gwtplugin.version>2.6.0-rc3</gwtplugin.version>
     <jetty.version>8.1.2.v20120308</jetty.version>
+    <javancss.version>2.0</javancss.version>
   </properties>
 
   <dependencyManagement>
@@ -99,7 +100,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>javancss-maven-plugin</artifactId>
-          <version>2.0</version>
+          <version>${javancss.version}</version>
         </plugin>
 
         <plugin>
