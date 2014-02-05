@@ -15,12 +15,15 @@
  */
 package jetbrains.jetpad.test;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class BaseTestCase {
   private static final String TEST_MODE_PROPERTY = "jetbrains.jetpad.testMode";
   private static final String TEST_MODE_ON = "1";
+  private static Level ourLevel;
 
   @Rule
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
@@ -29,5 +32,16 @@ public abstract class BaseTestCase {
 
   static {
     System.setProperty(TEST_MODE_PROPERTY, TEST_MODE_ON);
+  }
+
+  @BeforeClass
+  public static void turnLoggingOff() {
+    ourLevel = Logger.getLogger("").getLevel();
+    Logger.getLogger("").setLevel(Level.OFF);
+  }
+
+  @AfterClass
+  public static void turnLoggingBack() {
+    Logger.getLogger("").setLevel(ourLevel);
   }
 }
