@@ -18,7 +18,7 @@
     <guava.version>15.0</guava.version>
     <gwtquery.version>1.4.0</gwtquery.version>
     <gwt.version>2.6.0</gwt.version>
-    <gwtplugin.version>2.6.0-rc3</gwtplugin.version>
+    <gwtplugin.version>2.6.0</gwtplugin.version>
 
     <jetty.version>8.1.2.v20120308</jetty.version>
     <javancss.version>2.0</javancss.version>
