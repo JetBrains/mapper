@@ -26,8 +26,8 @@ import static org.mockito.Mockito.*;
 public class PropertyTest {
   @Test
   public void incorrectEventFiring() {
-    final Property<String> prop = new ValueProperty<String>(null);
-    ReadableProperty<Integer> derived = new SimpleDerivedProperty<Integer>(new Supplier<Integer>() {
+    final Property<String> prop = new ValueProperty<>(null);
+    ReadableProperty<Integer> derived = new SimpleDerivedProperty<>(new Supplier<Integer>() {
       @Override
       public Integer get() {
         String value = prop.get();
@@ -43,6 +43,6 @@ public class PropertyTest {
 
     prop.set("");
 
-    verify(handler).onEvent(new PropertyChangeEvent<Integer>(3, 0));
+    verify(handler).onEvent(new PropertyChangeEvent<>(3, 0));
   }
 }

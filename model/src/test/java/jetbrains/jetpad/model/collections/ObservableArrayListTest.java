@@ -26,8 +26,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ObservableArrayListTest {
-  private ObservableList<String> list = new ObservableArrayList<String>();
-  private List<CollectionItemEvent<String>> events = new ArrayList<CollectionItemEvent<String>>();
+  private ObservableList<String> list = new ObservableArrayList<>();
+  private List<CollectionItemEvent<String>> events = new ArrayList<>();
   private CollectionListener<String> listener = new CollectionAdapter<String>() {
     @Override
     public void onItemAdded(CollectionItemEvent<String> event) {

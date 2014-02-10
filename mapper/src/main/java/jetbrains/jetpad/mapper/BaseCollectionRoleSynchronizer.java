@@ -60,13 +60,13 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
 
   protected class MapperUpdater {
     public final void update(List<SourceT> sourceList) {
-      List<SourceT> targetContent = new ArrayList<SourceT>();
+      List<SourceT> targetContent = new ArrayList<>();
       List<Mapper<? extends SourceT, ? extends TargetT>> mappers = getModifiableMappers();
       for (Mapper<?, ? extends TargetT> m : mappers) {
         targetContent.add((SourceT) m.getSource());
       }
 
-      List<DifferenceBuilder<SourceT>.DifferenceItem> difference = new DifferenceBuilder<SourceT>(sourceList, targetContent).build();
+      List<DifferenceBuilder<SourceT>.DifferenceItem> difference = new DifferenceBuilder<>(sourceList, targetContent).build();
       for (DifferenceBuilder<SourceT>.DifferenceItem item : difference) {
         if (item.isAdd) {
           Mapper<? extends SourceT, ? extends TargetT> mapper = createMapper(item.item);

@@ -19,7 +19,7 @@ import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
 public class TestModelObject {
-  public final Property<String> name = new ValueProperty<String>(null);
+  public final Property<String> name = new ValueProperty<>(null);
 
   public TestModelObject() {
   }

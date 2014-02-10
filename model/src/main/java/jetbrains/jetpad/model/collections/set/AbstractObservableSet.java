@@ -30,7 +30,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   
   public Registration addListener(CollectionListener<ItemT> l) {
     if (myListeners == null) {
-      myListeners = new Listeners<CollectionListener<ItemT>>();
+      myListeners = new Listeners<>();
     }
     return myListeners.add(l);
   }
@@ -56,7 +56,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
           public void call(CollectionListener<ItemT> l) {
-            l.onItemAdded(new CollectionItemEvent<ItemT>(item, -1, true));
+            l.onItemAdded(new CollectionItemEvent<>(item, -1, true));
           }
         });
       }
@@ -85,7 +85,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
           public void call(CollectionListener<ItemT> l) {
-            l.onItemRemoved(new CollectionItemEvent<ItemT>(item, -1, false));
+            l.onItemRemoved(new CollectionItemEvent<>(item, -1, false));
           }
         });
       }

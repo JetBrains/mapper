@@ -49,7 +49,7 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
 
   protected void fireEvents(final ValueT oldValue, final ValueT newValue) {
     if (myHandlers != null) {
-      final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<ValueT>(oldValue, newValue);
+      final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<>(oldValue, newValue);
       myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
         @Override
         public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
@@ -62,7 +62,7 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
   @Override
   public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>();
+      myHandlers = new Listeners<>();
     }
 
     final Registration reg = myHandlers.add(handler);

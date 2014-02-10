@@ -18,7 +18,7 @@ package jetbrains.jetpad.json;
 import java.util.*;
 
 public class JsonObject extends JsonValue {
-  private Map<String, JsonValue> myValues = new LinkedHashMap<String, JsonValue>();
+  private Map<String, JsonValue> myValues = new LinkedHashMap<>();
 
   public JsonObject() {
   }
@@ -101,7 +101,7 @@ public class JsonObject extends JsonValue {
     builder.append("{");
     builder.indent();
     builder.newLine();
-    List<String> keys = new ArrayList<String>(myValues.keySet());
+    List<String> keys = new ArrayList<>(myValues.keySet());
     for (int i = 0; i < keys.size(); i++) {
       builder.append("\"").append(JsonUtil.escape(keys.get(i))).append("\":");
       myValues.get(keys.get(i)).toString(builder);

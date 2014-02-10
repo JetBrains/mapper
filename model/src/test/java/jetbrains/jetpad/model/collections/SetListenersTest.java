@@ -112,7 +112,7 @@ public class SetListenersTest extends ListenersTestCase {
 
     @Override
     public void assertContentEquals(Integer... expected) {
-      assertEquals(new HashSet<Integer>(Arrays.asList(expected)), this);
+      assertEquals(new HashSet<>(Arrays.asList(expected)), this);
     }
   }
 }

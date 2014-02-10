@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class BooleanPropertiesTest {
-  private static Property<Boolean> TRUE = new ValueProperty<Boolean>(true);
-  private static Property<Boolean> FALSE = new ValueProperty<Boolean>(false);
+  private static Property<Boolean> TRUE = new ValueProperty<>(true);
+  private static Property<Boolean> FALSE = new ValueProperty<>(false);
   private static Property<Boolean> NULL = new ValueProperty<Boolean>() {
     @Override
     public Boolean get() {

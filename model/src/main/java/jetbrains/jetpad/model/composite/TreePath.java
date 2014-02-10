@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TreePath<CompositeT extends Composite<CompositeT>> {
-  private List<Integer> myPath = new ArrayList<Integer>();
+  private List<Integer> myPath = new ArrayList<>();
 
   public TreePath(CompositeT composite) {
     CompositeT current = composite;

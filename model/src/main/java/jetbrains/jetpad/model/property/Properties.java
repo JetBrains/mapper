@@ -392,7 +392,7 @@ public class Properties {
 
             if (Objects.equal(oldValue, newValue)) return;
 
-            handler.onEvent(new PropertyChangeEvent<TargetT>(oldValue, newValue));
+            handler.onEvent(new PropertyChangeEvent<>(oldValue, newValue));
           }
         });
       }

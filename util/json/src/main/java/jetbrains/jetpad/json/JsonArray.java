@@ -29,7 +29,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
 
   public void add(int pos, JsonValue value) {
     if (myValues == null) {
-      myValues = new ArrayList<JsonValue>(1);
+      myValues = new ArrayList<>(1);
     }
     myValues.add(pos, value);
   }

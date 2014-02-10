@@ -174,15 +174,15 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   public final <MapperT extends Mapper<?, ?>> ObservableList<MapperT> createChildList() {
-    return new ChildList<MapperT>();
+    return new ChildList<>();
   }
 
   public final <MapperT extends Mapper<?, ?>> ObservableSet<MapperT> createChildSet() {
-    return new ChildSet<MapperT>();
+    return new ChildSet<>();
   }
 
   public final <MapperT extends Mapper<?, ?>> Property<MapperT> createChildProperty() {
-    return new ChildProperty<MapperT>();
+    return new ChildProperty<>();
   }
 
   private void addChild(Mapper<?, ?> child) {

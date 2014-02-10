@@ -37,7 +37,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
     ValueT newValue = get();
     if (Objects.equal(myOldValue, newValue)) return;
 
-    final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<ValueT>(myOldValue, newValue);
+    final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<>(myOldValue, newValue);
     myOldValue = newValue;
 
     if (myHandlers != null) {
@@ -53,7 +53,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
   @Override
   public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>();
+      myHandlers = new Listeners<>();
     }
     if (myHandlers.isEmpty()) {
       myOldValue = get();

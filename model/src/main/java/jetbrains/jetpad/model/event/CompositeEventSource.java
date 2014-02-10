@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompositeEventSource<EventT> implements EventSource<EventT> {
-  private Listeners<EventHandler<? super EventT>> myHandlers = new Listeners<EventHandler<? super EventT>>();
-  private List<EventSource<? extends EventT>> myEventSources = new ArrayList<EventSource<? extends EventT>>();
-  private List<Registration> myRegistrations = new ArrayList<Registration>();
+  private Listeners<EventHandler<? super EventT>> myHandlers = new Listeners<>();
+  private List<EventSource<? extends EventT>> myEventSources = new ArrayList<>();
+  private List<Registration> myRegistrations = new ArrayList<>();
 
   public CompositeEventSource(EventSource<? extends EventT>... sources) {
     for (EventSource<? extends EventT> s : sources) {

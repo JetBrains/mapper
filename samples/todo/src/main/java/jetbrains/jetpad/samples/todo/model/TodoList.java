@@ -20,5 +20,5 @@ import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 public class TodoList {
-  public final ObservableList<TodoListItem> items = new ChildList<TodoList, TodoListItem>(this);
+  public final ObservableList<TodoListItem> items = new ChildList<>(this);
 }

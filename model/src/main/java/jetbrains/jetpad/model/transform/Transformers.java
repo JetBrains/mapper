@@ -101,7 +101,7 @@ public class Transformers {
 
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
-        final List<Registration> itemRegistrations = new ArrayList<Registration>();
+        final List<Registration> itemRegistrations = new ArrayList<>();
 
         final Registration reg = from.addListener(new CollectionListener<SourceT>() {
           @Override
@@ -195,7 +195,7 @@ public class Transformers {
     };
 
     return new BaseTransformer<ObservableCollection<ItemT>, ObservableList<ItemT>>() {
-      private Map<ItemT, Registration> myListeners = new HashMap<ItemT, Registration>();
+      private Map<ItemT, Registration> myListeners = new HashMap<>();
       private Registration myCollectionRegistration;
       private CollectionListener<ItemT> myCollectionListener;
 
@@ -220,8 +220,8 @@ public class Transformers {
               }
             }
             if (needMove) {
-              myCollectionListener.onItemRemoved(new CollectionItemEvent<ItemT>(item, -1, false));
-              myCollectionListener.onItemAdded(new CollectionItemEvent<ItemT>(item, -1, true));
+              myCollectionListener.onItemRemoved(new CollectionItemEvent<>(item, -1, false));
+              myCollectionListener.onItemAdded(new CollectionItemEvent<>(item, -1, true));
             }
           }
         }));
@@ -315,7 +315,7 @@ public class Transformers {
       }
       @Override
       protected ObservableList<ItemT> createTo() {
-        return new ObservableArrayList<ItemT>();
+        return new ObservableArrayList<>();
       }
     };
   }
@@ -331,7 +331,7 @@ public class Transformers {
       }
       @Override
       protected ObservableCollection<ItemT> createTo() {
-        return new ObservableHashSet<ItemT>();
+        return new ObservableHashSet<>();
       }
     };
   }
@@ -499,8 +499,8 @@ public class Transformers {
 
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<ResultT>> transform(final ObservableList<SourceT> from, final ObservableList<ResultT> to) {
-        final Map<SourceT, Registration> registrations = new HashMap<SourceT, Registration>();
-        final Map<SourceT, Integer> sizes = new HashMap<SourceT, Integer>();
+        final Map<SourceT, Registration> registrations = new HashMap<>();
+        final Map<SourceT, Integer> sizes = new HashMap<>();
 
         CollectionAdapter<SourceT> sourceListener = new CollectionAdapter<SourceT>() {
           @Override
@@ -555,7 +555,7 @@ public class Transformers {
         final Registration sourceRegistration = from.addListener(sourceListener);
         int index = 0;
         for (SourceT s : from) {
-          sourceListener.onItemAdded(new CollectionItemEvent<SourceT>(s, index++, true));
+          sourceListener.onItemAdded(new CollectionItemEvent<>(s, index++, true));
         }
 
         return new Transformation<ObservableList<SourceT>, ObservableList<ResultT>>() {
@@ -602,7 +602,7 @@ public class Transformers {
 
       @Override
       public Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>> transform(final ObservableList<Property<ValueT>> from, final ObservableList<ValueT> to) {
-        final List<Registration> propRegistrations = new ArrayList<Registration>();
+        final List<Registration> propRegistrations = new ArrayList<>();
         CollectionAdapter<Property<ValueT>> listener = new CollectionAdapter<Property<ValueT>>() {
           @Override
           public void onItemAdded(final CollectionItemEvent<Property<ValueT>> listEvent) {
@@ -624,7 +624,7 @@ public class Transformers {
         };
 
         for (int i = 0; i < from.size(); i++) {
-          listener.onItemAdded(new CollectionItemEvent<Property<ValueT>>(from.get(i), i, true));
+          listener.onItemAdded(new CollectionItemEvent<>(from.get(i), i, true));
         }
 
         final Registration reg = from.addListener(listener);
@@ -680,7 +680,7 @@ public class Transformers {
           }
         };
 
-        final Map<SourceT, Registration> registrations = new HashMap<SourceT, Registration>();
+        final Map<SourceT, Registration> registrations = new HashMap<>();
         CollectionAdapter<SourceT> sourceListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<SourceT> event) {
@@ -709,7 +709,7 @@ public class Transformers {
         };
         final Registration sourceRegistration = from.addListener(sourceListener);
         for (SourceT s : from) {
-          sourceListener.onItemAdded(new CollectionItemEvent<SourceT>(s, -1, true));
+          sourceListener.onItemAdded(new CollectionItemEvent<>(s, -1, true));
         }
 
         return new Transformation<ObservableCollection<SourceT>, ObservableCollection<ResultT>>() {

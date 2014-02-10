@@ -25,19 +25,19 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 
 public class FlattenListTest {
-  private ObservableArrayList<String> from = new ObservableArrayList<String>();
-  private ObservableArrayList<String> to = new ObservableArrayList<String>();
+  private ObservableArrayList<String> from = new ObservableArrayList<>();
+  private ObservableArrayList<String> to = new ObservableArrayList<>();
   private Transformer<ObservableList<String>, ObservableList<String>> transformer = Transformers.flattenList(new Function<String, ObservableList<String>>() {
     @Override
     public ObservableList<String> apply(String input) {
-      ObservableList<String> res = new ObservableArrayList<String>();
+      ObservableList<String> res = new ObservableArrayList<>();
       res.add(input + "1");
       res.add(input + "2");
       return res;
     }
   });
 
-  private ObservableArrayList<MyList> fromList = new ObservableArrayList<MyList>();
+  private ObservableArrayList<MyList> fromList = new ObservableArrayList<>();
   private Transformer<ObservableList<MyList>, ObservableList<String>> listTransformer = Transformers.flattenList(
     new Function<MyList, ObservableList<String>>() {
     @Override
@@ -168,7 +168,7 @@ public class FlattenListTest {
   }
 
   private class MyList {
-    ObservableArrayList<String> list = new ObservableArrayList<String>();
+    ObservableArrayList<String> list = new ObservableArrayList<>();
 
     private MyList() {
     }

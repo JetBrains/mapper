@@ -51,8 +51,8 @@ public class DifferenceBuilderTest {
   }
 
   private <ItemT> void assertConverges(List<ItemT> source, List<ItemT> target) {
-    List<ItemT> targetList = new ArrayList<ItemT>(target);
-    List<DifferenceBuilder<ItemT>.DifferenceItem> items = new DifferenceBuilder<ItemT>(source, targetList).build();
+    List<ItemT> targetList = new ArrayList<>(target);
+    List<DifferenceBuilder<ItemT>.DifferenceItem> items = new DifferenceBuilder<>(source, targetList).build();
     for (DifferenceBuilder<ItemT>.DifferenceItem item : items) {
       item.apply(targetList);
     }

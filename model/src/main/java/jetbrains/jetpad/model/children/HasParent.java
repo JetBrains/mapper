@@ -20,7 +20,7 @@ import jetbrains.jetpad.model.property.ReadOnlyProperty;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
 public class HasParent<ParentT, SiblingT> {
-  final DelayedValueProperty<ParentT> myParent = new DelayedValueProperty<ParentT>();
+  final DelayedValueProperty<ParentT> myParent = new DelayedValueProperty<>();
   PositionData<? extends SiblingT> myPositionData;
 
   public ReadableProperty<ParentT> parent() {

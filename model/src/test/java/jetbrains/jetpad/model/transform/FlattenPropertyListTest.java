@@ -29,13 +29,13 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 public class FlattenPropertyListTest {
-  private ObservableList<Property<String>> list = new ObservableArrayList<Property<String>>();
-  private ObservableList<String> flattenedList = new ObservableArrayList<String>();
+  private ObservableList<Property<String>> list = new ObservableArrayList<>();
+  private ObservableList<String> flattenedList = new ObservableArrayList<>();
   private Transformation<ObservableList<Property<String>>, ObservableList<String>> trans;
 
   @Before
   public void init() {
-    list.addAll(Arrays.asList(new ValueProperty<String>("a"), new ValueProperty<String>("b"), new ValueProperty<String>("c")));
+    list.addAll(Arrays.asList(new ValueProperty<>("a"), new ValueProperty<>("b"), new ValueProperty<>("c")));
     trans = Transformers.<String>flattenPropertyList().transform(list, flattenedList);
   }
 
@@ -53,7 +53,7 @@ public class FlattenPropertyListTest {
 
   @Test
   public void itemAdd() {
-    list.add(1, new ValueProperty<String>("x"));
+    list.add(1, new ValueProperty<>("x"));
 
     assertList("a", "x", "b", "c");
   }
