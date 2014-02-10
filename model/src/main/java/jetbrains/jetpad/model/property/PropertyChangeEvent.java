@@ -42,7 +42,7 @@ public class PropertyChangeEvent<ValueT> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    PropertyChangeEvent that = (PropertyChangeEvent) o;
+    PropertyChangeEvent<?> that = (PropertyChangeEvent<?>) o;
 
     if (myNewValue != null ? !myNewValue.equals(that.myNewValue) : that.myNewValue != null) return false;
     if (myOldValue != null ? !myOldValue.equals(that.myOldValue) : that.myOldValue != null) return false;

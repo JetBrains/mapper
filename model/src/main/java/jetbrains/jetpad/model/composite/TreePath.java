@@ -48,7 +48,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> {
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof TreePath)) return false;
-    TreePath path = (TreePath) o;
+    TreePath<?> path = (TreePath<?>) o;
     return myPath.equals(path.myPath);
   }
 

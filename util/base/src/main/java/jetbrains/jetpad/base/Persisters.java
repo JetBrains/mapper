@@ -110,7 +110,7 @@ public class Persisters {
       }
 
       @Override
-      public String serialize(Enum value) {
+      public String serialize(E value) {
         return value == null ? (defaultValue != null ? defaultValue.toString() : null) : value.toString();
       }
 
