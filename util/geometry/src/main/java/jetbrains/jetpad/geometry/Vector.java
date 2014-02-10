@@ -50,6 +50,10 @@ public class Vector {
     return new Vector(x * i, y * i);
   }
 
+  public Vector div(int i) {
+    return new Vector(x / i, y / i);
+  }
+
   public int dotProduct(Vector v) {
     return x * v.x + y * v.y;
   }
