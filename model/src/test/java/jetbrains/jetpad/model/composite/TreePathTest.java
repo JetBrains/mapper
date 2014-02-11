@@ -20,10 +20,8 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class TreePathTest {
   private TestComposite root = new TestComposite();
@@ -46,5 +44,12 @@ public class TreePathTest {
   public void pathEquality() {
     assertThat(new TreePath<>(child1), equalTo(new TreePath<>(child1)));
     assertThat(new TreePath<>(child2), not(equalTo(new TreePath<>(child1))));
+  }
+
+  @Test
+  public void pathComparison() {
+    assertTrue(new TreePath<TestComposite>(root).compareTo(new TreePath<TestComposite>(child1)) < 0);
+    assertTrue(new TreePath<TestComposite>(child1).compareTo(new TreePath<TestComposite>(child2)) < 0);
+    assertTrue(new TreePath<TestComposite>(child1).compareTo(new TreePath<TestComposite>(child1)) == 0);
   }
 }

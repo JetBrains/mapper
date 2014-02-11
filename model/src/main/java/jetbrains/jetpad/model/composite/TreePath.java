@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TreePath<CompositeT extends Composite<CompositeT>> {
+public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>>{
   private List<Integer> myPath = new ArrayList<>();
 
   public TreePath(CompositeT composite) {
@@ -55,6 +55,16 @@ public class TreePath<CompositeT extends Composite<CompositeT>> {
   @Override
   public int hashCode() {
     return myPath.hashCode();
+  }
+
+  @Override
+  public int compareTo(TreePath<CompositeT> o) {
+    int maxIndex = Math.min(myPath.size(), o.myPath.size());
+    for (int i = 0; i < maxIndex; i++) {
+      int delta = myPath.get(i) - o.myPath.get(i);
+      if (delta != 0) return delta;
+    }
+    return myPath.size() - o.myPath.size();
   }
 
   @Override
