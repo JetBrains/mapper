@@ -300,17 +300,26 @@ public class Transformers {
     return new BaseFilterTransformer<ItemT, CollectionT, ObservableList<ItemT>>(filterBy) {
       @Override
       protected void add(ItemT item, CollectionT from, ObservableList<ItemT> to) {
-        int index = -1;
-        int count = 0;
-        for (ItemT current : from) {
-          if (item == current) {
-            index = count;
+        Iterator<ItemT> fromItr = from.iterator();
+        int index = 0;
+        boolean foundItem = false;
+        for (ItemT curTo: to) {
+          while (fromItr.hasNext()) {
+            ItemT curFrom = fromItr.next();
+            if (curFrom == curTo) {
+              break;
+            }
+            if (curFrom == item) {
+              foundItem = true;
+              break;
+            }
+          }
+          if (foundItem) {
             break;
           }
-          if (filter(current)) {
-            count++;
-          }
+          index++;
         }
+        if (!fromItr.hasNext() && !foundItem) throw new IllegalStateException();
         to.add(index, item);
       }
       @Override

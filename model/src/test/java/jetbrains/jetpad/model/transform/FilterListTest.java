@@ -19,10 +19,10 @@ import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.property.Properties;
-import jetbrains.jetpad.model.property.ReadableProperty;
+import jetbrains.jetpad.model.property.*;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FilterListTest {
@@ -58,5 +58,53 @@ public class FilterListTest {
     from.add("aa");
     assertTrue(to.size() == 1);
     assertTrue(to.get(0).equals("aa"));
+  }
+
+  @Test
+  public void simultaneousAdd() {
+    final Property<Boolean> p = new ValueProperty<>(false);
+    Transformer<ObservableCollection<Object>, ObservableList<Object>> filter = Transformers.listFilter(new Function<Object, ReadableProperty<Boolean>>() {
+      @Override
+      public ReadableProperty<Boolean> apply(Object o) {
+        return p;
+      }
+    });
+    ObservableList<Object> source = new ObservableArrayList<>();
+    ObservableList<Object> target = filter.transform(source).getTarget();
+    source.add("d");
+    source.add(0, "c");
+    source.add(0, "b");
+    source.add(0, "a");
+    p.set(true);
+
+    assertEquals(4, target.size());
+    assertEquals("a", target.get(0));
+    assertEquals("b", target.get(1));
+    assertEquals("c", target.get(2));
+    assertEquals("d", target.get(3));
+  }
+
+  @Test
+  public void simultaneousAddRemove() {
+    final Property<Boolean> p = new ValueProperty<>(false);
+    Transformer<ObservableCollection<Integer>, ObservableList<Integer>> filter = Transformers.listFilter(new Function<Integer, ReadableProperty<Boolean>>() {
+      @Override
+      public ReadableProperty<Boolean> apply(final Integer i) {
+        return new DerivedProperty<Boolean>(p) {
+          @Override
+          public Boolean get() {
+            return p.get() == (i % 2 == 0);
+          }
+        };
+      }
+    });
+    ObservableList<Integer> source = new ObservableArrayList<>();
+    ObservableList<Integer> target = filter.transform(source).getTarget();
+    source.add(2);
+    source.add(0, 1);
+    p.set(true);
+
+    assertEquals(1, target.size());
+    assertEquals(2, (int)target.get(0));
   }
 }
