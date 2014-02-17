@@ -28,10 +28,10 @@ class DifferenceBuilder<ItemT> {
   }
 
   List<DifferenceItem> build() {
-    List<DifferenceItem> result = new ArrayList<>();
+    List<DifferenceItem> result = new ArrayList<DifferenceItem>();
 
     List<ItemT> sourceContent = mySourceList;
-    List<ItemT> target = new ArrayList<>(myTargetList);
+    List<ItemT> target = new ArrayList<ItemT>(myTargetList);
 
     for (int i = target.size() - 1; i >= 0; i--) {
       ItemT current = target.get(i);

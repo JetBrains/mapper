@@ -30,8 +30,8 @@ public class SelectTest {
 
   @Before
   public void setup() {
-    from = new ObservableHashSet<>();
-    to = new ObservableHashSet<>();
+    from = new ObservableHashSet<Integer>();
+    to = new ObservableHashSet<String>();
     select = Transformers.select(new Function<Integer, String>() {
       @Override
       public String apply(Integer input) {

@@ -21,8 +21,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class CachingPropertyTest {
-  Property<String> source = new ValueProperty<>("b");
-  ReadableProperty<String> cache = new CachingProperty<>(source);
+  Property<String> source = new ValueProperty<String>("b");
+  ReadableProperty<String> cache = new CachingProperty<String>(source);
 
   @Test
   public void simpleMode() {

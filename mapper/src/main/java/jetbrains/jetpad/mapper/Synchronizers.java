@@ -35,7 +35,7 @@ public class Synchronizers {
       List<SourceT> source,
       List<TargetT> target,
       MapperFactory<SourceT, TargetT> factory) {
-    return new SimpleRoleSynchronizer<>(mapper, source, target, factory);
+    return new SimpleRoleSynchronizer<SourceT, TargetT>(mapper, source, target, factory);
   }
 
   public static <
@@ -49,7 +49,7 @@ public class Synchronizers {
       Transformer<SourceT, ObservableList<MappedT>> transformer,
       List<TargetItemT> target,
       MapperFactory<MappedT, TargetT> factory) {
-    return new TransformingObservableCollectionRoleSynchronizer<>(mapper, source, transformer, target, factory);
+    return new TransformingObservableCollectionRoleSynchronizer<SourceT, MappedT, TargetT>(mapper, source, transformer, target, factory);
   }
 
   public static <
@@ -61,7 +61,7 @@ public class Synchronizers {
       ObservableList<SourceT> source,
       List<TargetItemT> target,
       MapperFactory<SourceT, TargetT> factory) {
-    return new ObservableCollectionRoleSynchronizer<>(mapper, source, target, factory);
+    return new ObservableCollectionRoleSynchronizer<SourceT, TargetT>(mapper, source, target, factory);
   }
 
   public static <
@@ -91,7 +91,7 @@ public class Synchronizers {
       final ReadableProperty<SourceT> source,
       final WritableProperty<TargetT> target,
       MapperFactory<SourceT, TargetT> factory) {
-    return new SingleChildRoleSynchronizer<>(mapper, source, target, factory);
+    return new SingleChildRoleSynchronizer<SourceT, TargetT>(mapper, source, target, factory);
   }
 
   public static <ValueT>

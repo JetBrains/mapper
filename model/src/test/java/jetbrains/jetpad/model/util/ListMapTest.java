@@ -22,8 +22,8 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class ListMapTest {
-  private ListMap<String, String> list = new ListMap<>();
-  private HashMap<String, String> map = new HashMap<>();
+  private ListMap<String, String> list = new ListMap<String, String>();
+  private HashMap<String, String> map = new HashMap<String, String>();
   private final static int RANDOM_STEPS = 100000;
   private Random random = new Random(1000);
 
@@ -111,9 +111,9 @@ public class ListMapTest {
       assertEquals(map.size(), list.size());
     }
     assertEquals(map.keySet(), list.keySet());
-    List<String> mapVals = new ArrayList<>(map.values());
+    List<String> mapVals = new ArrayList<String>(map.values());
     Collections.sort(mapVals);
-    List<String> listVals = new ArrayList<>(list.values());
+    List<String> listVals = new ArrayList<String>(list.values());
     Collections.sort(listVals);
     assertEquals(mapVals, listVals);
   } 

@@ -29,11 +29,11 @@ public class CompositeAsyncTest {
 
   @Test
   public void successOneByOne() {
-    List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
+    List<Async<Integer>> asyncs = new ArrayList<Async<Integer>>(SIZE);
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(new SimpleAsync<Integer>());
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    CompositeAsync<Integer> async = new CompositeAsync<Integer>(asyncs);
 
     Value<Boolean> succeeded = addSuccessHandler(async);
 
@@ -48,19 +48,19 @@ public class CompositeAsyncTest {
 
   @Test
   public void alreadySucceeded() {
-    List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
+    List<Async<Integer>> asyncs = new ArrayList<Async<Integer>>(SIZE);
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(Asyncs.constant(i));
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    CompositeAsync<Integer> async = new CompositeAsync<Integer>(asyncs);
     Value<Boolean> succeeded = addSuccessHandler(async);
     assertTrue(succeeded.get());
   }
 
   @Test
   public void emptyRequest() {
-    CompositeAsync<Integer> async = new CompositeAsync<>(new ArrayList<Async<Integer>>(0));
-    final Value<Boolean> succeeded = new Value<>(false);
+    CompositeAsync<Integer> async = new CompositeAsync<Integer>(new ArrayList<Async<Integer>>(0));
+    final Value<Boolean> succeeded = new Value<Boolean>(false);
     async.onSuccess(new Handler<List<Integer>>() {
       @Override
       public void handle(List<Integer> item) {
@@ -78,13 +78,13 @@ public class CompositeAsyncTest {
 
   @Test
   public void partialFailure() {
-    List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
+    List<Async<Integer>> asyncs = new ArrayList<Async<Integer>>(SIZE);
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(new SimpleAsync<Integer>());
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    CompositeAsync<Integer> async = new CompositeAsync<Integer>(asyncs);
 
-    final Value<Boolean> failed = new Value<>(false);
+    final Value<Boolean> failed = new Value<Boolean>(false);
     async.onSuccess(new Handler<List<Integer>>() {
       @Override
       public void handle(List<Integer> item) {
@@ -110,7 +110,7 @@ public class CompositeAsyncTest {
   }
 
   private Value<Boolean> addSuccessHandler(Async<List<Integer>> async) {
-    final Value<Boolean> succeeded = new Value<>(false);
+    final Value<Boolean> succeeded = new Value<Boolean>(false);
     async.onSuccess(new Handler<List<Integer>>() {
       @Override
       public void handle(List<Integer> item) {

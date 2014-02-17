@@ -31,7 +31,7 @@ public class PropertyBinding {
   }
 
   public static <ValueT> Registration bind(final Property<ValueT> source, final Property<ValueT> target) {
-    final Property<Boolean> syncing = new ValueProperty<>(false);
+    final Property<Boolean> syncing = new ValueProperty<Boolean>(false);
     target.set(source.get());
     return new CompositeRegistration(
       source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {

@@ -55,7 +55,7 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
     $(getTarget().clearCompleted).click(new Function() {
       @Override
       public boolean f(Event e) {
-        List<TodoListItem> toRemove = new ArrayList<>();
+        List<TodoListItem> toRemove = new ArrayList<TodoListItem>();
         for (TodoListItem item : getSource().items) {
           if (item.completed.get()) {
             toRemove.add(item);

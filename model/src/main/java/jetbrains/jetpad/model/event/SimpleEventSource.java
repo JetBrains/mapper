@@ -16,7 +16,7 @@
 package jetbrains.jetpad.model.event;
 
 public class SimpleEventSource<EventT> implements EventSource<EventT> {
-  private Listeners<EventHandler<? super EventT>> myListeners = new Listeners<>();
+  private Listeners<EventHandler<? super EventT>> myListeners = new Listeners<EventHandler<? super EventT>>();
 
   public void fire(final EventT event) {
     myListeners.fire(new ListenerCaller<EventHandler<? super EventT>>() {

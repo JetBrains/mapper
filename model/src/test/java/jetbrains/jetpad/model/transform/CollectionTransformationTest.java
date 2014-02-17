@@ -39,10 +39,10 @@ public class CollectionTransformationTest {
     }
   };
 
-  private ObservableSet<MyObject> from = new ObservableHashSet<>();
-  private ObservableSet<MyObject> to = new ObservableHashSet<>();
-  private ObservableList<MyObject> toList = new ObservableArrayList<>();
-  private ObservableList<MyObject> fromList = new ObservableArrayList<>();
+  private ObservableSet<MyObject> from = new ObservableHashSet<MyObject>();
+  private ObservableSet<MyObject> to = new ObservableHashSet<MyObject>();
+  private ObservableList<MyObject> toList = new ObservableArrayList<MyObject>();
+  private ObservableList<MyObject> fromList = new ObservableArrayList<MyObject>();
 
   @Test
   public void filterInitial() {
@@ -164,7 +164,7 @@ public class CollectionTransformationTest {
     Function<MyObject, ObservableCollection<String>> f = new Function<MyObject, ObservableCollection<String>>() {
       @Override
       public ObservableCollection<String> apply(MyObject input) {
-        ObservableHashSet<String> s = new ObservableHashSet<>();
+        ObservableHashSet<String> s = new ObservableHashSet<String>();
         s.add(input.name.get() + "1");
         s.add(input.name.get() + "2");
         return s;
@@ -254,7 +254,7 @@ public class CollectionTransformationTest {
     fromList.add(new MyObject("b"));
     fromList.add(new MyObject("c"));
 
-    ValueProperty<Integer> prop = new ValueProperty<>(1);
+    ValueProperty<Integer> prop = new ValueProperty<Integer>(1);
 
     Transformers.<MyObject>firstN(prop).transform(fromList, toList);
 
@@ -269,7 +269,7 @@ public class CollectionTransformationTest {
     fromList.add(new MyObject("b"));
     fromList.add(new MyObject("c"));
 
-    ValueProperty<Integer> prop = new ValueProperty<>(2);
+    ValueProperty<Integer> prop = new ValueProperty<Integer>(2);
 
     Transformers.<MyObject>firstN(prop).transform(fromList, toList);
 
@@ -291,7 +291,7 @@ public class CollectionTransformationTest {
   }
 
   private static class MyObject {
-    final Property<String> name = new ValueProperty<>(null);
+    final Property<String> name = new ValueProperty<String>(null);
 
     private MyObject(String name) {
       this.name.set(name);

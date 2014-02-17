@@ -26,8 +26,8 @@ import static org.junit.Assert.assertEquals;
 public class SynchonizersTest extends BaseTestCase {
   @Test
   public void forEventSourceOnAttach() {
-    final Value<Integer> runNum = new Value<>(0);
-    Property<Boolean> prop = new ValueProperty<>();
+    final Value<Integer> runNum = new Value<Integer>(0);
+    Property<Boolean> prop = new ValueProperty<Boolean>();
     final Synchronizer synchronizer = Synchronizers.forEventSource(prop, new Runnable() {
       @Override
       public void run() {

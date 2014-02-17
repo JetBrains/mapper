@@ -27,8 +27,8 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
   private Throwable myFailureThrowable = null;
   private boolean myFailed = false;
 
-  private List<Handler<? super ItemT>> mySuccessHandlers = new ArrayList<>();
-  private List<Handler<Throwable>> myFailureHandlers = new ArrayList<>();
+  private List<Handler<? super ItemT>> mySuccessHandlers = new ArrayList<Handler<? super ItemT>>();
+  private List<Handler<Throwable>> myFailureHandlers = new ArrayList<Handler<Throwable>>();
 
   public Async<ItemT> onSuccess(Handler<? super ItemT> handler) {
     if (mySucceeded) {

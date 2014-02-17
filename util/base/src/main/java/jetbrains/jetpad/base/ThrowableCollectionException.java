@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThrowableCollectionException extends RuntimeException {
-  private List<Throwable> myThrowables = new ArrayList<>();
+  private List<Throwable> myThrowables = new ArrayList<Throwable>();
 
   public ThrowableCollectionException(List<Throwable> throwables) {
     super(throwables.get(0));

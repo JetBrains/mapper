@@ -50,7 +50,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
   @Override
   public Transformation<CollectionS, CollectionT> transform(final CollectionS from, final CollectionT to) {
     return new Transformation<CollectionS, CollectionT>() {
-      private Map<ItemT, Registration> myPropertyRegistrations = new HashMap<>();
+      private Map<ItemT, Registration> myPropertyRegistrations = new HashMap<ItemT, Registration>();
       private Registration myCollectionRegistration;
 
       {

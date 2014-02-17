@@ -35,15 +35,15 @@ public class TreePathTest {
 
   @Test
   public void saveRestore() {
-    TreePath<TestComposite> path1 = new TreePath<>(child1);
+    TreePath<TestComposite> path1 = new TreePath<TestComposite>(child1);
 
     assertSame(child1, path1.get(root));
   }
 
   @Test
   public void pathEquality() {
-    assertThat(new TreePath<>(child1), equalTo(new TreePath<>(child1)));
-    assertThat(new TreePath<>(child2), not(equalTo(new TreePath<>(child1))));
+    assertThat(new TreePath<TestComposite>(child1), equalTo(new TreePath<TestComposite>(child1)));
+    assertThat(new TreePath<TestComposite>(child2), not(equalTo(new TreePath<TestComposite>(child1))));
   }
 
   @Test

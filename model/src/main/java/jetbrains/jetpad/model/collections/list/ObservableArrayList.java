@@ -71,7 +71,7 @@ public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
 
   private void ensureContainerInitialized() {
     if (myContainer == null) {
-      myContainer = new ArrayList<>(1);
+      myContainer = new ArrayList<ItemT>(1);
     }
   }
 }

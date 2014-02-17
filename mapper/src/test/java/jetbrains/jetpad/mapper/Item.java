@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Item {
-  public final ObservableList<Item> observableChildren = new ObservableArrayList<>();
-  public final List<Item> children = new ArrayList<>();
-  public final ObservableList<Item> transformedChildren = new ObservableArrayList<>();
-  public final Property<Item> singleChild = new ValueProperty<>();
-  public final Property<String> name = new ValueProperty<>();
+  public final ObservableList<Item> observableChildren = new ObservableArrayList<Item>();
+  public final List<Item> children = new ArrayList<Item>();
+  public final ObservableList<Item> transformedChildren = new ObservableArrayList<Item>();
+  public final Property<Item> singleChild = new ValueProperty<Item>();
+  public final Property<String> name = new ValueProperty<String>();
 
   Item() {
   }

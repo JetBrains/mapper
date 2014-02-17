@@ -31,8 +31,8 @@ public class PropertyToCollectionTest {
 
   @Before
   public void setup() {
-    from = new ValueProperty<>(0);
-    to = new ObservableHashSet<>();
+    from = new ValueProperty<Integer>(0);
+    to = new ObservableHashSet<Integer>();
     transformer = Transformers.propertyToCollection();
   }
 

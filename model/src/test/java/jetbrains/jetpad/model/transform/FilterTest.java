@@ -25,8 +25,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public class FilterTest {
-  private ObservableCollection<String> from = new ObservableHashSet<>();
-  private ObservableCollection<String> to = new ObservableHashSet<>();
+  private ObservableCollection<String> from = new ObservableHashSet<String>();
+  private ObservableCollection<String> to = new ObservableHashSet<String>();
   Transformer<ObservableCollection<String>, ObservableCollection<String>> filter = Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
     @Override
     public ReadableProperty<Boolean> apply(String s) {

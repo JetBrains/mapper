@@ -27,7 +27,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 public class MapTrasnfomerTest {
-  private ObservableList<String> source = new ObservableArrayList<>();
+  private ObservableList<String> source = new ObservableArrayList<String>();
   private ObservableList<Integer> target;
 
 

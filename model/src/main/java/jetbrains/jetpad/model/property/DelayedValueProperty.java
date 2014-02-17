@@ -46,7 +46,7 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
     myValue = value;
 
     if (myPendingEvent != null) throw new IllegalStateException();
-    myPendingEvent = new PropertyChangeEvent<>(oldValue, myValue);
+    myPendingEvent = new PropertyChangeEvent<ValueT>(oldValue, myValue);
   }
 
   public void flush() {
@@ -64,7 +64,7 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
   @Override
   public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<>();
+      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>();
     }
 
     final Registration reg = myHandlers.add(handler);

@@ -231,7 +231,7 @@ public class Composites {
   }
 
   static <ItemT> List<ItemT> toList(Iterable<ItemT> it) {
-    List<ItemT> result = new ArrayList<>();
+    List<ItemT> result = new ArrayList<ItemT>();
     for (ItemT i : it) {
       result.add(i);
     }

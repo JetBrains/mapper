@@ -84,7 +84,7 @@ public class DomUtil {
   }
 
   public static List<WithElement> withElementChildren(final Element e) {
-    final List<WithElement> items = new ArrayList<>();
+    final List<WithElement> items = new ArrayList<WithElement>();
     final List<Node> children = elementChildren(e);
 
     return new AbstractList<WithElement>() {
@@ -133,7 +133,7 @@ public class DomUtil {
     return new Property<String>() {
       private String myValue;
       private boolean myEditing;
-      private Listeners<EventHandler<? super PropertyChangeEvent<String>>> myListeners = new Listeners<>();
+      private Listeners<EventHandler<? super PropertyChangeEvent<String>>> myListeners = new Listeners<EventHandler<? super PropertyChangeEvent<String>>>();
       private InputElement myEditor = DOM.createInputText().cast();
 
       {
@@ -209,7 +209,7 @@ public class DomUtil {
           element.setInnerText(value);
         }
 
-        final PropertyChangeEvent<String> event = new PropertyChangeEvent<>(oldValue,  value);
+        final PropertyChangeEvent<String> event = new PropertyChangeEvent<String>(oldValue,  value);
         myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<String>>>() {
           @Override
           public void call(EventHandler<? super PropertyChangeEvent<String>> l) {
@@ -233,7 +233,7 @@ public class DomUtil {
   public static Property<Boolean> checkbox(final InputElement element) {
     return new Property<Boolean>() {
       private Registration myTimerRegistration;
-      private Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>> myListeners = new Listeners<>();
+      private Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>> myListeners = new Listeners<EventHandler<? super PropertyChangeEvent<Boolean>>>();
 
       @Override
       public Boolean get() {
@@ -248,7 +248,7 @@ public class DomUtil {
       @Override
       public Registration addHandler(final EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
         if (myListeners.isEmpty()) {
-          final Value<Boolean> value = new Value<>(element.isChecked());
+          final Value<Boolean> value = new Value<Boolean>(element.isChecked());
           final Timer timer = new Timer() {
             @Override
             public void run() {
@@ -257,7 +257,7 @@ public class DomUtil {
                 myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<Boolean>>>() {
                   @Override
                   public void call(EventHandler<? super PropertyChangeEvent<Boolean>> l) {
-                    l.onEvent(new PropertyChangeEvent<>(value.get(), currentValue));
+                    l.onEvent(new PropertyChangeEvent<Boolean>(value.get(), currentValue));
                   }
                 });
                 value.set(currentValue);

@@ -31,7 +31,7 @@ public class Listeners<ListenerT> {
   public Registration add(final ListenerT l) {
     if (myFireData != null) {
       if (myFireData.toAdd == null) {
-        myFireData.toAdd = new ArrayList<>(1);
+        myFireData.toAdd = new ArrayList<ListenerT>(1);
       }
       myFireData.toAdd.add(l);
       if (myFireData.toRemove != null) {
@@ -39,7 +39,7 @@ public class Listeners<ListenerT> {
       }
     } else {
       if (myListeners == null) {
-        myListeners = new ArrayList<>(1);
+        myListeners = new ArrayList<ListenerT>(1);
       }
       myListeners.add(l);
     }
@@ -48,7 +48,7 @@ public class Listeners<ListenerT> {
       public void remove() {
         if (myFireData != null) {
           if (myFireData.toRemove == null) {
-            myFireData.toRemove = new ArrayList<>(1);
+            myFireData.toRemove = new ArrayList<ListenerT>(1);
           }
           myFireData.toRemove.add(l);
           if (myFireData.toAdd != null) {
@@ -84,7 +84,7 @@ public class Listeners<ListenerT> {
 
   private void beforeFire() {
     if (myFireData == null) {
-      myFireData = new FireData<>();
+      myFireData = new FireData<ListenerT>();
     }
     myFireData.depth++;
   }

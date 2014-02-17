@@ -27,7 +27,7 @@ public class ListenersTest {
 
   @Before
   public void setup() {
-    myListeners = new Listeners<>();
+    myListeners = new Listeners<Listener>();
     myInnerListenerCalled = false;
   }
 

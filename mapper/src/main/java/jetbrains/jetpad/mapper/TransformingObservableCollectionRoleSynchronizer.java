@@ -56,7 +56,7 @@ class TransformingObservableCollectionRoleSynchronizer<
 
   protected void onAttach() {
     super.onAttach();
-    mySourceList = new ObservableArrayList<>();
+    mySourceList = new ObservableArrayList<MappedT>();
     mySourceTransformation = mySourceTransformer.transform(mySource, mySourceList);
     new MapperUpdater().update(mySourceList);
     for (Mapper<? extends MappedT, ? extends TargetT> m : getModifiableMappers()) {

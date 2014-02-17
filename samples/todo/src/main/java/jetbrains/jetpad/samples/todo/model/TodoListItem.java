@@ -20,6 +20,6 @@ import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
 public class TodoListItem extends HasParent<TodoList, TodoListItem> {
-  public final Property<Boolean> completed = new ValueProperty<>(false);
-  public final Property<String> text = new ValueProperty<>("");
+  public final Property<Boolean> completed = new ValueProperty<Boolean>(false);
+  public final Property<String> text = new ValueProperty<String>("");
 }

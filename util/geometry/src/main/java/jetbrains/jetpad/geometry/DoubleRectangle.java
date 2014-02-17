@@ -134,7 +134,7 @@ public class DoubleRectangle {
   }
 
   public Iterable<DoubleSegment> getParts() {
-    List<DoubleSegment> result = new ArrayList<>();
+    List<DoubleSegment> result = new ArrayList<DoubleSegment>();
     result.add(new DoubleSegment(origin, origin.add(new DoubleVector(dimension.x, 0))));
     result.add(new DoubleSegment(origin, origin.add(new DoubleVector(0, dimension.y))));
     result.add(new DoubleSegment(origin.add(dimension), origin.add(new DoubleVector(dimension.x, 0))));

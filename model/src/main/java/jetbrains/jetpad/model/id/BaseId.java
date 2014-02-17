@@ -25,7 +25,7 @@ import java.util.Random;
 public abstract class BaseId implements Serializable {
   private static final char SEPARATOR = '.';
 
-  private static final Map<String, String> ourNamesMap = new HashMap<>();
+  private static final Map<String, String> ourNamesMap = new HashMap<String, String>();
 
   private static final Random ourRandom = new Random();
 

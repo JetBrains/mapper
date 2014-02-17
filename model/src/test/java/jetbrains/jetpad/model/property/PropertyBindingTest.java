@@ -21,8 +21,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class PropertyBindingTest {
-  private Property<String> source = new ValueProperty<>();
-  private Property<String> target = new ValueProperty<>();
+  private Property<String> source = new ValueProperty<String>();
+  private Property<String> target = new ValueProperty<String>();
 
   @Test
   public void bidirectionalSync() {

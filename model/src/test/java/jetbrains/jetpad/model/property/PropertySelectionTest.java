@@ -77,7 +77,7 @@ public class PropertySelectionTest {
   }
 
   class C1 {
-    ValueProperty<Integer> value = new ValueProperty<>();
+    ValueProperty<Integer> value = new ValueProperty<Integer>();
 
     C1(Integer v) {
       value.set(v);
@@ -85,6 +85,6 @@ public class PropertySelectionTest {
   }
 
   class C2 {
-    ValueProperty<C1> ref = new ValueProperty<>();
+    ValueProperty<C1> ref = new ValueProperty<C1>();
   }
 }

@@ -34,7 +34,7 @@ public class TransformingSynchronizerTest {
 
 
   private void init(String... items) {
-    source = new ObservableArrayList<>();
+    source = new ObservableArrayList<String>();
     Collections.addAll(source, items);
     mapper = new MyMapper(source);
     mapper.attachRoot();
@@ -79,7 +79,10 @@ public class TransformingSynchronizerTest {
     protected void registerSynchronizers(SynchronizersConfiguration conf) {
       super.registerSynchronizers(conf);
 
-      conf.add(new TransformingObservableCollectionRoleSynchronizer<>(this, getSource(), Transformers.<String, String, String>sortBy(new Function<String, ReadableProperty<String>>() {
+      conf.add(new TransformingObservableCollectionRoleSynchronizer<
+        ObservableList<String>,
+        String,
+        String>(this, getSource(), Transformers.<String, String, String>sortBy(new Function<String, ReadableProperty<String>>() {
           @Override
           public ReadableProperty<String> apply(String s) {
             return Properties.constant(s);

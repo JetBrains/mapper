@@ -52,13 +52,13 @@ public class SingleItemCollectionProperty<ItemT> implements Property<ItemT> {
       @Override
       public void onItemAdded(CollectionItemEvent<ItemT> event) {
         if (myCollection.size() != 1) throw new IllegalStateException();
-        handler.onEvent(new PropertyChangeEvent<>(null, event.getItem()));
+        handler.onEvent(new PropertyChangeEvent<ItemT>(null, event.getItem()));
       }
 
       @Override
       public void onItemRemoved(CollectionItemEvent<ItemT> event) {
         if (!myCollection.isEmpty()) throw new IllegalStateException();
-        handler.onEvent(new PropertyChangeEvent<>(event.getItem(), null));
+        handler.onEvent(new PropertyChangeEvent<ItemT>(event.getItem(), null));
       }
     });
   }

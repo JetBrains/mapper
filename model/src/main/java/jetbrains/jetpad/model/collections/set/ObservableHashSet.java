@@ -98,7 +98,7 @@ public class ObservableHashSet<ItemT> extends AbstractObservableSet<ItemT> {
 
   private void ensureSetInitialized() {
     if (mySet == null) {
-      mySet = new HashSet<>(1);
+      mySet = new HashSet<ItemT>(1);
     }
   }
 }

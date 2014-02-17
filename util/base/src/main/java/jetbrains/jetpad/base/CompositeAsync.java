@@ -18,8 +18,8 @@ package jetbrains.jetpad.base;
 import java.util.*;
 
 public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
-  private List<ItemT> mySucceeded = new ArrayList<>();
-  private List<Throwable> myFailures = new ArrayList<>(0);
+  private List<ItemT> mySucceeded = new ArrayList<ItemT>();
+  private List<Throwable> myFailures = new ArrayList<Throwable>(0);
   private int myAsyncsCounter = 0;
 
   public CompositeAsync(List<Async<ItemT>> asyncs) {

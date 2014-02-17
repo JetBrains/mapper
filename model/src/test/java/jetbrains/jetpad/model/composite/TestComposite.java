@@ -28,9 +28,9 @@ import java.util.List;
 class TestComposite
     extends HasParent<TestComposite, TestComposite>
     implements Composite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
-  private ObservableList<TestComposite> myChildren = new ChildList<>(this);
-  private Property<Boolean> myVisible = new ValueProperty<>(true);
-  private Property<Boolean> myFocusable = new ValueProperty<>(true);
+  private ObservableList<TestComposite> myChildren = new ChildList<TestComposite, TestComposite>(this);
+  private Property<Boolean> myVisible = new ValueProperty<Boolean>(true);
+  private Property<Boolean> myFocusable = new ValueProperty<Boolean>(true);
   private Rectangle myBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
 
   @Override
