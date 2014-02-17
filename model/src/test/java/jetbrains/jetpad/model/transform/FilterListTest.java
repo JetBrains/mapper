@@ -62,14 +62,14 @@ public class FilterListTest {
 
   @Test
   public void simultaneousAdd() {
-    final Property<Boolean> p = new ValueProperty<>(false);
+    final Property<Boolean> p = new ValueProperty<Boolean>(false);
     Transformer<ObservableCollection<Object>, ObservableList<Object>> filter = Transformers.listFilter(new Function<Object, ReadableProperty<Boolean>>() {
       @Override
       public ReadableProperty<Boolean> apply(Object o) {
         return p;
       }
     });
-    ObservableList<Object> source = new ObservableArrayList<>();
+    ObservableList<Object> source = new ObservableArrayList<Object>();
     ObservableList<Object> target = filter.transform(source).getTarget();
     source.add("d");
     source.add(0, "c");
@@ -86,7 +86,7 @@ public class FilterListTest {
 
   @Test
   public void simultaneousAddRemove() {
-    final Property<Boolean> p = new ValueProperty<>(false);
+    final Property<Boolean> p = new ValueProperty<Boolean>(false);
     Transformer<ObservableCollection<Integer>, ObservableList<Integer>> filter = Transformers.listFilter(new Function<Integer, ReadableProperty<Boolean>>() {
       @Override
       public ReadableProperty<Boolean> apply(final Integer i) {
@@ -98,7 +98,7 @@ public class FilterListTest {
         };
       }
     });
-    ObservableList<Integer> source = new ObservableArrayList<>();
+    ObservableList<Integer> source = new ObservableArrayList<Integer>();
     ObservableList<Integer> target = filter.transform(source).getTarget();
     source.add(2);
     source.add(0, 1);

@@ -28,7 +28,8 @@
     <mvn.dependency.plugin.version>2.8</mvn.dependency.plugin.version>
     <mvn.surefire.plugin.version>2.12</mvn.surefire.plugin.version>
 
-    <java.source.level>1.7</java.source.level>
+    <java.source.level>1.6</java.source.level>
+    <java.target.level>1.6</java.target.level>
   </properties>
 
   <dependencyManagement>
@@ -92,7 +93,7 @@
           <version>${mvn.compiler.plugin.version}</version>
           <configuration>
             <source>${java.source.level}</source>
-            <target>${java.source.level}</target>
+            <target>${java.target.level}</target>
           </configuration>
         </plugin>
 
