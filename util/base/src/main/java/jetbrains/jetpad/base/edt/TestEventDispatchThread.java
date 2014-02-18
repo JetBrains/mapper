@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestEventDispatchThread implements EventDispatchThread {
-  private List<Runnable> myRunnables = new ArrayList<Runnable>();
+  private List<Runnable> myRunnables = new ArrayList<>();
 
   public void executeUpdates() {
     while (!myRunnables.isEmpty()) {
-      List<Runnable> toExecute = new ArrayList<Runnable>(myRunnables);
+      List<Runnable> toExecute = new ArrayList<>(myRunnables);
       myRunnables.clear();
       for (Runnable runnable : toExecute) {
         runnable.run();

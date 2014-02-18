@@ -31,8 +31,8 @@ public class SelectListTest {
 
   @Before
   public void setup() {
-    from = new ObservableArrayList<Integer>();
-    to = new ObservableArrayList<String>();
+    from = new ObservableArrayList<>();
+    to = new ObservableArrayList<>();
     select = Transformers.selectList(new Function<Integer, String>() {
       @Override
       public String apply(Integer input) {

@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.event;
 
 public class Callbacks {
   private static boolean ourForceProduction;
-  private static SimpleEventSource<Throwable> ourCallbackExceptions = new SimpleEventSource<Throwable>();
+  private static SimpleEventSource<Throwable> ourCallbackExceptions = new SimpleEventSource<>();
 
   public static EventSource<Throwable> callbackExceptions() {
     return ourCallbackExceptions;

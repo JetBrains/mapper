@@ -26,13 +26,13 @@ import java.util.List;
 public class Asyncs {
 
   public static <ValueT> Async<ValueT> constant(ValueT val) {
-    final SimpleAsync<ValueT> result = new SimpleAsync<ValueT>();
+    final SimpleAsync<ValueT> result = new SimpleAsync<>();
     result.success(val);
     return result;
   }
 
   public static <ValueT> Async<ValueT> failure(Throwable t) {
-    final SimpleAsync<ValueT> result = new SimpleAsync<ValueT>();
+    final SimpleAsync<ValueT> result = new SimpleAsync<>();
     result.failure(t);
     return result;
   }
@@ -47,7 +47,7 @@ public class Asyncs {
   }
 
   public static <SourceT, TargetT> Async<TargetT> map(Async<SourceT> async, final Function<SourceT, TargetT> f) {
-    final SimpleAsync<TargetT> result = new SimpleAsync<TargetT>();
+    final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async
       .onSuccess(new Handler<SourceT>() {
         @Override
@@ -65,7 +65,7 @@ public class Asyncs {
   }
 
   public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<SourceT, Async<TargetT>> f) {
-    final SimpleAsync<TargetT> result = new SimpleAsync<TargetT>();
+    final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async
       .onSuccess(new Handler<SourceT>() {
         @Override
@@ -113,9 +113,9 @@ public class Asyncs {
   }
 
   public static Async<Void> parallel(final Collection<? extends Async<?>> asyncs) {
-    final SimpleAsync<Void> result = new SimpleAsync<Void>();
-    final Value<Integer> completed = new Value<Integer>(0);
-    final List<Throwable> exceptions = new ArrayList<Throwable>();
+    final SimpleAsync<Void> result = new SimpleAsync<>();
+    final Value<Integer> completed = new Value<>(0);
+    final List<Throwable> exceptions = new ArrayList<>();
 
     final Runnable checkTermination = new Runnable() {
       @Override
@@ -151,7 +151,7 @@ public class Asyncs {
   }
 
   public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
-    final SimpleAsync<ResultT> result = new SimpleAsync<ResultT>();
+    final SimpleAsync<ResultT> result = new SimpleAsync<>();
     Async<ResultT> async = s.get();
     async.onSuccess(new Handler<ResultT>() {
       @Override

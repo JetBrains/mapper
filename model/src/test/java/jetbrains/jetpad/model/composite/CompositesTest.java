@@ -324,7 +324,7 @@ public class CompositesTest {
   }
 
   private List<TestComposite> asList(Iterable<TestComposite> it) {
-    List<TestComposite> result = new ArrayList<TestComposite>();
+    List<TestComposite> result = new ArrayList<>();
     for (TestComposite v : it) {
       result.add(v);
     }

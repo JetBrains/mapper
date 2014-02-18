@@ -18,8 +18,8 @@ package jetbrains.jetpad.mapper;
 import java.util.*;
 
 public final class MappingContext {
-  private Map<Object, Object> myMappers = new IdentityHashMap<Object, Object>();
-  private Map<Mapper<?, ?>, Runnable> myOnDispose = new HashMap<Mapper<?, ?>, Runnable>();
+  private Map<Object, Object> myMappers = new IdentityHashMap<>();
+  private Map<Mapper<?, ?>, Runnable> myOnDispose = new HashMap<>();
 
   public MappingContext() {
   }
@@ -35,7 +35,7 @@ public final class MappingContext {
         mappers.add(mapper);
       } else {
         Mapper<?, ?> m = (Mapper<?, ?>) ms;
-        Set<Mapper<?, ?>> mappers = new HashSet<Mapper<?, ?>>();
+        Set<Mapper<?, ?>> mappers = new HashSet<>();
         mappers.add(m);
         mappers.add(mapper);
         myMappers.put(source, mappers);
@@ -80,7 +80,7 @@ public final class MappingContext {
    * Try using this method as little as possible
    */
   public <S> Set<Mapper<? super S, ?>> getMappers(Mapper<?, ?> ancestor, S source) {
-    Set<Mapper<? super S, ?>> result = new HashSet<Mapper<? super S, ?>>();
+    Set<Mapper<? super S, ?>> result = new HashSet<>();
     for (Mapper<? super S, ?> m : getMappers(source)) {
       if (Mappers.isDescendant(ancestor, m)) {
         result.add(m);
@@ -99,7 +99,7 @@ public final class MappingContext {
       return Collections.emptySet();
     }
     Object mappers = myMappers.get(source);
-    Set<Mapper<? super S, ?>> result = new HashSet<Mapper<? super S, ?>>();
+    Set<Mapper<? super S, ?>> result = new HashSet<>();
     if (mappers instanceof Mapper) {
       result.add((Mapper<? super S, ?>) mappers);
     } else {

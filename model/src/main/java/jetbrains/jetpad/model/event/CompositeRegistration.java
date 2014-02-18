@@ -25,7 +25,7 @@ public class CompositeRegistration implements Registration {
   private boolean myRemoving;
 
   public CompositeRegistration(Registration... regs) {
-    myRegistrations = new ArrayList<Registration>(regs.length);
+    myRegistrations = new ArrayList<>(regs.length);
     myRegistrations.addAll(Arrays.asList(regs));
   }
 

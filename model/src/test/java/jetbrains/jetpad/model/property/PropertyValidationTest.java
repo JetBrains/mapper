@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class PropertyValidationTest {
   @Test
   public void validatedProperty() {
-    Property<String> source = new ValueProperty<String>("abc");
+    Property<String> source = new ValueProperty<>("abc");
 
     Property<String> validated = Properties.validatedProperty(source, new Predicate<String>() {
       @Override
@@ -41,7 +41,7 @@ public class PropertyValidationTest {
 
   @Test
   public void isValidProperty() {
-    Property<String> source = new ValueProperty<String>("abc");
+    Property<String> source = new ValueProperty<>("abc");
     ReadableProperty<Boolean> isValid = Properties.isPropertyValid(source, new Predicate<String>() {
       @Override
       public boolean apply(String input) {
