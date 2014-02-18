@@ -22,7 +22,7 @@ public class ThrowableCollectionException extends RuntimeException {
   private List<Throwable> myThrowables = new ArrayList<>();
 
   public ThrowableCollectionException(List<Throwable> throwables) {
-    super(throwables.get(0));
+    super("size=" + throwables.size(), throwables.get(0));
     myThrowables.addAll(throwables);
   }
 
