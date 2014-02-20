@@ -70,4 +70,9 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
     result = 31 * result + myIndex;
     return result;
   }
+
+  @Override
+  public String toString() {
+    return myItem + " " + (myAdded ? "added" : "removed") + " at " + myIndex;
+  }
 }
