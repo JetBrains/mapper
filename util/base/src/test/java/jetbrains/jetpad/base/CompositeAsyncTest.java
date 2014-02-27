@@ -18,6 +18,7 @@ package jetbrains.jetpad.base;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -77,7 +78,7 @@ public class CompositeAsyncTest {
   }
 
   @Test
-  public void partialFailure() {
+  public void partialFailureSingleException() {
     List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(new SimpleAsync<Integer>());
@@ -94,9 +95,8 @@ public class CompositeAsyncTest {
       @Override
       public void handle(Throwable item) {
         failed.set(true);
-        List<Throwable> throwables = ((ThrowableCollectionException) item).getThrowables();
-        assertEquals(1, throwables.size());
-        assertEquals("test", throwables.get(0).getMessage());
+        assertTrue(item instanceof IllegalStateException);
+        assertEquals("test", item.getMessage());
       }
     });
 
@@ -106,6 +106,40 @@ public class CompositeAsyncTest {
     }
 
     ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).failure(new IllegalStateException("test"));
+    assertTrue(failed.get());
+  }
+
+  @Test
+  public void partialFailureSeveralExceptions() {
+    List<Async<Integer>> asyncs = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+      asyncs.add(new SimpleAsync<Integer>());
+    }
+    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+
+    final Value<Boolean> failed = new Value<>(false);
+    async.onSuccess(new Handler<List<Integer>>() {
+      @Override
+      public void handle(List<Integer> item) {
+        throw new UnsupportedOperationException();
+      }
+    }).onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        failed.set(true);
+        List<Throwable> throwables = ((ThrowableCollectionException) item).getThrowables();
+        assertEquals(2, throwables.size());
+        List<String> expected = Arrays.asList("0", "1");
+        List<String> actual = Arrays.asList(throwables.get(0).getMessage(), throwables.get(1).getMessage());
+        assertEquals(expected, actual);
+      }
+    });
+
+    for (int i = 0; i < asyncs.size() - 1; i++) {
+      ((SimpleAsync<Integer>)asyncs.get(i)).failure(new IllegalStateException("" + i));
+      assertFalse(failed.get());
+    }
+    ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
     assertTrue(failed.get());
   }
 
