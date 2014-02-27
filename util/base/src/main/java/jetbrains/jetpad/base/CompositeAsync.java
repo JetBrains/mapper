@@ -54,7 +54,11 @@ public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
     if (myFailures.isEmpty()) {
       success(mySucceeded);
     } else {
-      failure(new ThrowableCollectionException(myFailures));
+      if (myFailures.size() == 1) {
+        failure(myFailures.get(0));
+      } else {
+        failure(new ThrowableCollectionException(myFailures));
+      }
     }
   }
 }
