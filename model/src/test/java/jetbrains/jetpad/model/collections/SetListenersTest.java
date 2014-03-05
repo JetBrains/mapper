@@ -31,17 +31,17 @@ public class SetListenersTest extends ListenersTestCase {
   @Override
   protected MyCollection createThrowingOnAddCollection() {
     return new TestObservableHashSet() {
-        @Override
-        public boolean add(Integer integer) {
-          add(integer, new Runnable() {
-            @Override
-            public void run() {
-              throw new IllegalStateException();
-            }
-          });
-          return true;
-        }
-      };
+      @Override
+      public boolean add(Integer integer) {
+        add(integer, new Runnable() {
+          @Override
+          public void run() {
+            throw new IllegalStateException();
+          }
+        });
+        return true;
+      }
+    };
   }
 
   @Override
