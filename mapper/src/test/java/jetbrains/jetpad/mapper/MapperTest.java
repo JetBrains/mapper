@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.model.collections.set.ObservableSet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,6 +105,38 @@ public class MapperTest {
     assertTrue(target.observableChildren.isEmpty());
     assertTrue(target.children.isEmpty());
     assertTrue(target.transformedChildren.isEmpty());
+  }
+
+  @Test
+  public void illegalStateExceptionOnDetachBug() {
+    class MyMapper extends Mapper<Object, Object> {
+      ObservableSet<Mapper<?,?>> children;
+      MyMapper child;
+
+      MyMapper(Object source) {
+        super(source, new Object());
+        children = createChildSet();
+      }
+
+      void attachChild() {
+        child = new MyMapper(new Object());
+        children.add(child);
+      }
+
+      void detachChild() {
+        children.remove(child);
+        child = null;
+      }
+    }
+
+    MyMapper mapper = new MyMapper(new Object());
+    mapper.attachRoot();
+
+    mapper.attachChild();
+    mapper.detachChild();
+    mapper.attachChild();
+
+    mapper.detachRoot();
   }
 
   private void assertMapped() {

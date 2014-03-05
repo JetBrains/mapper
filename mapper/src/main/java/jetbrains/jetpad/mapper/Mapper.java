@@ -287,11 +287,12 @@ public abstract class Mapper<SourceT, TargetT> {
       checkCanRemove((Mapper<?, ?>) item);
       removeChild((Mapper<?, ?>) item);
 
+      boolean result = super.remove(item);
       if (isEmpty()) {
         removePart(this);
       }
 
-      return super.remove(item);
+      return result;
     }
 
     @Override
