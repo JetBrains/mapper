@@ -196,7 +196,9 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   private void checkCanAdd(Mapper<?, ?> item) {
-    if (item.myParent != null) throw new IllegalArgumentException();
+    if (item.myParent != null) {
+      throw new IllegalArgumentException();
+    }
   }
 
   private void checkCanRemove(Mapper<?, ?> item) {
@@ -236,29 +238,40 @@ public abstract class Mapper<SourceT, TargetT> {
 
   private class ChildList<MapperT extends Mapper<?, ?>> extends ObservableArrayList<MapperT> implements ChildContainer {
     @Override
-    public void add(int index, final MapperT item) {
-      checkCanAdd(item);
+    protected void checkAdd(int index, MapperT item) {
+      Mapper.this.checkCanAdd(item);
 
-      if (isEmpty()) {
-        addPart(this);
-      }
-
-      super.add(index, item);
-      addChild(item);
+      super.checkAdd(index, item);
     }
 
     @Override
-    public MapperT remove(int index) {
-      MapperT item = get(index);
-      checkCanRemove(item);
-      super.remove(index);
-      removeChild(item);
+    protected void checkRemove(int index, MapperT item) {
+      Mapper.this.checkCanRemove(item);
 
+      super.checkRemove(index, item);
+    }
+
+    @Override
+    protected void beforeItemAdded(int index, MapperT item) {
+      if (isEmpty()) {
+        addPart(this);
+      }
+      addChild(item);
+      super.beforeItemAdded(index, item);
+    }
+
+    @Override
+    protected void beforeItemRemoved(int index, MapperT item) {
+      removeChild(item);
+      super.beforeItemRemoved(index, item);
+    }
+
+    @Override
+    protected void afterItemRemoved(int index, MapperT item, boolean success) {
       if (isEmpty()) {
         removePart(this);
       }
-
-      return item;
+      super.afterItemRemoved(index, item, success);
     }
 
     @Override
@@ -269,30 +282,42 @@ public abstract class Mapper<SourceT, TargetT> {
 
   private class ChildSet<MapperT extends Mapper<?, ?>> extends ObservableHashSet<MapperT> implements ChildContainer {
     @Override
-    public boolean add(MapperT item) {
-      if (contains(item)) return false;
+    protected void checkAdd(MapperT item) {
+      Mapper.this.checkCanAdd(item);
 
+      super.checkAdd(item);
+    }
+
+    @Override
+    protected void checkRemove(MapperT item) {
+      Mapper.this.checkCanRemove(item);
+
+      super.checkRemove(item);
+    }
+
+    @Override
+    protected void beforeItemAdded(MapperT item) {
       if (isEmpty()) {
         addPart(this);
       }
 
-      checkCanAdd(item);
       addChild(item);
-      return super.add(item);
+
+      super.beforeItemAdded(item);
     }
 
     @Override
-    public boolean remove(Object item) {
-      if (!contains(item)) return false;
-      checkCanRemove((Mapper<?, ?>) item);
+    protected void beforeItemRemoved(MapperT item) {
       removeChild((Mapper<?, ?>) item);
+      super.beforeItemRemoved(item);
+    }
 
-      boolean result = super.remove(item);
+    @Override
+    protected void afterItemRemoved(MapperT item, boolean success) {
       if (isEmpty()) {
         removePart(this);
       }
-
-      return result;
+      super.afterItemRemoved(item, success);
     }
 
     @Override

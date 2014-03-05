@@ -119,7 +119,7 @@ public class MapperTest {
     mapper.detachRoot();
   }
 
-//  @Test
+  @Test
   public void illegalStateExceptionOnDetachBugInCaseOfClearCall() {
     TestMapper mapper = new TestMapper(new Object());
     mapper.attachRoot();
