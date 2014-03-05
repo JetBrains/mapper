@@ -947,6 +947,11 @@ public class Transformers {
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
+    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(Suppliers.ofInstance(item), condition);
+  }
+
+  public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
     final Supplier<ItemT> memoizedItem = Suppliers.memoize(item);
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
