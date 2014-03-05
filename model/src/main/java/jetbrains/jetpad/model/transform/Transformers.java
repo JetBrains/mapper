@@ -18,6 +18,7 @@ package jetbrains.jetpad.model.transform;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
@@ -946,7 +947,8 @@ public class Transformers {
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
+    final Supplier<ItemT> memoizedItem = Suppliers.memoize(item);
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {
@@ -979,7 +981,7 @@ public class Transformers {
           @Override
           public void onEvent(PropertyChangeEvent<Boolean> event) {
             if (event.getNewValue()) {
-              to.add(0, item);
+              to.add(0, memoizedItem.get());
             } else {
               to.remove(0);
             }
@@ -987,7 +989,7 @@ public class Transformers {
         };
 
         if (condition.get()) {
-          to.add(item);
+          to.add(memoizedItem.get());
         }
         to.addAll(from);
 
@@ -1015,8 +1017,15 @@ public class Transformers {
     };
   }
 
+
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
+    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(Suppliers.ofInstance(item), condition);
+  }
+
+  public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
+  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
+    final Supplier<ItemT> memoizedItem = Suppliers.memoize(item);
     return new BaseTransformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
       @Override
       public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(ObservableCollection<SourceT> from) {
@@ -1041,15 +1050,15 @@ public class Transformers {
           @Override
           public void onEvent(PropertyChangeEvent<Boolean> event) {
             if (event.getNewValue()) {
-              to.add(item);
+              to.add(memoizedItem.get());
             } else {
-              to.remove(item);
+              to.remove(memoizedItem.get());
             }
           }
         };
 
         if (condition.get()) {
-          to.add(item);
+          to.add(memoizedItem.get());
         }
         to.addAll(from);
 
