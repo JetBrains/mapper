@@ -34,17 +34,21 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     }
     return myListeners.add(l);
   }
-  
-  protected boolean canAdd(ItemT item) {
-    return true;
+
+  /**
+   * Check whether we can add item at index and if not so, throw and exception
+   */
+  protected void checkAdd(ItemT item) {
   }
 
-  protected boolean canRemove(ItemT item) {
-    return true;
+  /**
+   * Check whether we can remove item at index and if not so, throw and exception
+   */
+  protected void checkRemove(ItemT item) {
   }
 
   protected final void add(final ItemT item, Runnable action) {
-    if (!canAdd(item)) throw new IllegalArgumentException();
+    checkAdd(item);
 
     beforeItemAdded(item);
 
@@ -73,7 +77,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
 
 
   protected final void remove(final ItemT item, Runnable action) {
-    if (!canRemove(item)) throw new IllegalArgumentException();
+    checkRemove(item);
 
     beforeItemRemoved(item);
 

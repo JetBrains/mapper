@@ -109,31 +109,23 @@ public class MapperTest {
 
   @Test
   public void illegalStateExceptionOnDetachBug() {
-    class MyMapper extends Mapper<Object, Object> {
-      ObservableSet<Mapper<?,?>> children;
-      MyMapper child;
-
-      MyMapper(Object source) {
-        super(source, new Object());
-        children = createChildSet();
-      }
-
-      void attachChild() {
-        child = new MyMapper(new Object());
-        children.add(child);
-      }
-
-      void detachChild() {
-        children.remove(child);
-        child = null;
-      }
-    }
-
-    MyMapper mapper = new MyMapper(new Object());
+    TestMapper mapper = new TestMapper(new Object());
     mapper.attachRoot();
 
     mapper.attachChild();
     mapper.detachChild();
+    mapper.attachChild();
+
+    mapper.detachRoot();
+  }
+
+//  @Test
+  public void illegalStateExceptionOnDetachBugInCaseOfClearCall() {
+    TestMapper mapper = new TestMapper(new Object());
+    mapper.attachRoot();
+
+    mapper.attachChild();
+    mapper.detachChildren();
     mapper.attachChild();
 
     mapper.detachRoot();
@@ -156,5 +148,30 @@ public class MapperTest {
     }
 
     return result;
+  }
+
+  class TestMapper extends Mapper<Object, Object> {
+    ObservableSet<Mapper<?,?>> children;
+    TestMapper child;
+
+    TestMapper(Object source) {
+      super(source, new Object());
+      children = createChildSet();
+    }
+
+    void attachChild() {
+      child = new TestMapper(new Object());
+      children.add(child);
+    }
+
+    void detachChild() {
+      children.remove(child);
+      child = null;
+    }
+
+    void detachChildren() {
+      children.clear();
+      child = null;
+    }
   }
 }
