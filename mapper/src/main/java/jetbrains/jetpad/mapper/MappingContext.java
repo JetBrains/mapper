@@ -79,7 +79,7 @@ public final class MappingContext {
   }
 
   /**
-   * Try using this method as little as possible
+   * Try using this method as little as possible. Nice to use method which returns one mapper instead
    */
   public <S> Set<Mapper<? super S, ?>> getMappers(Mapper<?, ?> ancestor, S source) {
     Set<Mapper<? super S, ?>> result = new HashSet<>();
