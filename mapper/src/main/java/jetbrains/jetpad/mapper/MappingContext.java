@@ -72,7 +72,9 @@ public final class MappingContext {
   public <S> Mapper<? super S, ?> getMapper(Mapper<?, ?> ancestor, S source) {
     Set<Mapper<? super S, ?>> result = getMappers(ancestor, source);
     if (result.isEmpty()) return null;
-    if (result.size() > 1) throw new IllegalStateException();
+    if (result.size() > 1) {
+      throw new IllegalStateException("There are more than one mapper for " + source);
+    }
     return result.iterator().next();
   }
 
