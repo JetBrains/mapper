@@ -106,7 +106,7 @@ public class Persisters {
     return new Persister<E>() {
       @Override
       public E deserialize(String value) {
-        return value == null ? defaultValue : Enum.valueOf(cls, value);
+        return value == null ? defaultValue : Enums.valueOf(cls, value);
       }
 
       @Override
