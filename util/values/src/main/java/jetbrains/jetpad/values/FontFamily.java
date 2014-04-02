@@ -16,6 +16,11 @@ public class FontFamily {
     NamedFontFamily(String name) {
       myName = name;
     }
+
+    @Override
+    public String toString() {
+      return myName;
+    }
   }
 
   private static class MonospacedFontFamily extends FontFamily {
