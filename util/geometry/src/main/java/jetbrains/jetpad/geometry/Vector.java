@@ -78,10 +78,6 @@ public class Vector {
     return new Vector(-y, x);
   }
 
-  public double phi() {
-    return Math.atan2(y, x);
-  }
-
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Vector)) return false;
