@@ -29,6 +29,10 @@ public abstract class SimpleCollectionProperty<ItemT, ValueT> extends BaseDerive
     myCollection = collection;
   }
 
+  protected ObservableCollection<ItemT> getCollection() {
+    return myCollection;
+  }
+
   @Override
   protected void doAddListeners() {
     myRegistration = myCollection.addListener(new CollectionListener<ItemT>() {
