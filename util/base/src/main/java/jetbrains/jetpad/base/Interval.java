@@ -37,4 +37,21 @@ public class Interval {
   public String toString() {
     return "[" + myLowerBound + ", " + myUpperBound + "]";
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Interval)) return false;
+
+    Interval interval = (Interval) o;
+    if (myLowerBound != interval.myLowerBound) return false;
+    return myUpperBound == interval.myUpperBound;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myLowerBound;
+    result = 31 * result + myUpperBound;
+    return result;
+  }
 }
