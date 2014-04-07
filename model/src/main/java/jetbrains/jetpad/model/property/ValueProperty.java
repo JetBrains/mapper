@@ -19,7 +19,7 @@ import com.google.common.base.Objects;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT> {
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;

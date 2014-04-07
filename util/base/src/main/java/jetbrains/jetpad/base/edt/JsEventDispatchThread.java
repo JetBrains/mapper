@@ -16,6 +16,8 @@
 package jetbrains.jetpad.base.edt;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Timer;
+import jetbrains.jetpad.base.Registration;
 
 public final class JsEventDispatchThread implements EventDispatchThread {
   public static final JsEventDispatchThread INSTANCE = new JsEventDispatchThread();
@@ -31,5 +33,40 @@ public final class JsEventDispatchThread implements EventDispatchThread {
         r.run();
       }
     });
+  }
+
+  @Override
+  public Registration schedule(int delay, final Runnable r) {
+    final Timer timer = new Timer() {
+      @Override
+      public void run() {
+        r.run();
+      }
+    };
+    timer.schedule(delay);
+    return timerReg(timer);
+  }
+
+  @Override
+  public Registration scheduleRepeating(int period, final Runnable r) {
+    final Timer timer = new Timer() {
+      @Override
+      public void run() {
+        r.run();
+      }
+    };
+    timer.scheduleRepeating(period);
+    return timerReg(timer);
+  }
+
+  private Registration timerReg(final Timer timer) {
+    return new Registration() {
+      @Override
+      public void remove() {
+        if (timer.isRunning()) {
+          timer.cancel();
+        }
+      }
+    };
   }
 }

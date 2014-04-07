@@ -17,7 +17,7 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public class PropertyBinding {
   public static <ValueT> Registration bind(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {

@@ -17,7 +17,7 @@ package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public class SimpleDerivedProperty<ValueT> extends BaseDerivedProperty<ValueT> {
   private ReadableProperty<?>[] myDependencies;

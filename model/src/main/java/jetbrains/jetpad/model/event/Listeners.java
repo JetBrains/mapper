@@ -16,6 +16,8 @@
 package jetbrains.jetpad.model.event;
 
 
+import jetbrains.jetpad.base.Registration;
+
 import java.util.ArrayList;
 import java.util.List;
 

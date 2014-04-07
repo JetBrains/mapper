@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.model.property;
 
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

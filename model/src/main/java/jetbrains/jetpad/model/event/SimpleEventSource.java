@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.Registration;
+
 public class SimpleEventSource<EventT> implements EventSource<EventT> {
   private Listeners<EventHandler<? super EventT>> myListeners = new Listeners<>();
 

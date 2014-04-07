@@ -16,7 +16,7 @@
 package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public abstract class DerivedProperty<ValueT> extends BaseDerivedProperty<ValueT> {
   private Registration[] myRegistrations;

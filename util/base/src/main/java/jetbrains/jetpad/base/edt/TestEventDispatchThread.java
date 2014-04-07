@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Registration;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,5 +36,15 @@ public class TestEventDispatchThread implements EventDispatchThread {
   @Override
   public void schedule(Runnable r) {
     myRunnables.add(r);
+  }
+
+  @Override
+  public Registration schedule(int delay, Runnable r) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Registration scheduleRepeating(int period, Runnable r) {
+    throw new UnsupportedOperationException();
   }
 }

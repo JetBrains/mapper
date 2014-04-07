@@ -19,7 +19,7 @@ import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public class SingleItemCollectionProperty<ItemT> implements Property<ItemT> {
   private ObservableCollection<ItemT> myCollection;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.event;
+package jetbrains.jetpad.base;
 
 public interface Registration {
   public static final Registration EMPTY = new Registration() {

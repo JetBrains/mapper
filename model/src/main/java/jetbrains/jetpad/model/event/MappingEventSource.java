@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.event;
 
 import com.google.common.base.Function;
+import jetbrains.jetpad.base.Registration;
 
 public class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
   private Listeners<EventHandler<? super TargetEventT>> myHandlers = new Listeners<>();

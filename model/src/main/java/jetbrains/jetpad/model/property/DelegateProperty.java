@@ -16,7 +16,7 @@
 package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public class DelegateProperty<ValueT> implements Property<ValueT> {
   private Property<ValueT> myProperty;

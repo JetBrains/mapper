@@ -17,10 +17,8 @@ package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.event.Registration;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

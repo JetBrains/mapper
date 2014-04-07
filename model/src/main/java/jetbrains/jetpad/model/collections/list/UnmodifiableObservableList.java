@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.collections.list;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public class UnmodifiableObservableList<ElementT> extends UnmodifiableList<ElementT> implements ObservableList<ElementT> {
   public UnmodifiableObservableList(ObservableList<ElementT> wrappedList) {

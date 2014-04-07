@@ -15,6 +15,11 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Registration;
+
 public interface EventDispatchThread {
   void schedule(Runnable r);
+
+  Registration schedule(int delay, Runnable r);
+  Registration scheduleRepeating(int period, Runnable r);
 }

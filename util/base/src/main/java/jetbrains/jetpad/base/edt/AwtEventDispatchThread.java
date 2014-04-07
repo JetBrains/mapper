@@ -15,7 +15,11 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Registration;
+
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public final class AwtEventDispatchThread implements EventDispatchThread {
   public static final AwtEventDispatchThread INSTANCE = new AwtEventDispatchThread();
@@ -26,5 +30,43 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   @Override
   public void schedule(Runnable r) {
     SwingUtilities.invokeLater(r);
+  }
+
+  @Override
+  public Registration schedule(int delay, final Runnable r) {
+    final Timer timer = new Timer(delay, null);
+    timer.setRepeats(false);
+    timer.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        r.run();
+      }
+    });
+    timer.start();
+    return timerReg(timer);
+  }
+
+  @Override
+  public Registration scheduleRepeating(int period, final Runnable r) {
+    final Timer timer = new Timer(period, null);
+    timer.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        r.run();
+      }
+    });
+    timer.start();
+    return timerReg(timer);
+  }
+
+  private Registration timerReg(final Timer timer) {
+    return new Registration() {
+      @Override
+      public void remove() {
+        if (timer.isRunning()) {
+          timer.stop();
+        }
+      }
+    };
   }
 }

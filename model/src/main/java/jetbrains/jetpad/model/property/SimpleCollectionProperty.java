@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.property;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.collections.ObservableCollection;
-import jetbrains.jetpad.model.event.Registration;
+import jetbrains.jetpad.base.Registration;
 
 public abstract class SimpleCollectionProperty<ItemT, ValueT> extends BaseDerivedProperty<ValueT> {
   private ObservableCollection<ItemT> myCollection;
