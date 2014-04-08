@@ -40,11 +40,11 @@ public class TestEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, Runnable r) {
-    throw new UnsupportedOperationException();
+    return Registration.EMPTY;
   }
 
   @Override
   public Registration scheduleRepeating(int period, Runnable r) {
-    throw new UnsupportedOperationException();
+    return Registration.EMPTY;
   }
 }
