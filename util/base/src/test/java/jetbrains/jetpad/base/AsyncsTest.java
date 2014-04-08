@@ -19,7 +19,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AsyncsTest {
   @Test
@@ -137,6 +138,11 @@ public class AsyncsTest {
     }), 1);
   }
 
+  @Test
+  public void checkedCast() {
+    Async<String> stringAsync = Asyncs.constant("");
+    Async<Object> objectAsync = Asyncs.<Object>checkedCast(stringAsync);
+  }
 
   private void assertFailure(Async<?> async) {
     final Value<Boolean> called = new Value<>(false);
