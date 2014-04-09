@@ -16,35 +16,95 @@
 package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestEventDispatchThread implements EventDispatchThread {
-  private List<Runnable> myRunnables = new ArrayList<>();
+  private int myCurrentTime;
+  private int myModicationCount;
+  private List<RunnableRecord> myRecords = new ArrayList<>();
 
   public void executeUpdates() {
-    while (!myRunnables.isEmpty()) {
-      List<Runnable> toExecute = new ArrayList<>(myRunnables);
-      myRunnables.clear();
-      for (Runnable runnable : toExecute) {
-        runnable.run();
-      }
+    executeUpdates(0);
+  }
+
+  public void executeUpdates(int passedTime) {
+    executeCurrentUpdates();
+    for (int i = 0; i < passedTime; i++) {
+      myCurrentTime++;
+      executeCurrentUpdates();
     }
+  }
+
+  private void executeCurrentUpdates() {
+    int mc;
+    do {
+      mc = myModicationCount;
+      List<RunnableRecord> toRemove = new ArrayList<>();
+      for (RunnableRecord r : new ArrayList<>(myRecords)) {
+        if (r.getTargetTime() == myCurrentTime) {
+          r.run();
+          toRemove.add(r);
+        }
+      }
+      myRecords.removeAll(toRemove);
+    } while (myModicationCount != mc);
   }
 
   @Override
   public void schedule(Runnable r) {
-    myRunnables.add(r);
+    schedule(0, r);
   }
 
   @Override
   public Registration schedule(int delay, Runnable r) {
-    return Registration.EMPTY;
+    myModicationCount++;
+    final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, r);
+    myRecords.add(record);
+    return new Registration() {
+      @Override
+      public void remove() {
+        myRecords.remove(record);
+      }
+    };
   }
 
   @Override
-  public Registration scheduleRepeating(int period, Runnable r) {
-    return Registration.EMPTY;
+  public Registration scheduleRepeating(final int period, final Runnable r) {
+    final Value<Boolean> cancelled = new Value<>(false);
+    schedule(period, new Runnable() {
+      @Override
+      public void run() {
+        if (cancelled.get()) return;
+        r.run();
+        schedule(period, this);
+      }
+    });
+    return new Registration() {
+      @Override
+      public void remove() {
+        cancelled.set(true);
+      }
+    };
+  }
+
+  private class RunnableRecord {
+    private int myTargetTime;
+    private Runnable myRunnable;
+
+    private RunnableRecord(int targetTime, Runnable runnable) {
+      myTargetTime = targetTime;
+      myRunnable = runnable;
+    }
+
+    int getTargetTime() {
+      return myTargetTime;
+    }
+
+    void run() {
+      myRunnable.run();
+    }
   }
 }
