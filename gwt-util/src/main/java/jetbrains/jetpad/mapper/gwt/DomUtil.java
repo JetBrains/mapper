@@ -16,6 +16,7 @@
 package jetbrains.jetpad.mapper.gwt;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Supplier;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
@@ -25,14 +26,13 @@ import com.google.gwt.query.client.css.TakesCssValue;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
-import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.model.property.Property;
-import jetbrains.jetpad.model.property.PropertyChangeEvent;
-import jetbrains.jetpad.model.property.WritableProperty;
+import jetbrains.jetpad.model.property.*;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -363,4 +363,43 @@ public class DomUtil {
       }
     };
   }
+
+  public static ReadableProperty<Vector> dimension(final Element el) {
+    return timerBasedProperty(new Supplier<Vector>() {
+      @Override
+      public Vector get() {
+        return new Vector(el.getClientWidth(), el.getClientHeight());
+      }
+    }, 200);
+  }
+
+  public static <ValueT> ReadableProperty<ValueT> timerBasedProperty(final Supplier<ValueT> supplier, final int period) {
+    return new UpdatableProperty<ValueT>() {
+      private Timer myTimer = new Timer() {
+        @Override
+        public void run() {
+          update();
+        }
+      };
+
+      @Override
+      protected void doStartPolling() {
+        super.doStartPolling();
+        myTimer.scheduleRepeating(period);
+      }
+
+      @Override
+      protected void doStopPolling() {
+        super.doStopPolling();
+        myTimer.cancel();
+      }
+
+      @Override
+      protected ValueT doGet() {
+        return supplier.get();
+      }
+    };
+
+  }
+
 }

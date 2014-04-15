@@ -8,4 +8,5 @@
   <inherits name="com.google.gwt.user.User" />
   <inherits name="jetbrains.jetpad.model.Model"/>
   <inherits name="com.google.gwt.query.Query"/>
+  <inherits name="jetbrains.jetpad.geometry.Geometry"/>
 </module>
