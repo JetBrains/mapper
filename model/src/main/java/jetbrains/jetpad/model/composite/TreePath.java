@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import jetbrains.jetpad.model.collections.list.ObservableList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +30,9 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
       CompositeT parent = current.parent().get();
       if (parent != null) {
         int index = parent.children().indexOf(current);
-        if (index == -1) throw new IllegalStateException();
+        if (index == -1) {
+          throw new IllegalStateException();
+        }
         myPath.add(index);
       }
       current = parent;
@@ -38,11 +42,25 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
   }
 
   public CompositeT get(CompositeT root) {
+    if (!isValid(root)) {
+      throw new IllegalStateException("Invalid context");
+    }
+
     CompositeT current = root;
     for (Integer i : myPath) {
       current = current.children().get(i);
     }
     return current;
+  }
+
+  public boolean isValid(CompositeT root) {
+    CompositeT current = root;
+    for (Integer i : myPath) {
+      ObservableList<CompositeT> children = current.children();
+      if (i >= children.size()) return false;
+      current = children.get(i);
+    }
+    return true;
   }
 
   @Override

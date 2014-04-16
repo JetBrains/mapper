@@ -52,4 +52,13 @@ public class TreePathTest {
     assertTrue(new TreePath<TestComposite>(child1).compareTo(new TreePath<TestComposite>(child2)) < 0);
     assertTrue(new TreePath<TestComposite>(child1).compareTo(new TreePath<TestComposite>(child1)) == 0);
   }
+
+  @Test
+  public void pathValidity() {
+    TreePath<TestComposite> path = new TreePath<>(child1);
+
+    assertTrue(path.isValid(root));
+    assertFalse(path.isValid(child1));
+  }
+
 }
