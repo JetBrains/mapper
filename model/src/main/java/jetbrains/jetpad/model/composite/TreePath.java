@@ -41,6 +41,10 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     Collections.reverse(myPath);
   }
 
+  private TreePath(List<Integer> path) {
+    myPath.addAll(path);
+  }
+
   public CompositeT get(CompositeT root) {
     if (!isValid(root)) {
       throw new IllegalStateException("Invalid context");
@@ -61,6 +65,28 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
       current = children.get(i);
     }
     return true;
+  }
+
+  public int getLastIndex() {
+    if (myPath.isEmpty()) {
+      throw new IllegalStateException();
+    }
+    return myPath.get(myPath.size() - 1);
+  }
+
+  public TreePath<CompositeT> getParent() {
+    if (myPath.isEmpty()) {
+      throw new IllegalStateException();
+    }
+
+    return new TreePath<>(myPath.subList(0, myPath.size() - 1));
+  }
+
+  public TreePath<CompositeT> getChild(int index) {
+    List<Integer> newPath = new ArrayList<>();
+    newPath.addAll(myPath);
+    newPath.add(index);
+    return new TreePath<>(newPath);
   }
 
   @Override

@@ -61,4 +61,17 @@ public class TreePathTest {
     assertFalse(path.isValid(child1));
   }
 
+  @Test
+  public void lastIndex() {
+    TreePath<TestComposite> path = new TreePath<>(child2);
+    assertEquals(1, path.getLastIndex());
+  }
+
+  @Test
+  public void parent() {
+    TreePath<TestComposite> path = new TreePath<>(child2);
+
+    assertSame(root, path.getParent().get(root));
+  }
+
 }
