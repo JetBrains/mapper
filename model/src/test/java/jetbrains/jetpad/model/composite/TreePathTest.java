@@ -48,9 +48,9 @@ public class TreePathTest {
 
   @Test
   public void pathComparison() {
-    assertTrue(new TreePath<TestComposite>(root).compareTo(new TreePath<TestComposite>(child1)) < 0);
-    assertTrue(new TreePath<TestComposite>(child1).compareTo(new TreePath<TestComposite>(child2)) < 0);
-    assertTrue(new TreePath<TestComposite>(child1).compareTo(new TreePath<TestComposite>(child1)) == 0);
+    assertTrue(new TreePath<>(root).compareTo(new TreePath<TestComposite>(child1)) < 0);
+    assertTrue(new TreePath<>(child1).compareTo(new TreePath<TestComposite>(child2)) < 0);
+    assertTrue(new TreePath<>(child1).compareTo(new TreePath<TestComposite>(child1)) == 0);
   }
 
   @Test
