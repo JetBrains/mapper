@@ -26,6 +26,11 @@ public class ThrowableCollectionException extends RuntimeException {
     myThrowables.addAll(throwables);
   }
 
+  public ThrowableCollectionException(String message, List<Throwable> throwables) {
+    super(message + "; size=" + throwables.size(), throwables.get(0));
+    myThrowables.addAll(throwables);
+  }
+
   public List<Throwable> getThrowables() {
     return myThrowables;
   }
