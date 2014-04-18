@@ -64,7 +64,9 @@ public class Rectangle {
   }
 
   public Rectangle intersect(Rectangle r) {
-    if (!intersects(r)) throw new IllegalStateException();
+    if (!intersects(r)) {
+      throw new IllegalStateException();
+    }
 
     Vector to = origin;
     Vector ro = r.origin;
