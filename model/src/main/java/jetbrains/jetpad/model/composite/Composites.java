@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Range;
 import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
@@ -89,6 +90,21 @@ public class Composites {
   }
 
   public static <CompositeT extends Composite<CompositeT>>
+  CompositeT next(CompositeT start, CompositeT current) {
+    CompositeT nextSibling = nextSibling(current);
+
+    if (nextSibling != null) {
+      return firstLeaf(nextSibling);
+    }
+
+    if (isNonCompositeChild(current)) return null;
+
+    CompositeT parent = current.parent().get();
+    if (!isDescendant(parent, start)) return parent;
+    return next(start, parent);
+  }
+
+  public static <CompositeT extends Composite<CompositeT>>
   CompositeT prevLeaf(CompositeT c) {
     CompositeT prevSibling = prevSibling(c);
     if (prevSibling != null) {
@@ -104,91 +120,32 @@ public class Composites {
 
   public static <CompositeT extends Composite<CompositeT>>
   Iterable<CompositeT> ancestors(final CompositeT current) {
-    return new Iterable<CompositeT>() {
+    return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
-      public Iterator<CompositeT> iterator() {
-        return new Iterator<CompositeT>() {
-          private CompositeT myCurrent = current.parent().get();
-
-          @Override
-          public boolean hasNext() {
-            return myCurrent != null;
-          }
-
-          @Override
-          public CompositeT next() {
-            CompositeT result = myCurrent;
-            myCurrent = myCurrent.parent().get();
-            return result;
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-        };
+      public CompositeT apply(CompositeT input) {
+        return input.parent().get();
       }
-    };
+    });
   }
 
   public static <CompositeT extends Composite<CompositeT>>
   Iterable<CompositeT> nextLeaves(final CompositeT current) {
-    return new Iterable<CompositeT>() {
+    return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
-      public Iterator<CompositeT> iterator() {
-        return new Iterator<CompositeT>() {
-          private CompositeT myCurrentLeaf = current;
-          private CompositeT myNextLeaf = nextLeaf(current);
-
-          @Override
-          public boolean hasNext() {
-            return myNextLeaf != null;
-          }
-
-          @Override
-          public CompositeT next() {
-            myCurrentLeaf = myNextLeaf;
-            myNextLeaf = nextLeaf(myCurrentLeaf);
-            return myCurrentLeaf;
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-        };
+      public CompositeT apply(CompositeT input) {
+        return nextLeaf(input);
       }
-    };
+    });
   }
 
   public static <CompositeT extends Composite<CompositeT>>
   Iterable<CompositeT> prevLeaves(final CompositeT current) {
-    return new Iterable<CompositeT>() {
+    return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
-      public Iterator<CompositeT> iterator() {
-        return new Iterator<CompositeT>() {
-          private CompositeT myCurrentLeaf = current;
-          private CompositeT myPrevLeaf = prevLeaf(current);
-
-          @Override
-          public boolean hasNext() {
-            return myPrevLeaf != null;
-          }
-
-          @Override
-          public CompositeT next() {
-            myCurrentLeaf = myPrevLeaf;
-            myPrevLeaf = prevLeaf(myCurrentLeaf);
-            return myCurrentLeaf;
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-        };
+      public CompositeT apply(CompositeT input) {
+        return prevLeaf(input);
       }
-    };
+    });
   }
 
   public static <CompositeT extends Composite<CompositeT>>
@@ -463,5 +420,33 @@ public class Composites {
     }
 
     return result;
+  }
+
+  private static <ValueT> Iterable<ValueT> iterate(final ValueT initial, final Function<ValueT, ValueT> trans) {
+    return new Iterable<ValueT>() {
+      @Override
+      public Iterator<ValueT> iterator() {
+        return new Iterator<ValueT>() {
+          private ValueT myCurrent = trans.apply(initial);
+
+          @Override
+          public boolean hasNext() {
+            return myCurrent != null;
+          }
+
+          @Override
+          public ValueT next() {
+            ValueT result = myCurrent;
+            myCurrent = trans.apply(myCurrent);
+            return result;
+          }
+
+          @Override
+          public void remove() {
+            throw new UnsupportedOperationException();
+          }
+        };
+      }
+    };
   }
 }
