@@ -15,7 +15,9 @@
  */
 package jetbrains.jetpad.base.base64;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Base64Coder {
   private static int ourBase = 0;
@@ -105,5 +107,37 @@ public class Base64Coder {
     }
 
     return result.toString();
+  }
+
+  public static byte[] decodeBytes(String s) {
+    if (s.length() % 4 != 0) {
+      throw new IllegalArgumentException();
+    }
+
+    List<Byte> bytes = new ArrayList<>();
+    for (int i = 0; i < s.length() / 4; i++) {
+      char c1 = s.charAt(i * 4);
+      char c2 = s.charAt(i * 4 + 1);
+      char c3 = s.charAt(i * 4 + 2);
+      char c4 = s.charAt(i * 4 + 3);
+
+      byte b1 = (byte) ourChToValue[c1];
+      byte b2 = (byte) ourChToValue[c2];
+      byte b3 = c3 != '=' ? (byte) ourChToValue[c3] : -1;
+      byte b4 = c4 != '=' ? (byte) ourChToValue[c4] : -1;
+
+      bytes.add((byte) ((b1 << 2) + (b2 >> 4)));
+      if (c3 != '=') {
+        bytes.add((byte) (((b2 & 0xF) << 4) + (b3 >> 2)));
+      }
+      if (c4 != '=') {
+        bytes.add((byte) (((b3 & 0x3) << 6) + b4));
+      }
+    }
+    byte[] result = new byte[bytes.size()];
+    for (int i = 0; i < bytes.size(); i++) {
+      result[i] = bytes.get(i);
+    }
+    return result;
   }
 }
