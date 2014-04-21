@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.id;
+package jetbrains.jetpad.base.base64;
 
 import java.util.Arrays;
 
-//see RFC 4648 'base64url' encoding
-public class Base64URLSafeCoder {
+public class Base64Coder {
   private static int ourBase = 0;
   private static final int[] ourChToValue = new int[255];
   private static final char[] ourValueToCh = new char[255];
@@ -35,13 +34,13 @@ public class Base64URLSafeCoder {
     for (char ch = '0'; ch <= '9'; ch++) {
       add(ch);
     }
+    add('+');
     add('-');
-    add('_');
 
     if (ourBase != 64) throw new IllegalStateException();
   }
 
-  private Base64URLSafeCoder() {
+  private Base64Coder() {
   }
 
   private static void add(char ch) {
@@ -75,7 +74,36 @@ public class Base64URLSafeCoder {
     return l;
   }
 
-  public static void main(String[] args) {
-    System.out.println(3 << 6);
+  public static String encode(byte[] bytes) {
+    int blocksLen = bytes.length / 3;
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < blocksLen; i++) {
+      int base = i * 3;
+      byte b1 = bytes[base];
+      byte b2 = bytes[base + 1];
+      byte b3 = bytes[base + 2];
+
+      result.append(ourValueToCh[b1 >> 2]);
+      result.append(ourValueToCh[((b1 & 0x3) << 4) + (b2 >> 4)]);
+      result.append(ourValueToCh[((b2 & 0xF) << 2) + (b3 >> 6)]);
+      result.append(ourValueToCh[((b3 & 0x3F))]);
+    }
+
+    int lastBlock = blocksLen * 3 - 1;
+    if (bytes.length % 3 == 1) {
+      byte b = bytes[lastBlock + 1];
+      result.append(ourValueToCh[b >> 2]);
+      result.append(ourValueToCh[(b & 0x3) << 4]);
+      result.append("==");
+    } else if (bytes.length % 3 == 2) {
+      byte b1 = bytes[lastBlock + 1];
+      byte b2 = bytes[lastBlock + 2];
+      result.append(ourValueToCh[b1 >> 2]);
+      result.append(ourValueToCh[((b1 & 0x3) << 4) + (b2 >> 4)]);
+      result.append(ourValueToCh[((b2 & 0xF) << 2)]);
+      result.append("=");
+    }
+
+    return result.toString();
   }
 }

@@ -13,22 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.id;
+package jetbrains.jetpad.base.base64;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Base64Coder {
+//see RFC 4648 'base64url' encoding
+public class Base64URLSafeCoder {
   private static int ourBase = 0;
   private static final int[] ourChToValue = new int[255];
   private static final char[] ourValueToCh = new char[255];
 
   static {
     Arrays.fill(ourChToValue, 0, ourChToValue.length, -1);
+
+    for (char ch = 'A'; ch <= 'Z'; ch++) {
+      add(ch);
+    }
+    for (char ch = 'a'; ch <= 'z'; ch++) {
+      add(ch);
+    }
+    for (char ch = '0'; ch <= '9'; ch++) {
+      add(ch);
+    }
+    add('-');
+    add('_');
+
+    if (ourBase != 64) throw new IllegalStateException();
   }
 
-  private Base64Coder() {
+  private Base64URLSafeCoder() {
   }
 
   private static void add(char ch) {
@@ -60,25 +73,5 @@ public class Base64Coder {
       if (l < 0) throw new RuntimeException("Overflow");
     }
     return l;
-  }
-
-  static {
-    for (char ch = 'A'; ch <= 'Z'; ch++) {
-      add(ch);
-    }
-    for (char ch = 'a'; ch <= 'z'; ch++) {
-      add(ch);
-    }
-    for (char ch = '0'; ch <= '9'; ch++) {
-      add(ch);
-    }
-    add('+');
-    add('-');
-
-    if (ourBase != 64) throw new IllegalStateException();
-  }
-
-  public static void main(String[] args) {
-    System.out.println(3 << 6);
   }
 }
