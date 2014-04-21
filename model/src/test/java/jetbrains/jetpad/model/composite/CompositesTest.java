@@ -256,6 +256,15 @@ public class CompositesTest {
   }
 
   @Test
+  public void nextFocusableLeavesNotFocusable() {
+    child2.focusable().set(true);
+    leaf21.focusable().set(false);
+    leaf22.focusable().set(false);
+
+    assertSame(child2, Composites.nextFocusable(leaf12));
+  }
+
+  @Test
   public void nestFocusableNoNext() {
     assertNull(Composites.nextFocusable(leaf22));
   }
@@ -270,6 +279,15 @@ public class CompositesTest {
   @Test
   public void prevFocusableSimple() {
     assertSame(leaf11, Composites.prevFocusable(leaf12));
+  }
+
+  @Test
+  public void prevFocusableLeavesNotFocusable() {
+    child1.focusable().set(true);
+    leaf11.focusable().set(false);
+    leaf12.focusable().set(false);
+
+    assertSame(child1, Composites.prevFocusable(leaf21));
   }
 
   @Test

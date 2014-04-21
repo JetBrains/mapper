@@ -90,21 +90,6 @@ public class Composites {
   }
 
   public static <CompositeT extends Composite<CompositeT>>
-  CompositeT next(CompositeT start, CompositeT current) {
-    CompositeT nextSibling = nextSibling(current);
-
-    if (nextSibling != null) {
-      return firstLeaf(nextSibling);
-    }
-
-    if (isNonCompositeChild(current)) return null;
-
-    CompositeT parent = current.parent().get();
-    if (!isDescendant(parent, start)) return parent;
-    return next(start, parent);
-  }
-
-  public static <CompositeT extends Composite<CompositeT>>
   CompositeT prevLeaf(CompositeT c) {
     CompositeT prevSibling = prevSibling(c);
     if (prevSibling != null) {
@@ -146,6 +131,57 @@ public class Composites {
         return prevLeaf(input);
       }
     });
+  }
+
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> nextNavOrder(final CompositeT current) {
+    return iterate(current, new Function<CompositeT, CompositeT>() {
+      @Override
+      public CompositeT apply(CompositeT input) {
+        return nextNavOrder(current, input);
+      }
+    });
+  }
+
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> prevNavOrder(final CompositeT current) {
+    return iterate(current, new Function<CompositeT, CompositeT>() {
+      @Override
+      public CompositeT apply(CompositeT input) {
+        return prevNavOrder(current, input);
+      }
+    });
+  }
+
+
+  private static <CompositeT extends Composite<CompositeT>>
+  CompositeT nextNavOrder(CompositeT start, CompositeT current) {
+    CompositeT nextSibling = nextSibling(current);
+
+    if (nextSibling != null) {
+      return firstLeaf(nextSibling);
+    }
+
+    if (isNonCompositeChild(current)) return null;
+
+    CompositeT parent = current.parent().get();
+    if (!isDescendant(parent, start)) return parent;
+    return nextNavOrder(start, parent);
+  }
+
+  private static <CompositeT extends Composite<CompositeT>>
+  CompositeT prevNavOrder(CompositeT start, CompositeT current) {
+    CompositeT prevSibling = prevSibling(current);
+
+    if (prevSibling != null) {
+      return lastLeaf(prevSibling);
+    }
+
+    if (isNonCompositeChild(current)) return null;
+
+    CompositeT parent = current.parent().get();
+    if (!isDescendant(parent, start)) return parent;
+    return prevNavOrder(start, parent);
   }
 
   public static <CompositeT extends Composite<CompositeT>>
@@ -293,7 +329,7 @@ public class Composites {
 
   public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
   ViewT nextFocusable(ViewT v) {
-    for (ViewT cv : Composites.nextLeaves(v)) {
+    for (ViewT cv : Composites.nextNavOrder(v)) {
       if (isFocusable(cv)) return cv;
     }
     return null;
@@ -301,7 +337,7 @@ public class Composites {
 
   public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
   ViewT prevFocusable(ViewT v) {
-    for (ViewT cv : Composites.prevLeaves(v)) {
+    for (ViewT cv : Composites.prevNavOrder(v)) {
       if (isFocusable(cv)) return cv;
     }
     return null;
