@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 public class Base64EncoderTest {
   @Test
   public void encodeLenIs0Mod3() {
-    assertEquals("Q2F0", Base64Coder.encode(new byte[] { 'C', 'a', 't' }));
+    assertEquals("Q2F0", Base64Coder.encode(new byte[] {'C', 'a', 't'}));
   }
 
   @Test
@@ -18,7 +18,7 @@ public class Base64EncoderTest {
 
   @Test
   public void encodeLenIs1Mod3() {
-    assertEquals("Q2F0cw==", Base64Coder.encode(new byte[] { 'C', 'a', 't', 's' }));
+    assertEquals("Q2F0cw==", Base64Coder.encode(new byte[] {'C', 'a', 't', 's'}));
   }
 
   @Test
@@ -35,4 +35,11 @@ public class Base64EncoderTest {
   public void decodeLenIs2Mod3() {
     assertArrayEquals(new byte[] { 'B', 'r', 'a', 'i', 'n' }, Base64Coder.decodeBytes("QnJhaW4="));
   }
+
+  @Test
+  public void negativeBytes() {
+    assertEquals("----", Base64Coder.encode(new byte[] { -1, -1, -1 }));
+  }
+
+
 }
