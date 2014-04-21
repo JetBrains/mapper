@@ -38,11 +38,16 @@ public class Base64EncoderTest {
 
   @Test
   public void encodeNegativeBytes() {
-    assertEquals("----", Base64Coder.encode(new byte[] { -1, -1, -1 }));
+    assertEquals("////", Base64Coder.encode(new byte[] { -1, -1, -1 }));
   }
 
   @Test
   public void decodeNegativeBytes() {
-    assertArrayEquals(new byte[] { -1, -1, -1 }, Base64Coder.decodeBytes("----"));
+    assertArrayEquals(new byte[] { -1, -1, -1 }, Base64Coder.decodeBytes("////"));
+  }
+
+  @Test
+  public void negativeDecodeBug() {
+    assertArrayEquals(new byte[] { -1, 0, -1 }, Base64Coder.decodeBytes("/wD/"));
   }
 }
