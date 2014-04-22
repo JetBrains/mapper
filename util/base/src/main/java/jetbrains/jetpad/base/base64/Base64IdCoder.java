@@ -15,45 +15,17 @@
  */
 package jetbrains.jetpad.base.base64;
 
-import java.util.Arrays;
-
 public class Base64IdCoder {
-  private static int ourBase = 0;
-  private static final int[] ourChToValue = new int[255];
-  private static final char[] ourValueToCh = new char[255];
-
-  static {
-    Arrays.fill(ourChToValue, 0, ourChToValue.length, -1);
-
-    for (char ch = 'A'; ch <= 'Z'; ch++) {
-      add(ch);
-    }
-    for (char ch = 'a'; ch <= 'z'; ch++) {
-      add(ch);
-    }
-    for (char ch = '0'; ch <= '9'; ch++) {
-      add(ch);
-    }
-    add('+');
-    add('-');
-
-    if (ourBase != 64) throw new IllegalStateException();
-  }
+  private static final Base64Table ourTable = new Base64Table('-');
 
   private Base64IdCoder() {
   }
 
-  private static void add(char ch) {
-    int index = ourBase++;
-    ourChToValue[ch] = index;
-    ourValueToCh[index] = ch;
-  }
-
   public static String encode(long l) {
     StringBuilder result = new StringBuilder();
-    int base = ourBase;
+    int base = ourTable.getBase();
     do {
-      char ch = ourValueToCh[(int) (l % base)];
+      char ch = ourTable.valueToCh((int) (l % base));
       result.insert(0, ch);
       l = l >> 6;
     } while (l != 0);
@@ -66,10 +38,11 @@ public class Base64IdCoder {
     int len = s.length();
     for (int i = 0; i < len; i++) {
       char ch = s.charAt(i);
-      int val = ourChToValue[ch];
-      if (val == -1) throw new IllegalStateException("Unknown character '" + ch + "'");
+      int val = ourTable.chToValue(ch);
       l = (l << 6) + val;
-      if (l < 0) throw new RuntimeException("Overflow");
+      if (l < 0) {
+        throw new RuntimeException("Overflow");
+      }
     }
     return l;
   }
