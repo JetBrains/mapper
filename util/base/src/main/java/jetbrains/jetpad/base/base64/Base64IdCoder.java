@@ -16,34 +16,16 @@
 package jetbrains.jetpad.base.base64;
 
 public class Base64IdCoder {
-  private static final Base64Table ourTable = new Base64Table('-');
+  private static final IdCoder ourCoder = new IdCoder(new Base64Table('-'));
 
   private Base64IdCoder() {
   }
 
   public static String encode(long l) {
-    StringBuilder result = new StringBuilder();
-    int base = ourTable.getBase();
-    do {
-      char ch = ourTable.valueToCh((int) (l % base));
-      result.insert(0, ch);
-      l = l >> 6;
-    } while (l != 0);
-
-    return result.toString();
+    return ourCoder.encode(l);
   }
 
   public static long decode(String s) {
-    long l = 0;
-    int len = s.length();
-    for (int i = 0; i < len; i++) {
-      char ch = s.charAt(i);
-      int val = ourTable.chToValue(ch);
-      l = (l << 6) + val;
-      if (l < 0) {
-        throw new RuntimeException("Overflow");
-      }
-    }
-    return l;
+    return ourCoder.decode(s);
   }
 }
