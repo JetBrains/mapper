@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Base64Coder {
-  private static final Base64Table ourTable = new Base64Table('/');
+  private static final Base64Table ourTable = new Base64Table('+', '/');
 
   public static String encode(byte[] bytes) {
     int blocksLen = bytes.length / 3;

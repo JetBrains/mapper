@@ -24,6 +24,10 @@ class Base64Table {
 
 
   Base64Table(char lastChar) {
+    this('-', lastChar);
+  }
+
+  Base64Table(char beforeLast, char lastChar) {
     Arrays.fill(myChToValue, 0, myChToValue.length, -1);
 
     for (char ch = 'A'; ch <= 'Z'; ch++) {
@@ -35,7 +39,7 @@ class Base64Table {
     for (char ch = '0'; ch <= '9'; ch++) {
       add(ch);
     }
-    add('-');
+    add(beforeLast);
     add(lastChar);
 
     if (myBase != 64) throw new IllegalStateException();
