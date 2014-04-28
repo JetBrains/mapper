@@ -136,6 +136,20 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>repository.jetbrains.com</id>
+      <name>repository.jetbrains.com-releases</name>
+      <url>http://repository.jetbrains.com/jetpad</url>
+    </repository>
+    <snapshotRepository>
+      <id>repository.jetbrains.com</id>
+      <name>repository.jetbrains.com-snapshots</name>
+      <url>http://repository.jetbrains.com/jetpad</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <profiles>
     <profile>
       <id>forJVM6</id>
