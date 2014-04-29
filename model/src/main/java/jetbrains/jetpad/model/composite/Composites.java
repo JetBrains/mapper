@@ -16,8 +16,6 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Range;
-import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
 
 import java.util.ArrayList;
@@ -26,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Composites {
+  private static CompositesWithBounds ourWithBounds = new CompositesWithBounds(0);
+
   public static <CompositeT extends Composite<CompositeT>>
   void removeFromParent(CompositeT c) {
     CompositeT parent = c.parent().get();
@@ -343,121 +343,6 @@ public class Composites {
     return null;
   }
 
-  public static <ViewT extends HasBounds> boolean isAbove(ViewT upper, ViewT lower) {
-    Rectangle upperBounds = upper.getBounds();
-    Rectangle lowerBounds = lower.getBounds();
-    return upperBounds.origin.y + upperBounds.dimension.y <= lowerBounds.origin.y;
-  }
-
-  public static <ViewT extends HasBounds> boolean isBelow(ViewT lower, ViewT upper) {
-    return isAbove(upper, lower);
-  }
-
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT homeElement(ViewT cell) {
-    ViewT current = cell;
-    while (true) {
-      ViewT prev = Composites.prevFocusable(current);
-      if (prev == null || isAbove(prev, cell)) return current;
-      current = prev;
-    }
-  }
-
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT endElement(ViewT cell) {
-    ViewT current = cell;
-    while (true) {
-      ViewT next = Composites.nextFocusable(current);
-      if (next == null || isBelow(next, cell)) return current;
-      current = next;
-    }
-  }
-
-
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT upperFocusable(ViewT v, int xOffset) {
-    ViewT current = prevFocusable(v);
-    ViewT bestMatch = null;
-
-    while (current != null) {
-      if (bestMatch != null && Composites.isAbove(current, bestMatch)) {
-        break;
-      }
-
-      if (bestMatch != null) {
-        if (distanceTo(bestMatch, xOffset) > distanceTo(current, xOffset)) {
-          bestMatch = current;
-        }
-      } else if (Composites.isAbove(current, v)) {
-        bestMatch = current;
-      }
-
-      current = prevFocusable(current);
-    }
-
-    return bestMatch;
-  }
-
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT lowerFocusable(ViewT v, int xOffset) {
-    ViewT current = nextFocusable(v);
-    ViewT bestMatch = null;
-
-    while (current != null) {
-      if (bestMatch != null && Composites.isBelow(current, bestMatch)) {
-        break;
-      }
-
-      if (bestMatch != null) {
-        if (distanceTo(bestMatch, xOffset) > distanceTo(current, xOffset)) {
-          bestMatch = current;
-        }
-      } else if (Composites.isBelow(current, v)) {
-        bestMatch = current;
-      }
-
-      current = nextFocusable(current);
-    }
-
-    return bestMatch;
-  }
-
-  public static <ViewT extends HasBounds> double distanceTo(ViewT c, int x) {
-    Rectangle bounds = c.getBounds();
-    return bounds.distance(new Vector(x, bounds.origin.y));
-  }
-
-  public static <ViewT extends Composite<ViewT> & HasBounds & HasVisibility & HasFocusability>
-  ViewT findClosest(ViewT current, Vector loc) {
-    if (!current.visible().get()) return null;
-
-    Rectangle bounds = current.getBounds();
-    Range<Integer> range = Range.closed(bounds.origin.y, bounds.origin.y + bounds.dimension.y);
-    if (!range.contains(loc.y)) {
-      return null;
-    }
-    ViewT result = null;
-    int distance = Integer.MAX_VALUE;
-    for (ViewT child : current.children()) {
-      if (!child.visible().get()) continue;
-
-      ViewT closest = findClosest(child, loc);
-      if (closest == null) continue;
-      int newDistance = (int) closest.getBounds().distance(loc);
-
-      if (newDistance < distance) {
-        result = closest;
-        distance = newDistance;
-      }
-    }
-
-    if (result == null && current.focusable().get()) {
-      return current;
-    }
-
-    return result;
-  }
-
   private static <ValueT> Iterable<ValueT> iterate(final ValueT initial, final Function<ValueT, ValueT> trans) {
     return new Iterable<ValueT>() {
       @Override
@@ -484,5 +369,43 @@ public class Composites {
         };
       }
     };
+  }
+
+  //has bounds
+  public static <ViewT extends HasBounds> boolean isAbove(ViewT upper, ViewT lower) {
+    return ourWithBounds.isAbove(upper, lower);
+  }
+
+  public static <ViewT extends HasBounds> boolean isBelow(ViewT lower, ViewT upper) {
+    return ourWithBounds.isBelow(lower, upper);
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT homeElement(ViewT cell) {
+    return ourWithBounds.homeElement(cell);
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT endElement(ViewT cell) {
+    return ourWithBounds.endElement(cell);
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT upperFocusable(ViewT v, int xOffset) {
+    return ourWithBounds.upperFocusable(v, xOffset);
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  ViewT lowerFocusable(ViewT v, int xOffset) {
+    return ourWithBounds.lowerFocusable(v, xOffset);
+  }
+
+  public static <ViewT extends HasBounds> double distanceTo(ViewT c, int x) {
+    return ourWithBounds.distanceTo(c, x);
+  }
+
+  public static <ViewT extends Composite<ViewT> & HasBounds & HasVisibility & HasFocusability>
+  ViewT findClosest(ViewT current, Vector loc) {
+    return ourWithBounds.findClosest(current, loc);
   }
 }
