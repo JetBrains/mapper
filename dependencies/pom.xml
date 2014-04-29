@@ -150,6 +150,10 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <scm>
+    <developerConnection>scm:git:https://github.com/JetBrains/jetpad-mapper.git</developerConnection>
+  </scm>
+
   <profiles>
     <profile>
       <id>forJVM6</id>
