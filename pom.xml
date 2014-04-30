@@ -5,13 +5,13 @@
   <parent>
     <groupId>jetbrains.jetpad</groupId>
     <artifactId>dependencies</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>dependencies/pom.xml</relativePath>
   </parent>
 
   <groupId>jetbrains.jetpad.mapper</groupId>
   <artifactId>container</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -89,7 +89,7 @@
 
   <scm>
     <developerConnection>scm:git:https://github.com/JetBrains/jetpad-mapper.git</developerConnection>
-    <tag>jetpad-mapper-1.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
 </project>

@@ -4,13 +4,13 @@
 
   <groupId>jetbrains.jetpad.util</groupId>
   <artifactId>values</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
     <groupId>jetbrains.jetpad.mapper</groupId>
     <artifactId>container</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 

@@ -4,13 +4,13 @@
 
   <groupId>jetbrains.jetpad.samples</groupId>
   <artifactId>todo</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <parent>
     <groupId>jetbrains.jetpad.mapper</groupId>
     <artifactId>container</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -18,13 +18,13 @@
     <dependency>
       <groupId>jetbrains.jetpad.mapper</groupId>
       <artifactId>mapper</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>jetbrains.jetpad.mapper</groupId>
       <artifactId>gwt-util</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
