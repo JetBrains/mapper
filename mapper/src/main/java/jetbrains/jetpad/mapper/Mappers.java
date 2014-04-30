@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.model.collections.list.ObservableList;
+
 public class Mappers {
   public static boolean isDescendant(Mapper<?, ?> ancestor, Mapper<?, ?> descendant) {
     if (descendant == ancestor) return true;
@@ -27,5 +29,23 @@ public class Mappers {
     Mapper<?, ?> parent = mapper.getParent();
     if (parent == null) return mapper;
     return getRoot(parent);
+  }
+
+
+  public static <SourceT, Target1T, Target2T> MapperFactory<SourceT, Target2T> compose(final MapperFactory<SourceT, Target1T> f1, final MapperFactory<Target1T, Target2T> f2) {
+    return new MapperFactory<SourceT, Target2T>() {
+      @Override
+      public Mapper<? extends SourceT, ? extends Target2T> createMapper(SourceT source) {
+        final Mapper<? extends SourceT, ? extends Target1T> m1 = f1.createMapper(source);
+        final Mapper<? extends Target1T, ? extends Target2T> m2 = f2.createMapper(m1.getTarget());
+        return new Mapper<SourceT, Target2T>(m1.getSource(), m2.getTarget()) {
+          ObservableList<Mapper<?, ?>> children = createChildList();
+          {
+            children.add(m1);
+            children.add(m2);
+          }
+        };
+      }
+    };
   }
 }
