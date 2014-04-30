@@ -83,7 +83,7 @@ class DifferenceBuilder<ItemT> {
     private DifferenceItem(int index, ItemT item, boolean add) {
       this.index = index;
       this.item = item;
-      isAdd = add;
+      this.isAdd = add;
     }
 
 
