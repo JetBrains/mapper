@@ -83,13 +83,6 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-            <classifier>${envClassifier}</classifier>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>${mvn.dependency.plugin.version}</version>
         </plugin>
@@ -169,9 +162,6 @@
           <name>forJVM6</name>
         </property>
       </activation>
-      <properties>
-        <envClassifier>jvm6</envClassifier>
-      </properties>
       <build>
         <plugins>
           <plugin>
