@@ -89,4 +89,8 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <scm>
+    <developerConnection>scm:git:https://github.com/JetBrains/jetpad-mapper.git</developerConnection>
+  </scm>
+
 </project>
