@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * Synchronizer which creates child mappers for objects contained in a role
  */
-
 public interface RoleSynchronizer<SourceT, TargetT> extends Synchronizer {
   List<Mapper<? extends SourceT, ? extends TargetT>> getMappers();
 
