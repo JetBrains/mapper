@@ -65,8 +65,10 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
         myList.remove(index);
         myRemoved.remove(index);
         myAnimations.remove(index);
+        myRemoveCount--;
       }
     });
+    myRemoveCount++;
     myAnimations.set(actual, animation);
     return n;
   }
