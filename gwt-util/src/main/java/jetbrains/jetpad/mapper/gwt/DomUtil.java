@@ -28,6 +28,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.animation.AnimatedList;
 import jetbrains.jetpad.base.animation.Animation;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;

@@ -1,6 +1,4 @@
-package jetbrains.jetpad.mapper.gwt;
-
-import jetbrains.jetpad.base.animation.Animation;
+package jetbrains.jetpad.base.animation;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -49,7 +47,7 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
   @Override
   public ElementT remove(int index) {
     int actual = actualIndex(index);
-    myRemoved.set(index, true);
+    myRemoved.set(actual, true);
     final ElementT n = myList.get(actual);
     if (myAnimations.get(actual) != null) {
       myAnimations.get(actual).stop();
@@ -93,6 +91,7 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
         return current;
       }
       actual++;
+      current++;
     }
   }
 }
