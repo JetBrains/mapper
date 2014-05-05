@@ -1,43 +1,41 @@
 package jetbrains.jetpad.mapper.gwt;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
 import jetbrains.jetpad.base.animation.Animation;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class AnimatedList extends AbstractList<Node> {
-  private List<Node> myList;
+public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
+  private List<ElementT> myList;
   private List<Boolean> myRemoved = new ArrayList<>();
   private int myRemoveCount;
   private List<Animation> myAnimations = new ArrayList<>();
 
-  AnimatedList(Element target) {
-    myList = DomUtil.elementChildren(target);
+  public AnimatedList(List<ElementT> list) {
+    myList = list;
   }
 
-  abstract Animation addAnimation(Node n);
+  public abstract Animation addAnimation(ElementT e);
 
-  abstract Animation removeAnimation(Node n);
+  public abstract Animation removeAnimation(ElementT e);
 
   @Override
-  public Node get(int index) {
+  public ElementT get(int index) {
     return myList.get(actualIndex(index));
   }
 
   @Override
-  public Node set(int index, Node n) {
-    return myList.set(actualIndex(index), n);
+  public ElementT set(int index, ElementT e) {
+    return myList.set(actualIndex(index), e);
   }
 
   @Override
-  public void add(int index, Node n) {
+  public void add(int index, ElementT e) {
     int actual = actualIndex(index);
-    myList.add(actual, n);
+    myList.add(actual, e);
     myRemoved.add(index, false);
-    final Animation animation = addAnimation(n);
+    final Animation animation = addAnimation(e);
     animation.whenDone(new Runnable() {
       @Override
       public void run() {
@@ -49,10 +47,10 @@ abstract class AnimatedList extends AbstractList<Node> {
   }
 
   @Override
-  public Node remove(int index) {
+  public ElementT remove(int index) {
     int actual = actualIndex(index);
     myRemoved.set(index, true);
-    final Node n = myList.get(actual);
+    final ElementT n = myList.get(actual);
     if (myAnimations.get(actual) != null) {
       myAnimations.get(actual).stop();
     }

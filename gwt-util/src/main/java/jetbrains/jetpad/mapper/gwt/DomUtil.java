@@ -85,14 +85,14 @@ public class DomUtil {
   }
 
   public static List<Node> animatedChildren(Element e, final int delay) {
-    return new AnimatedList(e) {
+    return new AnimatedList<Node>(elementChildren(e)) {
       @Override
-      Animation addAnimation(Node n) {
+      public Animation addAnimation(Node n) {
         return DomAnimations.fadeIn(n, delay);
       }
 
       @Override
-      Animation removeAnimation(Node n) {
+      public Animation removeAnimation(Node n) {
         return DomAnimations.fadeOut(n, delay);
       }
     };
@@ -103,14 +103,14 @@ public class DomUtil {
   }
 
   public static List<Node> animatedChildren(Element e, final com.google.common.base.Function<Node, Animation> add, final com.google.common.base.Function<Node, Animation> remove) {
-    return new AnimatedList(e) {
+    return new AnimatedList<Node>(elementChildren(e)) {
       @Override
-      Animation addAnimation(Node n) {
+      public Animation addAnimation(Node n) {
         return add.apply(n);
       }
 
       @Override
-      Animation removeAnimation(Node n) {
+      public Animation removeAnimation(Node n) {
         return remove.apply(n);
       }
     };
