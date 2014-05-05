@@ -30,8 +30,7 @@ import java.util.List;
 import static com.google.gwt.query.client.GQuery.$;
 import static jetbrains.jetpad.mapper.Synchronizers.forObservableRole;
 import static jetbrains.jetpad.mapper.Synchronizers.forProperty;
-import static jetbrains.jetpad.mapper.gwt.DomUtil.innerTextOf;
-import static jetbrains.jetpad.mapper.gwt.DomUtil.withElementChildren;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.*;
 import static jetbrains.jetpad.model.property.Properties.size;
 import static jetbrains.jetpad.model.property.Properties.toStringOf;
 
@@ -72,7 +71,7 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
   @Override
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
     super.registerSynchronizers(conf);
-    conf.add(forObservableRole(this, getSource().items, withElementChildren(getTarget().children), new MapperFactory<TodoListItem, WithElement>() {
+    conf.add(forObservableRole(this, getSource().items, withAnimatedElementChildren(getTarget().children), new MapperFactory<TodoListItem, WithElement>() {
       @Override
       public Mapper<? extends TodoListItem, ? extends WithElement> createMapper(TodoListItem source) {
         return new TodoListItemMapper(source);

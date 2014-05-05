@@ -28,6 +28,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.animation.Animation;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
@@ -83,9 +84,44 @@ public class DomUtil {
     };
   }
 
+  public static List<Node> animatedChildren(Element e, final int delay) {
+    return new AnimatedList(e) {
+      @Override
+      Animation addAnimation(Node n) {
+        return DomAnimations.fadeIn(n, delay);
+      }
+
+      @Override
+      Animation removeAnimation(Node n) {
+        return DomAnimations.fadeOut(n, delay);
+      }
+    };
+  }
+
+  public static List<Node> animatedChildren(Element e) {
+    return animatedChildren(e, 300);
+  }
+
+  public static List<Node> animatedChildren(Element e, final com.google.common.base.Function<Node, Animation> add, final com.google.common.base.Function<Node, Animation> remove) {
+    return new AnimatedList(e) {
+      @Override
+      Animation addAnimation(Node n) {
+        return add.apply(n);
+      }
+
+      @Override
+      Animation removeAnimation(Node n) {
+        return remove.apply(n);
+      }
+    };
+  }
+
   public static List<WithElement> withElementChildren(final Element e) {
+    return withElementChildren(elementChildren(e));
+  }
+
+  static List<WithElement> withElementChildren(final List<Node> base) {
     final List<WithElement> items = new ArrayList<>();
-    final List<Node> children = elementChildren(e);
 
     return new AbstractList<WithElement>() {
       @Override
@@ -96,20 +132,20 @@ public class DomUtil {
       @Override
       public WithElement set(int index, WithElement element) {
         WithElement result = items.set(index, element);
-        children.set(index, result.getElement());
+        base.set(index, result.getElement());
         return result;
       }
 
       @Override
       public void add(int index, WithElement element) {
         items.add(index, element);
-        children.add(index, element.getElement());
+        base.add(index, element.getElement());
       }
 
       @Override
       public WithElement remove(int index) {
         WithElement result = items.remove(index);
-        children.remove(index);
+        base.remove(index);
         return result;
       }
 
@@ -118,6 +154,18 @@ public class DomUtil {
         return items.size();
       }
     };
+  }
+
+  public static List<WithElement> withAnimatedElementChildren(Element e) {
+    return withElementChildren(animatedChildren(e));
+  }
+
+  public static List<WithElement> withAnimatedElementChildren(Element e, int delay) {
+    return withElementChildren(animatedChildren(e, delay));
+  }
+
+  public static List<WithElement> withAnimatedElementChildren(Element e, final com.google.common.base.Function<Node, Animation> add, final com.google.common.base.Function<Node, Animation> remove) {
+    return withElementChildren(animatedChildren(e, add, remove));
   }
 
   public static WritableProperty<String> innerTextOf(final Element e) {

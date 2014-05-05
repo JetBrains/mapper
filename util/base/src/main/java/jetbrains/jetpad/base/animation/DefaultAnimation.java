@@ -19,10 +19,11 @@ public abstract class DefaultAnimation implements Animation {
 
   @Override
   public void stop() {
+    if (myDone) {
+      throw new IllegalStateException();
+    }
     doStop();
-    done();
   }
-
 
   @Override
   public void whenDone(final Runnable r) {
