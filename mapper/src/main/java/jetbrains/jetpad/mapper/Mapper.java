@@ -38,6 +38,11 @@ public abstract class Mapper<SourceT, TargetT> {
   private Object[] myParts = EMPTY_PATS;
   private Mapper<?, ?> myParent;
 
+  /**
+   * Construct a mapper with SourceT source and TagetT target
+   *
+   * NB: DO NOT create disposable resources in constructors. Use either registerSynchronizers or onAttach method.
+   */
   public Mapper(SourceT source, TargetT target) {
     mySource = source;
     myTarget = target;
