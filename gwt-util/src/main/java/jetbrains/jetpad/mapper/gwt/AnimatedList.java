@@ -62,9 +62,6 @@ abstract class AnimatedList extends AbstractList<Node> {
 
       @Override
       public void run() {
-        if (wasCalled) {
-          System.out.println();
-        }
         wasCalled = true;
         int index = myList.indexOf(n);
         myList.remove(index);
