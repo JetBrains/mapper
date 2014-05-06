@@ -71,6 +71,16 @@ public class AnimatedListTest {
     assertEquals(Arrays.asList(i1, i2, i3), baseList);
   }
 
+  @Test
+  public void setAnimation() {
+    init(i1, i2);
+
+    animatedList.set(1, i3);
+
+    assertNotNull(i3.animation);
+    assertEquals(Arrays.asList(i1, i3), animatedList);
+  }
+
   private void init(Item... items) {
     animatedList.addAll(Arrays.asList(items));
     finishAllAnimations();

@@ -25,7 +25,17 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
 
   @Override
   public ElementT set(int index, ElementT e) {
-    return myList.set(actualIndex(index), e);
+    int actual = actualIndex(index);
+    ElementT result = myList.set(actual, e);
+    final Animation animation = addAnimation(e);
+    myAnimations.set(actual, animation);
+    animation.whenDone(new Runnable() {
+      @Override
+      public void run() {
+        myAnimations.set(myAnimations.indexOf(animation), null);
+      }
+    });
+    return result;
   }
 
   @Override
@@ -38,8 +48,7 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
     animation.whenDone(new Runnable() {
       @Override
       public void run() {
-        int index = myAnimations.indexOf(animation);
-        myAnimations.set(index, null);
+        myAnimations.set(myAnimations.indexOf(animation), null);
       }
     });
   }
