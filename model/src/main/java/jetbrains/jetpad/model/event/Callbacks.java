@@ -25,7 +25,9 @@ public class Callbacks {
   }
 
   public static void asInProduction(Runnable r) {
-    if (ourForceProduction) throw new IllegalStateException();
+    if (ourForceProduction) {
+      throw new IllegalStateException();
+    }
     ourForceProduction = true;
     try {
       r.run();
@@ -35,13 +37,17 @@ public class Callbacks {
   }
 
   public static void handleException(Throwable t) {
-    if (isInUnitTests(t)) throw new RuntimeException(t);
+    if (isInUnitTests(t)) {
+      throw new RuntimeException(t);
+    }
     ourCallbackExceptions.fire(t);
     t.printStackTrace();
   }
 
   private static boolean isInUnitTests(Throwable t) {
-    if (ourForceProduction) return false;
+    if (ourForceProduction) {
+      return false;
+    }
     for (StackTraceElement e : t.getStackTrace()) {
       if (e.getClassName().startsWith("org.junit.runners")) {
         return true;
