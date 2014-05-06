@@ -34,6 +34,7 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
     myList.add(actual, e);
     myRemoved.add(index, false);
     final Animation animation = addAnimation(e);
+    myAnimations.add(index, animation);
     animation.whenDone(new Runnable() {
       @Override
       public void run() {
@@ -41,7 +42,6 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
         myAnimations.set(index, null);
       }
     });
-    myAnimations.add(index, animation);
   }
 
   @Override
