@@ -7,7 +7,7 @@ import java.util.List;
 public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
   private List<ElementT> myList;
   private List<Boolean> myRemoved = new ArrayList<>();
-  private int myRemoveCount;
+  private int myRemovedCount;
   private List<Animation> myAnimations = new ArrayList<>();
 
   public AnimatedList(List<ElementT> list) {
@@ -32,9 +32,9 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
   public void add(int index, ElementT e) {
     int actual = actualIndex(index);
     myList.add(actual, e);
-    myRemoved.add(index, false);
+    myRemoved.add(actual, false);
     final Animation animation = addAnimation(e);
-    myAnimations.add(index, animation);
+    myAnimations.add(actual, animation);
     animation.whenDone(new Runnable() {
       @Override
       public void run() {
@@ -53,36 +53,38 @@ public abstract class AnimatedList<ElementT> extends AbstractList<ElementT> {
       myAnimations.get(actual).stop();
     }
     Animation animation = removeAnimation(n);
+    myAnimations.set(actual, animation);
+    myRemovedCount++;
     animation.whenDone(new Runnable() {
-      boolean wasCalled = false;
-
       @Override
       public void run() {
-        wasCalled = true;
         int index = myList.indexOf(n);
         myList.remove(index);
         myRemoved.remove(index);
         myAnimations.remove(index);
-        myRemoveCount--;
+        myRemovedCount--;
       }
     });
-    myRemoveCount++;
-    myAnimations.set(actual, animation);
     return n;
   }
 
   @Override
   public int size() {
-    return myList.size() - myRemoveCount;
+    return myList.size() - myRemovedCount;
   }
 
   private int actualIndex(int index) {
-    if (myRemoveCount == 0) {
+    if (myRemovedCount == 0) {
       return index;
+    }
+
+    if (index == size()) {
+      return size() + myRemovedCount;
     }
 
     int current = 0;
     int actual = 0;
+
     while (true) {
       while (myRemoved.get(current)) {
         current++;

@@ -29,6 +29,15 @@ public class AnimatedListTest {
   }
 
   @Test
+  public void addWhenEverythingRemoved() {
+    init(i1);
+    animatedList.remove(i1);
+    animatedList.add(i2);
+
+    assertEquals(Arrays.asList(i2), animatedList);
+  }
+
+  @Test
   public void singleRemove() {
     init(i1, i2);
 
