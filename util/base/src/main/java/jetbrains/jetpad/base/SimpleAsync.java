@@ -49,7 +49,9 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   public void success(ItemT item) {
-    if (alreadyHandled()) throw new IllegalStateException();
+    if (alreadyHandled()) {
+      throw new IllegalStateException();
+    }
 
     for (Handler<? super ItemT> handler : mySuccessHandlers) {
       handler.handle(item);
@@ -60,7 +62,9 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   public void failure(Throwable throwable) {
-    if (alreadyHandled()) throw new IllegalStateException();
+    if (alreadyHandled()) {
+      throw new IllegalStateException();
+    }
 
     for (Handler<Throwable> handler : myFailureHandlers) {
       handler.handle(throwable);

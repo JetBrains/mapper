@@ -119,7 +119,9 @@ public class Synchronizers {
 
   public static <ValueT>
   Synchronizer forProperties(final Property<ValueT> source, final Property<ValueT> target) {
-    if (source == null || target == null) throw new NullPointerException();
+    if (source == null || target == null) {
+      throw new NullPointerException();
+    }
 
     return new Synchronizer() {
       private ValueT myOldValue;

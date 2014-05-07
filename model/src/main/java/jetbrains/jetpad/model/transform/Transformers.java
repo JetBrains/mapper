@@ -177,7 +177,9 @@ public class Transformers {
         ReadableProperty<ValueT> p1 = propSpec.apply(i1);
         ReadableProperty<ValueT> p2 = propSpec.apply(i2);
 
-        if (p1 == null || p2 == null) throw new NullPointerException();
+        if (p1 == null || p2 == null) {
+          throw new NullPointerException();
+        }
 
         ValueT v1 = p1.get();
         ValueT v2 = p2.get();
@@ -202,7 +204,9 @@ public class Transformers {
 
       private void watch(final ItemT item, final ObservableList<ItemT> to) {
         ReadableProperty<ValueT> property = propSpec.apply(item);
-        if (property == null) throw new NullPointerException();
+        if (property == null) {
+          throw new NullPointerException();
+        }
         myListeners.put(item, property.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<ValueT> event) {
@@ -320,7 +324,9 @@ public class Transformers {
           }
           index++;
         }
-        if (!fromItr.hasNext() && !foundItem) throw new IllegalStateException();
+        if (!fromItr.hasNext() && !foundItem) {
+          throw new IllegalStateException();
+        }
         to.add(index, item);
       }
       @Override
@@ -1162,7 +1168,9 @@ public class Transformers {
 
       @Override
       public Transformation<ReadableProperty<ItemT>, ObservableList<ItemT>> transform(final ReadableProperty<ItemT> from, final ObservableList<ItemT> to) {
-        if (!to.isEmpty()) throw new IllegalStateException();
+        if (!to.isEmpty()) {
+          throw new IllegalStateException();
+        }
 
         final Runnable sync = new Runnable() {
           @Override
@@ -1214,7 +1222,9 @@ public class Transformers {
 
       @Override
       public Transformation<ReadableProperty<ItemT>, ObservableCollection<ItemT>> transform(final ReadableProperty<ItemT> from, final ObservableCollection<ItemT> to) {
-        if (!to.isEmpty()) throw new IllegalStateException();
+        if (!to.isEmpty()) {
+          throw new IllegalStateException();
+        }
 
         final Runnable sync = new Runnable() {
           @Override

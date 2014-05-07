@@ -45,7 +45,9 @@ public abstract class BaseId implements Serializable {
     synchronized (ourNamesMap) {
       String oldName = ourNamesMap.get(id);
 
-      if (oldName != null && name != null && !oldName.equals(name)) throw new IllegalStateException();
+      if (oldName != null && name != null && !oldName.equals(name)) {
+        throw new IllegalStateException();
+      }
 
       if (name != null) {
         ourNamesMap.put(id, name);

@@ -116,7 +116,9 @@ public class Color {
   }
 
   private static String toColorPart(int value) {
-    if (value < 0 || value > 255) throw new IllegalArgumentException();
+    if (value < 0 || value > 255) {
+      throw new IllegalArgumentException();
+    }
 
     String result = Integer.toHexString(value);
     if (result.length() == 1) {

@@ -56,7 +56,9 @@ public final class MappingContext {
         myMappers.put(source, mappers.iterator().next());
       }
     } else {
-      if (ms != mapper) throw new IllegalStateException();
+      if (ms != mapper) {
+        throw new IllegalStateException();
+      }
       myMappers.remove(source);
     }
 

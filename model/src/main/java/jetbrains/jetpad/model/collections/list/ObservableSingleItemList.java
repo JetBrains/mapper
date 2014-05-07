@@ -35,7 +35,9 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   
   @Override
   public ItemT get(int index) {
-    if (myItem == null || index != 0) throw new IndexOutOfBoundsException();
+    if (myItem == null || index != 0) {
+      throw new IndexOutOfBoundsException();
+    }
     return myItem;
   }
 
@@ -55,7 +57,9 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
 
   @Override
   public void add(int index, final ItemT item) {
-    if (size() != 0) throw new IllegalStateException();
+    if (size() != 0) {
+      throw new IllegalStateException();
+    }
     add(index, item, new Runnable() {
       @Override
       public void run() {
@@ -66,9 +70,13 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
 
   @Override
   public ItemT remove(int index) {
-    if (index != 0) throw new IndexOutOfBoundsException();
+    if (index != 0) {
+      throw new IndexOutOfBoundsException();
+    }
     ItemT oldItem = myItem;
-    if (oldItem == null) throw new IndexOutOfBoundsException();
+    if (oldItem == null) {
+      throw new IndexOutOfBoundsException();
+    }
 
     remove(index, oldItem, new Runnable() {
       @Override

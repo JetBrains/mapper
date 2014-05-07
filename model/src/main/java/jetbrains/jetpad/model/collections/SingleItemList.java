@@ -25,7 +25,9 @@ public abstract class SingleItemList<ItemT> extends AbstractList<ItemT> {
   @Override
   public ItemT get(int index) {
     ItemT item = getItem();
-    if (item == null || index != 0) throw new IndexOutOfBoundsException();
+    if (item == null || index != 0) {
+      throw new IndexOutOfBoundsException();
+    }
     return item;
   }
 
@@ -36,7 +38,9 @@ public abstract class SingleItemList<ItemT> extends AbstractList<ItemT> {
 
   @Override
   public ItemT set(int index, ItemT t) {
-    if (index != 0) throw new IndexOutOfBoundsException();
+    if (index != 0) {
+      throw new IndexOutOfBoundsException();
+    }
     ItemT oldValue = getItem();
     setItem(t);
     return oldValue;
@@ -44,15 +48,21 @@ public abstract class SingleItemList<ItemT> extends AbstractList<ItemT> {
 
   @Override
   public void add(int index, ItemT item) {
-    if (size() != 0) throw new IllegalStateException();
+    if (size() != 0) {
+      throw new IllegalStateException();
+    }
     setItem(item);
   }
 
   @Override
   public ItemT remove(int index) {
-    if (index != 0) throw new IndexOutOfBoundsException();
+    if (index != 0) {
+      throw new IndexOutOfBoundsException();
+    }
     ItemT oldItem = getItem();
-    if (oldItem == null) throw new IndexOutOfBoundsException();
+    if (oldItem == null) {
+      throw new IndexOutOfBoundsException();
+    }
     setItem(null);
     return oldItem;
   }

@@ -85,20 +85,32 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   public final void attachRoot() {
-    if (myMappingContext != null) throw new IllegalStateException();
-    if (myParent != null) throw new IllegalStateException();
+    if (myMappingContext != null) {
+      throw new IllegalStateException();
+    }
+    if (myParent != null) {
+      throw new IllegalStateException();
+    }
     attach(new MappingContext());
   }
 
   public final void detachRoot() {
-    if (myMappingContext == null) throw new IllegalStateException();
-    if (myParent != null) throw new IllegalStateException("Dispose can be called only on the root mapper");
+    if (myMappingContext == null) {
+      throw new IllegalStateException();
+    }
+    if (myParent != null) {
+      throw new IllegalStateException("Dispose can be called only on the root mapper");
+    }
     detach();
   }
 
   final void attach(MappingContext ctx) {
-    if (myMappingContext != null) throw new IllegalStateException("Mapper is already attached");
-    if (myDetached) throw new IllegalStateException("Mapper can't be reused because it was already detached");
+    if (myMappingContext != null) {
+      throw new IllegalStateException("Mapper is already attached");
+    }
+    if (myDetached) {
+      throw new IllegalStateException("Mapper can't be reused because it was already detached");
+    }
 
     onBeforeAttach(ctx);
 

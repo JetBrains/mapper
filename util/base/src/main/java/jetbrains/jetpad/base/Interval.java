@@ -20,7 +20,9 @@ public class Interval {
   private int myUpperBound;
 
   public Interval(int lowerBound, int upperBound) {
-    if (lowerBound > upperBound) throw new IllegalArgumentException("Lower bound is greater than upper: lower bound=" + lowerBound + ", upper bound=" + upperBound);
+    if (lowerBound > upperBound) {
+      throw new IllegalArgumentException("Lower bound is greater than upper: lower bound=" + lowerBound + ", upper bound=" + upperBound);
+    }
     myLowerBound = lowerBound;
     myUpperBound = upperBound;
   }

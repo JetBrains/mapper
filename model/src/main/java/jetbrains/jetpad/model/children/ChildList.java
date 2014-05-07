@@ -26,7 +26,9 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
 
   @Override
   public void add(int index, final ChildT item) {
-    if (item.parent().get() != null) throw new IllegalArgumentException();
+    if (item.parent().get() != null) {
+      throw new IllegalArgumentException();
+    }
 
     item.myParent.set(myParent);
     item.myPositionData = new PositionData<ChildT>() {
@@ -61,7 +63,9 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
   @Override
   public ChildT remove(int index) {
     ChildT item = get(index);
-    if (item.parent().get() != myParent) throw new IllegalArgumentException();
+    if (item.parent().get() != myParent) {
+      throw new IllegalArgumentException();
+    }
 
     super.remove(index);
 

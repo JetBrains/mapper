@@ -52,7 +52,9 @@ public class DomUtil {
 
       @Override
       public Node set(int index, Node element) {
-        if (element.getParentElement() != null) throw new IllegalStateException();
+        if (element.getParentElement() != null) {
+          throw new IllegalStateException();
+        }
 
         Node child = get(index);
         e.replaceChild(child, element);
@@ -61,7 +63,9 @@ public class DomUtil {
 
       @Override
       public void add(int index, Node element) {
-        if (element.getParentElement() != null) throw new IllegalStateException();
+        if (element.getParentElement() != null) {
+          throw new IllegalStateException();
+        }
 
         if (index == 0) {
           e.insertFirst(element);
@@ -224,7 +228,9 @@ public class DomUtil {
       }
 
       private void startEditing() {
-        if (myEditing) throw new IllegalStateException();
+        if (myEditing) {
+          throw new IllegalStateException();
+        }
         myEditing = true;
 
         element.setInnerText("");
@@ -234,7 +240,9 @@ public class DomUtil {
       }
 
       private void stopEditing() {
-        if (!myEditing) throw new IllegalStateException();
+        if (!myEditing) {
+          throw new IllegalStateException();
+        }
         myEditing = false;
 
         myEditor.removeFromParent();

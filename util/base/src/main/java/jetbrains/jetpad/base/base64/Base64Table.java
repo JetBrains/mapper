@@ -42,7 +42,9 @@ class Base64Table {
     add(beforeLast);
     add(lastChar);
 
-    if (myBase != 64) throw new IllegalStateException();
+    if (myBase != 64) {
+      throw new IllegalStateException();
+    }
   }
 
   private void add(char ch) {

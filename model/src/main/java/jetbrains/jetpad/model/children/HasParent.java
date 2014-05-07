@@ -28,7 +28,9 @@ public class HasParent<ParentT, SiblingT> {
   }
 
   public Position<? extends SiblingT> getPosition() {
-    if (myPositionData == null) throw new IllegalStateException();
+    if (myPositionData == null) {
+      throw new IllegalStateException();
+    }
     return myPositionData.get();
   }
 

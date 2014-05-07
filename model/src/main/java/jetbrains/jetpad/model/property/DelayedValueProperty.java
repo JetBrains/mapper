@@ -45,7 +45,9 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
     ValueT oldValue = myValue;
     myValue = value;
 
-    if (myPendingEvent != null) throw new IllegalStateException();
+    if (myPendingEvent != null) {
+      throw new IllegalStateException();
+    }
     myPendingEvent = new PropertyChangeEvent<>(oldValue, myValue);
   }
 

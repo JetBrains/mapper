@@ -28,7 +28,9 @@ public class ChildProperty<ParentT, ChildT extends HasParent<? super ParentT, ? 
   public void set(ChildT value) {
     if (get() == value) return;
 
-    if (value != null && value.parent().get() != null) throw new IllegalStateException();
+    if (value != null && value.parent().get() != null) {
+      throw new IllegalStateException();
+    }
 
     ChildT oldValue = get();
     if (oldValue != null) {

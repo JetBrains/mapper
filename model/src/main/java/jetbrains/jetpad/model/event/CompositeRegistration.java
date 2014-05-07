@@ -49,7 +49,9 @@ public class CompositeRegistration implements Registration {
 
   @Override
   public void remove() {
-    if (myRemoved || myRemoving) throw new IllegalStateException();
+    if (myRemoved || myRemoving) {
+      throw new IllegalStateException();
+    }
 
     myRemoving = true;
     try {

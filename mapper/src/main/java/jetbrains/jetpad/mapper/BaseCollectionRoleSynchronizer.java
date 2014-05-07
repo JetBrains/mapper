@@ -37,7 +37,9 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
   }
 
   public final void attach(SynchronizerContext ctx) {
-    if (myMappingContext != null) throw new IllegalStateException();
+    if (myMappingContext != null) {
+      throw new IllegalStateException();
+    }
 
     myMappingContext = ctx.getMappingContext();
 
@@ -45,7 +47,9 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
   }
 
   public final void detach() {
-    if (myMappingContext == null) throw new IllegalStateException();
+    if (myMappingContext == null) {
+      throw new IllegalStateException();
+    }
 
     onDetach();
 

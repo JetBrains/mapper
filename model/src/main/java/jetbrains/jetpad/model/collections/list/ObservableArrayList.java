@@ -22,7 +22,9 @@ public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
   private List<ItemT> myContainer;
 
   public ItemT get(int index) {
-    if (myContainer == null) throw new ArrayIndexOutOfBoundsException(index);
+    if (myContainer == null) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return myContainer.get(index);
   }
 
