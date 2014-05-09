@@ -63,6 +63,12 @@ class SingleChildRoleSynchronizer<SourceT, TargetT> extends BaseRoleSynchronizer
     });
   }
 
+  @Override
+  public void detach() {
+    myChildRegistration.remove();
+    myTargetProperty.set(null);
+  }
+
   private void sync() {
     SourceT modelValue = myChildProperty.get();
     SourceT viewValue = myTargetMapper.get() == null ? null : myTargetMapper.get().getSource();
@@ -79,8 +85,4 @@ class SingleChildRoleSynchronizer<SourceT, TargetT> extends BaseRoleSynchronizer
     }
   }
 
-  @Override
-  public void detach() {
-    myChildRegistration.remove();
-  }
 }
