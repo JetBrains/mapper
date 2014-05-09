@@ -16,13 +16,13 @@
 package jetbrains.jetpad.mapper;
 
 import com.google.common.base.Supplier;
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
-import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.property.*;
 import jetbrains.jetpad.model.transform.Transformer;
 
