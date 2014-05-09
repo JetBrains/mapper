@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 public class Mappers {
@@ -31,6 +32,15 @@ public class Mappers {
     return getRoot(parent);
   }
 
+  public static Registration attachRoot(final Mapper<?, ?> mapper) {
+    mapper.attachRoot();
+    return new Registration() {
+      @Override
+      public void remove() {
+        mapper.detachRoot();
+      }
+    };
+  }
 
   public static <SourceT, Target1T, Target2T> MapperFactory<SourceT, Target2T> compose(final MapperFactory<SourceT, Target1T> f1, final MapperFactory<Target1T, Target2T> f2) {
     return new MapperFactory<SourceT, Target2T>() {
