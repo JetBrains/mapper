@@ -16,6 +16,8 @@
 package jetbrains.jetpad.geometry;
 
 public class DoubleVector {
+  public static final DoubleVector ZERO = new DoubleVector(0.0, 0.0);
+
   public final double x;
   public final double y;
 
