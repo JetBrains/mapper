@@ -16,10 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 public class Callbacks {
   private static boolean ourForceProduction;
   private static SimpleEventSource<Throwable> ourCallbackExceptions = new SimpleEventSource<>();
@@ -33,18 +29,10 @@ public class Callbacks {
       throw new IllegalStateException();
     }
     ourForceProduction = true;
-    PrintStream oldErr = System.err;
-    System.setErr(new PrintStream(new OutputStream() {
-      @Override
-      public void write(int b) throws IOException {
-      }
-    }));
-
     try {
       r.run();
     } finally {
       ourForceProduction = false;
-      System.setErr(oldErr);
     }
   }
 
