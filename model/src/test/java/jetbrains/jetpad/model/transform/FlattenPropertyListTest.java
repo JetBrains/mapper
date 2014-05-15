@@ -24,7 +24,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class FlattenPropertyListTest {
   private ObservableList<Property<String>> list = new ObservableArrayList<>();
@@ -34,7 +34,7 @@ public class FlattenPropertyListTest {
   @Before
   public void init() {
     list.addAll(Arrays.asList(new ValueProperty<>("a"), new ValueProperty<>("b"), new ValueProperty<>("c")));
-    trans = Transformers.<String>flattenPropertyList().transform(list, flattenedList);
+    trans = Transformers.<String, Property<String>>flattenPropertyList().transform(list, flattenedList);
   }
 
   @Test

@@ -19,6 +19,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
@@ -27,8 +28,6 @@ import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
@@ -608,20 +607,20 @@ public class Transformers {
     };
   }
 
-  public static <ValueT>
-  Transformer<ObservableList<Property<ValueT>>, ObservableList<ValueT>> flattenPropertyList() {
-    return new BaseTransformer<ObservableList<Property<ValueT>>, ObservableList<ValueT>>() {
+  public static <ValueT, PropertyT extends ReadableProperty<ValueT>>
+  Transformer<ObservableList<PropertyT>, ObservableList<ValueT>> flattenPropertyList() {
+    return new BaseTransformer<ObservableList<PropertyT>, ObservableList<ValueT>>() {
       @Override
-      public Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>> transform(ObservableList<Property<ValueT>> from) {
+      public Transformation<ObservableList<PropertyT>, ObservableList<ValueT>> transform(ObservableList<PropertyT> from) {
         return transform(from, new ObservableArrayList<ValueT>());
       }
 
       @Override
-      public Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>> transform(final ObservableList<Property<ValueT>> from, final ObservableList<ValueT> to) {
+      public Transformation<ObservableList<PropertyT>, ObservableList<ValueT>> transform(final ObservableList<PropertyT> from, final ObservableList<ValueT> to) {
         final List<Registration> propRegistrations = new ArrayList<>();
-        CollectionAdapter<Property<ValueT>> listener = new CollectionAdapter<Property<ValueT>>() {
+        CollectionAdapter<PropertyT> listener = new CollectionAdapter<PropertyT>() {
           @Override
-          public void onItemAdded(final CollectionItemEvent<Property<ValueT>> listEvent) {
+          public void onItemAdded(final CollectionItemEvent<PropertyT> listEvent) {
             propRegistrations.add(listEvent.getIndex(), listEvent.getItem().addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
               @Override
               public void onEvent(PropertyChangeEvent<ValueT> propEvent) {
@@ -633,7 +632,7 @@ public class Transformers {
           }
 
           @Override
-          public void onItemRemoved(CollectionItemEvent<Property<ValueT>> listEvent) {
+          public void onItemRemoved(CollectionItemEvent<PropertyT> listEvent) {
             propRegistrations.remove(listEvent.getIndex()).remove();
             to.remove(listEvent.getIndex());
           }
@@ -644,9 +643,9 @@ public class Transformers {
         }
 
         final Registration reg = from.addListener(listener);
-        return new Transformation<ObservableList<Property<ValueT>>, ObservableList<ValueT>>() {
+        return new Transformation<ObservableList<PropertyT>, ObservableList<ValueT>>() {
           @Override
-          public ObservableList<Property<ValueT>> getSource() {
+          public ObservableList<PropertyT> getSource() {
             return from;
           }
 
