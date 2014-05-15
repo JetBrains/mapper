@@ -28,16 +28,12 @@ import java.util.AbstractList;
 public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> implements ObservableList<ItemT> {
   private Listeners<CollectionListener<ItemT>> myListeners;
 
-  /**
-   * Check whether we can add item at index and if not so, throw and exception
-   */
   protected void checkAdd(int index, ItemT item) {
+    if (index < 0 || index > size()) throw new IndexOutOfBoundsException("Add: index=" + index + ", size=" + size());
   }
 
-  /**
-   * Check whether we can remove item at index and if not so, throw and exception
-   */
   protected void checkRemove(int index, ItemT item) {
+    if (index < 0 || index >= size()) throw new IndexOutOfBoundsException("Remove: index=" + index + ", size=" + size());
   }
 
   protected final void add(final int index, final ItemT item, Runnable action) {

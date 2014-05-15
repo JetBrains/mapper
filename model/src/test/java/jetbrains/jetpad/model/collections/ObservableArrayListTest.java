@@ -56,10 +56,7 @@ public class ObservableArrayListTest {
   
   @Test
   public void itemRemove() {
-    final String item = "xyz";
-    list.add(item);
-
-    events.clear();
+    final String item = addSampleItem();
     
     list.remove(item);
 
@@ -74,6 +71,50 @@ public class ObservableArrayListTest {
     assertEquals(0, events.size());
   }
 
+  @Test
+  public void addAtOkIndex() {
+    String item = "xyz";
+    list.add(0, item);
+    assertEvent(0, item, true);
+  }
+
+  @Test(expected = IndexOutOfBoundsException.class)
+   public void addAtInvalidIndex() {
+    try {
+      list.add(1, "xyz");
+    } finally {
+      assertTrue(events.isEmpty());
+      assertTrue(list.isEmpty());
+    }
+  }
+
+  @Test
+  public void removeAtOkIndex() {
+    final String item = addSampleItem();
+    String removed = list.remove(0);
+    assertEquals(item, removed);
+    assertEvent(0, item, false);
+  }
+
+  @Test(expected = IndexOutOfBoundsException.class)
+  public void removeAtInvalidIndex() {
+    final String item = addSampleItem();
+    try {
+      String removed = list.remove(1);
+      assertEquals(item, removed);
+    } finally {
+      assertTrue(events.isEmpty());
+      assertEquals(1, list.size());
+    }
+  }
+
+  private String addSampleItem() {
+    final String item = "xyz";
+    list.add(item);
+    events.clear();
+    return item;
+  }
+
   private void assertEvent(int index, String item, boolean added) {
     assertEquals(1, events.size());
 
@@ -82,8 +123,4 @@ public class ObservableArrayListTest {
     assertEquals(index, event.getIndex());
     assertTrue(added == event.isAdded());
   }
-
-
-
-
 }
