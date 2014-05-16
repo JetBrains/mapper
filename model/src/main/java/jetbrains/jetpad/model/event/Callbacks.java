@@ -17,22 +17,36 @@ package jetbrains.jetpad.model.event;
 
 
 public class Callbacks {
-  private static boolean ourForceProduction;
-  private static SimpleEventSource<Throwable> ourCallbackExceptions = new SimpleEventSource<>();
+  //we can use ThreadLocal here because of our own emulation at jetbrains.jetpad.model.jre.java.lang.ThreadLocal
+  @SuppressWarnings("NonJREEmulationClassesInClientCode")
+  private static ThreadLocal<Boolean> ourForceProduction = new ThreadLocal<Boolean>() {
+    @Override
+    protected Boolean initialValue() {
+      return false;
+    }
+  };
+
+  @SuppressWarnings("NonJREEmulationClassesInClientCode")
+  private static ThreadLocal<SimpleEventSource<Throwable>> ourCallbackExceptions = new ThreadLocal<SimpleEventSource<Throwable>>() {
+    @Override
+    protected SimpleEventSource<Throwable> initialValue() {
+      return new SimpleEventSource<>();
+    }
+  };
 
   public static EventSource<Throwable> callbackExceptions() {
-    return ourCallbackExceptions;
+    return ourCallbackExceptions.get();
   }
 
   public static void asInProduction(Runnable r) {
-    if (ourForceProduction) {
+    if (ourForceProduction.get()) {
       throw new IllegalStateException();
     }
-    ourForceProduction = true;
+    ourForceProduction.set(true);
     try {
       r.run();
     } finally {
-      ourForceProduction = false;
+      ourForceProduction.set(false);
     }
   }
 
@@ -40,12 +54,12 @@ public class Callbacks {
     if (isInUnitTests(t)) {
       throw new RuntimeException(t);
     }
-    ourCallbackExceptions.fire(t);
+    ourCallbackExceptions.get().fire(t);
     t.printStackTrace();
   }
 
   private static boolean isInUnitTests(Throwable t) {
-    if (ourForceProduction) {
+    if (ourForceProduction.get()) {
       return false;
     }
     for (StackTraceElement e : t.getStackTrace()) {
