@@ -18,6 +18,10 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 public class ThrowableHandlers {
   //we can use ThreadLocal here because of our own emulation at jetbrains.jetpad.model.jre.java.lang.ThreadLocal
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
@@ -46,9 +50,16 @@ public class ThrowableHandlers {
       throw new IllegalStateException();
     }
     ourForceProduction.set(true);
+    PrintStream defaultErr = System.err;
+    System.setErr(new PrintStream(new OutputStream() {
+      @Override
+      public void write(int b) throws IOException {
+      }
+    }));
     try {
       r.run();
     } finally {
+      System.setErr(defaultErr);
       ourForceProduction.set(false);
     }
   }
