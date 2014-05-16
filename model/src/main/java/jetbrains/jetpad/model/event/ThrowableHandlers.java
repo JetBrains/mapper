@@ -51,11 +51,11 @@ public class ThrowableHandlers {
     }
     ourForceProduction.set(true);
     PrintStream defaultErr = System.err;
-    System.setErr(new PrintStream(new OutputStream() {
-      @Override
+    OutputStream out = new OutputStream() {
       public void write(int b) throws IOException {
       }
-    }));
+    };
+    System.setErr(new PrintStream(out));
     try {
       r.run();
     } finally {
