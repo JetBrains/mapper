@@ -16,7 +16,9 @@
 package jetbrains.jetpad.model.event;
 
 
-public class Callbacks {
+import jetbrains.jetpad.base.Registration;
+
+public class ThrowableHandlers {
   //we can use ThreadLocal here because of our own emulation at jetbrains.jetpad.model.jre.java.lang.ThreadLocal
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
   private static ThreadLocal<Boolean> ourForceProduction = new ThreadLocal<Boolean>() {
@@ -27,15 +29,16 @@ public class Callbacks {
   };
 
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
-  private static ThreadLocal<SimpleEventSource<Throwable>> ourCallbackExceptions = new ThreadLocal<SimpleEventSource<Throwable>>() {
+  private static ThreadLocal<SimpleEventSource<Throwable>> ourHandlers = new ThreadLocal<SimpleEventSource<Throwable>>() {
     @Override
     protected SimpleEventSource<Throwable> initialValue() {
       return new SimpleEventSource<>();
     }
   };
 
-  public static EventSource<Throwable> callbackExceptions() {
-    return ourCallbackExceptions.get();
+  //new handler can't throw anything because it will lead to StackOverflowError!
+  public static Registration addHandler(EventHandler<? super Throwable> handler) {
+    return ourHandlers.get().addHandler(handler);
   }
 
   public static void asInProduction(Runnable r) {
@@ -50,12 +53,12 @@ public class Callbacks {
     }
   }
 
-  public static void handleException(Throwable t) {
+  public static void handle(Throwable t) {
     if (isInUnitTests(t)) {
       throw new RuntimeException(t);
     }
-    ourCallbackExceptions.get().fire(t);
     t.printStackTrace();
+    ourHandlers.get().fire(t);
   }
 
   private static boolean isInUnitTests(Throwable t) {

@@ -72,7 +72,7 @@ public class Listeners<ListenerT> {
         try {
           h.call(l);
         } catch (Throwable t) {
-          Callbacks.handleException(t);
+          ThrowableHandlers.handle(t);
         }
       }
     } finally {

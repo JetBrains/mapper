@@ -59,7 +59,7 @@ public class CompositeRegistration implements Registration {
         try {
           r.remove();
         } catch (Throwable t) {
-          Callbacks.handleException(t);
+          ThrowableHandlers.handle(t);
         }
       }
     } finally {
