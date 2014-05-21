@@ -35,15 +35,9 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     return myListeners.add(l);
   }
 
-  /**
-   * Check whether we can add item at index and if not so, throw and exception
-   */
   protected void checkAdd(ItemT item) {
   }
 
-  /**
-   * Check whether we can remove item at index and if not so, throw and exception
-   */
   protected void checkRemove(ItemT item) {
   }
 
