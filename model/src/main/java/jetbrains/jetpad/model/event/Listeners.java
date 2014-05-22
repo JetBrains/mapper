@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Listeners<ListenerT> {
-  private List<ListenerT> myListeners;
-  private FireData<ListenerT> myFireData;
+  private List<ListenerT> myListeners = null;
+  private FireData<ListenerT> myFireData = null;
 
   public boolean isEmpty() {
     if (myListeners == null) return true;
