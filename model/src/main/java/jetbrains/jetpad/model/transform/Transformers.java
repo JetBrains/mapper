@@ -670,7 +670,7 @@ public class Transformers {
 
   public static <SourceT, TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> flatten(final Function<SourceT, ObservableCollection<TargetT>> f) {
-    return Transformers.<SourceT, ObservableCollection<TargetT>, TargetT>flatten(f, Transformers.<ObservableCollection<TargetT>>identity());
+    return Transformers.flatten(f, Transformers.<ObservableCollection<TargetT>>identity());
   }
 
   public static <SourceT, SelectedT, ResultT>
