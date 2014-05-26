@@ -18,11 +18,12 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ThrowableHandlers {
+  private static final Logger LOG = Logger.getLogger(ThrowableHandlers.class.getName());
+
   //we can use ThreadLocal here because of our own emulation at jetbrains.jetpad.model.jre.java.lang.ThreadLocal
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
   private static ThreadLocal<Boolean> ourForceProduction = new ThreadLocal<Boolean>() {
@@ -50,25 +51,21 @@ public class ThrowableHandlers {
       throw new IllegalStateException();
     }
     ourForceProduction.set(true);
-    PrintStream defaultErr = System.err;
-    OutputStream out = new OutputStream() {
-      public void write(int b) throws IOException {
-      }
-    };
-    System.setErr(new PrintStream(out));
     try {
       r.run();
     } finally {
-      System.setErr(defaultErr);
       ourForceProduction.set(false);
     }
   }
 
   public static void handle(Throwable t) {
     if (isInUnitTests(t)) {
+      if (t instanceof RuntimeException) {
+        throw (RuntimeException)t;
+      }
       throw new RuntimeException(t);
     }
-    t.printStackTrace();
+    LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
     ourHandlers.get().fire(t);
   }
 

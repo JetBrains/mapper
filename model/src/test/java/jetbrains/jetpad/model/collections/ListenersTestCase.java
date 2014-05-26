@@ -37,7 +37,7 @@ public abstract class ListenersTestCase {
     c.verifyBeforeAfter();
   }
 
-  @Test(expected = RuntimeException.class)
+  @Test(expected = UnsupportedOperationException.class)
   public void beforeAfterOnAddArentAffectedByListenerExceptions() {
     MyCollection c = createCollection();
     c.addListener(createThrowingListener());
@@ -50,7 +50,7 @@ public abstract class ListenersTestCase {
     }
   }
 
-  @Test(expected = RuntimeException.class)
+  @Test(expected = UnsupportedOperationException.class)
   public void beforeAfterOnRemoveArentAffectedByListenerExceptions() {
     MyCollection c = createCollection();
     c.add(0);
@@ -95,11 +95,11 @@ public abstract class ListenersTestCase {
     return new CollectionListener<Integer>() {
       @Override
       public void onItemAdded(CollectionItemEvent<Integer> event) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
       }
       @Override
       public void onItemRemoved(CollectionItemEvent<Integer> event) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
       }
     };
   }
