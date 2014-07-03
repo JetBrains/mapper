@@ -25,6 +25,8 @@ public final class MappingContext {
   }
 
   protected void register(Mapper<?, ?> mapper) {
+    if (!mapper.isFindable()) return;
+
     Object source = mapper.getSource();
     if (!(myMappers.containsKey(source))) {
       myMappers.put(source, mapper);
@@ -44,6 +46,8 @@ public final class MappingContext {
   }
 
   protected void unregister(Mapper<?, ?> mapper) {
+    if (!mapper.isFindable()) return;
+
     Object source = mapper.getSource();
     if (!myMappers.containsKey(source)) {
       throw new IllegalStateException();

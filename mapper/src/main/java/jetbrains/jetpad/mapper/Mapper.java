@@ -52,6 +52,10 @@ public abstract class Mapper<SourceT, TargetT> {
     return myParent;
   }
 
+  protected boolean isFindable() {
+    return true;
+  }
+
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
   }
 

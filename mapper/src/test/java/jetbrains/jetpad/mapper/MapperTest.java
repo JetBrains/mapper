@@ -131,6 +131,31 @@ public class MapperTest {
     mapper.detachRoot();
   }
 
+  @Test
+  public void findableRoot() {
+    Object o = new Object();
+    TestMapper mapper = new TestMapper(o);
+    mapper.attachRoot();
+    assertSame(mapper, mapper.getDescendantMapper(o));
+
+    mapper.detachRoot();
+  }
+
+  @Test
+  public void nonFindableRoot() {
+    Object o = new Object();
+    TestMapper mapper = new TestMapper(o) {
+      @Override
+      protected boolean isFindable() {
+        return false;
+      }
+    };
+    mapper.attachRoot();
+    assertNull(mapper.getDescendantMapper(o));
+
+    mapper.detachChild();
+  }
+
   private void assertMapped() {
     Assert.assertEquals(source, target);
   }
