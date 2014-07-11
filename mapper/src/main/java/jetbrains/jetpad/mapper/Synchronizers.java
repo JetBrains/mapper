@@ -95,7 +95,7 @@ public class Synchronizers {
   }
 
   public static <ValueT>
-  Synchronizer forProperty(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
+  Synchronizer forPropsOneWay(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
     return new Synchronizer() {
       private Registration myRegistration;
 
@@ -118,7 +118,7 @@ public class Synchronizers {
   }
 
   public static <ValueT>
-  Synchronizer forProperties(final Property<ValueT> source, final Property<ValueT> target) {
+  Synchronizer forPropsTwoWay(final Property<ValueT> source, final Property<ValueT> target) {
     if (source == null || target == null) {
       throw new NullPointerException();
     }

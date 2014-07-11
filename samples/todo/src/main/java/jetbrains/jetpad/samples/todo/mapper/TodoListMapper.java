@@ -20,6 +20,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import jetbrains.jetpad.mapper.Mapper;
 import jetbrains.jetpad.mapper.MapperFactory;
+import jetbrains.jetpad.mapper.Synchronizers;
 import jetbrains.jetpad.mapper.gwt.WithElement;
 import jetbrains.jetpad.samples.todo.model.TodoList;
 import jetbrains.jetpad.samples.todo.model.TodoListItem;
@@ -29,7 +30,6 @@ import java.util.List;
 
 import static com.google.gwt.query.client.GQuery.$;
 import static jetbrains.jetpad.mapper.Synchronizers.forObservableRole;
-import static jetbrains.jetpad.mapper.Synchronizers.forProperty;
 import static jetbrains.jetpad.mapper.gwt.DomUtil.*;
 import static jetbrains.jetpad.model.property.Properties.size;
 import static jetbrains.jetpad.model.property.Properties.toStringOf;
@@ -78,6 +78,6 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
       }
     }));
 
-    conf.add(forProperty(toStringOf(size(getSource().items)), innerTextOf(getTarget().count)));
+    conf.add(Synchronizers.forPropsOneWay(toStringOf(size(getSource().items)), innerTextOf(getTarget().count)));
   }
 }
