@@ -15,37 +15,53 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.ListenerCaller;
+import jetbrains.jetpad.model.event.Listeners;
+
 import java.util.*;
 
 public final class MappingContext {
   private Map<Object, Object> myMappers = new HashMap<>();
   private Map<Mapper<?, ?>, Runnable> myOnDispose = new HashMap<>();
+  private Listeners<MappingContextListener> myListeners = new Listeners<>();
 
   public MappingContext() {
   }
 
-  protected void register(Mapper<?, ?> mapper) {
-    if (!mapper.isFindable()) return;
-
-    Object source = mapper.getSource();
-    if (!(myMappers.containsKey(source))) {
-      myMappers.put(source, mapper);
-    } else {
-      Object ms = myMappers.get(source);
-      if (ms instanceof Set) {
-        Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
-        mappers.add(mapper);
-      } else {
-        Mapper<?, ?> m = (Mapper<?, ?>) ms;
-        Set<Mapper<?, ?>> mappers = new HashSet<>();
-        mappers.add(m);
-        mappers.add(mapper);
-        myMappers.put(source, mappers);
-      }
-    }
+  public Registration addListener(MappingContextListener l) {
+    return myListeners.add(l);
   }
 
-  protected void unregister(Mapper<?, ?> mapper) {
+  protected void register(final Mapper<?, ?> mapper) {
+    if (mapper.isFindable()) {
+      Object source = mapper.getSource();
+      if (!(myMappers.containsKey(source))) {
+        myMappers.put(source, mapper);
+      } else {
+        Object ms = myMappers.get(source);
+        if (ms instanceof Set) {
+          Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
+          mappers.add(mapper);
+        } else {
+          Mapper<?, ?> m = (Mapper<?, ?>) ms;
+          Set<Mapper<?, ?>> mappers = new HashSet<>();
+          mappers.add(m);
+          mappers.add(mapper);
+          myMappers.put(source, mappers);
+        }
+      }
+    }
+
+    myListeners.fire(new ListenerCaller<MappingContextListener>() {
+      @Override
+      public void call(MappingContextListener l) {
+        l.onMapperRegistered(mapper);
+      }
+    });
+  }
+
+  protected void unregister(final Mapper<?, ?> mapper) {
     if (!mapper.isFindable()) return;
 
     Object source = mapper.getSource();
@@ -70,6 +86,13 @@ public final class MappingContext {
     if (onDispose != null) {
       onDispose.run();
     }
+
+    myListeners.fire(new ListenerCaller<MappingContextListener>() {
+      @Override
+      public void call(MappingContextListener l) {
+        l.onMapperUnregistered(mapper);
+      }
+    });
   }
 
   /**

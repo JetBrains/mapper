@@ -19,6 +19,7 @@ import jetbrains.jetpad.model.collections.set.ObservableSet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
@@ -154,6 +155,21 @@ public class MapperTest {
     assertNull(mapper.getDescendantMapper(o));
 
     mapper.detachChild();
+  }
+
+  @Test
+  public void mappingContextListeners() {
+    MappingContextListener l = Mockito.mock(MappingContextListener.class);
+
+    MappingContext ctx = new MappingContext();
+    ctx.addListener(l);
+
+    TestMapper mapper = new TestMapper(new Object());
+    mapper.attachRoot(ctx);
+    mapper.detachRoot();
+
+    Mockito.verify(l).onMapperRegistered(mapper);
+    Mockito.verify(l).onMapperUnregistered(mapper);
   }
 
   private void assertMapped() {

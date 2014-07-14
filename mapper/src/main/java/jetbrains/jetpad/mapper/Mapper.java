@@ -89,13 +89,17 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   public final void attachRoot() {
+    attachRoot(new MappingContext());
+  }
+
+  public final void attachRoot(MappingContext ctx) {
     if (myMappingContext != null) {
       throw new IllegalStateException();
     }
     if (myParent != null) {
       throw new IllegalStateException();
     }
-    attach(new MappingContext());
+    attach(ctx);
   }
 
   public final void detachRoot() {
