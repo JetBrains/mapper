@@ -28,14 +28,14 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Mapper<SourceT, TargetT> {
-  private static final Object[] EMPTY_PATS = new Object[0];
+  private static final Object[] EMPTY_PARTS = new Object[0];
 
   private SourceT mySource;
   private TargetT myTarget;
   private MappingContext myMappingContext;
   private boolean myDetached;
 
-  private Object[] myParts = EMPTY_PATS;
+  private Object[] myParts = EMPTY_PARTS;
   private Mapper<?, ?> myParent;
 
   /**
