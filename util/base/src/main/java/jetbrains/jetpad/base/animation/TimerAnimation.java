@@ -30,14 +30,14 @@ public abstract class TimerAnimation implements Animation {
   @Override
   public void stop() {
     myFrame = myMaxFrame;
-    animateFrame(myFrame);
+    animateFrame(myFrame, true);
     lastFrame();
     myDefaultAnimation.stop();
   }
 
   private void onFrame() {
     myFrame++;
-    animateFrame(myFrame);
+    animateFrame(myFrame, myFrame == myMaxFrame);
     if (myFrame == myMaxFrame) {
       lastFrame();
       myDefaultAnimation.done();
@@ -48,7 +48,7 @@ public abstract class TimerAnimation implements Animation {
     myTimerReg.remove();
   }
 
-  protected abstract void animateFrame(int frame);
+  protected abstract void animateFrame(int frame, boolean lastFrame);
 
   @Override
   public void whenDone(Runnable r) {
