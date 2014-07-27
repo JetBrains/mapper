@@ -35,7 +35,7 @@ public class Validators {
       return true;
     }
   };
-  private static final Predicate<String> INTEGER = new Predicate<String>() {
+  private static final Predicate<String> UNSINGED_INTEGER = new Predicate<String>() {
     @Override
     public boolean apply(String input) {
       if (Strings.isNullOrEmpty(input)) return false;
@@ -50,6 +50,19 @@ public class Validators {
       }
     }
   };
+  private static final Predicate<String> INTEGER = new Predicate<String>() {
+    @Override
+    public boolean apply(String input) {
+      if (Strings.isNullOrEmpty(input)) return false;
+      try {
+        Integer.parseInt(input);
+        return true;
+      } catch (NumberFormatException e) {
+        return false;
+      }
+    }
+  };
+
   private static final Predicate<String> BOOL = new Predicate<String>() {
     @Override
     public boolean apply(String input) {
@@ -59,6 +72,10 @@ public class Validators {
 
   public static Predicate<String> identifier() {
     return IDENTIFIER;
+  }
+
+  public static Predicate<String> unsignedInteger() {
+    return UNSINGED_INTEGER;
   }
 
   public static Predicate<String> integer() {
