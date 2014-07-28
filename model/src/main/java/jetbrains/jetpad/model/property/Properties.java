@@ -232,7 +232,7 @@ public class Properties {
 
       @Override
       public String getPropExpr() {
-        return "select(" + source.getPropExpr() + ", " + fun +")";
+        return "select(" + source.getPropExpr() + ", " + fun + ")";
       }
     };
   }
@@ -314,7 +314,7 @@ public class Properties {
 
       @Override
       public String getPropExpr() {
-        return "select(" + source.getPropExpr() + ", " + fun +")";
+        return "select(" + source.getPropExpr() + ", " + fun + ")";
       }
     }
 
@@ -684,10 +684,15 @@ public class Properties {
   }
 
   public static ReadableProperty<String> toStringOf(final ReadableProperty<?> p) {
+    return toStringOf(p, "null");
+  }
+
+  public static ReadableProperty<String> toStringOf(final ReadableProperty<?> p, final String nullValue) {
     return new DerivedProperty<String>(p) {
       @Override
       public String get() {
-        return "" + p.get();
+        Object value = p.get();
+        return value != null ? ("" + value) : nullValue;
       }
     };
   }
