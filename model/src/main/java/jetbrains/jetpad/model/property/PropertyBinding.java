@@ -20,7 +20,7 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
 
 public class PropertyBinding {
-  public static <ValueT> Registration bind(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
+  public static <ValueT> Registration bindOneWay(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
     target.set(source.get());
     return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
       @Override
@@ -30,7 +30,7 @@ public class PropertyBinding {
     });
   }
 
-  public static <ValueT> Registration bind(final Property<ValueT> source, final Property<ValueT> target) {
+  public static <ValueT> Registration bindTwoWay(final Property<ValueT> source, final Property<ValueT> target) {
     final Property<Boolean> syncing = new ValueProperty<>(false);
     target.set(source.get());
     return new CompositeRegistration(

@@ -27,7 +27,7 @@ public class PropertyBindingTest {
   @Test
   public void bidirectionalSync() {
     source.set("239");
-    Registration reg = PropertyBinding.bind(source, target);
+    Registration reg = PropertyBinding.bindTwoWay(source, target);
 
     assertEquals("239", target.get());
 

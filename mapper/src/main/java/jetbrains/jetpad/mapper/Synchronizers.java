@@ -130,7 +130,7 @@ public class Synchronizers {
       @Override
       public void attach(SynchronizerContext ctx) {
         myOldValue = source.get();
-        myRegistration = PropertyBinding.bind(source, target);
+        myRegistration = PropertyBinding.bindTwoWay(source, target);
       }
 
       @Override
