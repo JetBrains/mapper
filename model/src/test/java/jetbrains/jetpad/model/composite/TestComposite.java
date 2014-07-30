@@ -32,6 +32,11 @@ class TestComposite
   private Rectangle myBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
 
   @Override
+  public TestComposite getParent() {
+    return parent().get();
+  }
+
+  @Override
   public ObservableList<TestComposite> children() {
     return myChildren;
   }
