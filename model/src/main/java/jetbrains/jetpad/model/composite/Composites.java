@@ -81,6 +81,11 @@ public class Composites {
 
   public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT nextLeaf(CompositeT c) {
+    return nextLeaf(c, null);
+  }
+
+  public static <CompositeT extends NavComposite<CompositeT>>
+  CompositeT nextLeaf(CompositeT c, CompositeT within) {
     CompositeT nextSibling = c.nextSibling();
     if (nextSibling != null) {
       return firstLeaf(nextSibling);
@@ -89,12 +94,17 @@ public class Composites {
     if (isNonCompositeChild(c)) return null;
 
     CompositeT parent = c.parent().get();
-    if (parent == null) return null;
-    return nextLeaf(parent);
+    if (parent == within) return null;
+    return nextLeaf(parent, within);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT prevLeaf(CompositeT c) {
+    return prevLeaf(c, null);
+  }
+
+  public static <CompositeT extends NavComposite<CompositeT>>
+  CompositeT prevLeaf(CompositeT c, CompositeT within) {
     CompositeT prevSibling = c.prevSibling();
     if (prevSibling != null) {
       return lastLeaf(prevSibling);
@@ -103,8 +113,8 @@ public class Composites {
     if (isNonCompositeChild(c)) return null;
 
     CompositeT parent = c.parent().get();
-    if (parent == null) return null;
-    return prevLeaf(parent);
+    if (parent == within) return null;
+    return prevLeaf(parent, within);
   }
 
   public static <CompositeT extends Composite<CompositeT>>
