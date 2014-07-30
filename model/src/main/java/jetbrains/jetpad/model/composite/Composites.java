@@ -33,9 +33,13 @@ public class Composites {
     parent.children().remove(c);
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   boolean isNonCompositeChild(CompositeT c) {
     if (c.parent().get() == null) return false;
+
+    if (c.nextSibling() != null) return false;
+    if (c.prevSibling() != null) return false;
+
     return c.parent().get().children().indexOf(c) == -1;
   }
 
@@ -43,8 +47,8 @@ public class Composites {
   CompositeT nextSibling(CompositeT c) {
     CompositeT parent = c.parent().get();
     if (parent == null) return null;
-    if (isNonCompositeChild(c)) return null;
     int index = parent.children().indexOf(c);
+    if (index == -1) return null;
     if (index + 1 < parent.children().size()) {
       return parent.children().get(index + 1);
     }
@@ -55,8 +59,8 @@ public class Composites {
   CompositeT prevSibling(CompositeT c) {
     CompositeT parent = c.parent().get();
     if (parent == null) return null;
-    if (isNonCompositeChild(c)) return null;
     int index = parent.children().indexOf(c);
+    if (index == -1) return null;
     if (index > 0) {
       return parent.children().get(index - 1);
     }
@@ -211,8 +215,8 @@ public class Composites {
   public static <CompositeT extends Composite<CompositeT>>
   boolean isDescendant(CompositeT ancestor, CompositeT descendant) {
     if (ancestor == descendant) return true;
-    if (descendant.parent().get() == null) return false;
-    return isDescendant(ancestor, descendant.parent().get());
+    if (descendant.getParent() == null) return false;
+    return isDescendant(ancestor, descendant.getParent());
   }
 
   private static <CompositeT extends Composite<CompositeT>>
@@ -233,7 +237,7 @@ public class Composites {
 
   public static <ViewT extends Composite<ViewT> & HasVisibility>
   boolean isLastChild(ViewT v) {
-    ViewT parent = v.parent().get();
+    ViewT parent = v.getParent();
     if (parent == null) return false;
     List<ViewT> siblings = parent.children();
     int index = siblings.indexOf(v);
@@ -245,7 +249,7 @@ public class Composites {
 
   public static <ViewT extends Composite<ViewT> & HasVisibility>
   boolean isFirstChild(ViewT cell) {
-    ViewT parent = cell.parent().get();
+    ViewT parent = cell.getParent();
     if (parent == null) return false;
     List<ViewT> siblings = parent.children();
     int index = siblings.indexOf(cell);
@@ -301,14 +305,14 @@ public class Composites {
   public static <ViewT extends Composite<ViewT> & HasVisibility>
   boolean isVisible(ViewT v) {
     if (!v.visible().get()) return false;
-    ViewT parent = v.parent().get();
+    ViewT parent = v.getParent();
     if (parent == null) return true;
     return isVisible(parent);
   }
 
   public static <ViewT extends Composite<ViewT> & HasFocusability>
   ViewT focusableParent(ViewT v) {
-    ViewT parent = v.parent().get();
+    ViewT parent = v.getParent();
     if (parent == null) return null;
     if (parent.focusable().get()) return parent;
     return focusableParent(parent);
@@ -321,7 +325,7 @@ public class Composites {
     ViewT current = v;
     while (current != null) {
       if (!current.visible().get()) return false;
-      current = current.parent().get();
+      current = current.getParent();
     }
 
     return true;
