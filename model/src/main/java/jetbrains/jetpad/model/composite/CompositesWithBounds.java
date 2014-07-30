@@ -36,7 +36,7 @@ public class CompositesWithBounds {
     return isAbove(upper, lower);
   }
 
-  public <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT homeElement(ViewT cell) {
     ViewT current = cell;
     while (true) {
@@ -46,7 +46,7 @@ public class CompositesWithBounds {
     }
   }
 
-  public <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT endElement(ViewT cell) {
     ViewT current = cell;
     while (true) {
@@ -56,7 +56,7 @@ public class CompositesWithBounds {
     }
   }
 
-  public <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT upperFocusable(ViewT v, int xOffset) {
     ViewT current = Composites.prevFocusable(v);
     ViewT bestMatch = null;
@@ -80,7 +80,7 @@ public class CompositesWithBounds {
     return bestMatch;
   }
 
-  public <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT lowerFocusable(ViewT v, int xOffset) {
     ViewT current = Composites.nextFocusable(v);
     ViewT bestMatch = null;

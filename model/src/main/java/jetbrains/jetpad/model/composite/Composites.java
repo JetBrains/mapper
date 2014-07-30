@@ -75,9 +75,9 @@ public class Composites {
     return lastLeaf(c.children().get(c.children().size() - 1));
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT nextLeaf(CompositeT c) {
-    CompositeT nextSibling = nextSibling(c);
+    CompositeT nextSibling = c.nextSibling();
     if (nextSibling != null) {
       return firstLeaf(nextSibling);
     }
@@ -89,9 +89,9 @@ public class Composites {
     return nextLeaf(parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT prevLeaf(CompositeT c) {
-    CompositeT prevSibling = prevSibling(c);
+    CompositeT prevSibling = c.prevSibling();
     if (prevSibling != null) {
       return lastLeaf(prevSibling);
     }
@@ -113,7 +113,7 @@ public class Composites {
     });
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> nextLeaves(final CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
@@ -123,7 +123,7 @@ public class Composites {
     });
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> prevLeaves(final CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
@@ -133,7 +133,7 @@ public class Composites {
     });
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> nextNavOrder(final CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
@@ -143,7 +143,7 @@ public class Composites {
     });
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> prevNavOrder(final CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
@@ -154,9 +154,9 @@ public class Composites {
   }
 
 
-  private static <CompositeT extends Composite<CompositeT>>
+  private static <CompositeT extends NavComposite<CompositeT>>
   CompositeT nextNavOrder(CompositeT start, CompositeT current) {
-    CompositeT nextSibling = nextSibling(current);
+    CompositeT nextSibling = current.nextSibling();
 
     if (nextSibling != null) {
       return firstLeaf(nextSibling);
@@ -169,9 +169,9 @@ public class Composites {
     return nextNavOrder(start, parent);
   }
 
-  private static <CompositeT extends Composite<CompositeT>>
+  private static <CompositeT extends NavComposite<CompositeT>>
   CompositeT prevNavOrder(CompositeT start, CompositeT current) {
-    CompositeT prevSibling = prevSibling(current);
+    CompositeT prevSibling = current.prevSibling();
 
     if (prevSibling != null) {
       return lastLeaf(prevSibling);
@@ -327,7 +327,7 @@ public class Composites {
     return true;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility>
   ViewT nextFocusable(ViewT v) {
     for (ViewT cv : Composites.nextNavOrder(v)) {
       if (isFocusable(cv)) return cv;
@@ -335,7 +335,7 @@ public class Composites {
     return null;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
+  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility>
   ViewT prevFocusable(ViewT v) {
     for (ViewT cv : Composites.prevNavOrder(v)) {
       if (isFocusable(cv)) return cv;
@@ -380,22 +380,22 @@ public class Composites {
     return ourWithBounds.isBelow(lower, upper);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT homeElement(ViewT cell) {
     return ourWithBounds.homeElement(cell);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT endElement(ViewT cell) {
     return ourWithBounds.endElement(cell);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT upperFocusable(ViewT v, int xOffset) {
     return ourWithBounds.upperFocusable(v, xOffset);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
   ViewT lowerFocusable(ViewT v, int xOffset) {
     return ourWithBounds.lowerFocusable(v, xOffset);
   }
