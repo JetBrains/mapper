@@ -23,11 +23,9 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
-import java.util.List;
-
 class TestComposite
     extends HasParent<TestComposite, TestComposite>
-    implements Composite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
+    implements NavComposite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
   private ObservableList<TestComposite> myChildren = new ChildList<>(this);
   private Property<Boolean> myVisible = new ValueProperty<>(true);
   private Property<Boolean> myFocusable = new ValueProperty<>(true);
@@ -36,6 +34,16 @@ class TestComposite
   @Override
   public ObservableList<TestComposite> children() {
     return myChildren;
+  }
+
+  @Override
+  public TestComposite nextSibling() {
+    return Composites.nextSibling(this);
+  }
+
+  @Override
+  public TestComposite prevSibling() {
+    return Composites.prevSibling(this);
   }
 
   @Override
