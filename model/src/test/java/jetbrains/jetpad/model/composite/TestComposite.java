@@ -52,6 +52,18 @@ class TestComposite
   }
 
   @Override
+  public TestComposite firstChild() {
+    if (myChildren.isEmpty()) return null;
+    return myChildren.get(0);
+  }
+
+  @Override
+  public TestComposite lastChild() {
+    if (myChildren.isEmpty()) return null;
+    return myChildren.get(myChildren.size() - 1);
+  }
+
+  @Override
   public Property<Boolean> visible() {
     return myVisible;
   }

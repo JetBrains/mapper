@@ -67,16 +67,18 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT firstLeaf(CompositeT c) {
-    if (c.children().isEmpty()) return c;
-    return firstLeaf(c.children().get(0));
+    CompositeT first = c.firstChild();
+    if (first == null) return c;
+    return firstLeaf(first);
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT lastLeaf(CompositeT c) {
-    if (c.children().isEmpty()) return c;
-    return lastLeaf(c.children().get(c.children().size() - 1));
+    CompositeT last = c.lastChild();
+    if (last == null) return c;
+    return lastLeaf(last);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
