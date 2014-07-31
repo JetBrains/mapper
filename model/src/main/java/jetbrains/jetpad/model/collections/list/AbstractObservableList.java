@@ -29,11 +29,15 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   private Listeners<CollectionListener<ItemT>> myListeners;
 
   protected void checkAdd(int index, ItemT item) {
-    if (index < 0 || index > size()) throw new IndexOutOfBoundsException("Add: index=" + index + ", size=" + size());
+    if (index < 0 || index > size()) {
+      throw new IndexOutOfBoundsException("Add: index=" + index + ", size=" + size());
+    }
   }
 
   protected void checkRemove(int index, ItemT item) {
-    if (index < 0 || index >= size()) throw new IndexOutOfBoundsException("Remove: index=" + index + ", size=" + size());
+    if (index < 0 || index >= size()) {
+      throw new IndexOutOfBoundsException("Remove: index=" + index + ", size=" + size());
+    }
   }
 
   protected final void add(final int index, final ItemT item, Runnable action) {
