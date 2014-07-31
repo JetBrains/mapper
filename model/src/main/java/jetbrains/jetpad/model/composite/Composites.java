@@ -93,16 +93,18 @@ public class Composites {
 
   public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT nextLeaf(CompositeT c, CompositeT within) {
-    CompositeT nextSibling = c.nextSibling();
-    if (nextSibling != null) {
-      return firstLeaf(nextSibling);
+    CompositeT current = c;
+    while (true) {
+      CompositeT nextSibling = current.nextSibling();
+      if (nextSibling != null) {
+        return firstLeaf(nextSibling);
+      }
+
+      if (isNonCompositeChild(current)) return null;
+      CompositeT parent = current.getParent();
+      if (parent == within) return null;
+      current = parent;
     }
-
-    if (isNonCompositeChild(c)) return null;
-
-    CompositeT parent = c.getParent();
-    if (parent == within) return null;
-    return nextLeaf(parent, within);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
@@ -112,16 +114,19 @@ public class Composites {
 
   public static <CompositeT extends NavComposite<CompositeT>>
   CompositeT prevLeaf(CompositeT c, CompositeT within) {
-    CompositeT prevSibling = c.prevSibling();
-    if (prevSibling != null) {
-      return lastLeaf(prevSibling);
+    CompositeT current = c;
+    while (true) {
+      CompositeT prevSibling = current.prevSibling();
+      if (prevSibling != null) {
+        return lastLeaf(prevSibling);
+      }
+
+      if (isNonCompositeChild(current)) return null;
+
+      CompositeT parent = current.getParent();
+      if (parent == within) return null;
+      current = parent;
     }
-
-    if (isNonCompositeChild(c)) return null;
-
-    CompositeT parent = c.getParent();
-    if (parent == within) return null;
-    return prevLeaf(parent, within);
   }
 
   public static <CompositeT extends Composite<CompositeT>>
