@@ -28,24 +28,24 @@ public class Composites {
 
   public static <CompositeT extends Composite<CompositeT>>
   void removeFromParent(CompositeT c) {
-    CompositeT parent = c.parent().get();
+    CompositeT parent = c.getParent();
     if (parent == null) return;
     parent.children().remove(c);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
   boolean isNonCompositeChild(CompositeT c) {
-    if (c.parent().get() == null) return false;
+    if (c.getParent() == null) return false;
 
     if (c.nextSibling() != null) return false;
     if (c.prevSibling() != null) return false;
 
-    return c.parent().get().children().indexOf(c) == -1;
+    return c.getParent().children().indexOf(c) == -1;
   }
 
   public static <CompositeT extends Composite<CompositeT>>
   CompositeT nextSibling(CompositeT c) {
-    CompositeT parent = c.parent().get();
+    CompositeT parent = c.getParent();
     if (parent == null) return null;
     int index = parent.children().indexOf(c);
     if (index == -1) return null;
@@ -57,7 +57,7 @@ public class Composites {
 
   public static <CompositeT extends Composite<CompositeT>>
   CompositeT prevSibling(CompositeT c) {
-    CompositeT parent = c.parent().get();
+    CompositeT parent = c.getParent();
     if (parent == null) return null;
     int index = parent.children().indexOf(c);
     if (index == -1) return null;
@@ -95,7 +95,7 @@ public class Composites {
 
     if (isNonCompositeChild(c)) return null;
 
-    CompositeT parent = c.parent().get();
+    CompositeT parent = c.getParent();
     if (parent == within) return null;
     return nextLeaf(parent, within);
   }
@@ -114,7 +114,7 @@ public class Composites {
 
     if (isNonCompositeChild(c)) return null;
 
-    CompositeT parent = c.parent().get();
+    CompositeT parent = c.getParent();
     if (parent == within) return null;
     return prevLeaf(parent, within);
   }
@@ -124,7 +124,7 @@ public class Composites {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
       public CompositeT apply(CompositeT input) {
-        return input.parent().get();
+        return input.getParent();
       }
     });
   }
@@ -180,7 +180,7 @@ public class Composites {
 
     if (isNonCompositeChild(current)) return null;
 
-    CompositeT parent = current.parent().get();
+    CompositeT parent = current.getParent();
     if (!isDescendant(parent, start)) return parent;
     return nextNavOrder(start, parent);
   }
@@ -195,7 +195,7 @@ public class Composites {
 
     if (isNonCompositeChild(current)) return null;
 
-    CompositeT parent = current.parent().get();
+    CompositeT parent = current.getParent();
     if (!isDescendant(parent, start)) return parent;
     return prevNavOrder(start, parent);
   }
