@@ -247,43 +247,43 @@ public class Composites {
     return result;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasVisibility>
-  boolean isLastChild(ViewT v) {
-    ViewT parent = v.getParent();
+  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
+  boolean isLastChild(CompositeT v) {
+    CompositeT parent = v.getParent();
     if (parent == null) return false;
-    List<ViewT> siblings = parent.children();
+    List<CompositeT> siblings = parent.children();
     int index = siblings.indexOf(v);
-    for (ViewT cv : siblings.subList(index + 1, siblings.size())) {
+    for (CompositeT cv : siblings.subList(index + 1, siblings.size())) {
       if (cv.visible().get()) return false;
     }
     return true;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasVisibility>
-  boolean isFirstChild(ViewT cell) {
-    ViewT parent = cell.getParent();
+  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
+  boolean isFirstChild(CompositeT cell) {
+    CompositeT parent = cell.getParent();
     if (parent == null) return false;
-    List<ViewT> siblings = parent.children();
+    List<CompositeT> siblings = parent.children();
     int index = siblings.indexOf(cell);
 
-    for (ViewT cv : siblings.subList(0, index)) {
+    for (CompositeT cv : siblings.subList(0, index)) {
       if (cv.visible().get()) return false;
     }
     return true;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  ViewT firstFocusable(ViewT v) {
+  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  CompositeT firstFocusable(CompositeT v) {
     return firstFocusable(v, true);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  ViewT firstFocusable(ViewT v, boolean deepest) {
-    for (ViewT cv : v.children()) {
+  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  CompositeT firstFocusable(CompositeT v, boolean deepest) {
+    for (CompositeT cv : v.children()) {
       if (!cv.visible().get()) continue;
       if (!deepest && cv.focusable().get()) return cv;
 
-      ViewT result = firstFocusable(cv);
+      CompositeT result = firstFocusable(cv);
       if (result != null) return result;
     }
 
@@ -292,21 +292,21 @@ public class Composites {
     return null;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  ViewT lastFocusable(ViewT c) {
+  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  CompositeT lastFocusable(CompositeT c) {
     return lastFocusable(c, true);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  ViewT lastFocusable(ViewT v, boolean deepest) {
-    List<ViewT> children = v.children();
+  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  CompositeT lastFocusable(CompositeT v, boolean deepest) {
+    List<CompositeT> children = v.children();
     for (int i = children.size() - 1; i >= 0; i--) {
-      ViewT cv = children.get(i);
+      CompositeT cv = children.get(i);
 
       if (!cv.visible().get()) continue;
       if (!deepest && cv.focusable().get()) return cv;
 
-      ViewT result = lastFocusable(cv, deepest);
+      CompositeT result = lastFocusable(cv, deepest);
       if (result != null) return result;
     }
 
@@ -314,27 +314,27 @@ public class Composites {
     return null;
   }
 
-  public static <ViewT extends Composite<ViewT> & HasVisibility>
-  boolean isVisible(ViewT v) {
+  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
+  boolean isVisible(CompositeT v) {
     if (!v.visible().get()) return false;
-    ViewT parent = v.getParent();
+    CompositeT parent = v.getParent();
     if (parent == null) return true;
     return isVisible(parent);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability>
-  ViewT focusableParent(ViewT v) {
-    ViewT parent = v.getParent();
+  public static <CompositeT extends Composite<CompositeT> & HasFocusability>
+  CompositeT focusableParent(CompositeT v) {
+    CompositeT parent = v.getParent();
     if (parent == null) return null;
     if (parent.focusable().get()) return parent;
     return focusableParent(parent);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasFocusability & HasVisibility>
-  boolean isFocusable(ViewT v) {
+  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  boolean isFocusable(CompositeT v) {
     if (!v.focusable().get()) return false;
 
-    ViewT current = v;
+    CompositeT current = v;
     while (current != null) {
       if (!current.visible().get()) return false;
       current = current.getParent();
@@ -343,17 +343,17 @@ public class Composites {
     return true;
   }
 
-  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility>
-  ViewT nextFocusable(ViewT v) {
-    for (ViewT cv : Composites.nextNavOrder(v)) {
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility>
+  CompositeT nextFocusable(CompositeT v) {
+    for (CompositeT cv : Composites.nextNavOrder(v)) {
       if (isFocusable(cv)) return cv;
     }
     return null;
   }
 
-  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility>
-  ViewT prevFocusable(ViewT v) {
-    for (ViewT cv : Composites.prevNavOrder(v)) {
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility>
+  CompositeT prevFocusable(CompositeT v) {
+    for (CompositeT cv : Composites.prevNavOrder(v)) {
       if (isFocusable(cv)) return cv;
     }
     return null;
@@ -388,40 +388,40 @@ public class Composites {
   }
 
   //has bounds
-  public static <ViewT extends HasBounds> boolean isAbove(ViewT upper, ViewT lower) {
+  public static <CompositeT extends HasBounds> boolean isAbove(CompositeT upper, CompositeT lower) {
     return ourWithBounds.isAbove(upper, lower);
   }
 
-  public static <ViewT extends HasBounds> boolean isBelow(ViewT lower, ViewT upper) {
+  public static <CompositeT extends HasBounds> boolean isBelow(CompositeT lower, CompositeT upper) {
     return ourWithBounds.isBelow(lower, upper);
   }
 
-  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT homeElement(ViewT cell) {
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
+  CompositeT homeElement(CompositeT cell) {
     return ourWithBounds.homeElement(cell);
   }
 
-  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT endElement(ViewT cell) {
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
+  CompositeT endElement(CompositeT cell) {
     return ourWithBounds.endElement(cell);
   }
 
-  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT upperFocusable(ViewT v, int xOffset) {
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
+  CompositeT upperFocusable(CompositeT v, int xOffset) {
     return ourWithBounds.upperFocusable(v, xOffset);
   }
 
-  public static <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  ViewT lowerFocusable(ViewT v, int xOffset) {
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
+  CompositeT lowerFocusable(CompositeT v, int xOffset) {
     return ourWithBounds.lowerFocusable(v, xOffset);
   }
 
-  public static <ViewT extends HasBounds> double distanceTo(ViewT c, int x) {
+  public static <CompositeT extends HasBounds> double distanceTo(CompositeT c, int x) {
     return ourWithBounds.distanceTo(c, x);
   }
 
-  public static <ViewT extends Composite<ViewT> & HasBounds & HasVisibility & HasFocusability>
-  ViewT findClosest(ViewT current, Vector loc) {
+  public static <CompositeT extends Composite<CompositeT> & HasBounds & HasVisibility & HasFocusability>
+  CompositeT findClosest(CompositeT current, Vector loc) {
     return ourWithBounds.findClosest(current, loc);
   }
 }
