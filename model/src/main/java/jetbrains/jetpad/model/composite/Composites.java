@@ -210,7 +210,7 @@ public class Composites {
     return prevNavOrder(start, parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends NavComposite<CompositeT>>
   boolean isBefore(CompositeT c1, CompositeT c2) {
     if (c1 == c2) return false;
 
@@ -223,15 +223,39 @@ public class Composites {
 
     int commonLength = Math.min(c1a.size(), c2a.size());
     for (int i = 1; i < commonLength; i++) {
-      CompositeT prevAncestor = c1a.get(i - 1);
-      if (c1a.get(i) != c2a.get(i)) {
-        int c1aIndex = prevAncestor.children().indexOf(c1a.get(i));
-        int c2aIndex = prevAncestor.children().indexOf(c2a.get(i));
-        return c1aIndex < c2aIndex;
+      CompositeT first = c1a.get(i);
+      CompositeT second = c2a.get(i);
+      if (first != second) {
+        return deltaBetween(first, second) > 0;
       }
     }
 
     throw new IllegalArgumentException("One parameter is an ancestor of the other");
+  }
+
+  private static <CompositeT extends NavComposite<CompositeT>>
+  int deltaBetween(CompositeT c1, CompositeT c2) {
+    CompositeT left = c1;
+    CompositeT right = c1;
+    int delta = 0;
+
+    while (true) {
+      if (left == c2) {
+        return delta;
+      }
+      if (right == c2) {
+        return delta;
+      }
+
+      delta++;
+
+      if (left != null) {
+        left = left.prevSibling();
+      }
+      if (right != null) {
+        right = right.nextSibling();
+      }
+    }
   }
 
   public static <CompositeT extends Composite<CompositeT>>
