@@ -111,11 +111,22 @@ public final class MappingContext {
    * Try using this method as little as possible. Nice to use method which returns one mapper instead
    */
   public <S> Set<Mapper<? super S, ?>> getMappers(Mapper<?, ?> ancestor, S source) {
-    Set<Mapper<? super S, ?>> result = new HashSet<>();
-    for (Mapper<? super S, ?> m : getMappers(source)) {
+    Set<Mapper<? super S, ?>> mappers = getMappers(source);
+    Set<Mapper<? super S, ?>> result = null;
+    for (Mapper<? super S, ?> m : mappers) {
       if (Mappers.isDescendant(ancestor, m)) {
+        if (result == null) {
+          if (mappers.size() == 1) {
+            return Collections.<Mapper<? super S, ?>>singleton(m);
+          } else {
+            result = new HashSet<>();
+          }
+        }
         result.add(m);
       }
+    }
+    if (result == null) {
+      return Collections.emptySet();
     }
     return result;
   }
@@ -130,14 +141,14 @@ public final class MappingContext {
       return Collections.emptySet();
     }
     Object mappers = myMappers.get(source);
-    Set<Mapper<? super S, ?>> result = new HashSet<>();
     if (mappers instanceof Mapper) {
-      result.add((Mapper<? super S, ?>) mappers);
+      return Collections.<Mapper<? super S, ?>>singleton((Mapper<? super S, ?>) mappers);
     } else {
+      Set<Mapper<? super S, ?>> result = new HashSet<>();
       for (Mapper<?, ?> m : (Set<Mapper<? super S, ?>>) mappers) {
         result.add((Mapper<? super S, ?>) m);
       }
+      return result;
     }
-    return result;
   }
 }
