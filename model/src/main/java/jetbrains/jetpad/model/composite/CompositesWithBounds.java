@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.composite;
 
-import com.google.common.collect.Range;
 import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
 
@@ -107,36 +106,5 @@ public class CompositesWithBounds {
   public <ViewT extends HasBounds> double distanceTo(ViewT c, int x) {
     Rectangle bounds = c.getBounds();
     return bounds.distance(new Vector(x, bounds.origin.y));
-  }
-
-  public <ViewT extends Composite<ViewT> & HasBounds & HasVisibility & HasFocusability>
-  ViewT findClosestFocusable(ViewT current, Vector loc) {
-    if (!current.visible().get()) return null;
-
-    Rectangle bounds = current.getBounds();
-    Range<Integer> range = Range.closed(bounds.origin.y, bounds.origin.y + bounds.dimension.y);
-    if (!range.contains(loc.y)) {
-      return null;
-    }
-    ViewT result = null;
-    int distance = Integer.MAX_VALUE;
-    for (ViewT child : current.children()) {
-      if (!child.visible().get()) continue;
-
-      ViewT closest = findClosestFocusable(child, loc);
-      if (closest == null) continue;
-      int newDistance = (int) closest.getBounds().distance(loc);
-
-      if (newDistance < distance) {
-        result = closest;
-        distance = newDistance;
-      }
-    }
-
-    if (result == null && current.focusable().get()) {
-      return current;
-    }
-
-    return result;
   }
 }

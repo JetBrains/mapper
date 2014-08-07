@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.geometry.Rectangle;
-import jetbrains.jetpad.geometry.Vector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -333,12 +332,6 @@ public class CompositesTest {
   public void lowerFocusable() {
     assertSame(leaf21, Composites.lowerFocusable(leaf12, 0));
     assertSame(leaf22, Composites.lowerFocusable(leaf12, 10));
-  }
-
-  @Test
-  public void findClosest() {
-    assertSame(leaf11, Composites.findClosestFocusable(root, new Vector(0, 0)));
-    assertSame(leaf12, Composites.findClosestFocusable(root, new Vector(1000, 0)));
   }
 
   private List<TestComposite> asList(Iterable<TestComposite> it) {

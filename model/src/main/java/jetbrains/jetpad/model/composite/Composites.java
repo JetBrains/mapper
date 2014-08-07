@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
-import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
@@ -448,14 +447,5 @@ public class Composites {
   public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
   CompositeT lowerFocusable(CompositeT v, int xOffset) {
     return ourWithBounds.lowerFocusable(v, xOffset);
-  }
-
-  public static <CompositeT extends HasBounds> double distanceTo(CompositeT c, int x) {
-    return ourWithBounds.distanceTo(c, x);
-  }
-
-  public static <CompositeT extends Composite<CompositeT> & HasBounds & HasVisibility & HasFocusability>
-  CompositeT findClosestFocusable(CompositeT current, Vector loc) {
-    return ourWithBounds.findClosestFocusable(current, loc);
   }
 }
