@@ -455,7 +455,7 @@ public class Composites {
   }
 
   public static <CompositeT extends Composite<CompositeT> & HasBounds & HasVisibility & HasFocusability>
-  CompositeT findClosest(CompositeT current, Vector loc) {
-    return ourWithBounds.findClosest(current, loc);
+  CompositeT findClosestFocusable(CompositeT current, Vector loc) {
+    return ourWithBounds.findClosestFocusable(current, loc);
   }
 }

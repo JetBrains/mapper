@@ -110,7 +110,7 @@ public class CompositesWithBounds {
   }
 
   public <ViewT extends Composite<ViewT> & HasBounds & HasVisibility & HasFocusability>
-  ViewT findClosest(ViewT current, Vector loc) {
+  ViewT findClosestFocusable(ViewT current, Vector loc) {
     if (!current.visible().get()) return null;
 
     Rectangle bounds = current.getBounds();
@@ -123,7 +123,7 @@ public class CompositesWithBounds {
     for (ViewT child : current.children()) {
       if (!child.visible().get()) continue;
 
-      ViewT closest = findClosest(child, loc);
+      ViewT closest = findClosestFocusable(child, loc);
       if (closest == null) continue;
       int newDistance = (int) closest.getBounds().distance(loc);
 

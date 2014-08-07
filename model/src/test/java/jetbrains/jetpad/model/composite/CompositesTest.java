@@ -337,8 +337,8 @@ public class CompositesTest {
 
   @Test
   public void findClosest() {
-    assertSame(leaf11, Composites.findClosest(root, new Vector(0, 0)));
-    assertSame(leaf12, Composites.findClosest(root, new Vector(1000, 0)));
+    assertSame(leaf11, Composites.findClosestFocusable(root, new Vector(0, 0)));
+    assertSame(leaf12, Composites.findClosestFocusable(root, new Vector(1000, 0)));
   }
 
   private List<TestComposite> asList(Iterable<TestComposite> it) {
