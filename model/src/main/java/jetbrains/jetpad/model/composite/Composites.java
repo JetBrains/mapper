@@ -240,7 +240,7 @@ public class Composites {
 
     while (true) {
       if (left == c2) {
-        return delta;
+        return -delta;
       }
       if (right == c2) {
         return delta;

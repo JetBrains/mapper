@@ -120,6 +120,11 @@ public class CompositesTest {
   }
 
   @Test
+  public void sameParentNotBefore() {
+    assertFalse(Composites.isBefore(leaf12, leaf11));
+  }
+
+  @Test
   public void differentParentsIsBefore() {
     assertTrue(Composites.isBefore(leaf11, leaf22));
   }
