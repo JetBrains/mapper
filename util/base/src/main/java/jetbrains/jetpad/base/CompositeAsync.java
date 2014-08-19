@@ -21,15 +21,16 @@ public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
   private SortedMap<Integer, ItemT> mySucceeded = new TreeMap<>();
   private List<Throwable> myFailures = new ArrayList<>(0);
   private int myAsyncsCounter = 0;
-  private int mySuccessCounter = 0;
 
   public CompositeAsync(List<Async<ItemT>> asyncs) {
     myAsyncsCounter = asyncs.size();
+    int i = 0;
     for (Async<ItemT> async : asyncs) {
+      final int counter = i++;
       async.onSuccess(new Handler<ItemT>() {
         @Override
         public void handle(ItemT item) {
-          mySucceeded.put(mySuccessCounter++, item);
+          mySucceeded.put(counter, item);
           myAsyncsCounter--;
           onComponentResult();
         }
