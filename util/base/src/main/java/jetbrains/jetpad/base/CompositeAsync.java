@@ -18,18 +18,19 @@ package jetbrains.jetpad.base;
 import java.util.*;
 
 public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
-  private List<ItemT> mySucceeded = new ArrayList<>();
+  private SortedMap<Integer, ItemT> mySucceeded = new TreeMap<>();
   private List<Throwable> myFailures = new ArrayList<>(0);
   private int myAsyncsCounter = 0;
 
   public CompositeAsync(List<Async<ItemT>> asyncs) {
     myAsyncsCounter = asyncs.size();
 
-    for (Async<ItemT> async : asyncs) {
-      async.onSuccess(new Handler<ItemT>() {
+    for (int i = 0; i < asyncs.size(); i++) {
+      final int finalI = i;
+      asyncs.get(i).onSuccess(new Handler<ItemT>() {
         @Override
         public void handle(ItemT item) {
-          mySucceeded.add(item);
+          mySucceeded.put(finalI, item);
           myAsyncsCounter--;
           onComponentResult();
         }
@@ -52,7 +53,7 @@ public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
     if (myAsyncsCounter != 0) return;
 
     if (myFailures.isEmpty()) {
-      success(mySucceeded);
+      success(new ArrayList<>(mySucceeded.values()));
     } else {
       if (myFailures.size() == 1) {
         failure(myFailures.get(0));

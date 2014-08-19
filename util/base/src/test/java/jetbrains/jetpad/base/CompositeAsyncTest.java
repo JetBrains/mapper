@@ -162,4 +162,30 @@ public class CompositeAsyncTest {
     });
     return succeeded;
   }
+
+  @Test
+  public void resultListOrder() {
+    List<Async<Integer>> asyncs = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+      asyncs.add(new SimpleAsync<Integer>());
+    }
+
+    final Value<Boolean> ok = new Value<>(false);
+    new CompositeAsync<>(asyncs)
+        .onSuccess(new Handler<List<Integer>>() {
+          @Override
+          public void handle(List<Integer> item) {
+            for (int i = 0; i < item.size(); i++) {
+              assertEquals(i, (int)item.get(i));
+            }
+            ok.set(true);
+          }
+        });
+
+    ((SimpleAsync<Integer>)asyncs.get(1)).success(1);
+    ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
+    ((SimpleAsync<Integer>)asyncs.get(0)).success(0);
+
+    assertTrue(ok.get());
+  }
 }
