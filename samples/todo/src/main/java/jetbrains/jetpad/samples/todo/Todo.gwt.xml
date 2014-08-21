@@ -12,4 +12,15 @@
   <inherits name="com.google.gwt.query.Query"/>
 
   <entry-point class="jetbrains.jetpad.samples.todo.TodoEntryPoint" />
+
+  <inherits name="com.google.gwt.logging.Logging"/>                         <!--use GWT emulation for java.util.logging-->
+
+  <set-property name="gwt.logging.logLevel" value="INFO"/>
+  <set-property name="gwt.logging.enabled" value="TRUE"/>
+  <set-property name="gwt.logging.systemHandler" value="ENABLED"/>           <!--log to stdout-->
+  <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>          <!--log to javascript console-->
+  <set-property name="gwt.logging.firebugHandler" value="ENABLED"/>          <!--log to firebug console-->
+  <set-property name="gwt.logging.developmentModeHandler" value="DISABLED"/> <!--log to dev mode window-->
+  <set-property name="gwt.logging.popupHandler" value="DISABLED"/>           <!--log to popup-->
+  <set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />   <!--send log messages to server, need rpc service-->
 </module>
