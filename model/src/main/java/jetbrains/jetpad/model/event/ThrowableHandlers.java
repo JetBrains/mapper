@@ -18,6 +18,8 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,14 +36,13 @@ public class ThrowableHandlers {
   };
 
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
-  private static ThreadLocal<SimpleEventSource<Throwable>> ourHandlers = new ThreadLocal<SimpleEventSource<Throwable>>() {
+  private static ThreadLocal<MyEventSource> ourHandlers = new ThreadLocal<MyEventSource>() {
     @Override
-    protected SimpleEventSource<Throwable> initialValue() {
-      return new SimpleEventSource<>();
+    protected MyEventSource initialValue() {
+      return new MyEventSource();
     }
   };
 
-  //new handler can't throw anything because it will lead to StackOverflowError!
   public static Registration addHandler(EventHandler<? super Throwable> handler) {
     return ourHandlers.get().addHandler(handler);
   }
@@ -79,5 +80,26 @@ public class ThrowableHandlers {
       }
     }
     return false;
+  }
+
+  private static class MyEventSource implements EventSource<Throwable> {
+    private List<EventHandler<? super Throwable>> myHandlers = new ArrayList<>();
+
+    public void fire(Throwable event) {
+      for (EventHandler<? super Throwable> handler : myHandlers) {
+        handler.onEvent(event);
+      }
+    }
+
+    @Override
+    public Registration addHandler(final EventHandler<? super Throwable> handler) {
+      myHandlers.add(handler);
+      return new Registration() {
+        @Override
+        public void remove() {
+          myHandlers.remove(handler);
+        }
+      };
+    }
   }
 }
