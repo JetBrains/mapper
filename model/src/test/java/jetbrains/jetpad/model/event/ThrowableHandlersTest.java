@@ -15,20 +15,32 @@
  */
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.test.BaseTestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ThrowableHandlersTest extends BaseTestCase {
+  private static Registration ourHandlerRegistration;
 
-  @Test(expected = IllegalStateException.class)
-  public void addThrowingThrowableHandler() {
-    ThrowableHandlers.addHandler(new EventHandler<Throwable>() {
+  @BeforeClass
+  public static void addHandler() {
+    ourHandlerRegistration = ThrowableHandlers.addHandler(new EventHandler<Throwable>() {
       @Override
       public void onEvent(Throwable event) {
         throw new IllegalStateException();
       }
     });
+  }
 
+  @AfterClass
+  public static void removeHandler() {
+    ourHandlerRegistration.remove();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void addThrowingThrowableHandler() {
     ThrowableHandlers.asInProduction(new Runnable() {
       @Override
       public void run() {
@@ -36,4 +48,6 @@ public class ThrowableHandlersTest extends BaseTestCase {
       }
     });
   }
+
+
 }
