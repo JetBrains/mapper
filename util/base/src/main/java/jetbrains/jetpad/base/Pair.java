@@ -4,9 +4,9 @@ public class Pair<FirstT, SecondT> {
   public final FirstT first;
   public final SecondT second;
 
-  public Pair(SecondT second, FirstT first) {
-    this.second = second;
+  public Pair(FirstT first, SecondT second) {
     this.first = first;
+    this.second = second;
   }
 
   @Override
