@@ -140,12 +140,6 @@ public class AsyncsTest {
   }
 
   @Test
-  public void checkedCast() {
-    Async<String> stringAsync = Asyncs.constant("");
-    Async<Object> objectAsync = Asyncs.<Object>checkedCast(stringAsync);
-  }
-
-  @Test
   public void loadedTrue() {
     assertTrue(Asyncs.isLoaded(Asyncs.constant(239)));
   }
