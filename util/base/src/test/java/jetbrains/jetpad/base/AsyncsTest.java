@@ -20,6 +20,7 @@ import com.google.common.base.Supplier;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AsyncsTest {
@@ -143,6 +144,19 @@ public class AsyncsTest {
     Async<String> stringAsync = Asyncs.constant("");
     Async<Object> objectAsync = Asyncs.<Object>checkedCast(stringAsync);
   }
+
+  @Test
+  public void loadedTrue() {
+    assertTrue(Asyncs.isLoaded(Asyncs.constant(239)));
+  }
+
+  @Test
+  public void loadedFalse() {
+    SimpleAsync<Integer> async = new SimpleAsync<>();
+
+    assertFalse(Asyncs.isLoaded(async));
+  }
+
 
   private void assertFailure(Async<?> async) {
     final Value<Boolean> called = new Value<>(false);

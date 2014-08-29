@@ -24,6 +24,16 @@ import java.util.Collection;
 import java.util.List;
 
 public class Asyncs {
+  public static boolean isLoaded(Async<?> async) {
+    final Value<Boolean> loaded = new Value<>(false);
+    async.onSuccess(new Handler<Object>() {
+      @Override
+      public void handle(Object item) {
+        loaded.set(true);
+      }
+    });
+    return loaded.get();
+  }
 
   public static <ValueT> Async<ValueT> constant(ValueT val) {
     final SimpleAsync<ValueT> result = new SimpleAsync<>();
