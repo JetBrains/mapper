@@ -181,9 +181,4 @@ public class Asyncs {
     });
     return result;
   }
-
-  @SuppressWarnings("unchecked")
-  public static <T> Async<T> checkedCast(Async<? extends T> async) {
-    return (Async<T>) async;
-  }
 }
