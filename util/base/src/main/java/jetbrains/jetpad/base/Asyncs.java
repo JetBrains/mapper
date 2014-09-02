@@ -18,10 +18,7 @@ package jetbrains.jetpad.base;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class Asyncs {
   public static boolean isLoaded(Async<?> async) {
@@ -123,6 +120,10 @@ public class Asyncs {
   }
 
   public static Async<Void> parallel(final Collection<? extends Async<?>> asyncs) {
+    return parallel(asyncs, false);
+  }
+
+  public static Async<Void> parallel(final Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed) {
     final SimpleAsync<Void> result = new SimpleAsync<>();
     final Value<Integer> completed = new Value<>(0);
     final List<Throwable> exceptions = new ArrayList<>();
@@ -131,7 +132,7 @@ public class Asyncs {
       @Override
       public void run() {
         if (completed.get() == asyncs.size()) {
-          if (!exceptions.isEmpty()) {
+          if (!exceptions.isEmpty() && !alwaysSucceed) {
             result.failure(new ThrowableCollectionException(exceptions));
           } else {
             result.success(null);
