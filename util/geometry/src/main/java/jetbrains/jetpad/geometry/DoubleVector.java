@@ -67,7 +67,7 @@ public class DoubleVector {
   }
 
   public DoubleVector rotate(double phi) {
-    double x = this.x * Math.cos(phi) - y * Math.sin(phi);
+    double x = this.x * Math.cos(phi) - this.y * Math.sin(phi);
     double y = this.x * Math.sin(phi) + this.y * Math.cos(phi);
     return new DoubleVector(x, y);
   }
