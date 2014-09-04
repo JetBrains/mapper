@@ -333,7 +333,7 @@ public abstract class Mapper<SourceT, TargetT> {
 
     @Override
     protected void beforeItemRemoved(MapperT item) {
-      removeChild((Mapper<?, ?>) item);
+      removeChild(item);
       super.beforeItemRemoved(item);
     }
 
