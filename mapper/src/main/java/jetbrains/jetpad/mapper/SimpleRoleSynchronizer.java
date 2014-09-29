@@ -17,7 +17,7 @@ package jetbrains.jetpad.mapper;
 
 import java.util.List;
 
-public class SimpleRoleSynchronizer<SourceT, TargetT> extends BaseCollectionRoleSynchronizer<SourceT, TargetT> {
+public class SimpleRoleSynchronizer<SourceT, TargetT> extends BaseCollectionRoleSynchronizer<SourceT, TargetT> implements RefreshableSynchronizer {
   private List<SourceT> mySource;
   private List<TargetT> myTarget;
 
