@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.mapper;
+package jetbrains.jetpad.base.diff;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class DifferenceBuilder<ItemT> {
+public class DifferenceBuilder<ItemT> {
   private List<ItemT> mySourceList;
   private List<ItemT> myTargetList;
 
-  DifferenceBuilder(List<ItemT> sourceList, List<ItemT> targetList) {
+  public DifferenceBuilder(List<ItemT> sourceList, List<ItemT> targetList) {
     mySourceList = sourceList;
     myTargetList = targetList;
   }
 
-  List<DifferenceItem> build() {
+  public List<DifferenceItem> build() {
     List<DifferenceItem> result = new ArrayList<>();
 
     List<ItemT> sourceContent = mySourceList;
@@ -75,10 +75,10 @@ class DifferenceBuilder<ItemT> {
     return result;
   }
 
-  class DifferenceItem {
-    final int index;
-    final ItemT item;
-    final boolean isAdd;
+  public class DifferenceItem {
+    public final int index;
+    public final ItemT item;
+    public final boolean isAdd;
 
     private DifferenceItem(int index, ItemT item, boolean add) {
       this.index = index;

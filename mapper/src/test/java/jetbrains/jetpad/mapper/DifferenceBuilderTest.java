@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.diff.DifferenceBuilder;
 import org.junit.Test;
 
 import java.util.ArrayList;
