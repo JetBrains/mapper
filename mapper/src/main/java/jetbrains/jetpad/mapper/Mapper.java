@@ -39,7 +39,7 @@ public abstract class Mapper<SourceT, TargetT> {
   private Mapper<?, ?> myParent;
 
   /**
-   * Construct a mapper with SourceT source and TagetT target
+   * Construct a mapper with SourceT source and TargetT target
    *
    * NB: DO NOT create disposable resources in constructors. Use either registerSynchronizers or onAttach method.
    */
