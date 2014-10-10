@@ -92,15 +92,7 @@ public class Properties {
     return new DerivedProperty<Boolean>(op1, op2) {
       @Override
       public Boolean get() {
-        Boolean b1 = op1.get();
-        Boolean b2 = op2.get();
-        if (b1 == null) {
-          return andWithNull(b2);
-        }
-        if (b2 == null) {
-          return andWithNull(b1);
-        }
-        return b1 && b2;
+        return and(op1.get(), op2.get());
       }
 
       @Override
@@ -108,6 +100,16 @@ public class Properties {
         return "(" + op1.getPropExpr() + " && " + op2.getPropExpr() + ")";
       }
     };
+  }
+
+  static Boolean and(Boolean b1, Boolean b2) {
+    if (b1 == null) {
+      return andWithNull(b2);
+    }
+    if (b2 == null) {
+      return andWithNull(b1);
+    }
+    return b1 && b2;
   }
 
   private static Boolean andWithNull(Boolean b) {
