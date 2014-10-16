@@ -56,7 +56,9 @@ public class ObservableCollections {
       @Override
       public void set(List<ItemT> value) {
         list.clear();
-        list.addAll(value);
+        if (value != null) {
+          list.addAll(value);
+        }
       }
 
       @Override
