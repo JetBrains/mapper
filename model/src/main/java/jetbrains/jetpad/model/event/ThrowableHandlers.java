@@ -66,7 +66,7 @@ public class ThrowableHandlers {
       }
       throw new RuntimeException(t);
     }
-    LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
+    LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", new RuntimeException(t));
     ourHandlers.get().fire(t);
   }
 
