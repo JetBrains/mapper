@@ -33,15 +33,11 @@ public class Asyncs {
   }
 
   public static <ValueT> Async<ValueT> constant(ValueT val) {
-    final SimpleAsync<ValueT> result = new SimpleAsync<>();
-    result.success(val);
-    return result;
+    return new InstantAsync<>(val);
   }
 
   public static <ValueT> Async<ValueT> failure(Throwable t) {
-    final SimpleAsync<ValueT> result = new SimpleAsync<>();
-    result.failure(t);
-    return result;
+    return new FailureAsync<>(t);
   }
 
   public static <ResultT> Async<Void> toVoid(Async<ResultT> a) {
@@ -181,5 +177,39 @@ public class Asyncs {
       }
     });
     return result;
+  }
+
+  private static class InstantAsync<ValueT> implements Async<ValueT> {
+    final ValueT myValue;
+
+    public InstantAsync(ValueT value) {
+      myValue = value;
+    }
+
+    public Async<ValueT> onSuccess(Handler<? super ValueT> successHandler) {
+      successHandler.handle(myValue);
+      return this;
+    }
+
+    public Async<ValueT> onFailure(Handler<Throwable> failureHandler) {
+      return this;
+    }
+  }
+
+  private static class FailureAsync<ValueT> implements Async<ValueT> {
+    final Throwable myThrowable;
+
+    public FailureAsync(Throwable throwable) {
+      myThrowable = throwable;
+    }
+
+    public Async<ValueT> onSuccess(Handler<? super ValueT> successHandler) {
+      return this;
+    }
+
+    public Async<ValueT> onFailure(Handler<Throwable> failureHandler) {
+      failureHandler.handle(myThrowable);
+      return this;
+    }
   }
 }
