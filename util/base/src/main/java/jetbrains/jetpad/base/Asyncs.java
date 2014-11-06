@@ -15,11 +15,15 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
+@GwtCompatible
 public class Asyncs {
   public static boolean isLoaded(Async<?> async) {
     final Value<Boolean> loaded = new Value<>(false);
@@ -177,6 +181,40 @@ public class Asyncs {
       }
     });
     return result;
+  }
+
+  @GwtIncompatible("Uses threading primitives")
+  public static <ResultT> ResultT get(Async<ResultT> async) {
+    try {
+      final CountDownLatch latch = new CountDownLatch(1);
+
+      final Value<ResultT> result = new Value<>();
+      final Value<Throwable> error = new Value<>();
+
+      async.onSuccess(new Handler<ResultT>() {
+        @Override
+        public void handle(ResultT item) {
+          result.set(item);
+          latch.countDown();
+        }
+      }).onFailure(new Handler<Throwable>() {
+        @Override
+        public void handle(Throwable item) {
+          error.set(item);
+          latch.countDown();
+        }
+      });
+
+      latch.await();
+
+      if (error.get() != null) {
+        throw new RuntimeException(error.get());
+      } else {
+        return result.get();
+      }
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private static class InstantAsync<ValueT> implements Async<ValueT> {
