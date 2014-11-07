@@ -25,6 +25,9 @@ public class SingleItemCollectionProperty<ItemT> implements Property<ItemT> {
   private ObservableCollection<ItemT> myCollection;
 
   public SingleItemCollectionProperty(ObservableCollection<ItemT> collection) {
+    if (collection.size() > 1) {
+      throw new IllegalStateException();
+    }
     myCollection = collection;
   }
 
