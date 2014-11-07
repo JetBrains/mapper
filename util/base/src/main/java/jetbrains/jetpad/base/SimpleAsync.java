@@ -46,6 +46,51 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
     return this;
   }
 
+  @Override
+  public Registration handle(final Handler<? super ItemT> successHandler) {
+    if (mySucceeded) {
+      successHandler.handle(mySuccessItem);
+      return Registration.EMPTY;
+    } else {
+      mySuccessHandlers.add(successHandler);
+      return new Registration() {
+        @Override
+        public void remove() {
+          mySuccessHandlers.remove(successHandler);
+        }
+      };
+    }
+  }
+
+  @Override
+  public Registration handle(Handler<? super ItemT> successHandler, final Handler<Throwable> failureHandler) {
+    final Registration successRegistration = handle(successHandler);
+    final Registration failureRegistration = handleFailure(failureHandler);
+    return new Registration() {
+      @Override
+      public void remove() {
+        successRegistration.remove();
+        failureRegistration.remove();
+      }
+    };
+  }
+
+  @Override
+  public Registration handleFailure(final Handler<Throwable> failureHandler) {
+    if (myFailed) {
+      failureHandler.handle(myFailureThrowable);
+      return Registration.EMPTY;
+    } else {
+      myFailureHandlers.add(failureHandler);
+      return new Registration() {
+        @Override
+        public void remove() {
+          myFailureHandlers.remove(failureHandler);
+        }
+      };
+    }
+  }
+
   public void success(ItemT item) {
     if (alreadyHandled()) {
       throw new IllegalStateException();

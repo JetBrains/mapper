@@ -232,6 +232,19 @@ public class Asyncs {
     public Async<ValueT> onFailure(Handler<Throwable> failureHandler) {
       return this;
     }
+
+    public Registration handle(Handler<? super ValueT> successHandler) {
+      successHandler.handle(myValue);
+      return Registration.EMPTY;
+    }
+
+    public Registration handle(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+      return handle(successHandler);
+    }
+
+    public Registration handleFailure(Handler<Throwable> failureHandler) {
+      return Registration.EMPTY;
+    }
   }
 
   private static class FailureAsync<ValueT> implements Async<ValueT> {
@@ -248,6 +261,19 @@ public class Asyncs {
     public Async<ValueT> onFailure(Handler<Throwable> failureHandler) {
       failureHandler.handle(myThrowable);
       return this;
+    }
+
+    public Registration handle(Handler<? super ValueT> successHandler) {
+      return Registration.EMPTY;
+    }
+
+    public Registration handle(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+      return handleFailure(failureHandler);
+    }
+
+    public Registration handleFailure(Handler<Throwable> failureHandler) {
+      failureHandler.handle(myThrowable);
+      return Registration.EMPTY;
     }
   }
 }
