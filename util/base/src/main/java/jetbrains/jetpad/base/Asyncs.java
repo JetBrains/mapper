@@ -217,20 +217,11 @@ public class Asyncs {
     }
   }
 
-  private static class InstantAsync<ValueT> implements Async<ValueT> {
+  private static class InstantAsync<ValueT> extends BaseAsync<ValueT> {
     final ValueT myValue;
 
     public InstantAsync(ValueT value) {
       myValue = value;
-    }
-
-    public Async<ValueT> onSuccess(Handler<? super ValueT> successHandler) {
-      successHandler.handle(myValue);
-      return this;
-    }
-
-    public Async<ValueT> onFailure(Handler<Throwable> failureHandler) {
-      return this;
     }
 
     public Registration handle(Handler<? super ValueT> successHandler) {
@@ -247,20 +238,11 @@ public class Asyncs {
     }
   }
 
-  private static class FailureAsync<ValueT> implements Async<ValueT> {
+  private static class FailureAsync<ValueT> extends BaseAsync<ValueT> {
     final Throwable myThrowable;
 
     public FailureAsync(Throwable throwable) {
       myThrowable = throwable;
-    }
-
-    public Async<ValueT> onSuccess(Handler<? super ValueT> successHandler) {
-      return this;
-    }
-
-    public Async<ValueT> onFailure(Handler<Throwable> failureHandler) {
-      failureHandler.handle(myThrowable);
-      return this;
     }
 
     public Registration handle(Handler<? super ValueT> successHandler) {

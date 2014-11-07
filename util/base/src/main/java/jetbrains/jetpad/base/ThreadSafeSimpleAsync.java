@@ -1,26 +1,10 @@
 package jetbrains.jetpad.base;
 
-public class ThreadSafeSimpleAsync<ItemT> implements Async<ItemT> {
+public class ThreadSafeSimpleAsync<ItemT> extends BaseAsync<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
   public ThreadSafeSimpleAsync() {
     myAsync = new SimpleAsync<>();
-  }
-
-  @Override
-  public Async<ItemT> onSuccess(final Handler<? super ItemT> handler) {
-    synchronized (myAsync) {
-      myAsync.onSuccess(handler);
-      return this;
-    }
-  }
-
-  @Override
-  public Async<ItemT> onFailure(final Handler<Throwable> handler) {
-    synchronized (myAsync) {
-      myAsync.onFailure(handler);
-      return this;
-    }
   }
 
   @Override

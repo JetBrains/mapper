@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAsync<ItemT> implements Async<ItemT> {
+public class SimpleAsync<ItemT> extends BaseAsync<ItemT> {
   private ItemT mySuccessItem = null;
   private boolean mySucceeded = false;
 
@@ -27,24 +27,6 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
 
   private List<Handler<? super ItemT>> mySuccessHandlers = new ArrayList<>();
   private List<Handler<Throwable>> myFailureHandlers = new ArrayList<>();
-
-  public Async<ItemT> onSuccess(Handler<? super ItemT> handler) {
-    if (mySucceeded) {
-      handler.handle(mySuccessItem);
-    } else {
-      mySuccessHandlers.add(handler);
-    }
-    return this;
-  }
-
-  public Async<ItemT> onFailure(Handler<Throwable> handler) {
-    if (myFailed) {
-      handler.handle(myFailureThrowable);
-    } else {
-      myFailureHandlers.add(handler);
-    }
-    return this;
-  }
 
   @Override
   public Registration handle(final Handler<? super ItemT> successHandler) {
