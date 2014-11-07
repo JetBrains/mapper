@@ -211,7 +211,7 @@ public class Asyncs {
     }
   }
 
-  private static class InstantAsync<ValueT> extends BaseAsync<ValueT> {
+  private static class InstantAsync<ValueT> implements Async<ValueT> {
     final ValueT myValue;
 
     public InstantAsync(ValueT value) {
@@ -232,7 +232,7 @@ public class Asyncs {
     }
   }
 
-  private static class FailureAsync<ValueT> extends BaseAsync<ValueT> {
+  private static class FailureAsync<ValueT> implements Async<ValueT> {
     final Throwable myThrowable;
 
     public FailureAsync(Throwable throwable) {

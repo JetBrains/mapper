@@ -1,6 +1,6 @@
 package jetbrains.jetpad.base;
 
-public class ThreadSafeSimpleAsync<ItemT> extends BaseAsync<ItemT> {
+public class ThreadSafeSimpleAsync<ItemT> implements Async<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
   public ThreadSafeSimpleAsync() {
