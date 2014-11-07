@@ -27,14 +27,14 @@ public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
     int i = 0;
     for (Async<ItemT> async : asyncs) {
       final int counter = i++;
-      async.onSuccess(new Handler<ItemT>() {
+      async.handle(new Handler<ItemT>() {
         @Override
         public void handle(ItemT item) {
           mySucceeded.put(counter, item);
           myAsyncsCounter--;
           onComponentResult();
         }
-      }).onFailure(new Handler<Throwable>() {
+      }, new Handler<Throwable>() {
         @Override
         public void handle(Throwable item) {
           myFailures.add(item);

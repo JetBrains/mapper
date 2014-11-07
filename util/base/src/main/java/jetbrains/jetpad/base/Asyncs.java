@@ -27,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
 public class Asyncs {
   public static boolean isLoaded(Async<?> async) {
     final Value<Boolean> loaded = new Value<>(false);
-    async.onSuccess(new Handler<Object>() {
+    async.handle(new Handler<Object>() {
       @Override
       public void handle(Object item) {
         loaded.set(true);
@@ -55,54 +55,48 @@ public class Asyncs {
 
   public static <SourceT, TargetT> Async<TargetT> map(Async<SourceT> async, final Function<SourceT, TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async
-      .onSuccess(new Handler<SourceT>() {
-        @Override
-        public void handle(SourceT item) {
-          result.success(f.apply(item));
-        }
-      })
-      .onFailure(new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          result.failure(item);
-        }
-      });
+    async.handle(new Handler<SourceT>() {
+      @Override
+      public void handle(SourceT item) {
+        result.success(f.apply(item));
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        result.failure(item);
+      }
+    });
     return result;
   }
 
   public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<SourceT, Async<TargetT>> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async
-      .onSuccess(new Handler<SourceT>() {
-        @Override
-        public void handle(SourceT item) {
-          Async<TargetT> async = f.apply(item);
-          if (async == null) {
-            result.success(null);
-          } else {
-            async
-              .onSuccess(new Handler<TargetT>() {
-                @Override
-                public void handle(TargetT item) {
-                  result.success(item);
-                }
-              })
-              .onFailure(new Handler<Throwable>() {
-                @Override
-                public void handle(Throwable item) {
-                  result.failure(item);
-                }
-              });
-          }
+    async.handle(new Handler<SourceT>() {
+      @Override
+      public void handle(SourceT item) {
+        Async<TargetT> async = f.apply(item);
+        if (async == null) {
+          result.success(null);
+        } else {
+          async.handle(new Handler<TargetT>() {
+            @Override
+            public void handle(TargetT item) {
+              result.success(item);
+            }
+          }, new Handler<Throwable>() {
+            @Override
+            public void handle(Throwable item) {
+              result.failure(item);
+            }
+          });
         }
-      })
-      .onFailure(new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          result.failure(item);
-        }
-      });
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        result.failure(item);
+      }
+    });
     return result;
   }
 
@@ -142,7 +136,7 @@ public class Asyncs {
     };
 
     for (Async<?> a : asyncs) {
-      a.onFailure(new Handler<Throwable>() {
+      a.handleFailure(new Handler<Throwable>() {
         @Override
         public void handle(Throwable item) {
           completed.set(completed.get() + 1);
@@ -150,7 +144,7 @@ public class Asyncs {
           checkTermination.run();
         }
       });
-      a.onSuccess(new Handler<Object>() {
+      a.handle(new Handler<Object>() {
         @Override
         public void handle(Object item) {
           completed.set(completed.get() + 1);
@@ -164,15 +158,15 @@ public class Asyncs {
   public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
     final SimpleAsync<ResultT> result = new SimpleAsync<>();
     Async<ResultT> async = s.get();
-    async.onSuccess(new Handler<ResultT>() {
+    async.handle(new Handler<ResultT>() {
       @Override
       public void handle(ResultT item) {
         result.success(item);
       }
-    }).onFailure(new Handler<Throwable>() {
+    }, new Handler<Throwable>() {
       @Override
       public void handle(Throwable item) {
-        untilSuccess(s).onSuccess(new Handler<ResultT>() {
+        untilSuccess(s).handle(new Handler<ResultT>() {
           @Override
           public void handle(ResultT item) {
             result.success(item);
@@ -191,13 +185,13 @@ public class Asyncs {
       final Value<ResultT> result = new Value<>();
       final Value<Throwable> error = new Value<>();
 
-      async.onSuccess(new Handler<ResultT>() {
+      async.handle(new Handler<ResultT>() {
         @Override
         public void handle(ResultT item) {
           result.set(item);
           latch.countDown();
         }
-      }).onFailure(new Handler<Throwable>() {
+      }, new Handler<Throwable>() {
         @Override
         public void handle(Throwable item) {
           error.set(item);
