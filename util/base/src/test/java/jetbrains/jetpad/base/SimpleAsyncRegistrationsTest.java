@@ -61,6 +61,28 @@ public class SimpleAsyncRegistrationsTest {
     async.failure(null);
   }
 
+  @Test
+  public void addSuccessHandlerAfterFailure() {
+    async.failure(new Throwable());
+    Registration reg = async.onSuccess(new Handler<Void>() {
+      @Override
+      public void handle(Void item) {
+      }
+    });
+    reg.remove();
+  }
+
+  @Test
+  public void addFailureHandlerAfterSuccess() {
+    async.success(null);
+    Registration reg = async.onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+      }
+    });
+    reg.remove();
+  }
+
   private Handler<Throwable> throwingFailureHandler() {
     return throwingHandler();
   }

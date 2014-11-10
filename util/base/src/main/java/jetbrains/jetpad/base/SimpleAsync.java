@@ -34,13 +34,17 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
       successHandler.handle(mySuccessItem);
       return Registration.EMPTY;
     } else {
-      mySuccessHandlers.add(successHandler);
-      return new Registration() {
-        @Override
-        public void remove() {
-          mySuccessHandlers.remove(successHandler);
-        }
-      };
+      if (!myFailed) {
+        mySuccessHandlers.add(successHandler);
+        return new Registration() {
+          @Override
+          public void remove() {
+            mySuccessHandlers.remove(successHandler);
+          }
+        };
+      } else {
+        return Registration.EMPTY;
+      }
     }
   }
 
@@ -63,13 +67,17 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
       failureHandler.handle(myFailureThrowable);
       return Registration.EMPTY;
     } else {
-      myFailureHandlers.add(failureHandler);
-      return new Registration() {
-        @Override
-        public void remove() {
-          myFailureHandlers.remove(failureHandler);
-        }
-      };
+      if (!mySucceeded) {
+        myFailureHandlers.add(failureHandler);
+        return new Registration() {
+          @Override
+          public void remove() {
+            myFailureHandlers.remove(failureHandler);
+          }
+        };
+      } else {
+        return Registration.EMPTY;
+      }
     }
   }
 
@@ -100,8 +108,8 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   private void clearHandlers() {
-    mySuccessHandlers.clear();
-    myFailureHandlers.clear();
+    mySuccessHandlers = null;
+    myFailureHandlers = null;
   }
 
   private boolean alreadyHandled() {
