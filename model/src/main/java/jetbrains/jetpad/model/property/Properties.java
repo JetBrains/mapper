@@ -27,6 +27,9 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 
 public class Properties {
+  public static final ReadableProperty<Boolean> TRUE = Properties.constant(Boolean.TRUE);
+  public static final ReadableProperty<Boolean> FALSE = Properties.constant(Boolean.FALSE);
+
   public static ReadableProperty<Boolean> not(ReadableProperty<Boolean> prop) {
     return map(prop, new Function<Boolean, Boolean>() {
       @Override
