@@ -16,7 +16,7 @@
 package jetbrains.jetpad.base;
 
 public interface Async<ItemT> {
-  Registration handle(Handler<? super ItemT> successHandler);
-  Registration handle(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler);
-  Registration handleFailure(Handler<Throwable> failureHandler);
+  Registration onSuccess(Handler<? super ItemT> successHandler);
+  Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler);
+  Registration onFailure(Handler<Throwable> failureHandler);
 }

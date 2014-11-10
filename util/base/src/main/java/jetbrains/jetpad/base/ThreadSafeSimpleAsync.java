@@ -8,23 +8,23 @@ public class ThreadSafeSimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   @Override
-  public Registration handle(Handler<? super ItemT> successHandler) {
+  public Registration onSuccess(Handler<? super ItemT> successHandler) {
     synchronized (myAsync) {
-      return myAsync.handle(successHandler);
+      return myAsync.onSuccess(successHandler);
     }
   }
 
   @Override
-  public Registration handle(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler) {
+  public Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler) {
     synchronized (myAsync) {
-      return myAsync.handle(successHandler, failureHandler);
+      return myAsync.onResult(successHandler, failureHandler);
     }
   }
 
   @Override
-  public Registration handleFailure(Handler<Throwable> failureHandler) {
+  public Registration onFailure(Handler<Throwable> failureHandler) {
     synchronized (myAsync) {
-      return myAsync.handleFailure(failureHandler);
+      return myAsync.onFailure(failureHandler);
     }
   }
 

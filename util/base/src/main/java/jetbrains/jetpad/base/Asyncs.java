@@ -27,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
 public class Asyncs {
   public static boolean isLoaded(Async<?> async) {
     final Value<Boolean> loaded = new Value<>(false);
-    async.handle(new Handler<Object>() {
+    async.onSuccess(new Handler<Object>() {
       @Override
       public void handle(Object item) {
         loaded.set(true);
@@ -55,7 +55,7 @@ public class Asyncs {
 
   public static <SourceT, TargetT> Async<TargetT> map(Async<SourceT> async, final Function<SourceT, TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async.handle(new Handler<SourceT>() {
+    async.onResult(new Handler<SourceT>() {
       @Override
       public void handle(SourceT item) {
         result.success(f.apply(item));
@@ -71,14 +71,14 @@ public class Asyncs {
 
   public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<SourceT, Async<TargetT>> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async.handle(new Handler<SourceT>() {
+    async.onResult(new Handler<SourceT>() {
       @Override
       public void handle(SourceT item) {
         Async<TargetT> async = f.apply(item);
         if (async == null) {
           result.success(null);
         } else {
-          async.handle(new Handler<TargetT>() {
+          async.onResult(new Handler<TargetT>() {
             @Override
             public void handle(TargetT item) {
               result.success(item);
@@ -136,7 +136,7 @@ public class Asyncs {
     };
 
     for (Async<?> a : asyncs) {
-      a.handleFailure(new Handler<Throwable>() {
+      a.onFailure(new Handler<Throwable>() {
         @Override
         public void handle(Throwable item) {
           completed.set(completed.get() + 1);
@@ -144,7 +144,7 @@ public class Asyncs {
           checkTermination.run();
         }
       });
-      a.handle(new Handler<Object>() {
+      a.onSuccess(new Handler<Object>() {
         @Override
         public void handle(Object item) {
           completed.set(completed.get() + 1);
@@ -158,7 +158,7 @@ public class Asyncs {
   public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
     final SimpleAsync<ResultT> result = new SimpleAsync<>();
     Async<ResultT> async = s.get();
-    async.handle(new Handler<ResultT>() {
+    async.onResult(new Handler<ResultT>() {
       @Override
       public void handle(ResultT item) {
         result.success(item);
@@ -166,7 +166,7 @@ public class Asyncs {
     }, new Handler<Throwable>() {
       @Override
       public void handle(Throwable item) {
-        untilSuccess(s).handle(new Handler<ResultT>() {
+        untilSuccess(s).onSuccess(new Handler<ResultT>() {
           @Override
           public void handle(ResultT item) {
             result.success(item);
@@ -185,7 +185,7 @@ public class Asyncs {
       final Value<ResultT> result = new Value<>();
       final Value<Throwable> error = new Value<>();
 
-      async.handle(new Handler<ResultT>() {
+      async.onResult(new Handler<ResultT>() {
         @Override
         public void handle(ResultT item) {
           result.set(item);
@@ -218,16 +218,16 @@ public class Asyncs {
       myValue = value;
     }
 
-    public Registration handle(Handler<? super ValueT> successHandler) {
+    public Registration onSuccess(Handler<? super ValueT> successHandler) {
       successHandler.handle(myValue);
       return Registration.EMPTY;
     }
 
-    public Registration handle(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
-      return handle(successHandler);
+    public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+      return onSuccess(successHandler);
     }
 
-    public Registration handleFailure(Handler<Throwable> failureHandler) {
+    public Registration onFailure(Handler<Throwable> failureHandler) {
       return Registration.EMPTY;
     }
   }
@@ -239,15 +239,15 @@ public class Asyncs {
       myThrowable = throwable;
     }
 
-    public Registration handle(Handler<? super ValueT> successHandler) {
+    public Registration onSuccess(Handler<? super ValueT> successHandler) {
       return Registration.EMPTY;
     }
 
-    public Registration handle(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
-      return handleFailure(failureHandler);
+    public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+      return onFailure(failureHandler);
     }
 
-    public Registration handleFailure(Handler<Throwable> failureHandler) {
+    public Registration onFailure(Handler<Throwable> failureHandler) {
       failureHandler.handle(myThrowable);
       return Registration.EMPTY;
     }

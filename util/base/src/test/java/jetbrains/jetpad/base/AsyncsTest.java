@@ -154,7 +154,7 @@ public class AsyncsTest {
 
   private void assertFailure(Async<?> async) {
     final Value<Boolean> called = new Value<>(false);
-    async.handleFailure(new Handler<Throwable>() {
+    async.onFailure(new Handler<Throwable>() {
       @Override
       public void handle(Throwable item) {
         called.set(true);
@@ -166,7 +166,7 @@ public class AsyncsTest {
 
   private <ValueT> void assertAsyncEquals(Async<ValueT> async, ValueT value) {
     final Value<ValueT> result = new Value<>();
-    async.handle(new Handler<ValueT>() {
+    async.onSuccess(new Handler<ValueT>() {
       @Override
       public void handle(ValueT item) {
         result.set(item);

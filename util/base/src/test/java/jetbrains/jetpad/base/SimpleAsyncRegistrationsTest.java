@@ -9,28 +9,28 @@ public class SimpleAsyncRegistrationsTest {
 
   @Test
   public void removeSuccessRegistration() {
-    Registration reg = async.handle(throwingHandler());
+    Registration reg = async.onSuccess(throwingHandler());
     reg.remove();
     async.success(null);
   }
 
   @Test
   public void removeFailureRegistration() {
-    Registration reg = async.handleFailure(throwingFailureHandler());
+    Registration reg = async.onFailure(throwingFailureHandler());
     reg.remove();
     async.failure(null);
   }
 
   @Test
   public void removeCompositeRegistration1() {
-    Registration reg = async.handle(throwingHandler(), throwingFailureHandler());
+    Registration reg = async.onResult(throwingHandler(), throwingFailureHandler());
     reg.remove();
     async.success(null);
   }
 
   @Test
   public void removeCompositeRegistration2() {
-    Registration reg = async.handle(throwingHandler(), throwingFailureHandler());
+    Registration reg = async.onResult(throwingHandler(), throwingFailureHandler());
     reg.remove();
     async.failure(null);
   }
@@ -38,7 +38,7 @@ public class SimpleAsyncRegistrationsTest {
   @Test(expected = ConcurrentModificationException.class)
   public void removeRegistrationInSuccessHandler() {
     final Value<Registration> regValue = new Value<>();
-    Registration reg = async.handle(new Handler<Void>() {
+    Registration reg = async.onSuccess(new Handler<Void>() {
       @Override
       public void handle(Void item) {
         regValue.get().remove();
@@ -51,7 +51,7 @@ public class SimpleAsyncRegistrationsTest {
   @Test(expected = ConcurrentModificationException.class)
   public void removeRegistrationInFailureHandler() {
     final Value<Registration> regValue = new Value<>();
-    Registration reg = async.handleFailure(new Handler<Throwable>() {
+    Registration reg = async.onFailure(new Handler<Throwable>() {
       @Override
       public void handle(Throwable item) {
         regValue.get().remove();

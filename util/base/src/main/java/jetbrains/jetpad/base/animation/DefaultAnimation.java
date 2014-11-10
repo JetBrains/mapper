@@ -42,7 +42,7 @@ public abstract class DefaultAnimation implements Animation {
 
   @Override
   public void whenDone(final Runnable r) {
-    myWhenDone.handle(new Handler<Object>() {
+    myWhenDone.onSuccess(new Handler<Object>() {
       @Override
       public void handle(Object item) {
         r.run();

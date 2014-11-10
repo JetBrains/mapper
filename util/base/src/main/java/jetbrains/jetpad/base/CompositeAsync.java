@@ -27,7 +27,7 @@ public class CompositeAsync<ItemT> extends SimpleAsync<List<ItemT>> {
     int i = 0;
     for (Async<ItemT> async : asyncs) {
       final int counter = i++;
-      async.handle(new Handler<ItemT>() {
+      async.onResult(new Handler<ItemT>() {
         @Override
         public void handle(ItemT item) {
           mySucceeded.put(counter, item);
