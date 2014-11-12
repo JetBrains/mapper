@@ -17,11 +17,13 @@ package jetbrains.jetpad.model.collections.list;
 
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
+import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
+import jetbrains.jetpad.model.property.WritableProperty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +41,18 @@ public class ObservableCollections {
     ObservableSet<ItemT> result = new ObservableHashSet<>();
     result.addAll(s);
     return result;
+  }
+
+  public static <ItemT> WritableProperty<ItemT> asWritableProp(final ObservableCollection<ItemT> coll) {
+    return new WritableProperty<ItemT>() {
+      @Override
+      public void set(ItemT value) {
+        coll.clear();
+        if (value != null) {
+          coll.add(value);
+        }
+      }
+    };
   }
 
   public static <ItemT> Property<List<ItemT>> asProperty(final ObservableList<ItemT> list) {
