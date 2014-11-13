@@ -11,6 +11,7 @@
   <inherits name="jetbrains.jetpad.mapper.gwt.GwtMapper"/>
   <inherits name="com.google.gwt.query.Query"/>
 
+  <add-linker name="xsiframe"/>
   <entry-point class="jetbrains.jetpad.samples.todo.TodoEntryPoint"/>
 
   <inherits name="com.google.gwt.logging.Logging"/>                         <!--use GWT emulation for java.util.logging-->
