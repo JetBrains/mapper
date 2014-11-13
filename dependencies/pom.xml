@@ -14,7 +14,7 @@
     <mockito.version>1.9.5</mockito.version>
 
     <guava.version>15.0</guava.version>
-    <gwtquery.version>1.4.0</gwtquery.version>
+    <gwtquery.version>1.4.2</gwtquery.version>
     <gwt.version>2.6.1</gwt.version>
     <gwtplugin.version>2.6.1</gwtplugin.version>
 
