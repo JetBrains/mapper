@@ -5,6 +5,4 @@
         >
 <module>
   <source path="" />
-
-  <inherits name="jetbrains.jetpad.test.Test" />
 </module>
