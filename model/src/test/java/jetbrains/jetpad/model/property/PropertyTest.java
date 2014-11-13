@@ -16,12 +16,13 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Supplier;
+import jetbrains.jetpad.model.collections.list.ObservableArrayList;
+import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PropertyTest {
   @Test
@@ -44,5 +45,13 @@ public class PropertyTest {
     prop.set("");
 
     verify(handler).onEvent(new PropertyChangeEvent<>(3, 0));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void wrapTooBigCollection() {
+    ObservableList<Integer> list = new ObservableArrayList<>();
+    list.add(0);
+    list.add(1);
+    Properties.forSingleItemCollection(list);
   }
 }

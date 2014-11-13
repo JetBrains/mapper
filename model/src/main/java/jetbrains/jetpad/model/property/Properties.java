@@ -737,4 +737,56 @@ public class Properties {
     };
   }
 
+
+  public static <ItemT> Property<ItemT> forSingleItemCollection(final ObservableCollection<ItemT> coll) {
+    if (coll.size() > 1) {
+      throw new IllegalStateException();
+    }
+
+    return new Property<ItemT>() {
+      @Override
+      public ItemT get() {
+        if (coll.isEmpty()) {
+          return null;
+        }
+        return coll.iterator().next();
+      }
+
+      @Override
+      public void set(ItemT value) {
+        ItemT current = get();
+        if (current != null && current.equals(value)) return;
+        coll.clear();
+        if (value != null) {
+          coll.add(value);
+        }
+      }
+
+      @Override
+      public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ItemT>> handler) {
+        return coll.addListener(new CollectionAdapter<ItemT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<ItemT> event) {
+            if (coll.size() != 1) {
+              throw new IllegalStateException();
+            }
+            handler.onEvent(new PropertyChangeEvent<>(null, event.getItem()));
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+            if (!coll.isEmpty()) {
+              throw new IllegalStateException();
+            }
+            handler.onEvent(new PropertyChangeEvent<>(event.getItem(), null));
+          }
+        });
+      }
+
+      @Override
+      public String getPropExpr() {
+        return "singleItemCollection(" + coll + ")";
+      }
+    };
+  }
 }
