@@ -608,6 +608,19 @@ public class Properties {
     };
   }
 
+  public static <ValueT> ReadableProperty<ValueT> ifNull(final ReadableProperty<ValueT> prop, final ValueT ifNull) {
+    return new DerivedProperty<ValueT>(prop) {
+      @Override
+      public ValueT get() {
+        if (prop.get() == null) {
+          return ifNull;
+        } else {
+          return prop.get();
+        }
+      }
+    };
+  }
+
   public static <ValueT> ReadableProperty<ValueT> firstNotNull(final ReadableProperty<ValueT>... values) {
     return new DerivedProperty<ValueT>(values) {
       @Override
