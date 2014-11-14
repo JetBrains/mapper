@@ -8,7 +8,6 @@
   <inherits name="com.google.gwt.query.Query"/>
   <inherits name="com.google.gwt.dom.DOM"/>
   <inherits name="com.google.gwt.user.DOM"/>
-  <inherits name="com.google.gwt.user.Timer"/>
   <inherits name="jetbrains.jetpad.geometry.Geometry"/>
   <inherits name="jetbrains.jetpad.mapper.Mapper"/>
 </module>
