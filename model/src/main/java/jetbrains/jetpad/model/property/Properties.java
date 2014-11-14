@@ -608,7 +608,7 @@ public class Properties {
     };
   }
 
-  public static <ValueT> ReadableProperty<ValueT> ifNull(final ReadableProperty<ValueT> prop, final ValueT ifNull) {
+  public static <ValueT> ReadableProperty<ValueT> withDefaultValue(final ReadableProperty<ValueT> prop, final ValueT ifNull) {
     return new DerivedProperty<ValueT>(prop) {
       @Override
       public ValueT get() {
