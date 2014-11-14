@@ -7,4 +7,5 @@
   <source path="" />
   <super-source path="jre"/>
   <inherits name="jetbrains.jetpad.base.Base"/>
+  <inherits name="jetbrains.jetpad.geometry.Geometry"/>
 </module>
