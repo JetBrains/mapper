@@ -5,6 +5,5 @@
         >
 <module>
   <source path="" />
-
-  <inherits name="jetbrains.jetpad.model.Model" />
+  <inherits name="jetbrains.jetpad.model.Model"/>
 </module>

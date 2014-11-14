@@ -4,6 +4,7 @@
     "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd"
 >
 <module>
-  <inherits name="com.google.common.base.Base" />
   <source path=""/>
+  <inherits name="com.google.common.base.Base" />
+  <inherits name="com.google.common.collect.Collect"/>
 </module>

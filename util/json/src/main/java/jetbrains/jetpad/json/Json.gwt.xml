@@ -4,5 +4,5 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd"
         >
 <module>
-  <source path="" />
+  <source path="" excludes="JsonReader.java,InputStreamJsonLexer.java"/>
 </module>
