@@ -16,11 +16,11 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
@@ -42,11 +42,6 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
     return transform(from, createTo());
   }
 
-  protected boolean filter(ItemT item) {
-    Boolean b = myFilterBy.apply(item).get();
-    return b != null && b;
-  }
-
   @Override
   public Transformation<CollectionS, CollectionT> transform(final CollectionS from, final CollectionT to) {
     return new Transformation<CollectionS, CollectionT>() {
@@ -55,8 +50,8 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
 
       {
         for (ItemT item : from) {
-          watch(item);
-          if (filter(item)) {
+          boolean shouldAdd = watch(item);
+          if (shouldAdd) {
             to.add(item);
           }
         }
@@ -65,8 +60,8 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
           @Override
           public void onItemAdded(CollectionItemEvent<ItemT> event) {
             ItemT item = event.getItem();
-            watch(item);
-            if (filter(item)) {
+            boolean shouldAdd = watch(item);
+            if (shouldAdd) {
               add(item, from, to);
             }
           }
@@ -75,15 +70,14 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
           public void onItemRemoved(CollectionItemEvent<ItemT> event) {
             ItemT item = event.getItem();
             unwatch(item);
-            if (filter(item)) {
-              to.remove(item);
-            }
+            to.remove(item);
           }
         });
       }
 
-      private void watch(final ItemT item) {
-        myPropertyRegistrations.put(item, myFilterBy.apply(item).addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {
+      private boolean watch(final ItemT item) {
+        ReadableProperty<Boolean> property = myFilterBy.apply(item);
+        myPropertyRegistrations.put(item, property.addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {
           @Override
           public void onEvent(PropertyChangeEvent<Boolean> event) {
             if (event.getNewValue()) {
@@ -93,6 +87,8 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
             }
           }
         }));
+        Boolean value = property.get();
+        return value != null && value;
       }
 
       private void unwatch(ItemT item) {

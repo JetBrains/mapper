@@ -16,12 +16,19 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
+import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
+import jetbrains.jetpad.model.event.EventHandler;
+import jetbrains.jetpad.model.property.BaseReadableProperty;
 import jetbrains.jetpad.model.property.Properties;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FilterTest {
@@ -31,7 +38,7 @@ public class FilterTest {
     @Override
     public ReadableProperty<Boolean> apply(String s) {
       Boolean value;
-      if (s.equals("null")) {
+      if ("null".equals(s)) {
         value = null;
       } else {
         value = s.length() % 2 == 0;
@@ -57,5 +64,73 @@ public class FilterTest {
     from.add("aa");
     assertTrue(to.size() == 1);
     assertTrue(to.iterator().next().equals("aa"));
+  }
+
+  @Test
+  public void lifecycle() {
+    final Value<Integer> filterFunctionApplyCounter = new Value<>(0);
+    final Value<Integer> filterPropertyGetCounter = new Value<>(0);
+
+    final ReadableProperty<Boolean> p = new BaseReadableProperty<Boolean>() {
+      @Override
+      public Boolean get() {
+        filterPropertyGetCounter.set(filterPropertyGetCounter.get() + 1);
+        return true;
+      }
+
+      @Override
+      public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
+        return Registration.EMPTY;
+      }
+    };
+
+    Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
+      @Override
+      public ReadableProperty<Boolean> apply(String s) {
+        filterFunctionApplyCounter.set(filterFunctionApplyCounter.get() + 1);
+        return p;
+      }
+    }).transform(from, to);
+
+    String s = "abc";
+    from.add(s);
+    assertEquals(1, (int) filterFunctionApplyCounter.get());
+    assertEquals(1, (int) filterPropertyGetCounter.get());
+    assertTrue(to.contains(s));
+
+    from.remove(s);
+    assertTrue(from.isEmpty());
+    assertTrue(to.isEmpty());
+    assertEquals(1, (int) filterFunctionApplyCounter.get());
+    assertEquals(1, (int) filterPropertyGetCounter.get());
+  }
+
+  @Test
+  public void removeFilteredItem() {
+    from.add("a");
+    from.add("aa");
+    filter.transform(from, to);
+
+    assertEquals(1, to.size());
+    assertFalse(to.contains("a"));
+    from.remove("a");
+    assertEquals(1, to.size());
+  }
+
+  @Test
+  public void suspiciousPropertyFactory() {
+    Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
+      private int counter = 0;
+      @Override
+      public ReadableProperty<Boolean> apply(String s) {
+        return counter++ % 2 == 0 ? Properties.TRUE : Properties.FALSE;
+      }
+    }).transform(from, to);
+
+    from.add("a");
+    assertTrue(to.contains("a"));
+
+    from.remove("a");
+    assertTrue(to.isEmpty());
   }
 }

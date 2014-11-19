@@ -340,9 +340,7 @@ public class Transformers {
     return new BaseFilterTransformer<ItemT, CollectionT, ObservableCollection<ItemT>>(filterBy) {
       @Override
       protected void add(ItemT item, CollectionT from, ObservableCollection<ItemT> to) {
-        if (filter(item)) {
-          to.add(item);
-        }
+        to.add(item);
       }
       @Override
       protected ObservableCollection<ItemT> createTo() {
