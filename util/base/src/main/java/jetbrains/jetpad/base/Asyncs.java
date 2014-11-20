@@ -210,46 +210,4 @@ public class Asyncs {
       throw new RuntimeException(e);
     }
   }
-
-  private static class InstantAsync<ValueT> implements Async<ValueT> {
-    final ValueT myValue;
-
-    public InstantAsync(ValueT value) {
-      myValue = value;
-    }
-
-    public Registration onSuccess(Handler<? super ValueT> successHandler) {
-      successHandler.handle(myValue);
-      return Registration.EMPTY;
-    }
-
-    public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
-      return onSuccess(successHandler);
-    }
-
-    public Registration onFailure(Handler<Throwable> failureHandler) {
-      return Registration.EMPTY;
-    }
-  }
-
-  private static class FailureAsync<ValueT> implements Async<ValueT> {
-    final Throwable myThrowable;
-
-    public FailureAsync(Throwable throwable) {
-      myThrowable = throwable;
-    }
-
-    public Registration onSuccess(Handler<? super ValueT> successHandler) {
-      return Registration.EMPTY;
-    }
-
-    public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
-      return onFailure(failureHandler);
-    }
-
-    public Registration onFailure(Handler<Throwable> failureHandler) {
-      failureHandler.handle(myThrowable);
-      return Registration.EMPTY;
-    }
-  }
 }
