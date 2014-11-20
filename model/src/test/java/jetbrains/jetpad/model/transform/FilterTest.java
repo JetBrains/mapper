@@ -116,21 +116,4 @@ public class FilterTest {
     from.remove("a");
     assertEquals(1, to.size());
   }
-
-  @Test
-  public void suspiciousPropertyFactory() {
-    Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
-      private int counter = 0;
-      @Override
-      public ReadableProperty<Boolean> apply(String s) {
-        return counter++ % 2 == 0 ? Properties.TRUE : Properties.FALSE;
-      }
-    }).transform(from, to);
-
-    from.add("a");
-    assertTrue(to.contains("a"));
-
-    from.remove("a");
-    assertTrue(to.isEmpty());
-  }
 }
