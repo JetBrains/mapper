@@ -76,7 +76,7 @@ public class Properties {
     };
   }
 
-  public static ReadableProperty<Boolean> isEmptyString(final ReadableProperty<String> prop) {
+  public static ReadableProperty<Boolean> isNullOrEmpty(final ReadableProperty<String> prop) {
     return new DerivedProperty<Boolean>(prop) {
       @Override
       public Boolean get() {
