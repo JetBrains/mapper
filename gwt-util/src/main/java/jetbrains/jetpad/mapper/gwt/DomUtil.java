@@ -15,16 +15,11 @@
  */
 package jetbrains.jetpad.mapper.gwt;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.css.TakesCssValue;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
@@ -182,109 +177,8 @@ public class DomUtil {
     };
   }
 
-  public static Property<String> editableTextOf(final Element element) {
-    return new Property<String>() {
-      private String myValue;
-      private boolean myEditing;
-      private Listeners<EventHandler<? super PropertyChangeEvent<String>>> myListeners = new Listeners<>();
-      private InputElement myEditor = DOM.createInputText().cast();
-
-      {
-        $(element).click(new Function() {
-          @Override
-          public boolean f(Event e) {
-            startEditing();
-            return false;
-          }
-        });
-
-        $(myEditor).keydown(new Function() {
-          @Override
-          public boolean f(Event e) {
-            if (e.getKeyCode() == KeyCodes.KEY_ENTER) {
-              set(myEditor.getValue());
-              stopEditing();
-              return false;
-            }
-
-            if (e.getKeyCode() == KeyCodes.KEY_ESCAPE) {
-              stopEditing();
-              return false;
-            }
-
-            return super.f(e);
-          }
-        });
-
-        $(myEditor).blur(new Function() {
-          @Override
-          public boolean f(Event e) {
-            if (myEditing) {
-              stopEditing();
-            }
-            return false;
-          }
-        });
-      }
-
-      private void startEditing() {
-        if (myEditing) {
-          throw new IllegalStateException();
-        }
-        myEditing = true;
-
-        element.setInnerText("");
-        element.appendChild(myEditor);
-        myEditor.setValue(myValue);
-        myEditor.focus();
-      }
-
-      private void stopEditing() {
-        if (!myEditing) {
-          throw new IllegalStateException();
-        }
-        myEditing = false;
-
-        myEditor.removeFromParent();
-        element.setInnerText(myValue);
-      }
-
-      @Override
-      public String get() {
-        return myValue;
-      }
-
-      @Override
-      public void set(String value) {
-        if (Objects.equal(myValue, value)) return;
-
-        String oldValue = myValue;
-        myValue = value;
-        if (myEditing) {
-          myEditor.setValue(value);
-        } else {
-          element.setInnerText(value);
-        }
-
-        final PropertyChangeEvent<String> event = new PropertyChangeEvent<>(oldValue,  value);
-        myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<String>>>() {
-          @Override
-          public void call(EventHandler<? super PropertyChangeEvent<String>> l) {
-            l.onEvent(event);
-          }
-        });
-      }
-
-      @Override
-      public Registration addHandler(EventHandler<? super PropertyChangeEvent<String>> handler) {
-        return myListeners.add(handler);
-      }
-
-      @Override
-      public String getPropExpr() {
-        return "editableTextOf(" + element + ")";
-      }
-    };
+  public static EditableText editableTextOf(Element element) {
+    return new EditableText(element);
   }
 
   public static Property<Boolean> checkbox(final InputElement element) {
