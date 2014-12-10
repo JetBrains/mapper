@@ -78,17 +78,7 @@ public class Asyncs {
         if (async == null) {
           result.success(null);
         } else {
-          async.onResult(new Handler<TargetT>() {
-            @Override
-            public void handle(TargetT item) {
-              result.success(item);
-            }
-          }, new Handler<Throwable>() {
-            @Override
-            public void handle(Throwable item) {
-              result.failure(item);
-            }
-          });
+          delegate(async, result);
         }
       }
     }, new Handler<Throwable>() {
@@ -209,5 +199,19 @@ public class Asyncs {
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static <ValueT> Registration delegate(Async<ValueT> from, final ManagedAsync<ValueT> to) {
+    return from.onResult(new Handler<ValueT>() {
+      @Override
+      public void handle(ValueT item) {
+        to.success(item);
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        to.failure(item);
+      }
+    });
   }
 }
