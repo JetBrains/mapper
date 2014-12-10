@@ -1,9 +1,9 @@
 package jetbrains.jetpad.base;
 
-public class ThreadSafeSimpleAsync<ItemT> implements ManagedAsync<ItemT> {
+public class ThreadSafeAsync<ItemT> implements ManagedAsync<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
-  public ThreadSafeSimpleAsync() {
+  public ThreadSafeAsync() {
     myAsync = new SimpleAsync<>();
   }
 
