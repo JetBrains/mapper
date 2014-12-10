@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAsync<ItemT> implements Async<ItemT> {
+public class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
   private ItemT mySuccessItem = null;
   private boolean mySucceeded = false;
 
@@ -81,6 +81,7 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
     }
   }
 
+  @Override
   public void success(ItemT item) {
     if (alreadyHandled()) {
       throw new IllegalStateException();
@@ -94,6 +95,7 @@ public class SimpleAsync<ItemT> implements Async<ItemT> {
     mySucceeded = true;
   }
 
+  @Override
   public void failure(Throwable throwable) {
     if (alreadyHandled()) {
       throw new IllegalStateException();
