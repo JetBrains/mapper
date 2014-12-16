@@ -15,9 +15,9 @@
  */
 package jetbrains.jetpad.model.transform;
 
-public interface Transformation<SourceT, TargetT> {
+import jetbrains.jetpad.base.Disposable;
+
+public interface Transformation<SourceT, TargetT> extends Disposable {
   SourceT getSource();
   TargetT getTarget();
-
-  void dispose();
 }
