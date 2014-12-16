@@ -30,22 +30,21 @@ public class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
 
   @Override
   public Registration onSuccess(final Handler<? super ItemT> successHandler) {
-    if (mySucceeded) {
-      successHandler.handle(mySuccessItem);
-      return Registration.EMPTY;
-    } else {
-      if (!myFailed) {
-        mySuccessHandlers.add(successHandler);
-        return new Registration() {
-          @Override
-          public void remove() {
-            mySuccessHandlers.remove(successHandler);
-          }
-        };
-      } else {
-        return Registration.EMPTY;
+    if (alreadyHandled()) {
+      if (mySucceeded) {
+        successHandler.handle(mySuccessItem);
       }
+      return Registration.EMPTY;
     }
+    mySuccessHandlers.add(successHandler);
+    return new Registration() {
+      @Override
+      public void remove() {
+        if (mySuccessHandlers != null) {
+          mySuccessHandlers.remove(successHandler);
+        }
+      }
+    };
   }
 
   @Override
@@ -63,22 +62,21 @@ public class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
 
   @Override
   public Registration onFailure(final Handler<Throwable> failureHandler) {
-    if (myFailed) {
-      failureHandler.handle(myFailureThrowable);
-      return Registration.EMPTY;
-    } else {
-      if (!mySucceeded) {
-        myFailureHandlers.add(failureHandler);
-        return new Registration() {
-          @Override
-          public void remove() {
-            myFailureHandlers.remove(failureHandler);
-          }
-        };
-      } else {
-        return Registration.EMPTY;
+    if (alreadyHandled()) {
+      if (myFailed) {
+        failureHandler.handle(myFailureThrowable);
       }
+      return Registration.EMPTY;
     }
+    myFailureHandlers.add(failureHandler);
+    return new Registration() {
+      @Override
+      public void remove() {
+        if (myFailureHandlers != null) {
+          myFailureHandlers.remove(failureHandler);
+        }
+      }
+    };
   }
 
   @Override
@@ -86,7 +84,6 @@ public class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
     if (alreadyHandled()) {
       throw new IllegalStateException();
     }
-
     for (Handler<? super ItemT> handler : mySuccessHandlers) {
       handler.handle(item);
     }
@@ -100,7 +97,6 @@ public class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
     if (alreadyHandled()) {
       throw new IllegalStateException();
     }
-
     for (Handler<Throwable> handler : myFailureHandlers) {
       handler.handle(throwable);
     }
