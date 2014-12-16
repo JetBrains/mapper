@@ -15,9 +15,9 @@
  */
 package jetbrains.jetpad.model.property;
 
+import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.event.EventSource;
 
-public interface ReadableProperty<ValueT> extends EventSource<PropertyChangeEvent<ValueT>> {
+public interface ReadableProperty<ValueT> extends EventSource<PropertyChangeEvent<ValueT>>, Supplier<ValueT> {
   String getPropExpr();
-  ValueT get();
 }

@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -42,7 +43,7 @@ public class PropertyValidationTest {
   @Test
   public void isValidProperty() {
     Property<String> source = new ValueProperty<>("abc");
-    ReadableProperty<Boolean> isValid = Properties.isPropertyValid(source, new Predicate<String>() {
+    Supplier<Boolean> isValid = Properties.isPropertyValid(source, new Predicate<String>() {
       @Override
       public boolean apply(String input) {
         if (input == null) return false;

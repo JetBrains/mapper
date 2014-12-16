@@ -15,12 +15,11 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.property.ReadableProperty;
 
 public interface Composite<CompositeT extends Composite<CompositeT>> {
-  ReadableProperty<CompositeT> parent();
   CompositeT getParent();
-
+  Supplier<CompositeT> parent();
   ObservableList<CompositeT> children();
 }

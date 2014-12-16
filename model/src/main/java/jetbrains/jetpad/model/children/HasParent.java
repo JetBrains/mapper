@@ -15,15 +15,14 @@
  */
 package jetbrains.jetpad.model.children;
 
+import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.property.DelayedValueProperty;
-import jetbrains.jetpad.model.property.ReadOnlyProperty;
-import jetbrains.jetpad.model.property.ReadableProperty;
 
 public class HasParent<ParentT, SiblingT> {
   final DelayedValueProperty<ParentT> myParent = new DelayedValueProperty<>();
   PositionData<? extends SiblingT> myPositionData;
 
-  public ReadableProperty<ParentT> parent() {
+  public Supplier<ParentT> parent() {
     return myParent;
   }
 
