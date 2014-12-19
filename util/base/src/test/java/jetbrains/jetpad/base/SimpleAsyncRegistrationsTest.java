@@ -83,6 +83,50 @@ public class SimpleAsyncRegistrationsTest {
     reg.remove();
   }
 
+  @Test
+  public void removeSuccessRegistrationAfterSuccess() {
+    Registration reg = async.onSuccess(new Handler<Void>() {
+      @Override
+      public void handle(Void item) {
+      }
+    });
+    async.success(null);
+    reg.remove();
+  }
+
+  @Test
+  public void removeSuccessRegistrationAfterFailure() {
+    Registration reg = async.onSuccess(new Handler<Void>() {
+      @Override
+      public void handle(Void item) {
+      }
+    });
+    async.failure(null);
+    reg.remove();
+  }
+
+  @Test
+  public void removeFailureRegistrationAfterSuccess() {
+    Registration reg = async.onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+      }
+    });
+    async.success(null);
+    reg.remove();
+  }
+
+  @Test
+  public void removeFailureRegistrationAfterFailure() {
+    Registration reg = async.onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+      }
+    });
+    async.failure(null);
+    reg.remove();
+  }
+
   private Handler<Throwable> throwingFailureHandler() {
     return throwingHandler();
   }
