@@ -27,7 +27,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
   public TreePath(CompositeT composite) {
     CompositeT current = composite;
     while (current != null) {
-      CompositeT parent = current.parent().get();
+      CompositeT parent = current.getParent();
       if (parent != null) {
         int index = parent.children().indexOf(current);
         if (index == -1) {
