@@ -33,17 +33,21 @@ import java.util.*;
 
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
-    return new BaseTransformer<ItemT, ItemT>() {
+    return coerce();
+  }
+
+  public static <TargetT, SourceT extends TargetT> Transformer<SourceT, TargetT> coerce() {
+    return new BaseTransformer<SourceT, TargetT>() {
       @Override
-      public Transformation<ItemT, ItemT> transform(final ItemT from) {
-        return new Transformation<ItemT, ItemT>() {
+      public Transformation<SourceT, TargetT> transform(final SourceT from) {
+        return new Transformation<SourceT, TargetT>() {
           @Override
-          public ItemT getSource() {
+          public SourceT getSource() {
             return from;
           }
 
           @Override
-          public ItemT getTarget() {
+          public TargetT getTarget() {
             return from;
           }
 
@@ -54,7 +58,37 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ItemT, ItemT> transform(ItemT from, ItemT to) {
+      public Transformation<SourceT, TargetT> transform(SourceT from, TargetT to) {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  public static <ItemT> Transformer<ObservableList<ItemT>, ObservableList<? extends ItemT>> coerceList() {
+    return new BaseTransformer<ObservableList<ItemT>, ObservableList<? extends ItemT>>() {
+      @Override
+      public Transformation<ObservableList<ItemT>, ObservableList<? extends ItemT>> transform(final ObservableList<ItemT> from) {
+        return new Transformation<ObservableList<ItemT>, ObservableList<? extends ItemT>>() {
+          @Override
+          public ObservableList<ItemT> getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableList<? extends ItemT> getTarget() {
+            return from;
+          }
+
+          @Override
+          public void dispose() {
+
+          }
+        };
+
+      }
+
+      @Override
+      public Transformation<ObservableList<ItemT>, ObservableList<? extends ItemT>> transform(ObservableList<ItemT> from, ObservableList<? extends ItemT> to) {
         throw new UnsupportedOperationException();
       }
     };
