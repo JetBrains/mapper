@@ -530,18 +530,19 @@ public class Transformers {
   }
 
 
-  public static <SourceT, TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> flattenList(final Function<SourceT, ObservableList<TargetT>> f) {
-    return Transformers.<SourceT, ObservableList<TargetT>, TargetT>flattenList(f, Transformers.<ObservableList<TargetT>>identity());
-  }
 
   public static <ItemT>
-  Transformer<ObservableList<ObservableList<ItemT>>, ObservableList<ItemT>> flattenList() {
-    return flattenList(Functions.<ObservableList<ItemT>>identity());
+  Transformer<ObservableList<ObservableList<? extends ItemT>>, ObservableList<ItemT>> flattenList() {
+    return flattenList(Functions.<ObservableList<? extends ItemT>>identity());
+  }
+
+  public static <SourceT, TargetT>
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> flattenList(final Function<SourceT, ? extends ObservableList<? extends TargetT>> f) {
+    return Transformers.flattenList(f, Transformers.<ObservableList<? extends TargetT>>identity());
   }
 
   public static <SourceT, SelectedT, ResultT>
-  Transformer<ObservableList<SourceT>, ObservableList<ResultT>> flattenList(final Function<SourceT, SelectedT> f, final Transformer<SelectedT, ObservableList<ResultT>> t) {
+  Transformer<ObservableList<SourceT>, ObservableList<ResultT>> flattenList(final Function<SourceT, ? extends SelectedT> f, final Transformer<SelectedT, ? extends ObservableList<? extends ResultT>> t) {
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<ResultT>>() {
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<ResultT>> transform(ObservableList<SourceT> from) {
@@ -557,8 +558,8 @@ public class Transformers {
           @Override
           public void onItemAdded(final CollectionItemEvent<? extends SourceT> event) {
             SelectedT selected = f.apply(event.getItem());
-            final Transformation<SelectedT, ? extends ObservableList<ResultT>> transform = t.transform(selected);
-            ObservableList<ResultT> target = transform.getTarget();
+            final Transformation<SelectedT, ? extends ObservableList<? extends ResultT>> transform = t.transform(selected);
+            ObservableList<? extends ResultT> target = transform.getTarget();
 
             int startIndex = getStartResultIndex(event.getItem(), from, sizes);
             sizes.put(event.getItem(), target.size());
@@ -566,20 +567,7 @@ public class Transformers {
               to.add(startIndex++, r);
             }
 
-            final Registration reg = target.addListener(new CollectionListener<ResultT>() {
-              @Override
-              public void onItemAdded(CollectionItemEvent<? extends ResultT> nestedEvent) {
-                int startIndex = getStartResultIndex(event.getItem(), from, sizes);
-                to.add(startIndex + nestedEvent.getIndex(), nestedEvent.getItem());
-                sizes.put(event.getItem(), sizes.get(event.getItem()) + 1);
-              }
-
-              @Override
-              public void onItemRemoved(CollectionItemEvent<? extends ResultT> nestedEvent) {
-                to.remove(nestedEvent.getItem());
-                sizes.put(event.getItem(), sizes.get(event.getItem()) - 1);
-              }
-            });
+            final Registration reg = watch(event, target);
 
             registrations.put(event.getItem(), new Registration() {
               @Override
@@ -590,10 +578,27 @@ public class Transformers {
             });
           }
 
+          private <ItemT extends ResultT> Registration watch(final CollectionItemEvent<? extends SourceT> event, ObservableList<ItemT> list) {
+            return list.addListener(new CollectionListener<ItemT>() {
+              @Override
+              public void onItemAdded(CollectionItemEvent<? extends ItemT> nestedEvent) {
+                int startIndex = getStartResultIndex(event.getItem(), from, sizes);
+                to.add(startIndex + nestedEvent.getIndex(), nestedEvent.getItem());
+                sizes.put(event.getItem(), sizes.get(event.getItem()) + 1);
+              }
+
+              @Override
+              public void onItemRemoved(CollectionItemEvent<? extends ItemT> nestedEvent) {
+                to.remove(nestedEvent.getItem());
+                sizes.put(event.getItem(), sizes.get(event.getItem()) - 1);
+              }
+            });
+          }
+
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
             SelectedT selected = f.apply(event.getItem());
-            Transformation<SelectedT, ? extends ObservableCollection<ResultT>> transformation = t.transform(selected);
+            Transformation<SelectedT, ? extends ObservableList<? extends ResultT>> transformation = t.transform(selected);
 
             to.removeAll(transformation.getTarget());
             sizes.remove(event.getItem());
