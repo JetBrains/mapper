@@ -507,7 +507,7 @@ public class Transformers {
   }
 
   public static <SourceT, SelectedT, ResultT>
-  Transformer<ObservableList<SourceT>, ObservableList<ResultT>> flattenList(final Function<SourceT, SelectedT> f, final Transformer<SelectedT, ? extends ObservableList<ResultT>> t) {
+  Transformer<ObservableList<SourceT>, ObservableList<ResultT>> flattenList(final Function<SourceT, SelectedT> f, final Transformer<SelectedT, ObservableList<ResultT>> t) {
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<ResultT>>() {
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<ResultT>> transform(ObservableList<SourceT> from) {
