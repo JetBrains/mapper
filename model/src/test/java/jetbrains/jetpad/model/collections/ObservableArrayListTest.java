@@ -27,15 +27,15 @@ import static org.junit.Assert.*;
 
 public class ObservableArrayListTest {
   private ObservableList<String> list = new ObservableArrayList<>();
-  private List<CollectionItemEvent<String>> events = new ArrayList<>();
+  private List<CollectionItemEvent<? extends String>> events = new ArrayList<>();
   private CollectionListener<String> listener = new CollectionAdapter<String>() {
     @Override
-    public void onItemAdded(CollectionItemEvent<String> event) {
+    public void onItemAdded(CollectionItemEvent<? extends String> event) {
       events.add(event);
     }
 
     @Override
-    public void onItemRemoved(CollectionItemEvent<String> event) {
+    public void onItemRemoved(CollectionItemEvent<? extends String> event) {
       events.add(event);
     }
   };
@@ -118,7 +118,7 @@ public class ObservableArrayListTest {
   private void assertEvent(int index, String item, boolean added) {
     assertEquals(1, events.size());
 
-    CollectionItemEvent<String> event = events.get(0);
+    CollectionItemEvent<? extends String> event = events.get(0);
     assertSame(item, event.getItem());
     assertEquals(index, event.getIndex());
     assertTrue(added == event.isAdded());

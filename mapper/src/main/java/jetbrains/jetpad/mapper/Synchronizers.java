@@ -154,12 +154,12 @@ public class Synchronizers {
       public void attach(SynchronizerContext ctx) {
         myCollectionRegistration = collection.addListener(new CollectionAdapter<ElementT>() {
           @Override
-          public void onItemAdded(CollectionItemEvent<ElementT> event) {
+          public void onItemAdded(CollectionItemEvent<? extends ElementT> event) {
             sync.run();
           }
 
           @Override
-          public void onItemRemoved(CollectionItemEvent<ElementT> event) {
+          public void onItemRemoved(CollectionItemEvent<? extends ElementT> event) {
             sync.run();
           }
         });

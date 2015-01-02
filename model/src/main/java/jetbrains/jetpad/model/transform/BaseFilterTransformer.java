@@ -58,7 +58,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
 
         myCollectionRegistration = from.addListener(new CollectionAdapter<ItemT>() {
           @Override
-          public void onItemAdded(CollectionItemEvent<ItemT> event) {
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             ItemT item = event.getItem();
             boolean shouldAdd = watch(item);
             if (shouldAdd) {
@@ -67,7 +67,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
           }
 
           @Override
-          public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
             ItemT item = event.getItem();
             unwatch(item);
             to.remove(item);

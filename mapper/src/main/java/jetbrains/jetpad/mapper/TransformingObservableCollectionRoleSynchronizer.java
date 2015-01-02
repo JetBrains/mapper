@@ -64,7 +64,7 @@ class TransformingObservableCollectionRoleSynchronizer<
     }
     myCollectionRegistration = mySourceList.addListener(new CollectionAdapter<MappedT>() {
       @Override
-      public void onItemAdded(CollectionItemEvent<MappedT> event) {
+      public void onItemAdded(CollectionItemEvent<? extends MappedT> event) {
         Mapper<? extends MappedT, ? extends TargetT> mapper = createMapper(event.getItem());
         getModifiableMappers().add(event.getIndex(), mapper);
         myTarget.add(event.getIndex(), mapper.getTarget());
@@ -72,7 +72,7 @@ class TransformingObservableCollectionRoleSynchronizer<
       }
 
       @Override
-      public void onItemRemoved(CollectionItemEvent<MappedT> event) {
+      public void onItemRemoved(CollectionItemEvent<? extends MappedT> event) {
         getModifiableMappers().remove(event.getIndex());
         myTarget.remove(event.getIndex());
       }

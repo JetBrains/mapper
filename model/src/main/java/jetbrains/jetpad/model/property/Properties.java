@@ -566,12 +566,12 @@ public class Properties {
   private static <ItemT> CollectionAdapter<ItemT> simpleAdapter(final Runnable r) {
     return new CollectionAdapter<ItemT>() {
       @Override
-      public void onItemAdded(CollectionItemEvent<ItemT> event) {
+      public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
         r.run();
       }
 
       @Override
-      public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+      public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
         r.run();
       }
     };
@@ -779,7 +779,7 @@ public class Properties {
       public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ItemT>> handler) {
         return coll.addListener(new CollectionAdapter<ItemT>() {
           @Override
-          public void onItemAdded(CollectionItemEvent<ItemT> event) {
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             if (coll.size() != 1) {
               throw new IllegalStateException();
             }
@@ -787,7 +787,7 @@ public class Properties {
           }
 
           @Override
-          public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
             if (!coll.isEmpty()) {
               throw new IllegalStateException();
             }

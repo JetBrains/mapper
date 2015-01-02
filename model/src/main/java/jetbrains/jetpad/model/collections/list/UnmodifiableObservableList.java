@@ -36,7 +36,7 @@ public class UnmodifiableObservableList<ElementT> extends UnmodifiableList<Eleme
   }
 
   @Override
-  public Registration addHandler(EventHandler<? super CollectionItemEvent<ElementT>> handler) {
+  public Registration addHandler(EventHandler<? super CollectionItemEvent<? extends ElementT>> handler) {
     return getWrappedList().addHandler(handler);
   }
 }

@@ -16,6 +16,6 @@
 package jetbrains.jetpad.model.collections;
 
 public interface CollectionListener<ItemT> {
-  void onItemAdded(CollectionItemEvent<ItemT> event);
-  void onItemRemoved(CollectionItemEvent<ItemT> event);
+  void onItemAdded(CollectionItemEvent<? extends ItemT> event);
+  void onItemRemoved(CollectionItemEvent<? extends ItemT> event);
 }

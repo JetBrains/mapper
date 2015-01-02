@@ -58,7 +58,7 @@ class ObservableCollectionRoleSynchronizer<
 
     myCollectionRegistration = mySource.addListener(new CollectionAdapter<SourceT>() {
       @Override
-      public void onItemAdded(CollectionItemEvent<SourceT> event) {
+      public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
         Mapper<? extends SourceT, ? extends TargetT> mapper = createMapper(event.getItem());
         getModifiableMappers().add(event.getIndex(), mapper);
         myTarget.add(event.getIndex(), mapper.getTarget());
@@ -66,7 +66,7 @@ class ObservableCollectionRoleSynchronizer<
       }
 
       @Override
-      public void onItemRemoved(CollectionItemEvent<SourceT> event) {
+      public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
         getModifiableMappers().remove(event.getIndex());
         myTarget.remove(event.getIndex());
       }

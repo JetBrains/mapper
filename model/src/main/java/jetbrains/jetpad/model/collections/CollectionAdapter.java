@@ -17,10 +17,10 @@ package jetbrains.jetpad.model.collections;
 
 public class CollectionAdapter<ItemT> implements CollectionListener<ItemT> {
   @Override
-  public void onItemAdded(CollectionItemEvent<ItemT> event) {
+  public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
   }
 
   @Override
-  public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+  public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
   }
 }

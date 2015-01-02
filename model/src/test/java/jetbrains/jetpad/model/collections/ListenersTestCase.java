@@ -94,11 +94,11 @@ public abstract class ListenersTestCase {
   private CollectionListener<Integer> createThrowingListener() {
     return new CollectionListener<Integer>() {
       @Override
-      public void onItemAdded(CollectionItemEvent<Integer> event) {
+      public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
         throw new UnsupportedOperationException();
       }
       @Override
-      public void onItemRemoved(CollectionItemEvent<Integer> event) {
+      public void onItemRemoved(CollectionItemEvent<? extends Integer> event) {
         throw new UnsupportedOperationException();
       }
     };

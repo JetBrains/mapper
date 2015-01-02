@@ -104,15 +104,15 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   @Override
-  public Registration addHandler(final EventHandler<? super CollectionItemEvent<ItemT>> handler) {
+  public Registration addHandler(final EventHandler<? super CollectionItemEvent<? extends ItemT>> handler) {
     final CollectionListener<ItemT> listener = new CollectionAdapter<ItemT>() {
       @Override
-      public void onItemAdded(CollectionItemEvent<ItemT> event) {
+      public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
         handler.onEvent(event);
       }
 
       @Override
-      public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+      public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
         handler.onEvent(event);
       }
     };

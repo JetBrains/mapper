@@ -20,6 +20,6 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.Collection;
 
-public interface ObservableCollection<ItemT> extends Collection<ItemT>, EventSource<CollectionItemEvent<ItemT>> {
+public interface ObservableCollection<ItemT> extends Collection<ItemT>, EventSource<CollectionItemEvent<? extends ItemT>> {
   Registration addListener(CollectionListener<ItemT> l);
 }

@@ -77,11 +77,11 @@ public class ObservableCollections {
 
       @Override
       public Registration addHandler(final EventHandler<? super PropertyChangeEvent<List<ItemT>>> handler) {
-        return list.addHandler(new EventHandler<CollectionItemEvent<ItemT>>() {
+        return list.addHandler(new EventHandler<CollectionItemEvent<? extends ItemT>>() {
           List<ItemT> myLastValue = new ArrayList<>(list);
 
           @Override
-          public void onEvent(CollectionItemEvent<ItemT> event) {
+          public void onEvent(CollectionItemEvent<? extends ItemT> event) {
             List<ItemT> newValue = new ArrayList<>(list);
             handler.onEvent(new PropertyChangeEvent<>(Collections.unmodifiableList(myLastValue), Collections.unmodifiableList(newValue)));
             myLastValue = newValue;

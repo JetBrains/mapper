@@ -40,7 +40,7 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
     mySourceSupplier = sourceSupplier;
     myBaseCollection.addListener(new CollectionAdapter<SourceT>() {
       @Override
-      public void onItemAdded(final CollectionItemEvent<SourceT> event) {
+      public void onItemAdded(final CollectionItemEvent<? extends SourceT> event) {
         myListeners.fire(new ListenerCaller<CollectionListener<TargetT>>() {
           @Override
           public void call(CollectionListener<TargetT> l) {
@@ -50,7 +50,7 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
       }
 
       @Override
-      public void onItemRemoved(final CollectionItemEvent<SourceT> event) {
+      public void onItemRemoved(final CollectionItemEvent<? extends SourceT> event) {
         myListeners.fire(new ListenerCaller<CollectionListener<TargetT>>() {
           @Override
           public void call(CollectionListener<TargetT> l) {
@@ -98,7 +98,7 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
   }
 
   @Override
-  public Registration addHandler(EventHandler<? super CollectionItemEvent<TargetT>> collectionItemEventEventHandler) {
+  public Registration addHandler(EventHandler<? super CollectionItemEvent<? extends TargetT>> collectionItemEventEventHandler) {
     throw new UnsupportedOperationException();
   }
 }

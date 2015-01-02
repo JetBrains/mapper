@@ -37,12 +37,12 @@ public abstract class SimpleCollectionProperty<ItemT, ValueT> extends BaseDerive
   protected void doAddListeners() {
     myRegistration = myCollection.addListener(new CollectionListener<ItemT>() {
       @Override
-      public void onItemAdded(CollectionItemEvent<ItemT> event) {
+      public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
         somethingChanged();
       }
 
       @Override
-      public void onItemRemoved(CollectionItemEvent<ItemT> event) {
+      public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
         somethingChanged();
       }
     });
