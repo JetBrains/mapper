@@ -15,10 +15,8 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.Function;
+import com.google.common.base.*;
 import com.google.common.base.Objects;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -497,9 +495,15 @@ public class Transformers {
     };
   }
 
+
   public static <SourceT, TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> flattenList(final Function<SourceT, ObservableList<TargetT>> f) {
     return Transformers.<SourceT, ObservableList<TargetT>, TargetT>flattenList(f, Transformers.<ObservableList<TargetT>>identity());
+  }
+
+  public static <ItemT>
+  Transformer<ObservableList<ObservableList<ItemT>>, ObservableList<ItemT>> flattenList() {
+    return flattenList(Functions.<ObservableList<ItemT>>identity());
   }
 
   public static <SourceT, SelectedT, ResultT>
