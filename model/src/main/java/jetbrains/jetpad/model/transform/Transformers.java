@@ -551,8 +551,8 @@ public class Transformers {
 
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<ResultT>> transform(final ObservableList<SourceT> from, final ObservableList<ResultT> to) {
-        final Map<SourceT, Registration> registrations = new HashMap<>();
-        final Map<SourceT, Integer> sizes = new HashMap<>();
+        final Map<SourceT, Registration> registrations = new IdentityHashMap<>();
+        final Map<SourceT, Integer> sizes = new IdentityHashMap<>();
 
         CollectionAdapter<SourceT> sourceListener = new CollectionAdapter<SourceT>() {
           @Override
