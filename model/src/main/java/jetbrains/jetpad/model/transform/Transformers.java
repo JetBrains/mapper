@@ -529,8 +529,6 @@ public class Transformers {
     };
   }
 
-
-
   public static <ItemT>
   Transformer<ObservableList<ObservableList<? extends ItemT>>, ObservableList<ItemT>> flattenList() {
     return flattenList(Functions.<ObservableList<? extends ItemT>>identity());

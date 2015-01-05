@@ -58,7 +58,7 @@ public class FlattenListTest {
   }
 
   @Test
-   public void addFirst() {
+  public void addFirst() {
     transformer.transform(from, to);
 
     from.add("a");
@@ -165,6 +165,21 @@ public class FlattenListTest {
     l2.list.add("c");
 
     assertEquals("[a]", "" + to);
+  }
+
+  @Test
+  public void listOfListNPE() {
+    ObservableList<String> l1 = new ObservableArrayList<>();
+    ObservableList<String> l2 = new ObservableArrayList<>();
+    ObservableList<ObservableList<? extends String>> container = new ObservableArrayList<>();
+    container.add(l1);
+    container.add(l2);
+
+    ObservableList<String> result = Transformers.<String>flattenList().transform(container).getTarget();
+
+    l1.add("x");
+
+    assertEquals(Arrays.asList("x"), result);
   }
 
   private class MyList {
