@@ -170,10 +170,8 @@ public class FlattenListTest {
   @Test
   public void listOfListNPE() {
     ObservableList<String> l1 = new ObservableArrayList<>();
-    ObservableList<String> l2 = new ObservableArrayList<>();
     ObservableList<ObservableList<? extends String>> container = new ObservableArrayList<>();
     container.add(l1);
-    container.add(l2);
 
     ObservableList<String> result = Transformers.<String>flattenList().transform(container).getTarget();
 
