@@ -565,7 +565,7 @@ public class Transformers {
               to.add(startIndex++, r);
             }
 
-            final Registration reg = watch(event, target);
+            final Registration reg = watch(event.getItem(), target);
 
             registrations.put(event.getItem(), new Registration() {
               @Override
@@ -576,19 +576,19 @@ public class Transformers {
             });
           }
 
-          private <ItemT extends ResultT> Registration watch(final CollectionItemEvent<? extends SourceT> event, ObservableList<ItemT> list) {
+          private <ItemT extends ResultT> Registration watch(final SourceT container, ObservableList<ItemT> list) {
             return list.addListener(new CollectionListener<ItemT>() {
               @Override
-              public void onItemAdded(CollectionItemEvent<? extends ItemT> nestedEvent) {
-                int startIndex = getStartResultIndex(event.getItem(), from, sizes);
-                to.add(startIndex + nestedEvent.getIndex(), nestedEvent.getItem());
-                sizes.put(event.getItem(), sizes.get(event.getItem()) + 1);
+              public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+                int startIndex = getStartResultIndex(container, from, sizes);
+                to.add(startIndex + event.getIndex(), event.getItem());
+                sizes.put(container, sizes.get(container) + 1);
               }
 
               @Override
-              public void onItemRemoved(CollectionItemEvent<? extends ItemT> nestedEvent) {
-                to.remove(nestedEvent.getItem());
-                sizes.put(event.getItem(), sizes.get(event.getItem()) - 1);
+              public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+                to.remove(event.getItem());
+                sizes.put(container, sizes.get(container) - 1);
               }
             });
           }
