@@ -259,9 +259,11 @@ public class Composites {
 
   public static <CompositeT extends Composite<CompositeT>>
   boolean isDescendant(CompositeT ancestor, CompositeT descendant) {
-    if (ancestor == descendant) return true;
-    if (descendant.getParent() == null) return false;
-    return isDescendant(ancestor, descendant.getParent());
+    while (true) {
+      if (ancestor == descendant) return true;
+      if (descendant.getParent() == null) return false;
+      descendant = descendant.getParent();
+    }
   }
 
   private static <CompositeT extends Composite<CompositeT>>
