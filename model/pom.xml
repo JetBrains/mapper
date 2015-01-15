@@ -38,24 +38,6 @@
       <version>1.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>forJVM6</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>**/jre/**</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public class ThrowableHandlers {
   private static final Logger LOG = Logger.getLogger(ThrowableHandlers.class.getName());
 
-  //we can use ThreadLocal here because of our own emulation at jetbrains.jetpad.model.jre.java.lang.ThreadLocal
+  //we can use ThreadLocal here because of our own emulation at model-gwt jetbrains.jetpad.model.jre.java.lang.ThreadLocal
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
   private static ThreadLocal<Boolean> ourForceProduction = new ThreadLocal<Boolean>() {
     @Override
