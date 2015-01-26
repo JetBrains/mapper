@@ -220,13 +220,14 @@ public class CollectionTransformationTest {
     fromList.add(new MyObject("b"));
     fromList.add(new MyObject("c"));
 
-    Transformers.<MyObject>firstN(Properties.<Integer>constant(2)).transform(fromList, toList);
+    Transformers.<MyObject>firstN(Properties.constant(2)).transform(fromList, toList);
 
     assertEquals("[a, b]", toList.toString());
   }
+
   @Test
   public void firstNAdd() {
-    Transformers.<MyObject>firstN(Properties.<Integer>constant(1)).transform(fromList, toList);
+    Transformers.<MyObject>firstN(Properties.constant(1)).transform(fromList, toList);
 
     fromList.add(new MyObject("x"));
     fromList.add(0, new MyObject("y"));
@@ -240,7 +241,7 @@ public class CollectionTransformationTest {
     fromList.add(new MyObject("b"));
     fromList.add(new MyObject("c"));
 
-    Transformers.<MyObject>firstN(Properties.<Integer>constant(1)).transform(fromList, toList);
+    Transformers.<MyObject>firstN(Properties.constant(1)).transform(fromList, toList);
 
     fromList.remove(2);
     fromList.remove(0);
