@@ -466,10 +466,10 @@ public class Transformers {
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             int n = value.get();
             if (event.getIndex() >= n) return;
-            to.add(event.getIndex(), event.getItem());
-            if (to.size() == n + 1) {
-              to.remove(n);
+            if (to.size() == n) {
+              to.remove(n - 1);
             }
+            to.add(event.getIndex(), event.getItem());
           }
 
           @Override

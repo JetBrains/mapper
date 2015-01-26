@@ -18,8 +18,10 @@ package jetbrains.jetpad.model.transform;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.collections.ObservableCollection;
+import jetbrains.jetpad.model.collections.SingleItemList;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
+import jetbrains.jetpad.model.collections.list.ObservableSingleItemList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
 import jetbrains.jetpad.model.property.Properties;
@@ -235,6 +237,17 @@ public class CollectionTransformationTest {
     assertEquals("[y]", toList.toString());
   }
 
+  @Test
+  public void targetHasNoMoreThanNElements() {
+    ObservableSingleItemList<MyObject> targetList = new ObservableSingleItemList<>();
+    fromList.add(new MyObject("x"));
+
+    Transformers.<MyObject>firstN(Properties.constant(1)).transform(fromList, targetList);
+    fromList.add(0, new MyObject("y"));
+
+    assertEquals("[y]", targetList.toString());
+  }
+  
   @Test
   public void firstNRemove() {
     fromList.add(new MyObject("a"));
