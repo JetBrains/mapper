@@ -35,6 +35,10 @@ public class Interval {
     return myUpperBound;
   }
 
+  public int getLength() {
+    return myUpperBound - myLowerBound;
+  }
+
   @Override
   public String toString() {
     return "[" + myLowerBound + ", " + myUpperBound + "]";
