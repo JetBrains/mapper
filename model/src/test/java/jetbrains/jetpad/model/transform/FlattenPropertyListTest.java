@@ -73,6 +73,4 @@ public class FlattenPropertyListTest {
   private void assertList(String... vals) {
     assertEquals(Arrays.asList(vals), flattenedList);
   }
-
-
 }
