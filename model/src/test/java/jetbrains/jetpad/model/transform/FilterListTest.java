@@ -141,7 +141,7 @@ public class FilterListTest {
   }
 
   @Test
-  public void failed() {
+  public void badPropertiesDependencies() {
     final Property<Boolean> init = new ValueProperty<>(false);
 
     ReadableProperty<Boolean> createTransformation = new DerivedProperty<Boolean>(init) {
