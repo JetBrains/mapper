@@ -19,8 +19,11 @@ import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
+import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.*;
 import org.junit.Test;
+
+import javax.annotation.Nullable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -106,5 +109,75 @@ public class FilterListTest {
 
     assertEquals(1, target.size());
     assertEquals(2, (int)target.get(0));
+  }
+
+  @Test
+  public void addSameElementTwice() {
+    String s = "aa";
+    from.add(s);
+    from.add("bb");
+    from.add(s);
+    filter.transform(from, to);
+
+    assertEquals(3, to.size());
+    assertEquals("aa", to.get(0));
+    assertEquals("bb", to.get(1));
+    assertEquals("aa", to.get(2));
+  }
+
+  @Test
+  public void addSameElementTwiceAfterTransformation() {
+    filter.transform(from, to);
+
+    String s = "aa";
+    from.add(s);
+    from.add("bb");
+    from.add(s);
+
+    assertEquals(3, to.size());
+    assertEquals("aa", to.get(0));
+    assertEquals("bb", to.get(1));
+    assertEquals("aa", to.get(2));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void failed() {
+    final Property<Boolean> init = new ValueProperty<>(false);
+
+    ReadableProperty<Boolean> createTransformation = new DerivedProperty<Boolean>(init) {
+      @Override
+      public Boolean get() {
+        return init.get();
+      }
+    };
+    final ReadableProperty<Boolean> filter = new DerivedProperty<Boolean>(init) {
+      @Override
+      public Boolean get() {
+        return init.get();
+      }
+    };
+
+    createTransformation.addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {
+      @Override
+      public void onEvent(PropertyChangeEvent<Boolean> event) {
+        Transformers.listFilter(new Function<String, ReadableProperty<Boolean>>() {
+          @Nullable
+          @Override
+          public ReadableProperty<Boolean> apply(String s) {
+            return filter;
+          }
+        }).transform(from, to);
+      }
+    });
+    filter.addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {
+      @Override
+      public void onEvent(PropertyChangeEvent<Boolean> event) {
+      }
+    });
+
+    from.add("a");
+    init.set(true);
+
+    System.out.println(to);
   }
 }
