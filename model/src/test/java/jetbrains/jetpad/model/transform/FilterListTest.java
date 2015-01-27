@@ -140,7 +140,7 @@ public class FilterListTest {
     assertEquals("aa", to.get(2));
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void failed() {
     final Property<Boolean> init = new ValueProperty<>(false);
 
@@ -178,6 +178,7 @@ public class FilterListTest {
     from.add("a");
     init.set(true);
 
-    System.out.println(to);
+    assertEquals(1, to.size());
+    assertEquals("a", to.get(0));
   }
 }
