@@ -95,7 +95,7 @@ public class FilterListTest {
       public ReadableProperty<Boolean> apply(final Integer i) {
         return new DerivedProperty<Boolean>(p) {
           @Override
-          public Boolean get() {
+          public Boolean doGet() {
             return p.get() == (i % 2 == 0);
           }
         };
@@ -146,13 +146,13 @@ public class FilterListTest {
 
     ReadableProperty<Boolean> createTransformation = new DerivedProperty<Boolean>(init) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         return init.get();
       }
     };
     final ReadableProperty<Boolean> filter = new DerivedProperty<Boolean>(init) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         return init.get();
       }
     };

@@ -20,7 +20,7 @@ public class AdvancedProperties {
   public static ReadableProperty<Boolean> and(final ReadableProperty<Boolean>... props) {
     return new DerivedProperty<Boolean>(props) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         Boolean res = Boolean.TRUE;
         for (ReadableProperty<Boolean> prop : props) {
           res = Properties.and(res, prop.get());

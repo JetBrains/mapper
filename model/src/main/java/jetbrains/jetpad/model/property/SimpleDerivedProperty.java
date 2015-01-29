@@ -58,7 +58,7 @@ public class SimpleDerivedProperty<ValueT> extends BaseDerivedProperty<ValueT> {
   }
 
   @Override
-  public ValueT get() {
+  protected ValueT doGet() {
     return mySupplier.get();
   }
 

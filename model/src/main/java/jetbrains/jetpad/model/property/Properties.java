@@ -63,7 +63,7 @@ public class Properties {
   public static ReadableProperty<Boolean> startsWith(final ReadableProperty<String> string, final ReadableProperty<String> prefix) {
     return new DerivedProperty<Boolean>(string, prefix) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         if (string.get() == null) return false;
         if (prefix.get() == null) return false;
         return string.get().startsWith(prefix.get());
@@ -79,7 +79,7 @@ public class Properties {
   public static ReadableProperty<Boolean> isNullOrEmpty(final ReadableProperty<String> prop) {
     return new DerivedProperty<Boolean>(prop) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         String val = prop.get();
         return val == null || val.length() == 0;
       }
@@ -94,7 +94,7 @@ public class Properties {
   public static ReadableProperty<Boolean> and(final ReadableProperty<Boolean> op1, final ReadableProperty<Boolean> op2) {
     return new DerivedProperty<Boolean>(op1, op2) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         return and(op1.get(), op2.get());
       }
 
@@ -125,7 +125,7 @@ public class Properties {
   public static ReadableProperty<Boolean> or(final ReadableProperty<Boolean> op1, final ReadableProperty<Boolean> op2) {
     return new DerivedProperty<Boolean>(op1, op2) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         Boolean b1 = op1.get();
         Boolean b2 = op2.get();
         if (b1 == null) {
@@ -154,7 +154,7 @@ public class Properties {
   public static ReadableProperty<Integer> add(final ReadableProperty<Integer> p1, final ReadableProperty<Integer> p2) {
     return new DerivedProperty<Integer>(p1, p2) {
       @Override
-      public Integer get() {
+      public Integer doGet() {
         if (p1.get() == null || p2.get() == null) return null;
         return p1.get() + p2.get();
       }
@@ -231,7 +231,7 @@ public class Properties {
       }
 
       @Override
-      public TargetT get() {
+      protected TargetT doGet() {
         return calc.get();
       }
 
@@ -307,7 +307,7 @@ public class Properties {
       }
 
       @Override
-      public TargetT get() {
+      protected TargetT doGet() {
         return calc.get();
       }
 
@@ -347,7 +347,7 @@ public class Properties {
   public static <ValueT> ReadableProperty<Boolean> equals(final ReadableProperty<? extends ValueT> p1, final ReadableProperty<? extends ValueT> p2) {
     return new DerivedProperty<Boolean>(p1, p2) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         return Objects.equal(p1.get(), p2.get());
       }
 
@@ -369,7 +369,7 @@ public class Properties {
   public static <SourceT, TargetT> ReadableProperty<TargetT> map(final ReadableProperty<SourceT> prop, final Function<SourceT, TargetT> f) {
     return new DerivedProperty<TargetT>(prop) {
       @Override
-      public TargetT get() {
+      public TargetT doGet() {
         return f.apply(prop.get());
       }
 
@@ -438,7 +438,7 @@ public class Properties {
   public static <ItemT> ReadableProperty<Boolean> isEmpty(final ObservableCollection<ItemT> collection) {
     return new SimpleCollectionProperty<ItemT, Boolean>(collection, collection.isEmpty()) {
       @Override
-      public Boolean get() {
+      protected Boolean doGet() {
         return collection.isEmpty();
       }
 
@@ -452,7 +452,7 @@ public class Properties {
   public static <ItemT> ReadableProperty<Integer> size(final ObservableCollection<ItemT> collection) {
     return new SimpleCollectionProperty<ItemT, Integer>(collection, collection.size()) {
       @Override
-      public Integer get() {
+      protected Integer doGet() {
         return collection.size();
       }
 
@@ -495,7 +495,7 @@ public class Properties {
       private Registration myCollectionRegistration;
 
       @Override
-      public T get() {
+      protected T doGet() {
         return supplier.get();
       }
 
@@ -552,7 +552,7 @@ public class Properties {
       }
 
       @Override
-      public Boolean get() {
+      protected Boolean doGet() {
         return collection.isEmpty();
       }
 
@@ -580,7 +580,7 @@ public class Properties {
   public static <ValueT> ReadableProperty<ValueT> ifProp(final ReadableProperty<Boolean> cond, final ReadableProperty<ValueT> ifTrue, final ReadableProperty<ValueT> ifFalse) {
     return new DerivedProperty<ValueT>(cond, ifTrue, ifFalse) {
       @Override
-      public ValueT get() {
+      public ValueT doGet() {
         return cond.get() ? ifTrue.get() : ifFalse.get();
       }
 
@@ -611,7 +611,7 @@ public class Properties {
   public static <ValueT> ReadableProperty<ValueT> withDefaultValue(final ReadableProperty<ValueT> prop, final ValueT ifNull) {
     return new DerivedProperty<ValueT>(prop) {
       @Override
-      public ValueT get() {
+      public ValueT doGet() {
         if (prop.get() == null) {
           return ifNull;
         } else {
@@ -624,7 +624,7 @@ public class Properties {
   public static <ValueT> ReadableProperty<ValueT> firstNotNull(final ReadableProperty<ValueT>... values) {
     return new DerivedProperty<ValueT>(values) {
       @Override
-      public ValueT get() {
+      public ValueT doGet() {
         for (ReadableProperty<ValueT> v : values) {
           if (v.get() != null) {
             return v.get();
@@ -656,7 +656,7 @@ public class Properties {
   public static <ValueT> ReadableProperty<Boolean> isPropertyValid(final ReadableProperty<ValueT> source, final Predicate<ValueT> validator) {
     return new DerivedProperty<Boolean>(source) {
       @Override
-      public Boolean get() {
+      public Boolean doGet() {
         return validator.apply(source.get());
       }
 
@@ -676,7 +676,7 @@ public class Properties {
       }
 
       @Override
-      public ValueT get() {
+      public ValueT doGet() {
         ValueT sourceValue = source.get();
         if (validator.apply(sourceValue)) {
           myLastValid = sourceValue;
@@ -708,7 +708,7 @@ public class Properties {
   public static ReadableProperty<String> toStringOf(final ReadableProperty<?> p, final String nullValue) {
     return new DerivedProperty<String>(p) {
       @Override
-      public String get() {
+      public String doGet() {
         Object value = p.get();
         return value != null ? ("" + value) : nullValue;
       }

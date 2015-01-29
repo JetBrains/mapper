@@ -53,7 +53,7 @@ public class CachingProperty<ValueT> extends SimpleDerivedProperty<ValueT> {
   }
 
   @Override
-  public ValueT get() {
+  public ValueT doGet() {
     if (myActive) {
       return myCachedValue;
     } else {

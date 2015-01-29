@@ -23,22 +23,33 @@ import jetbrains.jetpad.base.Registration;
 
 public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<ValueT> {
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
-  private ValueT myOldValue;
+  private ValueT myValue;
 
   protected BaseDerivedProperty(ValueT initialValue) {
-    myOldValue = initialValue;
+    myValue = initialValue;
   }
 
   protected abstract void doAddListeners();
 
   protected abstract void doRemoveListeners();
 
-  protected void somethingChanged() {
-    ValueT newValue = get();
-    if (Objects.equal(myOldValue, newValue)) return;
+  protected abstract ValueT doGet();
 
-    final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<>(myOldValue, newValue);
-    myOldValue = newValue;
+  @Override
+  public final ValueT get() {
+    if (myHandlers != null) {
+      return myValue;
+    } else {
+      return doGet();
+    }
+  }
+
+  protected void somethingChanged() {
+    ValueT newValue = doGet();
+    if (Objects.equal(myValue, newValue)) return;
+
+    final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<>(myValue, newValue);
+    myValue = newValue;
 
     if (myHandlers != null) {
       myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
@@ -56,7 +67,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
       myHandlers = new Listeners<>();
     }
     if (myHandlers.isEmpty()) {
-      myOldValue = get();
+      myValue = doGet();
       doAddListeners();
     }
     final Registration reg = myHandlers.add(handler);
@@ -66,6 +77,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
         reg.remove();
         if (myHandlers.isEmpty()) {
           doRemoveListeners();
+          myHandlers = null;
         }
       }
     };
