@@ -334,14 +334,14 @@ public class DomUtil {
       };
 
       @Override
-      protected void doStartPolling() {
-        super.doStartPolling();
+      protected void doAddListeners() {
+        super.doAddListeners();
         myTimer.scheduleRepeating(period);
       }
 
       @Override
-      protected void doStopPolling() {
-        super.doStopPolling();
+      protected void doRemoveListeners() {
+        super.doRemoveListeners();
         myTimer.cancel();
       }
 
