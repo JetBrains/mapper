@@ -356,8 +356,7 @@ public class Transformers {
           index++;
         }
         if (!fromItr.hasNext() && !foundItem) {
-          //in this case item has been already added to target collection
-          return;
+          throw new IllegalStateException("item " + item + " has not been found in " + from);
         }
         to.add(index, item);
       }
