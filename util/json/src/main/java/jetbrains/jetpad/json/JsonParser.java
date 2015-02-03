@@ -20,12 +20,16 @@ public class JsonParser {
   }
 
   public static JsonValue parse(String input) {
-    JsonLexer lexer = new StringJsonLexer(input);
-    JsonValue result = parseValue(lexer);
-    if (lexer.tokenKind() != null) {
-      throw new JsonParsingException();
+    try {
+      JsonLexer lexer = new StringJsonLexer(input);
+      JsonValue result = parseValue(lexer);
+      if (lexer.tokenKind() != null) {
+        throw new JsonParsingException();
+      }
+      return result;
+    } catch (RuntimeException e) {
+      throw new JsonParsingException("json=[" + input + ']', e);
     }
-    return result;
   }
 
   private static JsonValue parseValue(JsonLexer lexer) {
