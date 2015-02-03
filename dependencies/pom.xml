@@ -15,8 +15,8 @@
 
     <guava.version>15.0</guava.version>
     <gwtquery.version>1.4.2</gwtquery.version>
-    <gwt.version>2.6.1</gwt.version>
-    <gwtplugin.version>2.6.1</gwtplugin.version>
+    <gwt.version>2.7.0</gwt.version>
+    <gwtplugin.version>2.7.0</gwtplugin.version>
 
     <jetty.version>8.1.2.v20120308</jetty.version>
     <javancss.version>2.0</javancss.version>
@@ -127,6 +127,10 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
           <version>${gwtplugin.version}</version>
+          <configuration>
+            <incrementalCompileWarnings>true</incrementalCompileWarnings>
+          </configuration>
+
           <executions>
             <execution>
               <goals>
