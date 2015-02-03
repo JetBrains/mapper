@@ -20,12 +20,6 @@ public abstract class UpdatableProperty<ValueT> extends BaseDerivedProperty<Valu
     super(null);
   }
 
-  protected void doAddListeners() {
-  }
-
-  protected void doRemoveListeners() {
-  }
-
   @Override
   public String getPropExpr() {
     return "updatable property";

@@ -335,13 +335,11 @@ public class DomUtil {
 
       @Override
       protected void doAddListeners() {
-        super.doAddListeners();
         myTimer.scheduleRepeating(period);
       }
 
       @Override
       protected void doRemoveListeners() {
-        super.doRemoveListeners();
         myTimer.cancel();
       }
 

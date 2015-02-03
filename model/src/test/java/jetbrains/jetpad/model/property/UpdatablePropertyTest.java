@@ -33,6 +33,14 @@ public class UpdatablePropertyTest {
       protected String doGet() {
         return value;
       }
+
+      @Override
+      protected void doAddListeners() {
+      }
+
+      @Override
+      protected void doRemoveListeners() {
+      }
     };
   }
 
