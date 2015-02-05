@@ -20,6 +20,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>${mvn.jar.plugin.version}</version>
         <configuration>
           <excludes>
             <exclude>**/*.class</exclude>
