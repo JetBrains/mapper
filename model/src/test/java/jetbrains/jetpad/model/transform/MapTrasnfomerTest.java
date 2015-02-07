@@ -43,7 +43,6 @@ public class MapTrasnfomerTest {
 
   @Test
   public void nonEmptySource() {
-
     source.add("aaa");
 
     startTrans();
