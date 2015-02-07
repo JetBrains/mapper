@@ -18,34 +18,43 @@ package jetbrains.jetpad.model.transform;
 import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class MapTrasnfomerTest {
   private ObservableList<String> source = new ObservableArrayList<>();
   private ObservableList<Integer> target;
+  private Transformer<ObservableList<String>, ObservableList<Integer>> transformer = Transformers.listMap(
+    Transformers.fromFun(new Function<String, Integer>() {
+      @Override
+      public Integer apply(String input) {
+        return input.length();
+      }
+    }));
 
 
-  @Before
-  public void before() {
-    Transformer<ObservableList<String>, ObservableList<Integer>> transformer = Transformers.listMap(
-      Transformers.fromFun(new Function<String, Integer>() {
-        @Override
-        public Integer apply(String input) {
-          return input.length();
-        }
-      }));
 
+  public void startTrans() {
     target = transformer.transform(source).getTarget();
   }
 
   @Test
+  public void nonEmptySource() {
+
+    source.add("aaa");
+
+    startTrans();
+
+    assertEquals(Arrays.asList(3), target);
+  }
+
+  @Test
   public void itemAdd() {
+    startTrans();
+
     source.add("aaa");
     source.add(0, "b");
 
@@ -55,6 +64,9 @@ public class MapTrasnfomerTest {
 
   @Test
   public void itemRemove() {
+    startTrans();
+
+
     source.addAll(Arrays.asList("aaaa", "bbb", "c"));
 
     source.remove(1);

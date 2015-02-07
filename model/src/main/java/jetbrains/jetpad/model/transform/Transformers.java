@@ -135,7 +135,7 @@ public class Transformers {
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
         final List<Registration> itemRegistrations = new ArrayList<>();
 
-        final Registration reg = from.addListener(new CollectionListener<SourceT>() {
+        final CollectionListener<SourceT> listener = new CollectionListener<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getItem());
@@ -153,8 +153,14 @@ public class Transformers {
             to.remove(event.getIndex());
             itemRegistrations.remove(event.getIndex()).remove();
           }
-        });
+        };
 
+
+        for (int i = 0; i < from.size(); i++) {
+          listener.onItemAdded(new CollectionItemEvent<>(from.get(i), i, true));
+        }
+
+        final Registration reg = from.addListener(listener);
         return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
           @Override
           public ObservableList<SourceT> getSource() {
