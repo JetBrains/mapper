@@ -394,22 +394,6 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends NavComposite<CompositeT> & HasVisibility>
-  CompositeT nextVisible(CompositeT v) {
-    for (CompositeT cv : Composites.nextNavOrder(v)) {
-      if (isVisible(cv)) return cv;
-    }
-    return null;
-  }
-
-  public static <CompositeT extends NavComposite<CompositeT> & HasVisibility>
-  CompositeT prevVisible(CompositeT v) {
-    for (CompositeT cv : Composites.prevNavOrder(v)) {
-      if (isVisible(cv)) return cv;
-    }
-    return null;
-  }
-
   private static <ValueT> Iterable<ValueT> iterate(final ValueT initial, final Function<ValueT, ValueT> trans) {
     return new Iterable<ValueT>() {
       @Override
