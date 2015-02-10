@@ -42,6 +42,11 @@ public abstract class BaseId implements Serializable {
 
   protected BaseId(String id, String name) {
     myId = id;
+
+    if (id.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+
     synchronized (ourNamesMap) {
       String oldName = ourNamesMap.get(id);
 
