@@ -43,7 +43,7 @@ public abstract class BaseId implements Serializable {
   protected BaseId(String id, String name) {
     myId = id;
 
-    if (id.isEmpty()) {
+    if (id == null || id.isEmpty()) {
       throw new IllegalArgumentException();
     }
 
