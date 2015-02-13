@@ -46,6 +46,15 @@ public class BaseIdTest {
     assertEquals("newName1 [a.b]", id2.toString());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void emptyId() {
+    new MyId("");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullId() {
+    new MyId(null);
+  }
 
   private static class MyId extends BaseId {
     private MyId() {

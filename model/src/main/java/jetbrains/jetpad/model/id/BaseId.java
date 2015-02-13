@@ -44,7 +44,7 @@ public abstract class BaseId implements Serializable {
     myId = id;
 
     if (id == null || id.isEmpty()) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("id='" + id + "'");
     }
 
     synchronized (ourNamesMap) {
