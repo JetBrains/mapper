@@ -16,5 +16,11 @@
 package jetbrains.jetpad.base;
 
 public interface Handler<ItemT> {
+  public static final Handler<Object> EMPTY = new Handler<Object>() {
+    @Override
+    public void handle(Object item) {
+    }
+  };
+
   void handle(ItemT item);
 }
