@@ -38,8 +38,6 @@ public class Color {
   public static final Color CYAN = new Color(0, 255, 255);
   public static final Color LIGHT_CYAN = new Color(210, 255, 255);
   public static final Color ORANGE = new Color(255, 192, 0);
-  public static final Color LIGHT_ORANGE = new Color(255, 230, 0);
-  public static final Color VERY_LIGHT_ORANGE = new Color(255, 240, 0);
   public static final Color PINK = new Color(255, 175, 175);
   public static final Color LIGHT_PINK = new Color(255, 210, 210);
 
