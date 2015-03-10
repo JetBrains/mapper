@@ -25,15 +25,15 @@ import java.util.concurrent.CountDownLatch;
 
 @GwtCompatible
 public class Asyncs {
-  public static boolean isLoaded(Async<?> async) {
-    final Value<Boolean> loaded = new Value<>(false);
+  public static boolean isSucceeded(Async<?> async) {
+    final Value<Boolean> succeeded = new Value<>(false);
     async.onSuccess(new Handler<Object>() {
       @Override
       public void handle(Object item) {
-        loaded.set(true);
+        succeeded.set(true);
       }
     });
-    return loaded.get();
+    return succeeded.get();
   }
 
   public static <ValueT> Async<ValueT> constant(ValueT val) {

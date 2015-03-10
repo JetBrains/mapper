@@ -150,15 +150,15 @@ public class AsyncsTest {
   }
 
   @Test
-  public void loadedTrue() {
-    assertTrue(Asyncs.isLoaded(Asyncs.constant(239)));
+  public void succeededTrue() {
+    assertTrue(Asyncs.isSucceeded(Asyncs.constant(239)));
   }
 
   @Test
-  public void loadedFalse() {
+  public void succeededFalse() {
     SimpleAsync<Integer> async = new SimpleAsync<>();
 
-    assertFalse(Asyncs.isLoaded(async));
+    assertFalse(Asyncs.isSucceeded(async));
   }
 
 
