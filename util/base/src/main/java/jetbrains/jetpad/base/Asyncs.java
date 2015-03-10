@@ -142,6 +142,11 @@ public class Asyncs {
         }
       });
     }
+
+    if (asyncs.isEmpty()) {
+      checkTermination.run();
+    }
+
     return result;
   }
 

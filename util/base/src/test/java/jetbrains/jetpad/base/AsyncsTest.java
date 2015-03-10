@@ -19,15 +19,15 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 public class AsyncsTest {
   @Test
   public void constantAsync() {
     Async<Integer> c = Asyncs.constant(239);
-    assertAsyncEquals(c, 239);
+    assertSuccess(c, 239);
   }
 
   @Test
@@ -44,7 +44,7 @@ public class AsyncsTest {
         return input + 1;
       }
     });
-    assertAsyncEquals(mapped, 240);
+    assertSuccess(mapped, 240);
   }
 
   @Test
@@ -68,7 +68,7 @@ public class AsyncsTest {
       }
     });
 
-    assertAsyncEquals(selected, 240);
+    assertSuccess(selected, 240);
   }
 
   @Test
@@ -96,27 +96,37 @@ public class AsyncsTest {
   @Test
   public void selectReturnsNull() {
     Async<Integer> async = Asyncs.constant(1);
-    assertAsyncEquals(Asyncs.select(async, new Function<Integer, Async<Object>>() {
+    assertSuccessNull(Asyncs.select(async, new Function<Integer, Async<Object>>() {
       @Override
       public Async<Object> apply(Integer input) {
         return null;
       }
-    }), null);
+    }));
   }
 
   @Test
   public void parallelSuccess() {
-    assertAsyncEquals(Asyncs.parallel(Asyncs.constant(1), Asyncs.constant(2)), null);
+    assertSuccessNull(Asyncs.parallel(Asyncs.constant(1), Asyncs.constant(2)));
   }
 
   @Test
   public void parallelFailure() {
-    assertAsyncEquals(Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())), null);
+    assertFailure(Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())));
+  }
+
+  @Test
+  public void parallelAlwaysSucceed() {
+    assertSuccessNull(Asyncs.parallel(Arrays.asList(Asyncs.constant(1), Asyncs.failure(new Throwable())), true));
+  }
+
+  @Test
+  public void emptyParallel() {
+    assertSuccessNull(Asyncs.parallel());
   }
 
   @Test
   public void untilSuccess() {
-    assertAsyncEquals(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
       @Override
       public Async<Integer> get() {
         return Asyncs.<Integer>constant(1);
@@ -126,15 +136,15 @@ public class AsyncsTest {
 
   @Test
   public void untilSuccessWithFailures() {
-    assertAsyncEquals(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
       private int myCounter;
 
       @Override
       public Async<Integer> get() {
         if (myCounter++ < 10) {
-          return Asyncs.<Integer>failure(new RuntimeException());
+          return Asyncs.failure(new RuntimeException());
         }
-        return Asyncs.<Integer>constant(1);
+        return Asyncs.constant(1);
       }
     }), 1);
   }
@@ -164,7 +174,10 @@ public class AsyncsTest {
     assertTrue(called.get());
   }
 
-  private <ValueT> void assertAsyncEquals(Async<ValueT> async, ValueT value) {
+  private <ValueT> void assertSuccess(Async<ValueT> async, ValueT value) {
+    if (value == null) {
+      throw new IllegalStateException();
+    }
     final Value<ValueT> result = new Value<>();
     async.onSuccess(new Handler<ValueT>() {
       @Override
@@ -172,7 +185,17 @@ public class AsyncsTest {
         result.set(item);
       }
     });
-
     assertEquals(result.get(), value);
+  }
+
+  private <ValueT> void assertSuccessNull(Async<ValueT> async) {
+    final Value<Object> result = new Value<>(new Object());
+    async.onSuccess(new Handler<ValueT>() {
+      @Override
+      public void handle(ValueT item) {
+        result.set(item);
+      }
+    });
+    assertNull(result.get());
   }
 }
