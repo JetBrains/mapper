@@ -27,7 +27,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
 
   @Override
   public void schedule(final Runnable r) {
-    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+    Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
       @Override
       public void execute() {
         r.run();
