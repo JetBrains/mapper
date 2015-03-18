@@ -27,6 +27,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Mapper is an
+ */
 public abstract class Mapper<SourceT, TargetT> {
   private static final Object[] EMPTY_PARTS = new Object[0];
 
