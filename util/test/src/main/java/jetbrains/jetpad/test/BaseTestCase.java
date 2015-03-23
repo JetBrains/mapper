@@ -25,8 +25,12 @@ public abstract class BaseTestCase {
 
   @Rule
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
+  @Rule
+  public EnableRemoteTestsRule enableRemoteTestsRule = new EnableRemoteTestsRule();
   @ClassRule
   public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
+  @ClassRule
+  public static EnableRemoteTestsRule enableRemoteSuitesRule = new EnableRemoteTestsRule();
 
   @BeforeClass
   public static void turnLoggingOff() {
