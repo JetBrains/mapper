@@ -53,7 +53,7 @@ public class Asyncs {
     });
   }
 
-  public static <SourceT, TargetT> Async<TargetT> map(Async<SourceT> async, final Function<SourceT, TargetT> f) {
+  public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async.onResult(new Handler<SourceT>() {
       @Override
