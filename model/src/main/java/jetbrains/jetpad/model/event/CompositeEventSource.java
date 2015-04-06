@@ -20,22 +20,22 @@ import jetbrains.jetpad.base.Registration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompositeEventSource<EventT> implements EventSource<EventT> {
+final class CompositeEventSource<EventT> implements EventSource<EventT> {
   private Listeners<EventHandler<? super EventT>> myHandlers = new Listeners<>();
   private List<EventSource<? extends EventT>> myEventSources = new ArrayList<>();
   private List<Registration> myRegistrations = new ArrayList<>();
 
-  public CompositeEventSource(EventSource<? extends EventT>... sources) {
+  CompositeEventSource(EventSource<? extends EventT>... sources) {
     for (EventSource<? extends EventT> s : sources) {
       add(s);
     }
   }
 
-  public void add(EventSource<? extends EventT> source) {
+  void add(EventSource<? extends EventT> source) {
     myEventSources.add(source);
   }
 
-  public void remove(EventSource<? extends EventT> source) {
+  void remove(EventSource<? extends EventT> source) {
     myEventSources.remove(source);
   }
 
