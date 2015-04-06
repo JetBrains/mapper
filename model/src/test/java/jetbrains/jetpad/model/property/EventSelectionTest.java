@@ -31,7 +31,7 @@ public class EventSelectionTest {
   public void ignoredEvent() {
     es1.fire(null);
 
-    Mockito.verifyNoMoreInteractions(handler);
+    assertFired();
   }
 
 
@@ -39,8 +39,7 @@ public class EventSelectionTest {
   public void event() {
     es2.fire(null);
 
-    Mockito.verify(handler).onEvent(null);
-    Mockito.verifyNoMoreInteractions(handler);
+    assertFired((Object) null);
   }
 
   @Test
@@ -52,17 +51,21 @@ public class EventSelectionTest {
     es2.fire("c");
     es1.fire("d");
 
-    Mockito.verify(handler).onEvent("b");
-    Mockito.verify(handler).onEvent("d");
-    Mockito.verifyNoMoreInteractions(handler);
+    assertFired("b", "d");
   }
 
   @Test
   public void unregister() {
     reg.remove();
 
-    es2.fire("c");
+    assertFired();
+  }
 
+  private void assertFired(Object... items) {
+    for (Object s : items) {
+      Mockito.verify(handler).onEvent(s);
+    }
     Mockito.verifyNoMoreInteractions(handler);
   }
+
 }
