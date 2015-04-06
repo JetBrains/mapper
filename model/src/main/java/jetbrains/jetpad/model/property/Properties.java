@@ -20,11 +20,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
+import jetbrains.jetpad.model.event.EventSource;
 
 public class Properties {
   public static final ReadableProperty<Boolean> TRUE = Properties.constant(Boolean.TRUE);
@@ -324,6 +326,44 @@ public class Properties {
     }
 
     return new MyProperty();
+  }
+
+  public static <EventT, ValueT> EventSource<EventT> selectEvent(final ReadableProperty<ValueT> prop, final Selector<ValueT, EventSource<EventT>> selector) {
+    return new EventSource<EventT>() {
+      @Override
+      public Registration addHandler(final EventHandler<? super EventT> handler) {
+        final Value<Registration> esReg = new Value<>(Registration.EMPTY);
+
+        final Runnable update = new Runnable() {
+          @Override
+          public void run() {
+            esReg.get().remove();
+            if (prop.get() != null) {
+              esReg.set(selector.select(prop.get()).addHandler(handler));
+            } else {
+              esReg.set(Registration.EMPTY);
+            }
+          }
+        };
+
+        update.run();
+
+        final Registration propReg = prop.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+          @Override
+          public void onEvent(PropertyChangeEvent<ValueT> event) {
+            update.run();
+          }
+        });
+
+        return new Registration() {
+          @Override
+          public void remove() {
+            propReg.remove();
+            esReg.get().remove();
+          }
+        };
+      }
+    };
   }
 
   public static <ValueT> ReadableProperty<Boolean> same(final ReadableProperty<ValueT> prop, final ValueT value) {
