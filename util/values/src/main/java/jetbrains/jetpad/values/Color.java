@@ -41,6 +41,36 @@ public class Color {
   public static final Color PINK = new Color(255, 175, 175);
   public static final Color LIGHT_PINK = new Color(255, 210, 210);
 
+  public static Color parseColor(String text) {
+    int firstParen = text.indexOf("(");
+    if (firstParen == -1) {
+      throw new IllegalArgumentException();
+    }
+    int firstComma = text.indexOf(",", firstParen + 1);
+    if (firstComma == -1) {
+      throw new IllegalArgumentException();
+    }
+    int secondComma = text.indexOf(",", firstComma + 1);
+    if (secondComma == -1) {
+      throw new IllegalArgumentException();
+    }
+    int thirdComma = text.indexOf(",", secondComma + 1);
+    if (thirdComma == -1) {
+      throw new IllegalArgumentException();
+    }
+    int lastParen = text.indexOf(")", thirdComma + 1);
+    if (lastParen == -1) {
+      throw new IllegalArgumentException();
+    }
+
+    int red = Integer.parseInt(text.substring(firstParen + 1, firstComma));
+    int green = Integer.parseInt(text.substring(firstComma + 1, secondComma));
+    int blue = Integer.parseInt(text.substring(secondComma + 1, thirdComma));
+    int alpha = Integer.parseInt(text.substring(thirdComma + 1, lastParen));
+
+    return new Color(red, green, blue, alpha);
+  }
+
   private int myRed;
   private int myGreen;
   private int myBlue;
@@ -141,35 +171,5 @@ public class Color {
   @Override
   public String toString() {
     return "color(" + myRed + "," + myGreen + "," + myBlue + "," + myAlpha + ")";
-  }
-
-  public static Color parseColor(String text) {
-    int firstParen = text.indexOf("(");
-    if (firstParen == -1) {
-      throw new IllegalArgumentException();
-    }
-    int firstComma = text.indexOf(",", firstParen + 1);
-    if (firstComma == -1) {
-      throw new IllegalArgumentException();
-    }
-    int secondComma = text.indexOf(",", firstComma + 1);
-    if (secondComma == -1) {
-      throw new IllegalArgumentException();
-    }
-    int thirdComma = text.indexOf(",", secondComma + 1);
-    if (thirdComma == -1) {
-      throw new IllegalArgumentException();
-    }
-    int lastParen = text.indexOf(")", thirdComma + 1);
-    if (lastParen == -1) {
-      throw new IllegalArgumentException();
-    }
-
-    int red = Integer.parseInt(text.substring(firstParen + 1, firstComma));
-    int green = Integer.parseInt(text.substring(firstComma + 1, secondComma));
-    int blue = Integer.parseInt(text.substring(secondComma + 1, thirdComma));
-    int alpha = Integer.parseInt(text.substring(thirdComma + 1, lastParen));
-
-    return new Color(red, green, blue, alpha);
   }
 }
