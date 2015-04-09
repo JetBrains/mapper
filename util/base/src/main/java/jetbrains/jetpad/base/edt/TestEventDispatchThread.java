@@ -21,7 +21,7 @@ import jetbrains.jetpad.base.Value;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestEventDispatchThread implements EventDispatchThread {
+public final class TestEventDispatchThread implements EventDispatchThread {
   private int myCurrentTime;
   private int myModicationCount;
   private List<RunnableRecord> myRecords = new ArrayList<>();

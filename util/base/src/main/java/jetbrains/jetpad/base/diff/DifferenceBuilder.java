@@ -18,7 +18,7 @@ package jetbrains.jetpad.base.diff;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DifferenceBuilder<ItemT> {
+public final class DifferenceBuilder<ItemT> {
   private List<ItemT> mySourceList;
   private List<ItemT> myTargetList;
 

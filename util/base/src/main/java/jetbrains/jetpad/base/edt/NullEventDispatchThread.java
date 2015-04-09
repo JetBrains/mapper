@@ -17,7 +17,7 @@ package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Registration;
 
-public class NullEventDispatchThread implements EventDispatchThread {
+public final class NullEventDispatchThread implements EventDispatchThread {
   @Override
   public void schedule(Runnable r) {
   }
