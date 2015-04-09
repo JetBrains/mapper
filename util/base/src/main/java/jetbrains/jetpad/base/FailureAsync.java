@@ -15,23 +15,26 @@
  */
 package jetbrains.jetpad.base;
 
-public class FailureAsync<ValueT> implements Async<ValueT> {
-  public final Throwable throwable;
+class FailureAsync<ValueT> implements Async<ValueT> {
+  private final Throwable myThrowable;
 
   public FailureAsync(Throwable throwable) {
-    this.throwable = throwable;
+    myThrowable = throwable;
   }
 
+  @Override
   public Registration onSuccess(Handler<? super ValueT> successHandler) {
     return Registration.EMPTY;
   }
 
+  @Override
   public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
     return onFailure(failureHandler);
   }
 
+  @Override
   public Registration onFailure(Handler<Throwable> failureHandler) {
-    failureHandler.handle(throwable);
+    failureHandler.handle(myThrowable);
     return Registration.EMPTY;
   }
 }

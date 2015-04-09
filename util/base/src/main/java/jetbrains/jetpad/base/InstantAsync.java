@@ -15,22 +15,25 @@
  */
 package jetbrains.jetpad.base;
 
-public class InstantAsync<ValueT> implements Async<ValueT> {
-  public final ValueT value;
+class InstantAsync<ValueT> implements Async<ValueT> {
+  private final ValueT myValue;
 
-  public InstantAsync(ValueT value) {
-    this.value = value;
+  InstantAsync(ValueT value) {
+    myValue = value;
   }
 
+  @Override
   public Registration onSuccess(Handler<? super ValueT> successHandler) {
-    successHandler.handle(value);
+    successHandler.handle(myValue);
     return Registration.EMPTY;
   }
 
+  @Override
   public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
     return onSuccess(successHandler);
   }
 
+  @Override
   public Registration onFailure(Handler<Throwable> failureHandler) {
     return Registration.EMPTY;
   }
