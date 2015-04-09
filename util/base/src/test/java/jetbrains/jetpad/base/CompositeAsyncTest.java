@@ -34,7 +34,7 @@ public class CompositeAsyncTest {
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(new SimpleAsync<Integer>());
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    Async<List<Integer>> async = Asyncs.composite(asyncs);
 
     Value<Boolean> succeeded = addSuccessHandler(async);
 
@@ -53,14 +53,14 @@ public class CompositeAsyncTest {
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(Asyncs.constant(i));
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    Async<List<Integer>> async = Asyncs.composite(asyncs);
     Value<Boolean> succeeded = addSuccessHandler(async);
     assertTrue(succeeded.get());
   }
 
   @Test
   public void emptyRequest() {
-    CompositeAsync<Integer> async = new CompositeAsync<>(new ArrayList<Async<Integer>>(0));
+    Async<List<Integer>> async = Asyncs.composite(new ArrayList<Async<Integer>>(0));
     final Value<Boolean> succeeded = new Value<>(false);
     async.onResult(new Handler<List<Integer>>() {
       @Override
@@ -83,7 +83,7 @@ public class CompositeAsyncTest {
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(new SimpleAsync<Integer>());
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    Async<List<Integer>> async = Asyncs.composite(asyncs);
 
     final Value<Boolean> failed = new Value<>(false);
     async.onResult(new Handler<List<Integer>>() {
@@ -115,7 +115,7 @@ public class CompositeAsyncTest {
     for (int i = 0; i < 3; i++) {
       asyncs.add(new SimpleAsync<Integer>());
     }
-    CompositeAsync<Integer> async = new CompositeAsync<>(asyncs);
+    Async<List<Integer>> async = Asyncs.composite(asyncs);
 
     final Value<Boolean> failed = new Value<>(false);
     async.onResult(new Handler<List<Integer>>() {
@@ -171,7 +171,7 @@ public class CompositeAsyncTest {
     }
 
     final Value<Boolean> ok = new Value<>(false);
-    new CompositeAsync<>(asyncs).onSuccess(new Handler<List<Integer>>() {
+    Asyncs.composite(asyncs).onSuccess(new Handler<List<Integer>>() {
       @Override
       public void handle(List<Integer> item) {
         for (int i = 0; i < item.size(); i++) {

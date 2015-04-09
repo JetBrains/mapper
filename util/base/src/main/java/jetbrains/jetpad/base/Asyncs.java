@@ -107,15 +107,15 @@ public class Asyncs {
     return parallel(asyncs, false);
   }
 
-  public static Async<Void> parallel(final Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed) {
+  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed) {
     final SimpleAsync<Void> result = new SimpleAsync<>();
-    final Value<Integer> completed = new Value<>(0);
+    final Value<Integer> inProgress = new Value<>(asyncs.size());
     final List<Throwable> exceptions = new ArrayList<>();
 
     final Runnable checkTermination = new Runnable() {
       @Override
       public void run() {
-        if (completed.get() == asyncs.size()) {
+        if (inProgress.get() == 0) {
           if (!exceptions.isEmpty() && !alwaysSucceed) {
             result.failure(new ThrowableCollectionException(exceptions));
           } else {
@@ -126,18 +126,67 @@ public class Asyncs {
     };
 
     for (Async<?> a : asyncs) {
-      a.onFailure(new Handler<Throwable>() {
+      a.onResult(new Handler<Object>() {
+        @Override
+        public void handle(Object item) {
+          inProgress.set(inProgress.get() - 1);
+          checkTermination.run();
+        }
+      }, new Handler<Throwable>() {
         @Override
         public void handle(Throwable item) {
-          completed.set(completed.get() + 1);
           exceptions.add(item);
+          inProgress.set(inProgress.get() - 1);
           checkTermination.run();
         }
       });
-      a.onSuccess(new Handler<Object>() {
+    }
+
+    if (asyncs.isEmpty()) {
+      checkTermination.run();
+    }
+
+    return result;
+  }
+
+  public static <ItemT> Async<List<ItemT>> composite(List<Async<ItemT>> asyncs) {
+    final SimpleAsync<List<ItemT>> result = new SimpleAsync<>();
+    final SortedMap<Integer, ItemT> succeeded = new TreeMap<>();
+    final List<Throwable> exceptions = new ArrayList<>(0);
+    final Value<Integer> inProgress = new Value<>(asyncs.size());
+
+    final Runnable checkTermination = new Runnable() {
+      @Override
+      public void run() {
+        if (inProgress.get() == 0) {
+          if (exceptions.isEmpty()) {
+            result.success(new ArrayList<>(succeeded.values()));
+          } else {
+            if (exceptions.size() == 1) {
+              result.failure(exceptions.get(0));
+            } else {
+              result.failure(new ThrowableCollectionException(exceptions));
+            }
+          }
+        }
+      }
+    };
+
+    int i = 0;
+    for (Async<ItemT> async : asyncs) {
+      final int counter = i++;
+      async.onResult(new Handler<ItemT>() {
         @Override
-        public void handle(Object item) {
-          completed.set(completed.get() + 1);
+        public void handle(ItemT item) {
+          succeeded.put(counter, item);
+          inProgress.set(inProgress.get() - 1);
+          checkTermination.run();
+        }
+      }, new Handler<Throwable>() {
+        @Override
+        public void handle(Throwable item) {
+          exceptions.add(item);
+          inProgress.set(inProgress.get() - 1);
           checkTermination.run();
         }
       });
