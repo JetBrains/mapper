@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-public class Value<ValueT> {
+public final class Value<ValueT> {
   private ValueT myValue;
 
   public Value() {
