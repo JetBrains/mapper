@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-public class Pair<FirstT, SecondT> {
+public final class Pair<FirstT, SecondT> {
   public final FirstT first;
   public final SecondT second;
 

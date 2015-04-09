@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-public class Unit {
+public final class Unit {
   public static final Unit UNIT = new Unit();
 
   @Override

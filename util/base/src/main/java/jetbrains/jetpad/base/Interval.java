@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-public class Interval {
+public final class Interval {
   private int myLowerBound;
   private int myUpperBound;
 
