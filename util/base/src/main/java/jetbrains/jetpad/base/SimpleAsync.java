@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
+public final class SimpleAsync<ItemT> implements ManagedAsync<ItemT> {
   private ItemT mySuccessItem = null;
   private boolean mySucceeded = false;
 
