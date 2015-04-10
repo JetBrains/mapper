@@ -36,12 +36,44 @@ public class Asyncs {
     return succeeded.get();
   }
 
-  public static <ValueT> Async<ValueT> constant(ValueT val) {
-    return new InstantAsync<>(val);
+  public static <ValueT> Async<ValueT> constant(final ValueT val) {
+    return new Async<ValueT>() {
+      @Override
+      public Registration onSuccess(Handler<? super ValueT> successHandler) {
+        successHandler.handle(val);
+        return Registration.EMPTY;
+      }
+
+      @Override
+      public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+        return onSuccess(successHandler);
+      }
+
+      @Override
+      public Registration onFailure(Handler<Throwable> failureHandler) {
+        return Registration.EMPTY;
+      }
+    };
   }
 
-  public static <ValueT> Async<ValueT> failure(Throwable t) {
-    return new FailureAsync<>(t);
+  public static <ValueT> Async<ValueT> failure(final Throwable t) {
+    return new Async<ValueT>() {
+      @Override
+      public Registration onSuccess(Handler<? super ValueT> successHandler) {
+        return Registration.EMPTY;
+      }
+
+      @Override
+      public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+        return onFailure(failureHandler);
+      }
+
+      @Override
+      public Registration onFailure(Handler<Throwable> failureHandler) {
+        failureHandler.handle(t);
+        return Registration.EMPTY;
+      }
+    };
   }
 
   public static <ResultT> Async<Void> toVoid(Async<ResultT> a) {
