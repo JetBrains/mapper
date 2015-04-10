@@ -16,8 +16,8 @@
 package jetbrains.jetpad.base;
 
 public final class Interval {
-  private int myLowerBound;
-  private int myUpperBound;
+  private final int myLowerBound;
+  private final int myUpperBound;
 
   public Interval(int lowerBound, int upperBound) {
     if (lowerBound > upperBound) {
