@@ -36,6 +36,22 @@ public class Asyncs {
     return succeeded.get();
   }
 
+  public static boolean isFinished(Async<?> async) {
+    final Value<Boolean> finished = new Value<>(false);
+    async.onResult(new Handler<Object>() {
+      @Override
+      public void handle(Object item) {
+        finished.set(true);
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        finished.set(true);
+      }
+    });
+    return finished.get();
+  }
+
   public static <ValueT> Async<ValueT> constant(final ValueT val) {
     return new Async<ValueT>() {
       @Override
