@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.base;
 
+/**
+ * Asynchronous computation
+ */
 public interface Async<ItemT> {
   Registration onSuccess(Handler<? super ItemT> successHandler);
   Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler);
