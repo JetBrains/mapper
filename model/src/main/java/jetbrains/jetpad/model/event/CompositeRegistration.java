@@ -15,13 +15,14 @@
  */
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompositeRegistration implements Registration {
+public class CompositeRegistration extends BaseRegistration {
   private List<Registration> myRegistrations;
   private boolean myRemoved;
   private boolean myRemoving;
@@ -48,7 +49,7 @@ public class CompositeRegistration implements Registration {
   }
 
   @Override
-  public void remove() {
+  protected void doRemove() {
     if (myRemoved || myRemoving) {
       throw new IllegalStateException();
     }

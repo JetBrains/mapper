@@ -15,6 +15,11 @@
  */
 package jetbrains.jetpad.base;
 
+/**
+ * Registration object.
+ *
+ * Consider deriving your subclasses from {@link jetbrains.jetpad.base.BaseRegistration}
+ */
 public interface Registration {
   Registration EMPTY = new Registration() {
     @Override
