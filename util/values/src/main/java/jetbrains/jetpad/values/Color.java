@@ -71,6 +71,21 @@ public class Color {
     return new Color(red, green, blue, alpha);
   }
 
+  public static Color parseHex(String hexColor) {
+    if (!hexColor.startsWith("#")) {
+      throw new IllegalArgumentException();
+    }
+    hexColor = hexColor.substring(1);
+    if (hexColor.length() != 6) {
+      throw new IllegalArgumentException();
+    }
+    Integer r = Integer.valueOf(hexColor.substring(0, 2), 16);
+    Integer g = Integer.valueOf(hexColor.substring(2, 4), 16);
+    Integer b = Integer.valueOf(hexColor.substring(4, 6), 16);
+    return new Color(r, g, b);
+  }
+
+
   private int myRed;
   private int myGreen;
   private int myBlue;
