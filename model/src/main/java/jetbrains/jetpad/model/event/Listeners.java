@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.event;
 
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
@@ -45,15 +46,9 @@ public class Listeners<ListenerT> {
       }
       myListeners.add(l);
     }
-    return new Registration() {
-      private boolean myRemoved;
-
+    return new BaseRegistration() {
       @Override
-      public void remove() {
-        if (myRemoved) {
-          throw new IllegalStateException();
-        }
-
+      protected void doRemove() {
         if (myFireData != null) {
           if (myFireData.toRemove == null) {
             myFireData.toRemove = new ArrayList<>(1);
@@ -65,8 +60,6 @@ public class Listeners<ListenerT> {
         } else {
           myListeners.remove(l);
         }
-
-        myRemoved = true;
       }
     };
   }

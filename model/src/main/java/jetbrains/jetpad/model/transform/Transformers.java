@@ -17,6 +17,7 @@ package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.*;
 import com.google.common.base.Objects;
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -140,9 +141,9 @@ public class Transformers {
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getItem());
             to.add(event.getIndex(), transformation.getTarget());
-            itemRegistrations.add(event.getIndex(), new Registration() {
+            itemRegistrations.add(event.getIndex(), new BaseRegistration() {
               @Override
-              public void remove() {
+              protected void doRemove() {
                 transformation.dispose();
               }
             });
@@ -573,9 +574,9 @@ public class Transformers {
 
             final Registration reg = watch(event.getItem(), target);
 
-            registrations.put(event.getItem(), new Registration() {
+            registrations.put(event.getItem(), new BaseRegistration() {
               @Override
-              public void remove() {
+              protected void doRemove() {
                 reg.remove();
                 transform.dispose();
               }
@@ -749,9 +750,9 @@ public class Transformers {
             ObservableCollection<ResultT> target = transform.getTarget();
             to.addAll(target);
             final Registration reg = target.addListener(nestedListener);
-            registrations.put(event.getItem(), new Registration() {
+            registrations.put(event.getItem(), new BaseRegistration() {
               @Override
-              public void remove() {
+              protected void doRemove() {
                 reg.remove();
                 transform.dispose();
               }

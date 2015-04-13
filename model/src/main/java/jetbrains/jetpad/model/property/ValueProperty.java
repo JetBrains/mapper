@@ -16,10 +16,11 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Objects;
+import jetbrains.jetpad.base.BaseRegistration;
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
-import jetbrains.jetpad.base.Registration;
 
 public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT> {
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
@@ -66,9 +67,9 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
     }
 
     final Registration reg = myHandlers.add(handler);
-    return new Registration() {
+    return new BaseRegistration() {
       @Override
-      public void remove() {
+      protected void doRemove() {
         reg.remove();
         if (myHandlers.isEmpty()) {
           myHandlers = null;

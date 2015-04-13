@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import javax.swing.*;
@@ -60,9 +61,9 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   }
 
   private Registration timerReg(final Timer timer) {
-    return new Registration() {
+    return new BaseRegistration() {
       @Override
-      public void remove() {
+      protected void doRemove() {
         if (timer.isRunning()) {
           timer.stop();
         }

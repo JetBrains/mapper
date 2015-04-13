@@ -17,6 +17,7 @@ package jetbrains.jetpad.base.edt;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 public final class JsEventDispatchThread implements EventDispatchThread {
@@ -60,9 +61,9 @@ public final class JsEventDispatchThread implements EventDispatchThread {
   }
 
   private Registration timerReg(final Timer timer) {
-    return new Registration() {
+    return new BaseRegistration() {
       @Override
-      public void remove() {
+      protected void doRemove() {
         if (timer.isRunning()) {
           timer.cancel();
         }
