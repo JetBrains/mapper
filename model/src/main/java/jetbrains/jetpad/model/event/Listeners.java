@@ -51,7 +51,7 @@ public class Listeners<ListenerT> {
       @Override
       public void remove() {
         if (myRemoved) {
-//          throw new IllegalStateException();
+          throw new IllegalStateException();
         }
 
         if (myFireData != null) {
