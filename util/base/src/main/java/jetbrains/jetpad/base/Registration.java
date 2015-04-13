@@ -16,7 +16,7 @@
 package jetbrains.jetpad.base;
 
 public interface Registration {
-  public static final Registration EMPTY = new Registration() {
+  Registration EMPTY = new Registration() {
     @Override
     public void remove() {
     }
