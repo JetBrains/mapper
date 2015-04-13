@@ -19,6 +19,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -355,9 +356,9 @@ public class Properties {
           }
         });
 
-        return new Registration() {
+        return new BaseRegistration() {
           @Override
-          public void remove() {
+          protected void doRemove() {
             propReg.remove();
             esReg.get().remove();
           }

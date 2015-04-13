@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
@@ -48,9 +49,9 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
     }
 
     final Registration reg = myHandlers.add(handler);
-    return new Registration() {
+    return new BaseRegistration() {
       @Override
-      public void remove() {
+      protected void doRemove() {
         reg.remove();
         if (myHandlers.isEmpty()) {
           for (Registration hr : myRegistrations) {

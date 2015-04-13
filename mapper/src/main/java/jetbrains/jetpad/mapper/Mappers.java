@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
@@ -34,9 +35,9 @@ public class Mappers {
 
   public static Registration attachRoot(final Mapper<?, ?> mapper) {
     mapper.attachRoot();
-    return new Registration() {
+    return new BaseRegistration() {
       @Override
-      public void remove() {
+      protected void doRemove() {
         mapper.detachRoot();
       }
     };

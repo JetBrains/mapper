@@ -1,5 +1,6 @@
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -35,9 +36,9 @@ public class EventSources {
         });
 
 
-        return new Registration() {
+        return new BaseRegistration() {
           @Override
-          public void remove() {
+          protected void doRemove() {
             for (Registration r : itemRegs) {
               r.remove();
             }
