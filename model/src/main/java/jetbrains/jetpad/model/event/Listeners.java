@@ -46,8 +46,14 @@ public class Listeners<ListenerT> {
       myListeners.add(l);
     }
     return new Registration() {
+      private boolean myRemoved;
+
       @Override
       public void remove() {
+        if (myRemoved) {
+//          throw new IllegalStateException();
+        }
+
         if (myFireData != null) {
           if (myFireData.toRemove == null) {
             myFireData.toRemove = new ArrayList<>(1);
@@ -59,6 +65,8 @@ public class Listeners<ListenerT> {
         } else {
           myListeners.remove(l);
         }
+
+        myRemoved = true;
       }
     };
   }
