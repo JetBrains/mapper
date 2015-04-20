@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-public class ThreadSafeAsync<ItemT> implements ManagedAsync<ItemT> {
+public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
   public ThreadSafeAsync() {
@@ -43,14 +43,12 @@ public class ThreadSafeAsync<ItemT> implements ManagedAsync<ItemT> {
     }
   }
 
-  @Override
   public void success(ItemT item) {
     synchronized (myAsync) {
       myAsync.success(item);
     }
   }
 
-  @Override
   public void failure(Throwable throwable) {
     synchronized (myAsync) {
       myAsync.failure(throwable);

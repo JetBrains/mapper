@@ -303,7 +303,7 @@ public class Asyncs {
     }
   }
 
-  public static <ValueT> Registration delegate(Async<ValueT> from, final ManagedAsync<ValueT> to) {
+  public static <ValueT> Registration delegate(Async<ValueT> from, final SimpleAsync<ValueT> to) {
     return from.onResult(new Handler<ValueT>() {
       @Override
       public void handle(ValueT item) {
