@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 public final class NullEventDispatchThread implements EventDispatchThread {
@@ -24,11 +25,11 @@ public final class NullEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, Runnable r) {
-    return Registration.EMPTY;
+    return BaseRegistration.empty();
   }
 
   @Override
   public Registration scheduleRepeating(int period, Runnable r) {
-    return Registration.EMPTY;
+    return BaseRegistration.empty();
   }
 }

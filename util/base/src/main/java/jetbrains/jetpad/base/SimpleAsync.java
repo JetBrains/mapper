@@ -34,7 +34,7 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
       if (mySucceeded) {
         successHandler.handle(mySuccessItem);
       }
-      return Registration.EMPTY;
+      return BaseRegistration.empty();
     }
     mySuccessHandlers.add(successHandler);
     return new BaseRegistration() {
@@ -66,7 +66,7 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
       if (myFailed) {
         failureHandler.handle(myFailureThrowable);
       }
-      return Registration.EMPTY;
+      return BaseRegistration.empty();
     }
     myFailureHandlers.add(failureHandler);
     return new BaseRegistration() {

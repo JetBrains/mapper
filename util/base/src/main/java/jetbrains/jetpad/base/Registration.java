@@ -21,11 +21,6 @@ package jetbrains.jetpad.base;
  * Consider deriving your subclasses from {@link jetbrains.jetpad.base.BaseRegistration}
  */
 public interface Registration {
-  Registration EMPTY = new Registration() {
-    @Override
-    public void remove() {
-    }
-  };
 
   /**
    * Removes this registration. You shouldn't call this method more than once. It's recommended to throw

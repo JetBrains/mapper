@@ -1,6 +1,14 @@
 package jetbrains.jetpad.base;
 
 public abstract class BaseRegistration implements Registration {
+  public static Registration empty() {
+    return new BaseRegistration() {
+      @Override
+      protected void doRemove() {
+      }
+    };
+  }
+
   private boolean myRemoved;
 
   protected abstract void doRemove();
@@ -13,6 +21,4 @@ public abstract class BaseRegistration implements Registration {
     doRemove();
     myRemoved = true;
   }
-
-
 }

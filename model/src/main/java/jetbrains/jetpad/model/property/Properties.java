@@ -333,7 +333,7 @@ public class Properties {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
-        final Value<Registration> esReg = new Value<>(Registration.EMPTY);
+        final Value<Registration> esReg = new Value<>(BaseRegistration.empty());
 
         final Runnable update = new Runnable() {
           @Override
@@ -342,7 +342,7 @@ public class Properties {
             if (prop.get() != null) {
               esReg.set(selector.select(prop.get()).addHandler(handler));
             } else {
-              esReg.set(Registration.EMPTY);
+              esReg.set(BaseRegistration.empty());
             }
           }
         };
@@ -466,7 +466,7 @@ public class Properties {
 
       @Override
       public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
-        return Registration.EMPTY;
+        return BaseRegistration.empty();
       }
 
       @Override
