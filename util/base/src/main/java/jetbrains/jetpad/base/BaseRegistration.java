@@ -33,7 +33,7 @@ public abstract class BaseRegistration implements Registration {
     if (myRemoved) {
       throw new IllegalStateException();
     }
-    doRemove();
     myRemoved = true;
+    doRemove();
   }
 }
