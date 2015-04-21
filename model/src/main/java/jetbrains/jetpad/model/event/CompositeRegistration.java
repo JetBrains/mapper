@@ -24,7 +24,6 @@ import java.util.List;
 
 public class CompositeRegistration extends BaseRegistration {
   private List<Registration> myRegistrations;
-  private boolean myRemoved;
   private boolean myRemoving;
 
   public CompositeRegistration(Registration... regs) {
@@ -50,10 +49,9 @@ public class CompositeRegistration extends BaseRegistration {
 
   @Override
   protected void doRemove() {
-    if (myRemoved || myRemoving) {
+    if (myRemoving) {
       throw new IllegalStateException();
     }
-
     myRemoving = true;
     try {
       for (Registration r : myRegistrations) {
@@ -66,6 +64,5 @@ public class CompositeRegistration extends BaseRegistration {
     } finally {
       myRemoving = false;
     }
-    myRemoved = true;
   }
 }
