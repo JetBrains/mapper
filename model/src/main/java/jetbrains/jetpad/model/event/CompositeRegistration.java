@@ -23,7 +23,6 @@ import java.util.List;
 
 public class CompositeRegistration extends Registration {
   private List<Registration> myRegistrations;
-  private boolean myRemoving;
 
   public CompositeRegistration(Registration... regs) {
     myRegistrations = new ArrayList<>(regs.length);
@@ -48,20 +47,8 @@ public class CompositeRegistration extends Registration {
 
   @Override
   protected void doRemove() {
-    if (myRemoving) {
-      throw new IllegalStateException();
-    }
-    myRemoving = true;
-    try {
-      for (Registration r : myRegistrations) {
-        try {
-          r.remove();
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
-      }
-    } finally {
-      myRemoving = false;
+    for (Registration r : myRegistrations) {
+      r.remove();
     }
   }
 }
