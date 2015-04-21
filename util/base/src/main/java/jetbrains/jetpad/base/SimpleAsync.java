@@ -34,10 +34,10 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
       if (mySucceeded) {
         successHandler.handle(mySuccessItem);
       }
-      return BaseRegistration.empty();
+      return Registration.empty();
     }
     mySuccessHandlers.add(successHandler);
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         if (mySuccessHandlers != null) {
@@ -51,7 +51,7 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
   public Registration onResult(Handler<? super ItemT> successHandler, final Handler<Throwable> failureHandler) {
     final Registration successRegistration = onSuccess(successHandler);
     final Registration failureRegistration = onFailure(failureHandler);
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         successRegistration.remove();
@@ -66,10 +66,10 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
       if (myFailed) {
         failureHandler.handle(myFailureThrowable);
       }
-      return BaseRegistration.empty();
+      return Registration.empty();
     }
     myFailureHandlers.add(failureHandler);
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         if (myFailureHandlers != null) {

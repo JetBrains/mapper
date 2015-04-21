@@ -15,16 +15,24 @@
  */
 package jetbrains.jetpad.base;
 
-/**
- * Registration object.
- *
- * Consider deriving your subclasses from {@link jetbrains.jetpad.base.BaseRegistration}
- */
-public interface Registration {
+public abstract class Registration {
+  public static Registration empty() {
+    return new Registration() {
+      @Override
+      protected void doRemove() {
+      }
+    };
+  }
 
-  /**
-   * Removes this registration. You shouldn't call this method more than once. It's recommended to throw
-   * an exception in case it's called for the second time.
-   */
-  void remove();
+  private boolean myRemoved;
+
+  protected abstract void doRemove();
+
+  public final void remove() {
+    if (myRemoved) {
+      throw new IllegalStateException();
+    }
+    myRemoved = true;
+    doRemove();
+  }
 }

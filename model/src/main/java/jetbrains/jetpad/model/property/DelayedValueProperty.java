@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Objects;
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
@@ -69,9 +68,8 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
     if (myHandlers == null) {
       myHandlers = new Listeners<>();
     }
-
     final Registration reg = myHandlers.add(handler);
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         reg.remove();

@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ public class Listeners<ListenerT> {
       }
       myListeners.add(l);
     }
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         if (myFireData != null) {

@@ -21,7 +21,6 @@ import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.query.client.css.TakesCssValue;
 import com.google.gwt.user.client.Timer;
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.base.animation.AnimatedList;
@@ -217,7 +216,7 @@ public class DomUtil {
             }
           };
           timer.scheduleRepeating(100);
-          myTimerRegistration = new BaseRegistration() {
+          myTimerRegistration = new Registration() {
             @Override
             protected void doRemove() {
               timer.cancel();
@@ -225,7 +224,7 @@ public class DomUtil {
           };
         }
         final Registration reg = myListeners.add(handler);
-        return new BaseRegistration() {
+        return new Registration() {
           @Override
           protected void doRemove() {
             reg.remove();

@@ -15,14 +15,13 @@
  */
 package jetbrains.jetpad.model.event;
 
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompositeRegistration extends BaseRegistration {
+public class CompositeRegistration extends Registration {
   private List<Registration> myRegistrations;
   private boolean myRemoving;
 

@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class ThrowableHandlers {
     @Override
     public Registration addHandler(final EventHandler<? super Throwable> handler) {
       myHandlers.add(handler);
-      return new BaseRegistration() {
+      return new Registration() {
         @Override
         protected void doRemove() {
           myHandlers.remove(handler);

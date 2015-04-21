@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.base.edt;
 
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 
@@ -64,7 +63,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     myModicationCount++;
     final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, r);
     myRecords.add(record);
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         myRecords.remove(record);
@@ -83,7 +82,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
         schedule(period, this);
       }
     });
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         cancelled.set(true);

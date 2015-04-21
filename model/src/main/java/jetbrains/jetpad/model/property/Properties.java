@@ -19,7 +19,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -333,7 +332,7 @@ public class Properties {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
-        final Value<Registration> esReg = new Value<>(BaseRegistration.empty());
+        final Value<Registration> esReg = new Value<>(Registration.empty());
 
         final Runnable update = new Runnable() {
           @Override
@@ -342,7 +341,7 @@ public class Properties {
             if (prop.get() != null) {
               esReg.set(selector.select(prop.get()).addHandler(handler));
             } else {
-              esReg.set(BaseRegistration.empty());
+              esReg.set(Registration.empty());
             }
           }
         };
@@ -356,7 +355,7 @@ public class Properties {
           }
         });
 
-        return new BaseRegistration() {
+        return new Registration() {
           @Override
           protected void doRemove() {
             propReg.remove();
@@ -466,7 +465,7 @@ public class Properties {
 
       @Override
       public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
-        return BaseRegistration.empty();
+        return Registration.empty();
       }
 
       @Override

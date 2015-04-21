@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.ObservableCollection;
@@ -81,7 +80,7 @@ public class FilterTest {
 
       @Override
       public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
-        return BaseRegistration.empty();
+        return Registration.empty();
       }
     };
 

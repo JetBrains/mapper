@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 import com.google.common.base.Function;
-import jetbrains.jetpad.base.BaseRegistration;
 import jetbrains.jetpad.base.Registration;
 
 public class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
@@ -49,7 +48,7 @@ public class MappingEventSource<SourceEventT, TargetEventT> implements EventSour
     }
     final Registration reg = myHandlers.add(handler);
 
-    return new BaseRegistration() {
+    return new Registration() {
       @Override
       protected void doRemove() {
         reg.remove();
