@@ -15,10 +15,12 @@
  */
 package jetbrains.jetpad.json;
 
+import javax.annotation.Nonnull;
+
 public class JsonString extends JsonValue {
   private String myValue;
 
-  public JsonString(String value) {
+  public JsonString(@Nonnull String value) {
     myValue = value;
   }
 

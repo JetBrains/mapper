@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.json;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class JsonArray extends JsonValue implements Iterable<JsonValue> {
@@ -27,7 +28,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     add(size(), value);
   }
 
-  public void add(int pos, JsonValue value) {
+  public void add(int pos, @Nonnull JsonValue value) {
     if (myValues == null) {
       myValues = new ArrayList<>(1);
     }
@@ -38,7 +39,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     myValues.remove(pos);
   }
 
-  public void add(String s) {
+  public void add(@Nonnull String s) {
     add(new JsonString(s));
   }
 

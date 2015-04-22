@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.json;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class JsonObject extends JsonValue {
@@ -23,14 +24,12 @@ public class JsonObject extends JsonValue {
   public JsonObject() {
   }
 
-  public void put(String key, JsonValue value) {
+  public void put(String key, @Nonnull JsonValue value) {
     myValues.put(key, value);
   }
 
-  public void put(String key, String value) {
-    if (value != null) {
-      put(key, new JsonString(value));
-    }
+  public void put(String key, @Nonnull String value) {
+    put(key, new JsonString(value));
   }
 
   public void put(String key, double value) {
