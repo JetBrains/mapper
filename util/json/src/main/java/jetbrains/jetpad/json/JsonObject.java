@@ -45,6 +45,10 @@ public class JsonObject extends JsonValue {
     return myValues.get(key);
   }
 
+  public void remove(String key) {
+    myValues.remove(key);
+  }
+
   public String getString(String key) {
     JsonString value = (JsonString) get(key);
     if (value == null) {
