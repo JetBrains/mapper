@@ -50,6 +50,6 @@ public abstract class SimpleCollectionProperty<ItemT, ValueT> extends BaseDerive
 
   @Override
   protected void doRemoveListeners() {
-    myRegistration.dispose();
+    myRegistration.remove();
   }
 }

@@ -47,7 +47,7 @@ public class Listeners<ListenerT> {
     }
     return new Registration() {
       @Override
-      protected void doDispose() {
+      protected void doRemove() {
         if (myFireData != null) {
           if (myFireData.toRemove == null) {
             myFireData.toRemove = new ArrayList<>(1);

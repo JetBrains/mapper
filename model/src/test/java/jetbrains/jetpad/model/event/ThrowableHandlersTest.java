@@ -36,7 +36,7 @@ public class ThrowableHandlersTest extends BaseTestCase {
 
   @AfterClass
   public static void removeHandler() {
-    ourHandlerRegistration.dispose();
+    ourHandlerRegistration.remove();
   }
 
   @Test(expected = IllegalStateException.class)

@@ -62,7 +62,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
   private Registration timerReg(final Timer timer) {
     return new Registration() {
       @Override
-      protected void doDispose() {
+      protected void doRemove() {
         if (timer.isRunning()) {
           timer.cancel();
         }

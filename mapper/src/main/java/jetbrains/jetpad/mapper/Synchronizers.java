@@ -112,7 +112,7 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        myRegistration.dispose();
+        myRegistration.remove();
       }
     };
   }
@@ -135,7 +135,7 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        myRegistration.dispose();
+        myRegistration.remove();
         target.set(myOldValue);
       }
     };
@@ -168,7 +168,7 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        myCollectionRegistration.dispose();
+        myCollectionRegistration.remove();
       }
     };
   }
@@ -184,7 +184,7 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        myReg.dispose();
+        myReg.remove();
       }
     };
   }
@@ -197,7 +197,7 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        r.dispose();
+        r.remove();
       }
     };
   }
@@ -237,7 +237,7 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        myReg.dispose();
+        myReg.remove();
       }
     };
   }

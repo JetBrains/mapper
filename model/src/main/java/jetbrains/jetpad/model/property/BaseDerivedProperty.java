@@ -73,8 +73,8 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
     final Registration reg = myHandlers.add(handler);
     return new Registration() {
       @Override
-      protected void doDispose() {
-        reg.dispose();
+      protected void doRemove() {
+        reg.remove();
         if (myHandlers.isEmpty()) {
           doRemoveListeners();
           myHandlers = null;

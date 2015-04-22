@@ -84,7 +84,7 @@ public class UpdatablePropertyTest {
 
   @Test
   public void removeAllListenersReturnsToSimpleMode() {
-    property.addHandler(Mockito.mock(EventHandler.class)).dispose();
+    property.addHandler(Mockito.mock(EventHandler.class)).remove();
 
     value = "c";
 

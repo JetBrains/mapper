@@ -96,7 +96,7 @@ public class ThrowableHandlers {
       myHandlers.add(handler);
       return new Registration() {
         @Override
-        protected void doDispose() {
+        protected void doRemove() {
           myHandlers.remove(handler);
         }
       };

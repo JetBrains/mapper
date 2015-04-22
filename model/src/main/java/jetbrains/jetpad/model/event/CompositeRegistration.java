@@ -46,9 +46,9 @@ public class CompositeRegistration extends Registration {
   }
 
   @Override
-  protected void doDispose() {
+  protected void doRemove() {
     for (Registration r : myRegistrations) {
-      r.dispose();
+      r.remove();
     }
   }
 }

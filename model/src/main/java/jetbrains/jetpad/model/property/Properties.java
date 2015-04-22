@@ -204,7 +204,7 @@ public class Properties {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
             if (myTargetProperty != null) {
-              myTargetRegistration.dispose();
+              myTargetRegistration.remove();
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
@@ -227,9 +227,9 @@ public class Properties {
       @Override
       protected void doRemoveListeners() {
         if (myTargetProperty != null) {
-          myTargetRegistration.dispose();
+          myTargetRegistration.remove();
         }
-        mySourceRegistration.dispose();
+        mySourceRegistration.remove();
       }
 
       @Override
@@ -280,7 +280,7 @@ public class Properties {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
             if (myTargetProperty != null) {
-              myTargetRegistration.dispose();
+              myTargetRegistration.remove();
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
@@ -303,9 +303,9 @@ public class Properties {
       @Override
       protected void doRemoveListeners() {
         if (myTargetProperty != null) {
-          myTargetRegistration.dispose();
+          myTargetRegistration.remove();
         }
-        mySourceRegistration.dispose();
+        mySourceRegistration.remove();
       }
 
       @Override
@@ -337,7 +337,7 @@ public class Properties {
         final Runnable update = new Runnable() {
           @Override
           public void run() {
-            esReg.get().dispose();
+            esReg.get().remove();
             if (prop.get() != null) {
               esReg.set(selector.select(prop.get()).addHandler(handler));
             } else {
@@ -357,9 +357,9 @@ public class Properties {
 
         return new Registration() {
           @Override
-          protected void doDispose() {
-            propReg.dispose();
-            esReg.get().dispose();
+          protected void doRemove() {
+            propReg.remove();
+            esReg.get().remove();
           }
         };
       }
@@ -557,8 +557,8 @@ public class Properties {
 
       @Override
       protected void doRemoveListeners() {
-        myRegistration.dispose();
-        myCollectionRegistration.dispose();
+        myRegistration.remove();
+        myCollectionRegistration.remove();
       }
 
       @Override
@@ -588,7 +588,7 @@ public class Properties {
 
       @Override
       protected void doRemoveListeners() {
-        myCollectionRegistration.dispose();
+        myCollectionRegistration.remove();
       }
 
       @Override

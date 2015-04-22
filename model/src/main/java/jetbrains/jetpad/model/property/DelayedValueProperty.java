@@ -71,8 +71,8 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
     final Registration reg = myHandlers.add(handler);
     return new Registration() {
       @Override
-      protected void doDispose() {
-        reg.dispose();
+      protected void doRemove() {
+        reg.remove();
         if (myHandlers.isEmpty()) {
           myHandlers = null;
         }

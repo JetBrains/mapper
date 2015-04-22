@@ -18,25 +18,29 @@ package jetbrains.jetpad.base;
 public abstract class Registration implements Disposable {
   public static final Registration EMPTY = new Registration() {
     @Override
-    protected void doDispose() {
+    protected void doRemove() {
     }
 
     @Override
-    public void dispose() {
+    public void remove() {
     }
   };
 
-  private boolean myDisposed;
+  private boolean myRemoved;
 
-  protected abstract void doDispose();
+  protected abstract void doRemove();
 
   //this method should never be overridden except Registration.EMPTY
-  @Override
-  public void dispose() {
-    if (myDisposed) {
+  public void remove() {
+    if (myRemoved) {
       throw new IllegalStateException();
     }
-    myDisposed = true;
-    doDispose();
+    myRemoved = true;
+    doRemove();
+  }
+
+  @Override
+  public void dispose() {
+    remove();
   }
 }

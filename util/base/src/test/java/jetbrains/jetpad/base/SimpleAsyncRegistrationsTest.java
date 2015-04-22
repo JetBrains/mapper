@@ -25,28 +25,28 @@ public class SimpleAsyncRegistrationsTest {
   @Test
   public void removeSuccessRegistration() {
     Registration reg = async.onSuccess(throwingHandler());
-    reg.dispose();
+    reg.remove();
     async.success(null);
   }
 
   @Test
   public void removeFailureRegistration() {
     Registration reg = async.onFailure(throwingFailureHandler());
-    reg.dispose();
+    reg.remove();
     async.failure(null);
   }
 
   @Test
   public void removeCompositeRegistration1() {
     Registration reg = async.onResult(throwingHandler(), throwingFailureHandler());
-    reg.dispose();
+    reg.remove();
     async.success(null);
   }
 
   @Test
   public void removeCompositeRegistration2() {
     Registration reg = async.onResult(throwingHandler(), throwingFailureHandler());
-    reg.dispose();
+    reg.remove();
     async.failure(null);
   }
 
@@ -56,7 +56,7 @@ public class SimpleAsyncRegistrationsTest {
     Registration reg = async.onSuccess(new Handler<Void>() {
       @Override
       public void handle(Void item) {
-        regValue.get().dispose();
+        regValue.get().remove();
       }
     });
     regValue.set(reg);
@@ -69,7 +69,7 @@ public class SimpleAsyncRegistrationsTest {
     Registration reg = async.onFailure(new Handler<Throwable>() {
       @Override
       public void handle(Throwable item) {
-        regValue.get().dispose();
+        regValue.get().remove();
       }
     });
     regValue.set(reg);
@@ -84,7 +84,7 @@ public class SimpleAsyncRegistrationsTest {
       public void handle(Void item) {
       }
     });
-    reg.dispose();
+    reg.remove();
   }
 
   @Test
@@ -95,7 +95,7 @@ public class SimpleAsyncRegistrationsTest {
       public void handle(Throwable item) {
       }
     });
-    reg.dispose();
+    reg.remove();
   }
 
   @Test
@@ -106,7 +106,7 @@ public class SimpleAsyncRegistrationsTest {
       }
     });
     async.success(null);
-    reg.dispose();
+    reg.remove();
   }
 
   @Test
@@ -117,7 +117,7 @@ public class SimpleAsyncRegistrationsTest {
       }
     });
     async.failure(null);
-    reg.dispose();
+    reg.remove();
   }
 
   @Test
@@ -128,7 +128,7 @@ public class SimpleAsyncRegistrationsTest {
       }
     });
     async.success(null);
-    reg.dispose();
+    reg.remove();
   }
 
   @Test
@@ -139,7 +139,7 @@ public class SimpleAsyncRegistrationsTest {
       }
     });
     async.failure(null);
-    reg.dispose();
+    reg.remove();
   }
 
   private Handler<Throwable> throwingFailureHandler() {

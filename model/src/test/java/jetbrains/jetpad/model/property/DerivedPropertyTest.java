@@ -47,7 +47,7 @@ public class DerivedPropertyTest {
       public void onEvent(PropertyChangeEvent<Integer> event) {
       }
     });
-    reg.dispose();
+    reg.remove();
 
     string.set("aa");
     assertEquals(2, length.get().intValue());

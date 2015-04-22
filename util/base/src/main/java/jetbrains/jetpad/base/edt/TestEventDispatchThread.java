@@ -65,7 +65,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     myRecords.add(record);
     return new Registration() {
       @Override
-      protected void doDispose() {
+      protected void doRemove() {
         myRecords.remove(record);
       }
     };
@@ -84,7 +84,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     });
     return new Registration() {
       @Override
-      protected void doDispose() {
+      protected void doRemove() {
         cancelled.set(true);
       }
     };
