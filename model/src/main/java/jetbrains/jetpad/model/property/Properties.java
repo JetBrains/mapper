@@ -204,7 +204,7 @@ public class Properties {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
             if (myTargetProperty != null) {
-              myTargetRegistration.remove();
+              myTargetRegistration.dispose();
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
@@ -227,9 +227,9 @@ public class Properties {
       @Override
       protected void doRemoveListeners() {
         if (myTargetProperty != null) {
-          myTargetRegistration.remove();
+          myTargetRegistration.dispose();
         }
-        mySourceRegistration.remove();
+        mySourceRegistration.dispose();
       }
 
       @Override
@@ -280,7 +280,7 @@ public class Properties {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
             if (myTargetProperty != null) {
-              myTargetRegistration.remove();
+              myTargetRegistration.dispose();
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
@@ -303,9 +303,9 @@ public class Properties {
       @Override
       protected void doRemoveListeners() {
         if (myTargetProperty != null) {
-          myTargetRegistration.remove();
+          myTargetRegistration.dispose();
         }
-        mySourceRegistration.remove();
+        mySourceRegistration.dispose();
       }
 
       @Override
@@ -332,16 +332,16 @@ public class Properties {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
-        final Value<Registration> esReg = new Value<>(Registration.empty());
+        final Value<Registration> esReg = new Value<>(Registration.EMPTY);
 
         final Runnable update = new Runnable() {
           @Override
           public void run() {
-            esReg.get().remove();
+            esReg.get().dispose();
             if (prop.get() != null) {
               esReg.set(selector.select(prop.get()).addHandler(handler));
             } else {
-              esReg.set(Registration.empty());
+              esReg.set(Registration.EMPTY);
             }
           }
         };
@@ -357,9 +357,9 @@ public class Properties {
 
         return new Registration() {
           @Override
-          protected void doRemove() {
-            propReg.remove();
-            esReg.get().remove();
+          protected void doDispose() {
+            propReg.dispose();
+            esReg.get().dispose();
           }
         };
       }
@@ -465,7 +465,7 @@ public class Properties {
 
       @Override
       public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
-        return Registration.empty();
+        return Registration.EMPTY;
       }
 
       @Override
@@ -557,8 +557,8 @@ public class Properties {
 
       @Override
       protected void doRemoveListeners() {
-        myRegistration.remove();
-        myCollectionRegistration.remove();
+        myRegistration.dispose();
+        myCollectionRegistration.dispose();
       }
 
       @Override
@@ -588,7 +588,7 @@ public class Properties {
 
       @Override
       protected void doRemoveListeners() {
-        myCollectionRegistration.remove();
+        myCollectionRegistration.dispose();
       }
 
       @Override

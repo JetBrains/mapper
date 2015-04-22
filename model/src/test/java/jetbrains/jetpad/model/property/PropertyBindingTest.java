@@ -34,7 +34,7 @@ public class PropertyBindingTest {
     target.set("z");
     assertEquals("z", source.get());
 
-    reg.remove();
+    reg.dispose();
     source.set("zzz");
 
     assertEquals("z", target.get());

@@ -218,7 +218,7 @@ public class DomUtil {
           timer.scheduleRepeating(100);
           myTimerRegistration = new Registration() {
             @Override
-            protected void doRemove() {
+            protected void doDispose() {
               timer.cancel();
             }
           };
@@ -226,9 +226,9 @@ public class DomUtil {
         final Registration reg = myListeners.add(handler);
         return new Registration() {
           @Override
-          protected void doRemove() {
-            reg.remove();
-            myTimerRegistration.remove();
+          protected void doDispose() {
+            reg.dispose();
+            myTimerRegistration.dispose();
             myTimerRegistration = null;
           }
         };

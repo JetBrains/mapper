@@ -142,7 +142,7 @@ public class Transformers {
             to.add(event.getIndex(), transformation.getTarget());
             itemRegistrations.add(event.getIndex(), new Registration() {
               @Override
-              protected void doRemove() {
+              protected void doDispose() {
                 transformation.dispose();
               }
             });
@@ -151,7 +151,7 @@ public class Transformers {
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
             to.remove(event.getIndex());
-            itemRegistrations.remove(event.getIndex()).remove();
+            itemRegistrations.remove(event.getIndex()).dispose();
           }
         };
 
@@ -175,9 +175,9 @@ public class Transformers {
           @Override
           public void dispose() {
             for (Registration r : itemRegistrations) {
-              r.remove();
+              r.dispose();
             }
-            reg.remove();
+            reg.dispose();
           }
         };
       }
@@ -270,7 +270,7 @@ public class Transformers {
       }
 
       private void unwatch(ItemT item) {
-        myListeners.remove(item).remove();
+        myListeners.remove(item).dispose();
       }
 
       @Override
@@ -329,7 +329,7 @@ public class Transformers {
             for (ItemT item : from) {
               unwatch(item);
             }
-            myCollectionRegistration.remove();
+            myCollectionRegistration.dispose();
           }
         };
       }
@@ -438,7 +438,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            myCollectionRegistration.remove();
+            myCollectionRegistration.dispose();
           }
 
           private boolean exists(SourceT item) {
@@ -527,8 +527,8 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromReg.remove();
-            propReg.remove();
+            fromReg.dispose();
+            propReg.dispose();
           }
         };
       }
@@ -575,8 +575,8 @@ public class Transformers {
 
             registrations.put(event.getItem(), new Registration() {
               @Override
-              protected void doRemove() {
-                reg.remove();
+              protected void doDispose() {
+                reg.dispose();
                 transform.dispose();
               }
             });
@@ -608,7 +608,7 @@ public class Transformers {
             sizes.remove(event.getItem());
 
             transformation.dispose();
-            registrations.remove(event.getItem()).remove();
+            registrations.remove(event.getItem()).dispose();
           }
         };
 
@@ -632,9 +632,9 @@ public class Transformers {
           @Override
           public void dispose() {
             for (SourceT s : from) {
-              registrations.remove(s).remove();
+              registrations.remove(s).dispose();
             }
-            sourceRegistration.remove();
+            sourceRegistration.dispose();
           }
         };
       }
@@ -678,7 +678,7 @@ public class Transformers {
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends PropertyT> listEvent) {
-            propRegistrations.remove(listEvent.getIndex()).remove();
+            propRegistrations.remove(listEvent.getIndex()).dispose();
             to.remove(listEvent.getIndex());
           }
         };
@@ -701,9 +701,9 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            reg.remove();
+            reg.dispose();
             for (Registration r : propRegistrations) {
-              r.remove();
+              r.dispose();
             }
             propRegistrations.clear();
             to.clear();
@@ -751,8 +751,8 @@ public class Transformers {
             final Registration reg = target.addListener(nestedListener);
             registrations.put(event.getItem(), new Registration() {
               @Override
-              protected void doRemove() {
-                reg.remove();
+              protected void doDispose() {
+                reg.dispose();
                 transform.dispose();
               }
             });
@@ -764,7 +764,7 @@ public class Transformers {
             Transformation<SelectedT, ? extends ObservableCollection<ResultT>> transformation = t.transform(selected);
             to.removeAll(transformation.getTarget());
             transformation.dispose();
-            registrations.remove(event.getItem()).remove();
+            registrations.remove(event.getItem()).dispose();
           }
         };
         final Registration sourceRegistration = from.addListener(sourceListener);
@@ -786,9 +786,9 @@ public class Transformers {
           @Override
           public void dispose() {
             for (SourceT s : from) {
-              registrations.remove(s).remove();
+              registrations.remove(s).dispose();
             }
-            sourceRegistration.remove();
+            sourceRegistration.dispose();
           }
         };
       }
@@ -830,7 +830,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            registration.remove();
+            registration.dispose();
           }
         };
       }
@@ -871,7 +871,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            registration.remove();
+            registration.dispose();
           }
         };
       }
@@ -920,7 +920,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
+            fromRegistration.dispose();
           }
         };
       }
@@ -988,8 +988,8 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
-            itemsRegistration.remove();
+            fromRegistration.dispose();
+            itemsRegistration.dispose();
           }
         };
       }
@@ -1064,8 +1064,8 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
-            conditionRegistration.remove();
+            fromRegistration.dispose();
+            conditionRegistration.dispose();
           }
         };
       }
@@ -1133,8 +1133,8 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
-            conditionRegistration.remove();
+            fromRegistration.dispose();
+            conditionRegistration.dispose();
           }
         };
       }
@@ -1195,7 +1195,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
+            fromRegistration.dispose();
           }
         };
       }
@@ -1248,7 +1248,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            r.remove();
+            r.dispose();
           }
         };
       }
@@ -1302,7 +1302,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            r.remove();
+            r.dispose();
           }
         };
       }
@@ -1349,7 +1349,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
+            fromRegistration.dispose();
           }
         };
       }
@@ -1396,7 +1396,7 @@ public class Transformers {
 
           @Override
           public void dispose() {
-            fromRegistration.remove();
+            fromRegistration.dispose();
           }
         };
       }

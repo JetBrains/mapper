@@ -81,7 +81,7 @@ class TransformingObservableCollectionRoleSynchronizer<
 
   protected void onDetach() {
     super.onDetach();
-    myCollectionRegistration.remove();
+    myCollectionRegistration.dispose();
     mySourceTransformation.dispose();
     myTarget.clear();
   }

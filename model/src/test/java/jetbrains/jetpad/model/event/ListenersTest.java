@@ -36,7 +36,7 @@ public class ListenersTest {
     myListeners.add(new Listener() {
       @Override
       public void act() {
-        myListeners.add(createInnerListener()).remove();
+        myListeners.add(createInnerListener()).dispose();
       }
     });
     fireAndCheck(1);
@@ -48,7 +48,7 @@ public class ListenersTest {
       @Override
       public void act() {
         Listener l = createInnerListener();
-        myListeners.add(l).remove();
+        myListeners.add(l).dispose();
         myListeners.add(l);
       }
     });

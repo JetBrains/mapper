@@ -59,7 +59,7 @@ public class SelectFromListEventSourcesTest {
 
   @Test
   public void removeReg() {
-    reg.remove();
+    reg.dispose();
 
     es1.fire("aaa");
 

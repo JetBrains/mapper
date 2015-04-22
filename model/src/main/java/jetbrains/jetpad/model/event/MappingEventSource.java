@@ -50,10 +50,10 @@ public class MappingEventSource<SourceEventT, TargetEventT> implements EventSour
 
     return new Registration() {
       @Override
-      protected void doRemove() {
-        reg.remove();
+      protected void doDispose() {
+        reg.dispose();
         if (myHandlers.isEmpty()) {
-          mySourceHandler.remove();
+          mySourceHandler.dispose();
         }
       }
     };

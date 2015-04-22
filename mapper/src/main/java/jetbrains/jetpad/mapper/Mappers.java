@@ -36,7 +36,7 @@ public class Mappers {
     mapper.attachRoot();
     return new Registration() {
       @Override
-      protected void doRemove() {
+      protected void doDispose() {
         mapper.detachRoot();
       }
     };

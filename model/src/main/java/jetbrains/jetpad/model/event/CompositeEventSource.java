@@ -50,11 +50,11 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
     final Registration reg = myHandlers.add(handler);
     return new Registration() {
       @Override
-      protected void doRemove() {
-        reg.remove();
+      protected void doDispose() {
+        reg.dispose();
         if (myHandlers.isEmpty()) {
           for (Registration hr : myRegistrations) {
-            hr.remove();
+            hr.dispose();
           }
           myRegistrations.clear();
         }

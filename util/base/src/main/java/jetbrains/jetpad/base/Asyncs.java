@@ -57,7 +57,7 @@ public class Asyncs {
       @Override
       public Registration onSuccess(Handler<? super ValueT> successHandler) {
         successHandler.handle(val);
-        return Registration.empty();
+        return Registration.EMPTY;
       }
 
       @Override
@@ -67,7 +67,7 @@ public class Asyncs {
 
       @Override
       public Registration onFailure(Handler<Throwable> failureHandler) {
-        return Registration.empty();
+        return Registration.EMPTY;
       }
     };
   }
@@ -76,7 +76,7 @@ public class Asyncs {
     return new Async<ValueT>() {
       @Override
       public Registration onSuccess(Handler<? super ValueT> successHandler) {
-        return Registration.empty();
+        return Registration.EMPTY;
       }
 
       @Override
@@ -87,7 +87,7 @@ public class Asyncs {
       @Override
       public Registration onFailure(Handler<Throwable> failureHandler) {
         failureHandler.handle(t);
-        return Registration.empty();
+        return Registration.EMPTY;
       }
     };
   }

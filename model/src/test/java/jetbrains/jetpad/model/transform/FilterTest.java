@@ -80,7 +80,7 @@ public class FilterTest {
 
       @Override
       public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
-        return Registration.empty();
+        return Registration.EMPTY;
       }
     };
 

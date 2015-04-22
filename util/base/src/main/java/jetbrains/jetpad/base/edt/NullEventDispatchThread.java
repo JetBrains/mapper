@@ -24,11 +24,11 @@ public final class NullEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, Runnable r) {
-    return Registration.empty();
+    return Registration.EMPTY;
   }
 
   @Override
   public Registration scheduleRepeating(int period, Runnable r) {
-    return Registration.empty();
+    return Registration.EMPTY;
   }
 }

@@ -29,7 +29,7 @@ public class EventSources {
             if (event.isAdded()) {
               itemRegs.add(event.getIndex(), selector.select(event.getItem()).addHandler(handler));
             } else {
-              itemRegs.remove(event.getIndex()).remove();
+              itemRegs.remove(event.getIndex()).dispose();
             }
           }
         });
@@ -37,12 +37,12 @@ public class EventSources {
 
         return new Registration() {
           @Override
-          protected void doRemove() {
+          protected void doDispose() {
             for (Registration r : itemRegs) {
-              r.remove();
+              r.dispose();
             }
 
-            listReg.remove();
+            listReg.dispose();
           }
         };
       }

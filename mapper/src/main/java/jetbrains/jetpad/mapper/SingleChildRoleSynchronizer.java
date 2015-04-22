@@ -65,7 +65,7 @@ class SingleChildRoleSynchronizer<SourceT, TargetT> extends BaseRoleSynchronizer
 
   @Override
   public void detach() {
-    myChildRegistration.remove();
+    myChildRegistration.dispose();
     myTargetProperty.set(null);
   }
 

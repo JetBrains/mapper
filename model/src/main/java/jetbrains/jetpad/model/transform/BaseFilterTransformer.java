@@ -92,7 +92,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
       }
 
       private void unwatch(ItemT item) {
-        myPropertyRegistrations.remove(item).remove();
+        myPropertyRegistrations.remove(item).dispose();
       }
 
       @Override
@@ -107,7 +107,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
 
       @Override
       public void dispose() {
-        myCollectionRegistration.remove();
+        myCollectionRegistration.dispose();
         for (ItemT item : from) {
           unwatch(item);
         }

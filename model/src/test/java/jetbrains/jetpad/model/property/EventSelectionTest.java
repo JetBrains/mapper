@@ -56,7 +56,7 @@ public class EventSelectionTest {
 
   @Test
   public void unregister() {
-    reg.remove();
+    reg.dispose();
 
     assertFired();
   }

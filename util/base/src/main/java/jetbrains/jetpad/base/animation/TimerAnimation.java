@@ -60,7 +60,7 @@ public abstract class TimerAnimation implements Animation {
   }
 
   private void lastFrame() {
-    myTimerReg.remove();
+    myTimerReg.dispose();
   }
 
   protected abstract void animateFrame(int frame, boolean lastFrame);

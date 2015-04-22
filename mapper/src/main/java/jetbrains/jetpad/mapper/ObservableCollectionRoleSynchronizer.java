@@ -75,7 +75,7 @@ class ObservableCollectionRoleSynchronizer<
 
   protected void onDetach() {
     super.onDetach();
-    myCollectionRegistration.remove();
+    myCollectionRegistration.dispose();
     myTarget.clear();
   }
 }

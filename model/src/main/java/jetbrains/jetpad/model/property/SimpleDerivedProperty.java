@@ -52,7 +52,7 @@ public class SimpleDerivedProperty<ValueT> extends BaseDerivedProperty<ValueT> {
   @Override
   protected void doRemoveListeners() {
     for (Registration r : myRegistrations) {
-      r.remove();
+      r.dispose();
     }
     myRegistrations = null;
   }
