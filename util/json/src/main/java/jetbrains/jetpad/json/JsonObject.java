@@ -28,8 +28,10 @@ public class JsonObject extends JsonValue {
     myValues.put(key, value);
   }
 
-  public void put(String key, @Nonnull String value) {
-    put(key, new JsonString(value));
+  public void put(String key, String value) {
+    if (value != null) {
+      put(key, new JsonString(value));
+    }
   }
 
   public void put(String key, double value) {
