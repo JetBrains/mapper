@@ -22,32 +22,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ParsingTest {
-  public ParsingTest() {
-  }
 
   @Test
   public void emptyObject() {
     JsonObject object = (JsonObject) JsonParser.parse("{}");
-
     assertTrue(object.getKeys().isEmpty());
   }
 
-  @Test
+  @Test(expected = JsonParsingException.class)
   public void extraSymbols() {
-    try {
-      JsonParser.parse("{} {");
-      Assert.fail();
-    } catch (JsonParsingException e) {
-    }
+    JsonParser.parse("{} {");
   }
 
-  @Test
+  @Test(expected = JsonParsingException.class)
   public void unknownSymbols() {
-    try {
-      JsonParser.parse("{} @");
-      Assert.fail();
-    } catch (JsonParsingException e) {
-    }
+    JsonParser.parse("{} @");
   }
 
   @Test
