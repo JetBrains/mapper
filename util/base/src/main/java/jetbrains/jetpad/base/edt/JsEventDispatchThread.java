@@ -15,11 +15,16 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class JsEventDispatchThread implements EventDispatchThread {
+  private static final Logger LOG = Logger.getLogger(JsEventDispatchThread.class.getName());
   public static final JsEventDispatchThread INSTANCE = new JsEventDispatchThread();
 
   private JsEventDispatchThread() {
@@ -30,7 +35,12 @@ public final class JsEventDispatchThread implements EventDispatchThread {
     Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
       @Override
       public void execute() {
-        r.run();
+        try {
+          r.run();
+        } catch (Throwable t) {
+          LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
+          GWT.log("Runnable submitted to JsEventDispatchThread failed. Message: " + t.getMessage());
+        }
       }
     });
   }
@@ -40,7 +50,12 @@ public final class JsEventDispatchThread implements EventDispatchThread {
     final Timer timer = new Timer() {
       @Override
       public void run() {
-        r.run();
+        try {
+          r.run();
+        } catch (Throwable t) {
+          LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
+          GWT.log("Runnable submitted to JsEventDispatchThread failed. Message: " + t.getMessage());
+        }
       }
     };
     timer.schedule(delay);
@@ -52,7 +67,12 @@ public final class JsEventDispatchThread implements EventDispatchThread {
     final Timer timer = new Timer() {
       @Override
       public void run() {
-        r.run();
+        try {
+          r.run();
+        } catch (Throwable t) {
+          LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
+          GWT.log("Runnable submitted to JsEventDispatchThread failed. Message: " + t.getMessage());
+        }
       }
     };
     timer.scheduleRepeating(period);
