@@ -316,39 +316,4 @@ public class Asyncs {
       }
     });
   }
-
-  public static <ValueT> Supplier<Async<ValueT>> atMostOneRequest(final Supplier<Async<ValueT>> supplier) {
-    return new Supplier<Async<ValueT>>() {
-      private Async<ValueT> myCached;
-
-      @Override
-      public Async<ValueT> get() {
-        if (myCached != null) {
-          return myCached;
-        }
-
-        Async<ValueT> async = supplier.get();
-
-        final SimpleAsync<ValueT> result = new SimpleAsync<>();
-        myCached = result;
-
-        async.onResult(new Handler<ValueT>() {
-          @Override
-          public void handle(ValueT item) {
-            result.success(item);
-            myCached = null;
-          }
-        }, new Handler<Throwable>() {
-          @Override
-          public void handle(Throwable item) {
-            result.failure(item);
-            myCached = null;
-          }
-        });
-
-        return myCached;
-      }
-    };
-
-  }
 }
