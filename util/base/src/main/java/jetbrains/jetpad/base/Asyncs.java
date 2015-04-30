@@ -32,7 +32,7 @@ public class Asyncs {
       public void handle(Object item) {
         succeeded.set(true);
       }
-    });
+    }).remove();
     return succeeded.get();
   }
 
@@ -48,7 +48,7 @@ public class Asyncs {
       public void handle(Throwable item) {
         finished.set(true);
       }
-    });
+    }).remove();
     return finished.get();
   }
 
