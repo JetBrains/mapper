@@ -43,7 +43,7 @@ public class Persisters {
 
     @Override
     public String serialize(Long value) {
-      return value.equals(0L) ? null : value.toString();
+      return value == null || value.equals(0L) ? null : value.toString();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class Persisters {
 
       @Override
       public String serialize(Integer value) {
-        if (new Integer(defaultValue).equals(value)) return null;
+        if (value == null || Integer.valueOf(defaultValue).equals(value)) return null;
         return "" + value;
       }
 
@@ -138,7 +138,7 @@ public class Persisters {
 
       @Override
       public String serialize(Boolean value) {
-        return "" + value;
+        return value == null ? null : "" + value;
       }
 
       @Override
