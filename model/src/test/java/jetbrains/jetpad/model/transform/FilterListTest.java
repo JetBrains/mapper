@@ -23,8 +23,6 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.*;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -161,7 +159,6 @@ public class FilterListTest {
       @Override
       public void onEvent(PropertyChangeEvent<Boolean> event) {
         Transformers.listFilter(new Function<String, ReadableProperty<Boolean>>() {
-          @Nullable
           @Override
           public ReadableProperty<Boolean> apply(String s) {
             return filter;
