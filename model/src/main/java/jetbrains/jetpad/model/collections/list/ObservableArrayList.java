@@ -21,6 +21,7 @@ import java.util.List;
 public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
   private List<ItemT> myContainer;
 
+  @Override
   public ItemT get(int index) {
     if (myContainer == null) {
       throw new ArrayIndexOutOfBoundsException(index);
@@ -28,11 +29,9 @@ public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
     return myContainer.get(index);
   }
 
+  @Override
   public int size() {
-    if (myContainer == null) {
-      return 0;
-    }
-    return myContainer.size();
+    return myContainer == null ? 0 : myContainer.size();
   }
 
   @Override
@@ -43,32 +42,17 @@ public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
   }
 
   @Override
-  public void add(final int index, final ItemT item) {
+  protected void doAdd(int index, ItemT item) {
     ensureContainerInitialized();
-
-    add(index, item, new Runnable() {
-      @Override
-      public void run() {
-        myContainer.add(index, item);
-      }
-    });
+    myContainer.add(index, item);
   }
 
   @Override
-  public ItemT remove(final int index) {
-    ensureContainerInitialized();
-
-    ItemT result = myContainer.get(index);
-    remove(index, result, new Runnable() {
-      @Override
-      public void run() {
-        myContainer.remove(index);
-        if (myContainer.isEmpty()) {
-          myContainer = null;
-        }
-      }
-    });
-    return result;
+  protected void doRemove(int index) {
+    myContainer.remove(index);
+    if (myContainer.isEmpty()) {
+      myContainer = null;
+    }
   }
 
   private void ensureContainerInitialized() {

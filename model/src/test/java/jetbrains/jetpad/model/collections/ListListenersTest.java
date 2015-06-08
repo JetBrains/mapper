@@ -31,13 +31,8 @@ public class ListListenersTest extends ListenersTestCase {
   protected MyCollection createThrowingOnAddCollection() {
     return new TestObservableArrayList() {
       @Override
-      public void add(int index, Integer item) {
-        add(index, item, new Runnable() {
-          @Override
-          public void run() {
-            throw new IllegalStateException();
-          }
-        });
+      protected void doAdd(int index, Integer item) {
+        throw new IllegalStateException();
       }
     };
   }
@@ -46,15 +41,8 @@ public class ListListenersTest extends ListenersTestCase {
   protected MyCollection createThrowingOnRemoveCollection() {
     return new TestObservableArrayList() {
       @Override
-      public Integer remove(int index) {
-        Integer result = get(index);
-        remove(index, result, new Runnable() {
-          @Override
-          public void run() {
-            throw new IllegalStateException();
-          }
-        });
-        return result;
+      protected void doRemove(int index) {
+        throw new IllegalStateException();
       }
     };
   }
