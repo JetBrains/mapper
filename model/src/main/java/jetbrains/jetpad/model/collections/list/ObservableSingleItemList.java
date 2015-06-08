@@ -56,20 +56,34 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   }
 
   @Override
-  protected void checkAdd(int index, ItemT item) {
-    super.checkAdd(index, item);
+  public void add(int index, final ItemT item) {
     if (size() != 0) {
       throw new IllegalStateException();
     }
+    add(index, item, new Runnable() {
+      @Override
+      public void run() {
+        myItem = item;
+      }
+    });
   }
 
   @Override
-  protected void doAdd(int index, ItemT item) {
-    myItem = item;
-  }
+  public ItemT remove(int index) {
+    if (index != 0) {
+      throw new IndexOutOfBoundsException();
+    }
+    ItemT oldItem = myItem;
+    if (oldItem == null) {
+      throw new IndexOutOfBoundsException();
+    }
 
-  @Override
-  protected void doRemove(int index) {
-    myItem = null;
+    remove(index, oldItem, new Runnable() {
+      @Override
+      public void run() {
+        myItem = null;
+      }
+    });
+    return oldItem;
   }
 }

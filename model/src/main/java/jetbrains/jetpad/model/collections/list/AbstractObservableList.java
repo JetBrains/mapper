@@ -40,13 +40,14 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
     }
   }
 
-  @Override
-  public final void add(final int index, final ItemT item) {
+  protected final void add(final int index, final ItemT item, Runnable action) {
     checkAdd(index, item);
+
     beforeItemAdded(index, item);
+
     boolean success = false;
     try {
-      doAdd(index, item);
+      action.run();
       success = true;
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
@@ -61,22 +62,20 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
     }
   }
 
-  protected abstract void doAdd(int index, ItemT item);
-
   protected void beforeItemAdded(int index, ItemT item) {
   }
 
   protected void afterItemAdded(int index, ItemT item, boolean success) {
   }
 
-  @Override
-  public final ItemT remove(final int index) {
-    final ItemT item = get(index);
+  protected final void remove(final int index, final ItemT item, Runnable action) {
     checkRemove(index, item);
+
     beforeItemRemoved(index, item);
+
     boolean success = false;
     try {
-      doRemove(index);
+      action.run();
       success = true;
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
@@ -89,10 +88,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
     } finally {
       afterItemRemoved(index, item, success);
     }
-    return item;
   }
-
-  protected abstract void doRemove(int index);
 
   protected void beforeItemRemoved(int index, ItemT item) {
   }

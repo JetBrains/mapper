@@ -15,8 +15,6 @@
  */
 package jetbrains.jetpad.model.children;
 
-import jetbrains.jetpad.model.collections.CollectionAdapter;
-import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 
 public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? super ChildT>> extends ObservableArrayList<ChildT> {
@@ -24,32 +22,14 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
 
   public ChildList(ParentT parent) {
     myParent = parent;
-    addListener(new CollectionAdapter<ChildT>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends ChildT> event) {
-        event.getItem().myParent.flush();
-      }
-
-      @Override
-      public void onItemRemoved(CollectionItemEvent<? extends ChildT> event) {
-        ChildT item = event.getItem();
-        item.myParent.set(null);
-        item.myPositionData = null;
-        item.myParent.flush();
-      }
-    });
   }
 
   @Override
-  protected void checkAdd(int index, ChildT item) {
-    super.checkAdd(index, item);
+  public void add(int index, final ChildT item) {
     if (item.parent().get() != null) {
       throw new IllegalArgumentException();
     }
-  }
 
-  @Override
-  protected void beforeItemAdded(int index, final ChildT item) {
     item.myParent.set(myParent);
     item.myPositionData = new PositionData<ChildT>() {
       @Override
@@ -74,13 +54,26 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
         ChildList.this.remove(item);
       }
     };
+
+    super.add(index, item);
+
+    item.myParent.flush();
   }
 
   @Override
-  protected void checkRemove(int index, ChildT item) {
-    super.checkRemove(index, item);
+  public ChildT remove(int index) {
+    ChildT item = get(index);
     if (item.parent().get() != myParent) {
       throw new IllegalArgumentException();
     }
+
+    super.remove(index);
+
+    item.myParent.set(null);
+    item.myPositionData = null;
+
+    item.myParent.flush();
+
+    return item;
   }
 }

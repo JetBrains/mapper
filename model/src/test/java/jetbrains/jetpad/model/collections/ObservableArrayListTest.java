@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -54,16 +53,16 @@ public class ObservableArrayListTest {
 
     assertEvent(0, item, true);
   }
-
+  
   @Test
   public void itemRemove() {
     final String item = addSampleItem();
-
+    
     list.remove(item);
 
     assertEvent(0, item, false);
   }
-
+  
   @Test
   public void nonExistentItemRemove() {
     String item = "xyz";
@@ -80,7 +79,7 @@ public class ObservableArrayListTest {
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
-  public void addAtInvalidIndex() {
+   public void addAtInvalidIndex() {
     try {
       list.add(1, "xyz");
     } finally {
@@ -107,15 +106,6 @@ public class ObservableArrayListTest {
       assertTrue(events.isEmpty());
       assertEquals(1, list.size());
     }
-  }
-
-  @Test
-  public void iteratorRemove() {
-    addSampleItem();
-    Iterator<String> i = list.iterator();
-    i.next();
-    i.remove();
-    assertEvent(0, "xyz", false);
   }
 
   private String addSampleItem() {
