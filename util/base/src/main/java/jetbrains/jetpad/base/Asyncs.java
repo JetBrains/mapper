@@ -22,6 +22,8 @@ import com.google.common.base.Supplier;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
 public class Asyncs {
@@ -271,35 +273,33 @@ public class Asyncs {
 
   @GwtIncompatible("Uses threading primitives")
   public static <ResultT> ResultT get(Async<ResultT> async) {
+    final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicReference<ResultT> result = new AtomicReference<>(null);
+    final AtomicReference<Throwable> error = new AtomicReference<>(null);
+    async.onResult(new Handler<ResultT>() {
+      @Override
+      public void handle(ResultT item) {
+        result.set(item);
+        latch.countDown();
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        error.set(item);
+        latch.countDown();
+      }
+    });
     try {
-      final CountDownLatch latch = new CountDownLatch(1);
-
-      final Value<ResultT> result = new Value<>();
-      final Value<Throwable> error = new Value<>();
-
-      async.onResult(new Handler<ResultT>() {
-        @Override
-        public void handle(ResultT item) {
-          result.set(item);
-          latch.countDown();
-        }
-      }, new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          error.set(item);
-          latch.countDown();
-        }
-      });
-
-      latch.await();
-
-      if (error.get() != null) {
-        throw new RuntimeException(error.get());
-      } else {
-        return result.get();
+      if (!latch.await(5, TimeUnit.SECONDS)) {
+        throw new RuntimeException("timeout");
       }
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
+    }
+    if (error.get() != null) {
+      throw new RuntimeException(error.get());
+    } else {
+      return result.get();
     }
   }
 
