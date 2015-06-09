@@ -301,7 +301,10 @@ public class Asyncs {
         throw new RuntimeException("timeout");
       }
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      if (error.get() == null) {
+        error.set(e);
+      }
+      Thread.currentThread().interrupt();
     }
     if (error.get() != null) {
       throw new RuntimeException(error.get());
