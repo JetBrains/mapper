@@ -32,14 +32,8 @@ public class SetListenersTest extends ListenersTestCase {
   protected MyCollection createThrowingOnAddCollection() {
     return new TestObservableHashSet() {
       @Override
-      public boolean add(Integer integer) {
-        add(integer, new Runnable() {
-          @Override
-          public void run() {
-            throw new IllegalStateException();
-          }
-        });
-        return true;
+      protected boolean doAdd(Integer item) {
+        throw new IllegalStateException();
       }
     };
   }
@@ -48,14 +42,8 @@ public class SetListenersTest extends ListenersTestCase {
   protected MyCollection createThrowingOnRemoveCollection() {
     return new TestObservableHashSet() {
       @Override
-      public boolean remove(Object integer) {
-        remove((Integer) integer, new Runnable() {
-          @Override
-          public void run() {
-            throw new IllegalStateException();
-          }
-        });
-        return true;
+      protected boolean doRemove(Integer item) {
+        throw new IllegalStateException();
       }
     };
   }

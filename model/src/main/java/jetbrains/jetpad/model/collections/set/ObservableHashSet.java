@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.collections.set;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,76 +23,29 @@ public class ObservableHashSet<ItemT> extends AbstractObservableSet<ItemT> {
   private Set<ItemT> mySet;
 
   @Override
-  public Iterator<ItemT> iterator() {
-    if (mySet == null) {
-      return Collections.<ItemT>emptyList().iterator();
-    }
-
-    final Iterator<ItemT> iterator = mySet.iterator();
-    return new Iterator<ItemT>() {
-      private ItemT myLastReturned;
-
-      @Override
-      public boolean hasNext() {
-        return iterator.hasNext();
-      }
-
-      @Override
-      public ItemT next() {
-        myLastReturned = iterator.next();
-        return myLastReturned;
-      }
-
-      @Override
-      public void remove() {
-        ObservableHashSet.this.remove(myLastReturned, new Runnable() {
-          @Override
-          public void run() {
-            iterator.remove();
-          }
-        });
-        myLastReturned = null;
-      }
-    };
-  }
-
-  @Override
   public int size() {
-    if (mySet == null) return 0;
-    return mySet.size();
+    return mySet == null ? 0 : mySet.size();
   }
 
   @Override
   public boolean contains(Object o) {
-    if (mySet == null) return false;
-    return mySet.contains(o);
+    return mySet == null ? false : mySet.contains(o);
   }
 
   @Override
-  public boolean add(final ItemT t) {
+  protected boolean doAdd(ItemT item) {
     ensureSetInitialized();
-    if (mySet.contains(t)) return false;
-    add(t, new Runnable() {
-      @Override
-      public void run() {
-        mySet.add(t);
-      }
-    });
-    return true;
+    return mySet.add(item);
   }
 
   @Override
-  public boolean remove(final Object o) {
-    if (mySet == null) return false;
-    if (!mySet.contains(o)) return false;
-    remove((ItemT) o, new Runnable() {
-      @Override
-      public void run() {
-        ensureSetInitialized();
-        mySet.remove((ItemT) o);
-      }
-    });
-    return true;
+  protected boolean doRemove(ItemT item) {
+    return mySet.remove(item);
+  }
+
+  @Override
+  protected Iterator<ItemT> getIterator() {
+    return mySet.iterator();
   }
 
   private void ensureSetInitialized() {

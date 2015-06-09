@@ -24,6 +24,8 @@ import jetbrains.jetpad.model.event.Listeners;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.AbstractSet;
+import java.util.Collections;
+import java.util.Iterator;
 
 public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> implements ObservableSet<ItemT> {
   private Listeners<CollectionListener<ItemT>> myListeners;
@@ -35,21 +37,14 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     return myListeners.add(l);
   }
 
-  protected void checkAdd(ItemT item) {
-  }
-
-  protected void checkRemove(ItemT item) {
-  }
-
-  protected final void add(final ItemT item, Runnable action) {
+  @Override
+  public final boolean add(final ItemT item) {
+    if (contains(item)) return false;
     checkAdd(item);
-
     beforeItemAdded(item);
-
     boolean success = false;
     try {
-      action.run();
-      success = true;
+      success = doAdd(item);
       if (myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
@@ -61,25 +56,71 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     } finally {
       afterItemAdded(item, success);
     }
+    return success;
   }
 
-  protected void beforeItemAdded(ItemT item) {
-  }
-
-  protected void afterItemAdded(ItemT item, boolean success) {
-  }
-
-
-  protected final void remove(final ItemT item, Runnable action) {
-    checkRemove(item);
-
-    beforeItemRemoved(item);
-
+  @Override
+  public final boolean remove(Object o) {
+    if (!contains(o)) return false;
+    final ItemT item = (ItemT) o;
+    doBeforeRemove(item);
     boolean success = false;
     try {
-      action.run();
-      success = true;
-      if (myListeners != null) {
+      success = doRemove(item);
+    } finally {
+      doAfterRemove(item, success);
+    }
+    return success;
+  }
+
+  @Override
+  public final Iterator<ItemT> iterator() {
+    if (size() == 0) {
+      return Collections.emptyIterator();
+    }
+    final Iterator<ItemT> iterator = getIterator();
+    return new Iterator<ItemT>() {
+      private boolean myCanRemove = false;
+      private ItemT myLastReturned;
+
+      @Override
+      public boolean hasNext() {
+        return iterator.hasNext();
+      }
+
+      @Override
+      public ItemT next() {
+        myLastReturned = iterator.next();
+        myCanRemove = true;
+        return myLastReturned;
+      }
+
+      @Override
+      public void remove() {
+        if (!myCanRemove) {
+          throw new IllegalStateException();
+        }
+        myCanRemove = false;
+        doBeforeRemove(myLastReturned);
+        boolean success = false;
+        try {
+          iterator.remove();
+          success = true;
+        } finally {
+          doAfterRemove(myLastReturned, success);
+        }
+      }
+    };
+  }
+
+  private void doBeforeRemove(ItemT item) {
+    checkRemove(item);
+    beforeItemRemoved(item);
+  }
+
+  private void doAfterRemove(final ItemT item, boolean success) {
+    try {
+      if (success && myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
           public void call(CollectionListener<ItemT> l) {
@@ -92,6 +133,22 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     }
   }
 
+  protected abstract boolean doAdd(ItemT item);
+  protected abstract boolean doRemove(ItemT item);
+  protected abstract Iterator<ItemT> getIterator();
+
+  protected void checkAdd(ItemT item) {
+  }
+
+  protected void checkRemove(ItemT item) {
+  }
+
+  protected void beforeItemAdded(ItemT item) {
+  }
+
+  protected void afterItemAdded(ItemT item, boolean success) {
+  }
+
   protected void beforeItemRemoved(ItemT item) {
   }
 
@@ -100,7 +157,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
 
   @Override
   public Registration addHandler(final EventHandler<? super CollectionItemEvent<? extends ItemT>> handler) {
-    final CollectionListener<ItemT> listener = new CollectionAdapter<ItemT>() {
+    return addListener(new CollectionAdapter<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
         handler.onEvent(event);
@@ -110,7 +167,6 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
       public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
         handler.onEvent(event);
       }
-    };
-    return addListener(listener);
+    });
   }
 }
