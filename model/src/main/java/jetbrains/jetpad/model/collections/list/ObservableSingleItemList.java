@@ -17,16 +17,17 @@ package jetbrains.jetpad.model.collections.list;
 
 public class ObservableSingleItemList<ItemT> extends AbstractObservableList<ItemT> {
   private ItemT myItem;
+  private boolean myEmpty = true;
 
   public ObservableSingleItemList() {
   }
 
   public ObservableSingleItemList(ItemT item) {
-    myItem = item;
+    doSet(item);
   }
 
   public ItemT getItem() {
-    return myItem;
+    return get(0);
   }
 
   public void setItem(ItemT item) {
@@ -35,7 +36,7 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   
   @Override
   public ItemT get(int index) {
-    if (myItem == null || index != 0) {
+    if (myEmpty || index != 0) {
       throw new IndexOutOfBoundsException();
     }
     return myItem;
@@ -43,33 +44,37 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
 
   @Override
   public int size() {
-    return myItem == null ? 0 : 1;
+    return myEmpty ? 0 : 1;
   }
 
   @Override
   public ItemT set(int index, ItemT t) {
-    ItemT oldValue = myItem == null ? null : remove(index);
-    if (t != null) {
-      add(index, t);
-    }
+    ItemT oldValue = myEmpty ? null : remove(index);
+    add(index, t);
     return oldValue;
   }
 
   @Override
   protected void checkAdd(int index, ItemT item) {
     super.checkAdd(index, item);
-    if (size() != 0) {
+    if (!myEmpty) {
       throw new IllegalStateException();
     }
   }
 
   @Override
   protected void doAdd(int index, ItemT item) {
-    myItem = item;
+    doSet(item);
   }
 
   @Override
   protected void doRemove(int index) {
     myItem = null;
+    myEmpty = true;
+  }
+
+  private void doSet(ItemT item) {
+    myItem = item;
+    myEmpty = false;
   }
 }
