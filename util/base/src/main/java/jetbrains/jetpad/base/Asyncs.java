@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
 public class Asyncs {
+  private static final long DEFAULT_GET_TIMEOUT_SECONDS = 5;
+
   public static boolean isSucceeded(Async<?> async) {
     final Value<Boolean> succeeded = new Value<>(false);
     async.onSuccess(new Handler<Object>() {
@@ -273,6 +275,11 @@ public class Asyncs {
 
   @GwtIncompatible("Uses threading primitives")
   public static <ResultT> ResultT get(Async<ResultT> async) {
+    return get(DEFAULT_GET_TIMEOUT_SECONDS, TimeUnit.SECONDS, async);
+  }
+
+  @GwtIncompatible("Uses threading primitives")
+  public static <ResultT> ResultT get(long timeout, TimeUnit unit, Async<ResultT> async) {
     final CountDownLatch latch = new CountDownLatch(1);
     final AtomicReference<ResultT> result = new AtomicReference<>(null);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
@@ -290,7 +297,7 @@ public class Asyncs {
       }
     });
     try {
-      if (!latch.await(5, TimeUnit.SECONDS)) {
+      if (!latch.await(timeout, unit)) {
         throw new RuntimeException("timeout");
       }
     } catch (InterruptedException e) {
