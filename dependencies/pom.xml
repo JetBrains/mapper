@@ -21,6 +21,8 @@
     <jetty.version>8.1.2.v20120308</jetty.version>
     <javancss.version>2.0</javancss.version>
 
+    <jsr305.version>1.3.9</jsr305.version>
+
     <mvn.compiler.plugin.version>2.3.2</mvn.compiler.plugin.version>
     <mvn.war.plugin.version>2.2</mvn.war.plugin.version>
     <mvn.jar.plugin.version>2.3.2</mvn.jar.plugin.version>
@@ -51,6 +53,13 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava-gwt</artifactId>
         <version>${guava.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
 
       <dependency>
@@ -77,6 +86,12 @@
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-websocket</artifactId>
         <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>${jsr305.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -130,7 +145,6 @@
           <!--<configuration>-->
             <!--<incrementalCompileWarnings>true</incrementalCompileWarnings>-->
           <!--</configuration>-->
-
           <executions>
             <execution>
               <goals>

@@ -18,7 +18,6 @@
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
-      <version>1.3.9</version>
     </dependency>
 
     <dependency>
@@ -28,5 +27,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 </project>
