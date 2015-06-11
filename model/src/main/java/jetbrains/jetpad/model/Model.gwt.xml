@@ -7,5 +7,4 @@
   <source path=""/>
   <inherits name="jetbrains.jetpad.base.Base"/>
   <inherits name="jetbrains.jetpad.geometry.Geometry"/>
-  <inherits name="jetbrains.jetpad.model.ModelGwt"/>
 </module>
