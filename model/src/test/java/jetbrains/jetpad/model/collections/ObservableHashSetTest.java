@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ObservableHashSetTest {
@@ -126,5 +127,50 @@ public class ObservableHashSetTest {
     };
     set.addListener(listener);
     return counter;
+  }
+
+  @Test
+  public void fireWhenNotAdded() {
+    final Value<Boolean> afterCalled = new Value<>(false);
+    set = new ObservableHashSet<String>() {
+      @Override
+      protected boolean doAdd(String item) {
+        return false;
+      }
+
+      @Override
+      protected void afterItemAdded(String item, boolean success) {
+        assertEquals("x", item);
+        assertFalse(success);
+        afterCalled.set(true);
+      }
+    };
+    set.addListener(listener);
+    set.add("x");
+    assertTrue(afterCalled.get());
+    Mockito.verify(listener, Mockito.never()).onItemAdded(new CollectionItemEvent<>("x", -1, true));
+  }
+
+  @Test
+  public void fireWhenNotRemoved() {
+    final Value<Boolean> afterCalled = new Value<>(false);
+    set = new ObservableHashSet<String>() {
+      @Override
+      protected boolean doRemove(String item) {
+        return false;
+      }
+
+      @Override
+      protected void afterItemRemoved(String item, boolean success) {
+        assertEquals("x", item);
+        assertFalse(success);
+        afterCalled.set(true);
+      }
+    };
+    set.add("x");
+    set.addListener(listener);
+    set.remove("x");
+    assertTrue(afterCalled.get());
+    Mockito.verify(listener, Mockito.never()).onItemRemoved(new CollectionItemEvent<>("x", -1, false));
   }
 }

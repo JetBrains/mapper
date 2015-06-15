@@ -40,12 +40,24 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   @Override
   public final boolean add(final ItemT item) {
     if (contains(item)) return false;
-    checkAdd(item);
-    beforeItemAdded(item);
+    doBeforeAdd(item);
     boolean success = false;
     try {
       success = doAdd(item);
-      if (myListeners != null) {
+    } finally {
+      doAfterAdd(item, success);
+    }
+    return success;
+  }
+
+  private void doBeforeAdd(ItemT item) {
+    checkAdd(item);
+    beforeItemAdded(item);
+  }
+
+  private void doAfterAdd(final ItemT item, boolean success) {
+    try {
+      if (success && myListeners != null) {
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
           public void call(CollectionListener<ItemT> l) {
@@ -56,7 +68,6 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     } finally {
       afterItemAdded(item, success);
     }
-    return success;
   }
 
   @Override
