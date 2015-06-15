@@ -58,7 +58,7 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   protected void checkAdd(int index, ItemT item) {
     super.checkAdd(index, item);
     if (!myEmpty) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Single item list already has an item");
     }
   }
 
