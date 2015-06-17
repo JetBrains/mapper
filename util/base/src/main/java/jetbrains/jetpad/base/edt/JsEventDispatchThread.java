@@ -39,7 +39,6 @@ public final class JsEventDispatchThread implements EventDispatchThread {
           r.run();
         } catch (Throwable t) {
           LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
-          GWT.log("Runnable submitted to JsEventDispatchThread failed. Message: " + t.getMessage());
         }
       }
     });
@@ -54,7 +53,6 @@ public final class JsEventDispatchThread implements EventDispatchThread {
           r.run();
         } catch (Throwable t) {
           LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
-          GWT.log("Runnable submitted to JsEventDispatchThread failed. Message: " + t.getMessage());
         }
       }
     };
@@ -71,7 +69,6 @@ public final class JsEventDispatchThread implements EventDispatchThread {
           r.run();
         } catch (Throwable t) {
           LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
-          GWT.log("Runnable submitted to JsEventDispatchThread failed. Message: " + t.getMessage());
         }
       }
     };
