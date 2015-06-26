@@ -22,13 +22,10 @@ import com.google.common.base.Supplier;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
 public class Asyncs {
-  private static final long DEFAULT_GET_TIMEOUT_SECONDS = 5;
-
   public static boolean isSucceeded(Async<?> async) {
     final Value<Boolean> succeeded = new Value<>(false);
     async.onSuccess(new Handler<Object>() {
@@ -275,11 +272,6 @@ public class Asyncs {
 
   @GwtIncompatible("Uses threading primitives")
   public static <ResultT> ResultT get(Async<ResultT> async) {
-    return get(DEFAULT_GET_TIMEOUT_SECONDS, TimeUnit.SECONDS, async);
-  }
-
-  @GwtIncompatible("Uses threading primitives")
-  public static <ResultT> ResultT get(long timeout, TimeUnit unit, Async<ResultT> async) {
     final CountDownLatch latch = new CountDownLatch(1);
     final AtomicReference<ResultT> result = new AtomicReference<>(null);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
@@ -297,9 +289,7 @@ public class Asyncs {
       }
     });
     try {
-      if (!latch.await(timeout, unit)) {
-        throw new RuntimeException("timeout");
-      }
+      latch.await();
     } catch (InterruptedException e) {
       if (error.get() == null) {
         error.set(e);
