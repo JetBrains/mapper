@@ -6,6 +6,7 @@
 <module>
   <source path="">
     <exclude name="edt/AwtEventDispatchThread.java" />
+    <exclude name="edt/ExecutorEventDispatchThread.java" />
   </source>
   <inherits name="com.google.gwt.user.User"/>
   <inherits name="com.google.common.base.Base"/>
