@@ -22,6 +22,7 @@ import com.google.common.base.Supplier;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
@@ -270,8 +271,44 @@ public class Asyncs {
     return result;
   }
 
+  public static <ValueT> Registration delegate(Async<ValueT> from, final SimpleAsync<ValueT> to) {
+    return from.onResult(new Handler<ValueT>() {
+      @Override
+      public void handle(ValueT item) {
+        to.success(item);
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        to.failure(item);
+      }
+    });
+  }
+
   @GwtIncompatible("Uses threading primitives")
   public static <ResultT> ResultT get(Async<ResultT> async) {
+    return get(async, new Awaiter() {
+      @Override
+      public void await(CountDownLatch latch) throws InterruptedException {
+        latch.await();
+      }
+    });
+  }
+
+  @GwtIncompatible("Uses threading primitives")
+  public static <ResultT> ResultT get(Async<ResultT> async, final long timeout, final TimeUnit timeUnit) {
+    return get(async, new Awaiter() {
+      @Override
+      public void await(CountDownLatch latch) throws InterruptedException {
+        if (!latch.await(timeout, timeUnit)) {
+          throw new RuntimeException("timeout " + timeout + " " + timeUnit + " exceeded");
+        }
+      }
+    });
+  }
+
+  @GwtIncompatible("Uses threading primitives")
+  private static <ResultT> ResultT get(Async<ResultT> async, Awaiter awaiter) {
     final CountDownLatch latch = new CountDownLatch(1);
     final AtomicReference<ResultT> result = new AtomicReference<>(null);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
@@ -289,12 +326,12 @@ public class Asyncs {
       }
     });
     try {
-      latch.await();
+      awaiter.await(latch);
     } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
       if (error.get() == null) {
         error.set(e);
       }
-      Thread.currentThread().interrupt();
     }
     if (error.get() != null) {
       throw new RuntimeException(error.get());
@@ -303,17 +340,8 @@ public class Asyncs {
     }
   }
 
-  public static <ValueT> Registration delegate(Async<ValueT> from, final SimpleAsync<ValueT> to) {
-    return from.onResult(new Handler<ValueT>() {
-      @Override
-      public void handle(ValueT item) {
-        to.success(item);
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        to.failure(item);
-      }
-    });
+  @GwtIncompatible("Uses threading primitives")
+  private interface Awaiter {
+    void await(CountDownLatch latch) throws InterruptedException;
   }
 }
