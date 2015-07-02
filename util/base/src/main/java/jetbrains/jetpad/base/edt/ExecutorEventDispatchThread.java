@@ -11,20 +11,16 @@ public class ExecutorEventDispatchThread implements EventDispatchThread {
   private static final Logger LOG = Logger.getLogger(ExecutorEventDispatchThread.class.getName());
 
   private final ScheduledExecutorService myExecutor;
-  private final Handler<Throwable> myErrorHandler;
+  private volatile Handler<Throwable> myErrorHandler;
 
   public ExecutorEventDispatchThread() {
-    this(new Handler<Throwable>() {
+    myExecutor = Executors.newSingleThreadScheduledExecutor();
+    myErrorHandler = new Handler<Throwable>() {
       @Override
       public void handle(Throwable t) {
         LOG.log(Level.SEVERE, "Runnable submitted to ExecutorEventDispatchThread failed", t);
       }
-    });
-  }
-
-  public ExecutorEventDispatchThread(Handler<Throwable> errorHandler) {
-    myExecutor = Executors.newSingleThreadScheduledExecutor();
-    myErrorHandler = errorHandler;
+    };
   }
 
   @Override
@@ -61,6 +57,10 @@ public class ExecutorEventDispatchThread implements EventDispatchThread {
    */
   public ExecutorService getExecutor() {
     return myExecutor;
+  }
+
+  public void setErrorHandler(Handler<Throwable> errorHandler) {
+    myErrorHandler = errorHandler;
   }
 
   private static class FutureRegistration extends Registration {
