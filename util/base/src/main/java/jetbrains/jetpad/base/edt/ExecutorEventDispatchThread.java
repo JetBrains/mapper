@@ -15,12 +15,12 @@ public class ExecutorEventDispatchThread implements EventDispatchThread {
 
   public ExecutorEventDispatchThread() {
     myExecutor = Executors.newSingleThreadScheduledExecutor();
-    myErrorHandler = new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable t) {
-        LOG.log(Level.SEVERE, "Runnable submitted to ExecutorEventDispatchThread failed", t);
-      }
-    };
+    setErrorHandler();
+  }
+
+  public ExecutorEventDispatchThread(String name) {
+    myExecutor = Executors.newSingleThreadScheduledExecutor(new OurNamedThreadFactory(name));
+    setErrorHandler();
   }
 
   @Override
@@ -63,6 +63,15 @@ public class ExecutorEventDispatchThread implements EventDispatchThread {
     myErrorHandler = errorHandler;
   }
 
+  public void setErrorHandler() {
+    setErrorHandler(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable t) {
+        LOG.log(Level.SEVERE, "Runnable submitted to ExecutorEventDispatchThread failed", t);
+      }
+    });
+  }
+
   private static class FutureRegistration extends Registration {
     private final Future<?> future;
 
@@ -73,6 +82,19 @@ public class ExecutorEventDispatchThread implements EventDispatchThread {
     @Override
     protected void doRemove() {
       future.cancel(false);
+    }
+  }
+
+  private static class OurNamedThreadFactory implements ThreadFactory {
+    private final String myName;
+
+    OurNamedThreadFactory(String name) {
+      myName = name;
+    }
+
+    @Override
+    public Thread newThread(Runnable r) {
+      return new Thread(r, myName);
     }
   }
 }
