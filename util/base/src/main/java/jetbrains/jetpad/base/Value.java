@@ -15,7 +15,9 @@
  */
 package jetbrains.jetpad.base;
 
-public final class Value<ValueT> {
+import com.google.common.base.Supplier;
+
+public final class Value<ValueT> implements Supplier<ValueT> {
   private ValueT myValue;
 
   public Value() {
