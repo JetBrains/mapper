@@ -9,6 +9,7 @@
     <exclude name="edt/ExecutorEventDispatchThread.java" />
     <exclude name="edt/ThreadyTaskManager.java" />
     <exclude name="edt/ThreadyTaskManagerFactory.java" />
+    <exclude name="edt/TaskManagerPool.java" />
   </source>
   <inherits name="com.google.gwt.user.User"/>
   <inherits name="com.google.common.base.Base"/>
