@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.AfterClass;
@@ -26,9 +27,9 @@ public class ThrowableHandlersTest extends BaseTestCase {
 
   @BeforeClass
   public static void addHandler() {
-    ourHandlerRegistration = ThrowableHandlers.addHandler(new EventHandler<Throwable>() {
+    ourHandlerRegistration = ThrowableHandlers.addHandler(new Handler<Throwable>() {
       @Override
-      public void onEvent(Throwable event) {
+      public void handle(Throwable event) {
         throw new IllegalStateException();
       }
     });

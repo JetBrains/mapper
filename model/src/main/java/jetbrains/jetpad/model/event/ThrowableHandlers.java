@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.event;
 
 
+import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class ThrowableHandlers {
     }
   };
 
-  public static Registration addHandler(EventHandler<? super Throwable> handler) {
+  public static Registration addHandler(Handler<? super Throwable> handler) {
     return ourHandlers.get().addHandler(handler);
   }
 
@@ -82,17 +83,16 @@ public class ThrowableHandlers {
     return false;
   }
 
-  private static class MyEventSource implements EventSource<Throwable> {
-    private List<EventHandler<? super Throwable>> myHandlers = new ArrayList<>();
+  private static class MyEventSource {
+    private List<Handler<? super Throwable>> myHandlers = new ArrayList<>();
 
-    public void fire(Throwable event) {
-      for (EventHandler<? super Throwable> handler : myHandlers) {
-        handler.onEvent(event);
+    public void fire(Throwable throwable) {
+      for (Handler<? super Throwable> handler : myHandlers) {
+        handler.handle(throwable);
       }
     }
 
-    @Override
-    public Registration addHandler(final EventHandler<? super Throwable> handler) {
+    public Registration addHandler(final Handler<? super Throwable> handler) {
       myHandlers.add(handler);
       return new Registration() {
         @Override
