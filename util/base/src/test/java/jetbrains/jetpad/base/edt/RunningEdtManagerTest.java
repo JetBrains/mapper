@@ -16,7 +16,6 @@
 package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Value;
-import jetbrains.jetpad.base.edt.RunningTaskManager;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class RunningTaskManagerTest extends BaseTestCase {
-  private final RunningTaskManager manager = new RunningTaskManager();
+public class RunningEdtManagerTest extends BaseTestCase {
+  private final RunningEdtManager manager = new RunningEdtManager();
 
   @Before
   public void setup() {

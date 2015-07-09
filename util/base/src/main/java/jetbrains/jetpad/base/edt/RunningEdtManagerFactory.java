@@ -15,9 +15,9 @@
  */
 package jetbrains.jetpad.base.edt;
 
-public interface TaskManager {
-  EventDispatchThread getEDT();
-  void finish();
-  void kill();
-  boolean isStopped();
+public class RunningEdtManagerFactory implements EdtManagerFactory {
+  @Override
+  public EventDispatchThreadManager createTaskManager(String taskManagerName) {
+    return new RunningEdtManager(taskManagerName);
+  }
 }

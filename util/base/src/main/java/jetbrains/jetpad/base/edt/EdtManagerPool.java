@@ -19,33 +19,33 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.concurrent.CountDownLatch;
 
-public class TaskManagerPool {
-  private final TaskManagerFactory myFactory;
+public class EdtManagerPool {
+  private final EdtManagerFactory myFactory;
   private final int myPoolSize;
-  private final TaskManager[] myManagers;
+  private final EventDispatchThreadManager[] myManagers;
   private final int[] myWorkingAdapters;
   private final String myName;
   private int myCurManager;
   private int myCreatedManagersNum;
   private final Object myLock;
 
-  public TaskManagerPool(String name, int poolSize, TaskManagerFactory factory) {
+  public EdtManagerPool(String name, int poolSize, EdtManagerFactory factory) {
     myLock = new Object();
 
     myName = name;
     myPoolSize = poolSize;
     myFactory = factory;
-    myManagers = new TaskManager[myPoolSize];
+    myManagers = new EventDispatchThreadManager[myPoolSize];
     myWorkingAdapters = new int[myPoolSize];
     myCurManager = 0;
     myCreatedManagersNum = 0;
   }
 
-  public TaskManager createTaskManager(String name) {
+  public EventDispatchThreadManager createTaskManager(String name) {
     synchronized (myLock) {
       int cur = getCurManagerIndex();
       incWorkingAdapters(cur);
-      return new TaskManagerAdapter(name, myManagers[cur], cur);
+      return new EdtManagerAdapter(name, myManagers[cur], cur);
     }
   }
 
@@ -80,7 +80,7 @@ public class TaskManagerPool {
   //for test
   boolean isEmpty() {
     synchronized (myLock) {
-      for (TaskManager manager : myManagers) {
+      for (EventDispatchThreadManager manager : myManagers) {
         if (manager != null) {
           return false;
         }
@@ -90,19 +90,19 @@ public class TaskManagerPool {
   }
 
   //for test
-  boolean checkManager(TaskManager manager) {
+  boolean checkManager(EventDispatchThreadManager manager) {
     synchronized (myLock) {
-      TaskManagerAdapter adapter = (TaskManagerAdapter) manager;
+      EdtManagerAdapter adapter = (EdtManagerAdapter) manager;
       return adapter.myManager == myManagers[adapter.myIndex];
     }
   }
 
-  private class TaskManagerAdapter extends BaseTaskManager {
+  private class EdtManagerAdapter extends BaseEdtManager {
     //we can't use here only myIndex because myManagers[] is guarded by a lock
-    private final TaskManager myManager;
+    private final EventDispatchThreadManager myManager;
     private final int myIndex;
 
-    private TaskManagerAdapter(String name, TaskManager manager, int index) {
+    private EdtManagerAdapter(String name, EventDispatchThreadManager manager, int index) {
       super(name);
       myManager = manager;
       myIndex = index;

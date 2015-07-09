@@ -15,9 +15,30 @@
  */
 package jetbrains.jetpad.base.edt;
 
-public class RunningTaskManagerFactory implements TaskManagerFactory {
+public class BufferingEdtManager extends RunningEdtManager {
+  public BufferingEdtManager() {
+    super();
+  }
+
+  public BufferingEdtManager(String name) {
+    super(name);
+  }
+
   @Override
-  public TaskManager createTaskManager(String taskManagerName) {
-    return new RunningTaskManager(taskManagerName);
+  public void doSchedule(Runnable r) {
+    addTaskToQueue(r);
+  }
+
+  public void flush() {
+    flushAll();
+  }
+
+  public void flush(final int number) {
+    flush(new Flusher() {
+      @Override
+      public int getLimit() {
+        return number;
+      }
+    });
   }
 }

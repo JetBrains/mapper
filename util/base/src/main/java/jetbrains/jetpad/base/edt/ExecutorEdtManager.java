@@ -22,12 +22,12 @@ import jetbrains.jetpad.base.ThrowableHandlers;
 import java.util.concurrent.TimeUnit;
 
 
-public class ThreadyTaskManager extends BaseTaskManager {
+public class ExecutorEdtManager extends BaseEdtManager {
   private static final int BIG_TIMEOUT_DAYS = 1;
   private final ExecutorEventDispatchThread myEdt;
   private volatile boolean myInitialized;
 
-  public ThreadyTaskManager(String name) {
+  public ExecutorEdtManager(String name) {
     super(name);
     myEdt = new ExecutorEventDispatchThread(name);
   }

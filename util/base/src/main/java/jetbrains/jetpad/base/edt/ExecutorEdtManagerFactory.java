@@ -15,9 +15,9 @@
  */
 package jetbrains.jetpad.base.edt;
 
-public class ThreadyTaskManagerFactory implements TaskManagerFactory {
+public class ExecutorEdtManagerFactory implements EdtManagerFactory {
   @Override
-  public TaskManager createTaskManager(String taskManagerName) {
-    return new ThreadyTaskManager(taskManagerName);
+  public EventDispatchThreadManager createTaskManager(String taskManagerName) {
+    return new ExecutorEdtManager(taskManagerName);
   }
 }

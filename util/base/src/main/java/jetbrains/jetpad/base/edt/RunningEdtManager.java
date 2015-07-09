@@ -20,16 +20,16 @@ import jetbrains.jetpad.base.Registration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RunningTaskManager extends BaseTaskManager {
+public class RunningEdtManager extends BaseEdtManager {
   private volatile boolean myExecuting = false;
   private volatile boolean myFlushing = false;
   private final List<Runnable> myTasks = new ArrayList<>();
 
-  public RunningTaskManager() {
+  public RunningEdtManager() {
     this("");
   }
 
-  public RunningTaskManager(String name) {
+  public RunningEdtManager(String name) {
     super(name);
   }
 

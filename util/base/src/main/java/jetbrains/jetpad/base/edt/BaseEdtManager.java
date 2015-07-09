@@ -17,11 +17,11 @@ package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Registration;
 
-public abstract class BaseTaskManager implements TaskManager, EventDispatchThread {
+public abstract class BaseEdtManager implements EventDispatchThreadManager, EventDispatchThread {
   private volatile boolean myFinished;
   private final String myName;
 
-  public BaseTaskManager(String name) {
+  public BaseEdtManager(String name) {
     myName = name;
   }
 

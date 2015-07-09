@@ -22,12 +22,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 
-public class ThreadyTaskManagerTest extends BaseTestCase {
+public class ExecutorEdtManagerTest extends BaseTestCase {
   private boolean mySuccess;
 
   @Test
   public void testSubmitAfterShutdown() {
-    TaskManager tm = new ThreadyTaskManager("My task manager");
+    EventDispatchThreadManager tm = new ExecutorEdtManager("My task manager");
     EventDispatchThread edt = tm.getEDT();
     edt.schedule(new Runnable() {
       @Override
