@@ -7,6 +7,8 @@
   <source path="">
     <exclude name="edt/AwtEventDispatchThread.java" />
     <exclude name="edt/ExecutorEventDispatchThread.java" />
+    <exclude name="edt/ThreadyTaskManager.java" />
+    <exclude name="edt/ThreadyTaskManagerFactory.java" />
   </source>
   <inherits name="com.google.gwt.user.User"/>
   <inherits name="com.google.common.base.Base"/>
