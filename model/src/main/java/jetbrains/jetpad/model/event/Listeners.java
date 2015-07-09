@@ -17,6 +17,7 @@ package jetbrains.jetpad.model.event;
 
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.ArrayList;
 import java.util.List;

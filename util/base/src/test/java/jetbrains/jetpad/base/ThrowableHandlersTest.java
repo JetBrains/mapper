@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.event;
+package jetbrains.jetpad.base;
 
-import jetbrains.jetpad.base.Handler;
-import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
