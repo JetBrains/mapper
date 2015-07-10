@@ -27,6 +27,10 @@ public class ExecutorEdtManager extends BaseEdtManager {
   private final ExecutorEventDispatchThread myEdt;
   private volatile boolean myInitialized;
 
+  public ExecutorEdtManager() {
+    this("");
+  }
+
   public ExecutorEdtManager(String name) {
     super(name);
     myEdt = new ExecutorEventDispatchThread(name);

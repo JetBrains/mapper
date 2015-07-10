@@ -71,7 +71,7 @@ public class ExecutorEventDispatchThread implements EventDispatchThread {
   /**
    * Do not use it directly, only for state checks and finalization.
    */
-  public ExecutorService getExecutor() {
+  ExecutorService getExecutor() {
     return myExecutor;
   }
 
