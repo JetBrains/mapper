@@ -184,7 +184,7 @@ public class Properties {
       }
     };
 
-    return new BaseDerivedProperty<TargetT>(calc.get()) {
+    return new BaseDerivedProperty<TargetT>(null) {
       private ReadableProperty<TargetT> myTargetProperty;
 
       private Registration mySourceRegistration;
