@@ -23,6 +23,6 @@ public abstract class BaseReadableProperty<ValueT> implements ReadableProperty<V
 
   @Override
   public String toString() {
-    return getPropExpr() + " = '" + get() + "'";
+    return getPropExpr();
   }
 }
