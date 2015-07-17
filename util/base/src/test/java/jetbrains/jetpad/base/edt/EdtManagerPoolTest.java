@@ -81,7 +81,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
     assertTrue(taskExecuted.get());
   }
 
-  @Test
+  @Test(expected = RuntimeException.class)
   public void taskAfterFinished() {
     init();
     EventDispatchThreadManager manager = createManager();

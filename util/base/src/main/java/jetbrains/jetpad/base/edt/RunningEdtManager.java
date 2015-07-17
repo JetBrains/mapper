@@ -24,6 +24,7 @@ public class RunningEdtManager extends BaseEdtManager {
   private volatile boolean myExecuting = false;
   private volatile boolean myFlushing = false;
   private final List<Runnable> myTasks = new ArrayList<>();
+  private volatile boolean myFlag;
 
   public RunningEdtManager() {
     this("");
@@ -65,8 +66,11 @@ public class RunningEdtManager extends BaseEdtManager {
   }
 
   final void flush(Flusher flusher) {
+//    System.out.println("flush +");
     if (myFlushing) {
-      throw new IllegalStateException(wrapMessage("recursive flush is prohibited"));
+
+      throw new IllegalStateException(wrapMessage("recursive flush is prohibited, myFlushing=" + myFlushing + ", " +
+          "tasks queue size = " + myTasks));
     }
     myFlushing = true;
     int executedTasksCounter = 0;
@@ -80,6 +84,7 @@ public class RunningEdtManager extends BaseEdtManager {
       if (!isStopped()) {
         myTasks.subList(0, executedTasksCounter).clear();
       }
+//      System.out.println("flush -");
     }
   }
 
@@ -111,10 +116,11 @@ public class RunningEdtManager extends BaseEdtManager {
   @Override
   public void doSchedule(Runnable r) {
     if (myExecuting) {
+//      System.out.println("executing, tasks " + myTasks);
       myTasks.add(r);
     } else {
       if (!myTasks.isEmpty()) {
-        throw new IllegalStateException();
+        throw new IllegalStateException("Scheduling for non-empty tasks queue " + myTasks);
       }
       executeTask(r);
       if (!isStopped()) {

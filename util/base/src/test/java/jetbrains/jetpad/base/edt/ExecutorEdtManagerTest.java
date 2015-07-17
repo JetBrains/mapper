@@ -25,7 +25,7 @@ import static org.junit.Assert.assertFalse;
 public class ExecutorEdtManagerTest extends BaseTestCase {
   private boolean mySuccess;
 
-  @Test
+  @Test(expected = RuntimeException.class)
   public void testSubmitAfterShutdown() {
     EventDispatchThreadManager tm = new ExecutorEdtManager("My task manager");
     EventDispatchThread edt = tm.getEDT();

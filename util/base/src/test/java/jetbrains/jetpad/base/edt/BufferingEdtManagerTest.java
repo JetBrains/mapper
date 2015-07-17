@@ -75,7 +75,7 @@ public class BufferingEdtManagerTest extends BaseTestCase {
     assertTrue(manager.isStopped());
   }
 
-  @Test
+  @Test(expected = IllegalStateException.class)
   public void addTaskAfterFinish() {
     final Value<Integer> taskCompleted = new Value<>(0);
     manager.getEDT().schedule(new Runnable() {

@@ -59,9 +59,16 @@ public abstract class BaseEdtManager implements EventDispatchThreadManager, Even
     }
   }
 
+  Registration checkCanSchedule() {
+    if (isStopped()) {
+      throw new IllegalStateException();
+    }
+    return null;
+  }
+
   @Override
   public final void schedule(Runnable r) {
-    if (isStopped()) {
+    if (checkCanSchedule() != null) {
       return;
     }
     doSchedule(r);
@@ -71,8 +78,9 @@ public abstract class BaseEdtManager implements EventDispatchThreadManager, Even
 
   @Override
   public final Registration schedule(int delay, Runnable r) {
-    if (isStopped()) {
-      return Registration.EMPTY;
+    Registration reg = checkCanSchedule();
+    if (reg != null) {
+      return reg;
     }
     return doSchedule(delay, r);
   }
@@ -81,8 +89,9 @@ public abstract class BaseEdtManager implements EventDispatchThreadManager, Even
 
   @Override
   public final Registration scheduleRepeating(int period, Runnable r) {
-    if (isStopped()) {
-      return Registration.EMPTY;
+    Registration reg = checkCanSchedule();
+    if (reg != null) {
+      return reg;
     }
     return doScheduleRepeating(period, r);
   }
