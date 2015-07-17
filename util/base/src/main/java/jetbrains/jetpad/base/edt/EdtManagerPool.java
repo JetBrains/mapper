@@ -149,5 +149,10 @@ public class EdtManagerPool {
     protected Registration doScheduleRepeating(int period, Runnable runnable) {
       return myManager.getEDT().scheduleRepeating(period, runnable);
     }
+
+    @Override
+    protected void doScheduleAndWaitCompletion(Runnable r) {
+      myManager.scheduleAndWaitCompletion(r);
+    }
   }
 }

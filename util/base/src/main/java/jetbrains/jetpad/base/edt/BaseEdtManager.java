@@ -98,6 +98,16 @@ public abstract class BaseEdtManager implements EventDispatchThreadManager, Even
 
   protected abstract Registration doScheduleRepeating(int period, Runnable runnable);
 
+  @Override
+  public final void scheduleAndWaitCompletion(Runnable r) {
+    if (checkCanSchedule() != null) {
+      return;
+    }
+    doScheduleAndWaitCompletion(r);
+  }
+
+  protected abstract void doScheduleAndWaitCompletion(Runnable r);
+
   protected String wrapMessage(String message) {
     return this + ": " + message;
   }

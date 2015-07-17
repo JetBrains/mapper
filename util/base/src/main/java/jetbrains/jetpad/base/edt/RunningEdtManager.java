@@ -124,6 +124,11 @@ public class RunningEdtManager extends BaseEdtManager {
   }
 
   @Override
+  protected void doScheduleAndWaitCompletion(Runnable r) {
+    doSchedule(r);
+  }
+
+  @Override
   public Registration doSchedule(int delay, Runnable r) {
     throw new UnsupportedOperationException();
   }

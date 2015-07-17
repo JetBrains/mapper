@@ -112,6 +112,28 @@ public class ExecutorEdtManager extends BaseEdtManager {
     return getMyEdt().scheduleRepeating(period, r);
   }
 
+  @Override
+  protected void doScheduleAndWaitCompletion(final Runnable r) {
+    final CountDownLatch latch = new CountDownLatch(1);
+    doSchedule(new Runnable() {
+      @Override
+      public void run() {
+        r.run();
+        latch.countDown();
+      }
+    });
+    boolean ok = false;
+    try {
+      ok = latch.await(BIG_TIMEOUT_DAYS, TimeUnit.DAYS);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      handleException(new RuntimeException(e));
+    }
+    if (!ok) {
+      handleException(new IllegalStateException("Failed to complete a task in " + BIG_TIMEOUT_DAYS + " day(s)"));
+    }
+  }
+
   private static class ExecutorEventDispatchThread implements EventDispatchThread {
     private static final Logger LOG = Logger.getLogger(ExecutorEventDispatchThread.class.getName());
 

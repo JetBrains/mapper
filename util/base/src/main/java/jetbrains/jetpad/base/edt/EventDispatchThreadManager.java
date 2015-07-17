@@ -17,6 +17,7 @@ package jetbrains.jetpad.base.edt;
 
 public interface EventDispatchThreadManager {
   EventDispatchThread getEDT();
+  void scheduleAndWaitCompletion(Runnable r);
   void finish();
   void kill();
   boolean isStopped();
