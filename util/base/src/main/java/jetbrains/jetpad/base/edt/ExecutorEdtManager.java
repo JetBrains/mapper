@@ -118,8 +118,11 @@ public class ExecutorEdtManager extends BaseEdtManager {
     doSchedule(new Runnable() {
       @Override
       public void run() {
-        r.run();
-        latch.countDown();
+        try {
+          r.run();
+        } finally {
+          latch.countDown();
+        }
       }
     });
     boolean ok = false;
