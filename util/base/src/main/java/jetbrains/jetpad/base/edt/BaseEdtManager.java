@@ -15,13 +15,10 @@
  */
 package jetbrains.jetpad.base.edt;
 
-import jetbrains.jetpad.base.Registration;
-
-public abstract class BaseEdtManager implements EventDispatchThreadManager, EventDispatchThread {
-  private volatile boolean myFinished;
+abstract class BaseEdtManager implements EventDispatchThreadManager, EventDispatchThread {
   private final String myName;
 
-  public BaseEdtManager(String name) {
+  BaseEdtManager(String name) {
     myName = name;
   }
 
@@ -30,83 +27,9 @@ public abstract class BaseEdtManager implements EventDispatchThreadManager, Even
     return this;
   }
 
-  @Override
-  public void finish() {
-    checkCanStop();
-  }
-
-  @Override
-  public void kill() {
-    checkCanStop();
-  }
-
-  @Override
-  public boolean isStopped() {
-    return myFinished;
-  }
-
   public String getName() {
     return myName;
   }
-
-  protected void shutdown() {
-    myFinished = true;
-  }
-
-  private void checkCanStop() {
-    if (myFinished) {
-      throw new IllegalStateException(wrapMessage("has already been stopped"));
-    }
-  }
-
-  Registration checkCanSchedule() {
-    if (isStopped()) {
-      throw new IllegalStateException();
-    }
-    return null;
-  }
-
-  @Override
-  public final void schedule(Runnable r) {
-    if (checkCanSchedule() != null) {
-      return;
-    }
-    doSchedule(r);
-  }
-
-  protected abstract void doSchedule(Runnable runnable);
-
-  @Override
-  public final Registration schedule(int delay, Runnable r) {
-    Registration reg = checkCanSchedule();
-    if (reg != null) {
-      return reg;
-    }
-    return doSchedule(delay, r);
-  }
-
-  protected abstract Registration doSchedule(int delay, Runnable runnable);
-
-  @Override
-  public final Registration scheduleRepeating(int period, Runnable r) {
-    Registration reg = checkCanSchedule();
-    if (reg != null) {
-      return reg;
-    }
-    return doScheduleRepeating(period, r);
-  }
-
-  protected abstract Registration doScheduleRepeating(int period, Runnable runnable);
-
-  @Override
-  public final void scheduleAndWaitCompletion(Runnable r) {
-    if (checkCanSchedule() != null) {
-      return;
-    }
-    doScheduleAndWaitCompletion(r);
-  }
-
-  protected abstract void doScheduleAndWaitCompletion(Runnable r);
 
   protected String wrapMessage(String message) {
     return this + ": " + message;

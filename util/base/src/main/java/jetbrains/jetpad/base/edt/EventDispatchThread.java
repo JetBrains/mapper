@@ -18,8 +18,24 @@ package jetbrains.jetpad.base.edt;
 import jetbrains.jetpad.base.Registration;
 
 public interface EventDispatchThread {
+  /**
+   *
+   * @param r Runnable to be scheduled
+   * @throws EventDispatchThreadException in case of failure, e.g. if the thread has been shutdown
+   */
   void schedule(Runnable r);
 
+  /**
+   *
+   * @param r Runnable to be scheduled
+   * @throws EventDispatchThreadException in case of failure, e.g. if the thread has been shutdown
+   */
   Registration schedule(int delay, Runnable r);
+
+  /**
+   *
+   * @param r Runnable to be scheduled
+   * @throws EventDispatchThreadException in case of failure, e.g. if the thread has been shutdown
+   */
   Registration scheduleRepeating(int period, Runnable r);
 }

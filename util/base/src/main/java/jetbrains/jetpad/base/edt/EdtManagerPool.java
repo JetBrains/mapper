@@ -110,13 +110,11 @@ public class EdtManagerPool {
 
     @Override
     public void finish() {
-      super.finish();
       final CountDownLatch latch = new CountDownLatch(1);
       myManager.getEDT().schedule(new Runnable() {
-          @Override
-          public void run() {
-            shutdown();
-            latch.countDown();
+        @Override
+        public void run() {
+          latch.countDown();
           }
         });
       try {
@@ -130,28 +128,31 @@ public class EdtManagerPool {
 
     @Override
     public void kill() {
-      super.kill();
-      shutdown();
       decWorkingAdapters(myIndex);
     }
 
     @Override
-    protected void doSchedule(Runnable runnable) {
+    public boolean isStopped() {
+      return myManager.isStopped();
+    }
+
+    @Override
+    public final void schedule(Runnable runnable) {
       myManager.getEDT().schedule(runnable);
     }
 
     @Override
-    protected Registration doSchedule(int delay, Runnable runnable) {
+    public final Registration schedule(int delay, Runnable runnable) {
       return myManager.getEDT().schedule(delay, runnable);
     }
 
     @Override
-    protected Registration doScheduleRepeating(int period, Runnable runnable) {
+    public final Registration scheduleRepeating(int period, Runnable runnable) {
       return myManager.getEDT().scheduleRepeating(period, runnable);
     }
 
     @Override
-    protected void doScheduleAndWaitCompletion(Runnable r) {
+    public final void scheduleAndWaitCompletion(Runnable r) {
       myManager.scheduleAndWaitCompletion(r);
     }
   }

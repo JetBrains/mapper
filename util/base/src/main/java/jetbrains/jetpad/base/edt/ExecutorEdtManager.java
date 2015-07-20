@@ -57,15 +57,12 @@ public class ExecutorEdtManager extends BaseEdtManager {
 
   @Override
   public void finish() {
-    super.finish();
     myEdt.getExecutor().shutdown();
-    shutdown();
     waitTermination();
   }
 
   @Override
   public void kill() {
-    super.kill();
     myEdt.getExecutor().shutdownNow();
     waitTermination();
   }
@@ -78,19 +75,23 @@ public class ExecutorEdtManager extends BaseEdtManager {
       Thread.currentThread().interrupt();
     }
     if (!terminated) {
-      handleException(new RuntimeException("failed to finish ThreadyTaskManager in " + BIG_TIMEOUT_DAYS +
+      handleException(new RuntimeException("failed to finish ExecutorEdtManager in " + BIG_TIMEOUT_DAYS +
           " days"));
     }
   }
 
   @Override
   public boolean isStopped() {
-    return super.isStopped() && isThreadInactive();
+    return isThreadInactive();
   }
 
   @Override
-  protected void doSchedule(Runnable runnable) {
-    getMyEdt().schedule(runnable);
+  public final void schedule(Runnable runnable) {
+    try {
+      getMyEdt().schedule(runnable);
+    } catch (RejectedExecutionException e) {
+      throw new EventDispatchThreadException(e);
+    }
   }
 
 
@@ -103,28 +104,44 @@ public class ExecutorEdtManager extends BaseEdtManager {
   }
 
   @Override
-  public Registration doSchedule(int delay, Runnable r) {
-    return getMyEdt().schedule(delay, r);
+  public final Registration schedule(int delay, Runnable r) {
+    Registration reg;
+    try {
+      reg = getMyEdt().schedule(delay, r);
+    } catch (RejectedExecutionException e) {
+      throw new EventDispatchThreadException(e);
+    }
+    return reg;
   }
 
   @Override
-  public Registration doScheduleRepeating(int period, Runnable r) {
-    return getMyEdt().scheduleRepeating(period, r);
+  public final Registration scheduleRepeating(int period, Runnable r) {
+    Registration reg;
+    try {
+      reg = getMyEdt().scheduleRepeating(period, r);
+    } catch (RejectedExecutionException e) {
+      throw new EventDispatchThreadException(e);
+    }
+    return reg;
   }
 
   @Override
-  protected void doScheduleAndWaitCompletion(final Runnable r) {
+  public final void scheduleAndWaitCompletion(final Runnable r) {
     final CountDownLatch latch = new CountDownLatch(1);
-    doSchedule(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          r.run();
-        } finally {
-          latch.countDown();
+    try {
+      schedule(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            r.run();
+          } finally {
+            latch.countDown();
+          }
         }
-      }
-    });
+      });
+    } catch (RejectedExecutionException e) {
+      throw new EventDispatchThreadException(e);
+    }
     boolean ok = false;
     try {
       ok = latch.await(BIG_TIMEOUT_DAYS, TimeUnit.DAYS);

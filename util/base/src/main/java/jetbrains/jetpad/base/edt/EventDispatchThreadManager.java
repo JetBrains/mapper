@@ -17,7 +17,14 @@ package jetbrains.jetpad.base.edt;
 
 public interface EventDispatchThreadManager {
   EventDispatchThread getEDT();
+
+  /**
+   *
+   * @param r Runnable to be scheduled
+   * @throws EventDispatchThreadException in case of failure, e.g. if the manager has been finished or killed
+   */
   void scheduleAndWaitCompletion(Runnable r);
+
   void finish();
   void kill();
   boolean isStopped();

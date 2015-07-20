@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RunningEdtManager extends BaseEdtManager {
+  private volatile boolean myFinished;
   private volatile boolean myExecuting = false;
   private volatile boolean myFlushing = false;
   private final List<Runnable> myTasks = new ArrayList<>();
@@ -35,7 +36,7 @@ public class RunningEdtManager extends BaseEdtManager {
 
   @Override
   public void finish() {
-    super.finish();
+    checkCanStop();
     final int tasksLeft = myTasks.size();
     if (!myFlushing) {
       flush(new Flusher() {
@@ -50,9 +51,65 @@ public class RunningEdtManager extends BaseEdtManager {
 
   @Override
   public void kill() {
-    super.kill();
+    checkCanStop();
     myTasks.clear();
     shutdown();
+  }
+
+  protected void shutdown() {
+    myFinished = true;
+  }
+
+  @Override
+  public final void schedule(Runnable r) {
+    if (checkCanSchedule() != null) {
+      return;
+    }
+    doSchedule(r);
+  }
+
+  @Override
+  public final Registration schedule(int delay, Runnable r) {
+    Registration reg = checkCanSchedule();
+    if (reg != null) {
+      return reg;
+    }
+    return doSchedule(delay, r);
+  }
+
+  @Override
+  public final Registration scheduleRepeating(int period, Runnable r) {
+    Registration reg = checkCanSchedule();
+    if (reg != null) {
+      return reg;
+    }
+    return doScheduleRepeating(period, r);
+  }
+
+  @Override
+  public void scheduleAndWaitCompletion(Runnable r) {
+    if (checkCanSchedule() != null) {
+      return;
+    }
+    doScheduleAndWaitCompletion(r);
+  }
+
+  Registration checkCanSchedule() {
+    if (isStopped()) {
+      throw new EventDispatchThreadException();
+    }
+    return null;
+  }
+
+  private void checkCanStop() {
+    if (myFinished) {
+      throw new IllegalStateException(wrapMessage("has already been stopped"));
+    }
+  }
+
+  @Override
+  public boolean isStopped() {
+    return myFinished;
   }
 
   final void flushAll() {
@@ -108,7 +165,6 @@ public class RunningEdtManager extends BaseEdtManager {
     myTasks.add(r);
   }
 
-  @Override
   public void doSchedule(Runnable r) {
     if (myExecuting) {
       myTasks.add(r);
@@ -123,17 +179,14 @@ public class RunningEdtManager extends BaseEdtManager {
     }
   }
 
-  @Override
   protected void doScheduleAndWaitCompletion(Runnable r) {
     doSchedule(r);
   }
 
-  @Override
   public Registration doSchedule(int delay, Runnable r) {
     throw new UnsupportedOperationException();
   }
 
-  @Override
   public Registration doScheduleRepeating(int period, Runnable r) {
     throw new UnsupportedOperationException();
   }
