@@ -28,7 +28,7 @@ public class JsonParser {
       }
       return result;
     } catch (RuntimeException e) {
-      throw new JsonParsingException("json=[" + input + ']', e);
+      throw new JsonParsingException("Failed to parse json=" + input, e);
     }
   }
 
