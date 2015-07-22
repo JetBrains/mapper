@@ -25,18 +25,6 @@ public class BufferingEdtManager extends RunningEdtManager {
   }
 
   @Override
-  protected void doScheduleAndWaitCompletion(Runnable r) {
-    doSchedule(r);
-    final int tasks = size();
-    flush(new Flusher() {
-      @Override
-      public int getLimit() {
-        return tasks;
-      }
-    });
-  }
-
-  @Override
   public void doSchedule(Runnable r) {
     addTaskToQueue(r);
   }

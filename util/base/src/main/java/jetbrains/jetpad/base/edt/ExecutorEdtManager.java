@@ -125,35 +125,6 @@ public class ExecutorEdtManager extends BaseEdtManager {
     return reg;
   }
 
-  @Override
-  public final void scheduleAndWaitCompletion(final Runnable r) {
-    final CountDownLatch latch = new CountDownLatch(1);
-    try {
-      schedule(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            r.run();
-          } finally {
-            latch.countDown();
-          }
-        }
-      });
-    } catch (RejectedExecutionException e) {
-      throw new EventDispatchThreadException(e);
-    }
-    boolean ok = false;
-    try {
-      ok = latch.await(BIG_TIMEOUT_DAYS, TimeUnit.DAYS);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      handleException(new RuntimeException(e));
-    }
-    if (!ok) {
-      handleException(new IllegalStateException("Failed to complete a task in " + BIG_TIMEOUT_DAYS + " day(s)"));
-    }
-  }
-
   private static class ExecutorEventDispatchThread implements EventDispatchThread {
     private static final Logger LOG = Logger.getLogger(ExecutorEventDispatchThread.class.getName());
 

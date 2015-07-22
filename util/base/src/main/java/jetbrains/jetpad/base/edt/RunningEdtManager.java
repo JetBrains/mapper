@@ -86,14 +86,6 @@ public class RunningEdtManager extends BaseEdtManager {
     return doScheduleRepeating(period, r);
   }
 
-  @Override
-  public void scheduleAndWaitCompletion(Runnable r) {
-    if (checkCanSchedule() != null) {
-      return;
-    }
-    doScheduleAndWaitCompletion(r);
-  }
-
   Registration checkCanSchedule() {
     if (isStopped()) {
       throw new EventDispatchThreadException();
@@ -177,10 +169,6 @@ public class RunningEdtManager extends BaseEdtManager {
         flushAll();
       }
     }
-  }
-
-  protected void doScheduleAndWaitCompletion(Runnable r) {
-    doSchedule(r);
   }
 
   public Registration doSchedule(int delay, Runnable r) {

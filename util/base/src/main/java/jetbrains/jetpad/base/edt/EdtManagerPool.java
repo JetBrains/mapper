@@ -151,9 +151,5 @@ public class EdtManagerPool {
       return myManager.getEDT().scheduleRepeating(period, runnable);
     }
 
-    @Override
-    public final void scheduleAndWaitCompletion(Runnable r) {
-      myManager.scheduleAndWaitCompletion(r);
-    }
   }
 }
