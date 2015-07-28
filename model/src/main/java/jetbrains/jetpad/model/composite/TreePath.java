@@ -18,6 +18,7 @@ package jetbrains.jetpad.model.composite;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,7 +62,9 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     CompositeT current = root;
     for (Integer i : myPath) {
       ObservableList<CompositeT> children = current.children();
-      if (i >= children.size()) return false;
+      if (i >= children.size()) {
+        return false;
+      }
       current = children.get(i);
     }
     return true;
