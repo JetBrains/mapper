@@ -15,8 +15,12 @@
  */
 package jetbrains.jetpad.test;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,11 +39,18 @@ public abstract class BaseTestCase {
   @BeforeClass
   public static void turnLoggingOff() {
     ourLevel = Logger.getLogger("").getLevel();
-    Logger.getLogger("").setLevel(Level.OFF);
+    setLogsLevel(Level.OFF);
   }
 
   @AfterClass
   public static void turnLoggingBack() {
-    Logger.getLogger("").setLevel(ourLevel);
+    setLogsLevel(ourLevel);
+  }
+
+  private static void setLogsLevel(Level level) {
+    Logger.getLogger("").setLevel(level);
+    for (Handler handler : Logger.getLogger("").getHandlers()) {
+      handler.setLevel(level);
+    }
   }
 }
