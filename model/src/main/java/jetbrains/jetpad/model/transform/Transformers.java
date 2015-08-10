@@ -188,13 +188,13 @@ public class Transformers {
     return listMap(fromFun(f));
   }
 
-  public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>>
-  Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
+  public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>, CollectionT extends ObservableCollection<ItemT>>
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
     return sortBy(propSpec, Order.ASCENDING);
   }
 
-  public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>>
-  Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Order order) {
+  public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>, CollectionT extends ObservableCollection<ItemT>>
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Order order) {
     return sortBy(propSpec, new Comparator<ValueT>() {
       @Override
       public int compare(ValueT o1, ValueT o2) {
@@ -206,8 +206,8 @@ public class Transformers {
     });
   }
 
-  public static <SpecItemT, ItemT extends SpecItemT, ValueT>
-  Transformer<ObservableCollection<ItemT>, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Comparator<ValueT> cmp) {
+  public static <SpecItemT, ItemT extends SpecItemT, ValueT, CollectionT extends ObservableCollection<ItemT>>
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Comparator<ValueT> cmp) {
     final Comparator<ItemT> comparator = new Comparator<ItemT>() {
       @Override
       public int compare(ItemT i1, ItemT i2) {
@@ -234,7 +234,7 @@ public class Transformers {
       }
     };
 
-    return new BaseTransformer<ObservableCollection<ItemT>, ObservableList<ItemT>>() {
+    return new BaseTransformer<CollectionT, ObservableList<ItemT>>() {
       private Map<ItemT, Registration> myListeners = new HashMap<>();
       private Registration myCollectionRegistration;
       private CollectionListener<ItemT> myCollectionListener;
@@ -274,12 +274,12 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableCollection<ItemT>, ObservableList<ItemT>> transform(ObservableCollection<ItemT> from) {
+      public Transformation<CollectionT, ObservableList<ItemT>> transform(CollectionT from) {
         return transform(from, new ObservableArrayList<ItemT>());
       }
 
       @Override
-      public Transformation<ObservableCollection<ItemT>, ObservableList<ItemT>> transform(final ObservableCollection<ItemT> from, final ObservableList<ItemT> to) {
+      public Transformation<CollectionT, ObservableList<ItemT>> transform(final CollectionT from, final ObservableList<ItemT> to) {
         myCollectionListener = new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
@@ -313,9 +313,9 @@ public class Transformers {
 
         myCollectionRegistration = from.addListener(myCollectionListener);
 
-        return new Transformation<ObservableCollection<ItemT>, ObservableList<ItemT>>() {
+        return new Transformation<CollectionT, ObservableList<ItemT>>() {
           @Override
-          public ObservableCollection<ItemT> getSource() {
+          public CollectionT getSource() {
             return from;
           }
 
