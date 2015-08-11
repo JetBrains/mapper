@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.mapper;
 
-import com.sun.tools.internal.xjc.reader.xmlschema.ErrorReporter;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
