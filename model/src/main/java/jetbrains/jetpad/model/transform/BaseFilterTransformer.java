@@ -106,7 +106,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
       }
 
       @Override
-      public void dispose() {
+      protected void doDispose() {
         myCollectionRegistration.remove();
         for (ItemT item : from) {
           unwatch(item);

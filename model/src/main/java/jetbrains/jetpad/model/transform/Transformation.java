@@ -17,7 +17,24 @@ package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Disposable;
 
-public interface Transformation<SourceT, TargetT> extends Disposable {
-  SourceT getSource();
-  TargetT getTarget();
+public abstract class Transformation<SourceT, TargetT> implements Disposable {
+  private boolean myDisposed;
+
+  public abstract SourceT getSource();
+  public abstract TargetT getTarget();
+
+  @Override
+  public final void dispose() {
+    if (myDisposed) {
+      throw new IllegalStateException("Already disposed");
+    }
+    try {
+      doDispose();
+    } finally {
+      myDisposed = true;
+    }
+  }
+
+  protected void doDispose() {
+  }
 }

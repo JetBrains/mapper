@@ -48,7 +48,7 @@ public abstract class BaseTransformer<SourceT, TargetT> implements Transformer<S
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             tn1.dispose();
             tn2.dispose();
           }

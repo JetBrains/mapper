@@ -50,10 +50,6 @@ public class Transformers {
           public TargetT getTarget() {
             return from;
           }
-
-          @Override
-          public void dispose() {
-          }
         };
       }
 
@@ -77,11 +73,6 @@ public class Transformers {
           @Override
           public ObservableList<? extends ItemT> getTarget() {
             return from;
-          }
-
-          @Override
-          public void dispose() {
-
           }
         };
 
@@ -108,10 +99,6 @@ public class Transformers {
           @Override
           public TargetT getTarget() {
             return target;
-          }
-
-          @Override
-          public void dispose() {
           }
         };
       }
@@ -173,7 +160,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             for (Registration r : itemRegistrations) {
               r.remove();
             }
@@ -325,7 +312,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             for (ItemT item : from) {
               unwatch(item);
             }
@@ -437,7 +424,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             myCollectionRegistration.remove();
           }
 
@@ -526,7 +513,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromReg.remove();
             propReg.remove();
           }
@@ -630,7 +617,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             for (SourceT s : from) {
               registrations.remove(s).remove();
             }
@@ -700,7 +687,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             reg.remove();
             for (Registration r : propRegistrations) {
               r.remove();
@@ -784,7 +771,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             for (SourceT s : from) {
               registrations.remove(s).remove();
             }
@@ -829,7 +816,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             registration.remove();
           }
         };
@@ -870,7 +857,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             registration.remove();
           }
         };
@@ -919,7 +906,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
           }
         };
@@ -987,7 +974,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
             itemsRegistration.remove();
           }
@@ -1063,7 +1050,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
             conditionRegistration.remove();
           }
@@ -1132,7 +1119,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
             conditionRegistration.remove();
           }
@@ -1194,7 +1181,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
           }
         };
@@ -1247,7 +1234,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             r.remove();
           }
         };
@@ -1301,7 +1288,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             r.remove();
           }
         };
@@ -1348,7 +1335,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
           }
         };
@@ -1395,7 +1382,7 @@ public class Transformers {
           }
 
           @Override
-          public void dispose() {
+          protected void doDispose() {
             fromRegistration.remove();
           }
         };
