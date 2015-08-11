@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.mapper;
 
+import com.sun.tools.internal.xjc.reader.xmlschema.ErrorReporter;
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
@@ -123,7 +125,12 @@ public abstract class Mapper<SourceT, TargetT> {
       throw new IllegalStateException("Mapper can't be reused because it was already detached");
     }
 
-    onBeforeAttach(ctx);
+    try {
+      onBeforeAttach(ctx);
+    } catch (Throwable t) {
+      ThrowableHandlers.handle(t);
+    }
+
 
     myMappingContext = ctx;
 
@@ -148,7 +155,11 @@ public abstract class Mapper<SourceT, TargetT> {
       }
     }
 
-    onAttach(ctx);
+    try {
+      onAttach(ctx);
+    } catch (Throwable t) {
+      ThrowableHandlers.handle(t);
+    }
   }
 
   final void detach() {
@@ -156,12 +167,20 @@ public abstract class Mapper<SourceT, TargetT> {
       throw new IllegalStateException();
     }
 
-    onDetach();
+    try {
+      onDetach();
+    } catch (Throwable t) {
+      ThrowableHandlers.handle(t);
+    }
 
     for (Object part : myParts) {
       if (part instanceof Synchronizer) {
         Synchronizer s = (Synchronizer) part;
-        s.detach();
+        try {
+          s.detach();
+        } catch (Throwable t) {
+          ThrowableHandlers.handle(t);
+        }
       }
       if (part instanceof ChildContainer) {
         ChildContainer cc = (ChildContainer) part;
