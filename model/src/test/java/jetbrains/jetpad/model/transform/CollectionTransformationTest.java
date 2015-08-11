@@ -114,7 +114,7 @@ public class CollectionTransformationTest {
   }
 
   @Test
-  public void sortWithTwoTransformsBug() {
+  public void sortWithTwoTransformsRegistrationDisposeBug() {
     Transformer<ObservableCollection<MyObject>, ObservableList<MyObject>> trans = createSortTransformer();
 
     Transformation<ObservableCollection<MyObject>, ObservableList<MyObject>> transformation = trans.transform(new ObservableArrayList<MyObject>());
@@ -127,6 +127,22 @@ public class CollectionTransformationTest {
     from.add(new MyObject("a"));
 
     assertEquals("[a]", toList.toString());
+  }
+
+  @Test
+  public void sortWithTwoTransformsItemRegistrationDisposeBug() {
+    Transformer<ObservableCollection<MyObject>, ObservableList<MyObject>> trans = createSortTransformer();
+
+    Transformation<ObservableCollection<MyObject>, ObservableList<MyObject>> t1 = trans.transform(new ObservableArrayList<MyObject>());
+    Transformation<ObservableCollection<MyObject>, ObservableList<MyObject>> t2 = trans.transform(new ObservableArrayList<MyObject>());
+
+
+    MyObject o1 = new MyObject("a");
+    t1.getSource().add(o1);
+    t2.getSource().add(o1);
+
+    t1.getSource().remove(o1);
+    t2.getSource().remove(o1);
   }
 
   @Test
