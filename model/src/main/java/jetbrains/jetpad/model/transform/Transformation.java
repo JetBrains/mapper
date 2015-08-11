@@ -28,11 +28,8 @@ public abstract class Transformation<SourceT, TargetT> implements Disposable {
     if (myDisposed) {
       throw new IllegalStateException("Already disposed");
     }
-    try {
-      doDispose();
-    } finally {
-      myDisposed = true;
-    }
+    myDisposed = true;
+    doDispose();
   }
 
   protected void doDispose() {
