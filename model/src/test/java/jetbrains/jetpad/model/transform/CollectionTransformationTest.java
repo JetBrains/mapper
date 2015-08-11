@@ -97,30 +97,36 @@ public class CollectionTransformationTest {
     from.add(new MyObject("c"));
     from.add(new MyObject("b"));
 
-    Transformers.sortBy(new Function<MyObject, ReadableProperty<String>>() {
-      @Override
-      public Property<String> apply(MyObject input) {
-        return input.name;
-      }
-    }).transform(from, toList);
+    createSortTransformer().transform(from, toList);
 
     assertEquals("[a, b, c]", toList.toString());
   }
 
   @Test
   public void sortHandling() {
-    Transformers.sortBy(new Function<MyObject, ReadableProperty<String>>() {
-      @Override
-      public Property<String> apply(MyObject input) {
-        return input.name;
-      }
-    }).transform(from, toList);
+    createSortTransformer().transform(from, toList);
 
     from.add(new MyObject("a"));
     from.add(new MyObject("c"));
     from.add(new MyObject("b"));
 
     assertEquals("[a, b, c]", toList.toString());
+  }
+
+  @Test
+  public void sortWithTwoTransformsBug() {
+    Transformer<ObservableCollection<MyObject>, ObservableList<MyObject>> trans = createSortTransformer();
+
+    Transformation<ObservableCollection<MyObject>, ObservableList<MyObject>> transformation = trans.transform(new ObservableArrayList<MyObject>());
+
+    trans.transform(from, toList);
+
+    transformation.dispose();
+
+
+    from.add(new MyObject("a"));
+
+    assertEquals("[a]", toList.toString());
   }
 
   @Test
@@ -290,6 +296,16 @@ public class CollectionTransformationTest {
     prop.set(0);
 
     assertEquals("[]", toList.toString());
+  }
+
+
+  private Transformer<ObservableCollection<MyObject>, ObservableList<MyObject>> createSortTransformer() {
+    return Transformers.sortBy(new Function<MyObject, ReadableProperty<String>>() {
+      @Override
+      public Property<String> apply(MyObject input) {
+        return input.name;
+      }
+    });
   }
 
   private Transformation<ObservableCollection<MyObject>, ObservableCollection<MyObject>> initForFlattenTest() {

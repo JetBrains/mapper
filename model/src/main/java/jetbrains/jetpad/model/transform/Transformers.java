@@ -223,7 +223,6 @@ public class Transformers {
 
     return new BaseTransformer<CollectionT, ObservableList<ItemT>>() {
       private Map<ItemT, Registration> myListeners = new HashMap<>();
-      private Registration myCollectionRegistration;
       private CollectionListener<ItemT> myCollectionListener;
 
       private void watch(final ItemT item, final ObservableList<ItemT> to) {
@@ -298,7 +297,7 @@ public class Transformers {
         }
         Collections.sort(to, comparator);
 
-        myCollectionRegistration = from.addListener(myCollectionListener);
+        final Registration collectionReg = from.addListener(myCollectionListener);
 
         return new Transformation<CollectionT, ObservableList<ItemT>>() {
           @Override
@@ -313,10 +312,10 @@ public class Transformers {
 
           @Override
           protected void doDispose() {
+            collectionReg.remove();
             for (ItemT item : from) {
               unwatch(item);
             }
-            myCollectionRegistration.remove();
           }
         };
       }
