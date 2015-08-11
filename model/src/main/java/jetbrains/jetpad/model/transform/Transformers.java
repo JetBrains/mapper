@@ -222,43 +222,6 @@ public class Transformers {
     };
 
     return new BaseTransformer<CollectionT, ObservableList<ItemT>>() {
-      private Map<ItemT, Registration> myListeners = new HashMap<>();
-      private CollectionListener<ItemT> myCollectionListener;
-
-      private void watch(final ItemT item, final ObservableList<ItemT> to) {
-        ReadableProperty<ValueT> property = propSpec.apply(item);
-        if (property == null) {
-          throw new NullPointerException();
-        }
-        myListeners.put(item, property.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
-          @Override
-          public void onEvent(PropertyChangeEvent<ValueT> event) {
-            boolean needMove = false;
-            int sortedIndex = to.indexOf(item);
-            if (sortedIndex > 0) {
-              ItemT before = to.get(sortedIndex - 1);
-              if (comparator.compare(before, item) > 0) {
-                needMove = true;
-              }
-            }
-            if (sortedIndex < to.size() - 1) {
-              ItemT after = to.get(sortedIndex + 1);
-              if (comparator.compare(item, after) > 0) {
-                needMove = true;
-              }
-            }
-            if (needMove) {
-              myCollectionListener.onItemRemoved(new CollectionItemEvent<>(item, -1, false));
-              myCollectionListener.onItemAdded(new CollectionItemEvent<>(item, -1, true));
-            }
-          }
-        }));
-      }
-
-      private void unwatch(ItemT item) {
-        myListeners.remove(item).remove();
-      }
-
       @Override
       public Transformation<CollectionT, ObservableList<ItemT>> transform(CollectionT from) {
         return transform(from, new ObservableArrayList<ItemT>());
@@ -266,40 +229,46 @@ public class Transformers {
 
       @Override
       public Transformation<CollectionT, ObservableList<ItemT>> transform(final CollectionT from, final ObservableList<ItemT> to) {
-        myCollectionListener = new CollectionAdapter<ItemT>() {
-          @Override
-          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-            ItemT item = event.getItem();
-            watch(item, to);
-
-            int pos = Collections.binarySearch(to, item, comparator);
-            int insertIndex = pos >= 0 ? pos + 1 : -(pos + 1);
-            to.add(insertIndex, item);
-          }
-
-          @Override
-          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
-            ItemT item = event.getItem();
-
-            int sortedIndex = to.indexOf(item);
-            if (sortedIndex == -1) {
-              throw new IllegalStateException();
-            }
-
-            to.remove(sortedIndex);
-            unwatch(item);
-          }
-        };
-
-        for (ItemT item : from) {
-          watch(item, to);
-          to.add(item);
-        }
-        Collections.sort(to, comparator);
-
-        final Registration collectionReg = from.addListener(myCollectionListener);
-
         return new Transformation<CollectionT, ObservableList<ItemT>>() {
+          Registration myCollectionReg;
+          CollectionListener<ItemT> myCollectionListener;
+          Map<ItemT, Registration> myListeners = new HashMap<>();
+
+          {
+            myCollectionReg = from.addListener(myCollectionListener = new CollectionAdapter<ItemT>() {
+              @Override
+              public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+                ItemT item = event.getItem();
+                watch(item, to);
+
+                int pos = Collections.binarySearch(to, item, comparator);
+                int insertIndex = pos >= 0 ? pos + 1 : -(pos + 1);
+                to.add(insertIndex, item);
+              }
+
+              @Override
+              public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+                ItemT item = event.getItem();
+
+                int sortedIndex = to.indexOf(item);
+                if (sortedIndex == -1) {
+                  throw new IllegalStateException();
+                }
+
+                to.remove(sortedIndex);
+                unwatch(item);
+              }
+            });
+
+
+            for (ItemT item : from) {
+              watch(item, to);
+              to.add(item);
+            }
+            Collections.sort(to, comparator);
+          }
+
+
           @Override
           public CollectionT getSource() {
             return from;
@@ -312,10 +281,44 @@ public class Transformers {
 
           @Override
           protected void doDispose() {
-            collectionReg.remove();
+            myCollectionReg.remove();
             for (ItemT item : from) {
               unwatch(item);
             }
+          }
+
+          private void watch(final ItemT item, final ObservableList<ItemT> to) {
+            ReadableProperty<ValueT> property = propSpec.apply(item);
+            if (property == null) {
+              throw new NullPointerException();
+            }
+            myListeners.put(item, property.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+              @Override
+              public void onEvent(PropertyChangeEvent<ValueT> event) {
+                boolean needMove = false;
+                int sortedIndex = to.indexOf(item);
+                if (sortedIndex > 0) {
+                  ItemT before = to.get(sortedIndex - 1);
+                  if (comparator.compare(before, item) > 0) {
+                    needMove = true;
+                  }
+                }
+                if (sortedIndex < to.size() - 1) {
+                  ItemT after = to.get(sortedIndex + 1);
+                  if (comparator.compare(item, after) > 0) {
+                    needMove = true;
+                  }
+                }
+                if (needMove) {
+                  myCollectionListener.onItemRemoved(new CollectionItemEvent<>(item, -1, false));
+                  myCollectionListener.onItemAdded(new CollectionItemEvent<>(item, -1, true));
+                }
+              }
+            }));
+          }
+
+          private void unwatch(ItemT item) {
+            myListeners.remove(item).remove();
           }
         };
       }
