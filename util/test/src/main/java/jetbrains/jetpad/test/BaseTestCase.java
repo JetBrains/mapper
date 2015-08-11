@@ -38,19 +38,20 @@ public abstract class BaseTestCase {
 
   @BeforeClass
   public static void turnLoggingOff() {
-    ourLevel = Logger.getLogger("").getLevel();
-    setLogsLevel(Level.OFF);
+    ourLevel = resetLogsLevel(Level.OFF);
   }
 
   @AfterClass
   public static void turnLoggingBack() {
-    setLogsLevel(ourLevel);
+    resetLogsLevel(ourLevel);
   }
 
-  private static void setLogsLevel(Level level) {
+  public static Level resetLogsLevel(Level level) {
+    Level oldLevel = Logger.getLogger("").getLevel();
     Logger.getLogger("").setLevel(level);
     for (Handler handler : Logger.getLogger("").getHandlers()) {
       handler.setLevel(level);
     }
+    return oldLevel;
   }
 }
