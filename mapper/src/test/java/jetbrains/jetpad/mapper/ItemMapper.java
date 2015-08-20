@@ -37,7 +37,7 @@ class ItemMapper extends Mapper<Item, Item> {
     mySimpleRole.refresh();
   }
 
-  private MapperFactory<Item, Item> createMapperFactory() {
+  protected MapperFactory<Item, Item> createMapperFactory() {
     return new MapperFactory<Item, Item>() {
       @Override
       public Mapper<? extends Item, ? extends Item> createMapper(Item source) {

@@ -131,6 +131,14 @@ public final class MappingContext {
     return result;
   }
 
+  Set<Mapper<?, ?>> getMappers() {
+    Set<Mapper<?, ?>> mappers = new HashSet<>();
+    for (Object source : myMappers.keySet()) {
+      mappers.addAll(getMappers(source));
+    }
+    return mappers;
+  }
+
   private <S> Set<Mapper<? super S, ?>> getMappers(S source) {
     if (!(myMappers.containsKey(source))) {
       return Collections.emptySet();

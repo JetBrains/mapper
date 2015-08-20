@@ -173,7 +173,7 @@ public class MapperTest {
   }
 
   private void assertMapped() {
-    Assert.assertEquals(source, target);
+    Assert.assertTrue(source.contentEquals(target));
   }
 
   private static Item createItemTree() {
