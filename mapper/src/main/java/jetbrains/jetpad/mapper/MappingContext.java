@@ -131,12 +131,7 @@ public final class MappingContext {
     return result;
   }
 
-  /**
-   * This method is for tests only. Usage of this method in mappers will lead to code which
-   * arbitrarily selects a mapper. Doing so if we have several mappers of the same kind for
-   * the same node, will lead to non determinism and hinder mapper reusability.
-   */
-  <S> Set<Mapper<? super S, ?>> getMappers(S source) {
+  private <S> Set<Mapper<? super S, ?>> getMappers(S source) {
     if (!(myMappers.containsKey(source))) {
       return Collections.emptySet();
     }
