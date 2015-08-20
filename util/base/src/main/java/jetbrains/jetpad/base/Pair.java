@@ -43,4 +43,9 @@ public final class Pair<FirstT, SecondT> {
     result = 31 * result + (second != null ? second.hashCode() : 0);
     return result;
   }
+
+  @Override
+  public String toString() {
+    return "[" + first + ", " + second + ']';
+  }
 }
