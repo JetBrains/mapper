@@ -24,12 +24,12 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class MappersByTargetFinderTest extends BaseTestCase {
+public class ByTargetIndexTest extends BaseTestCase {
   private Map<Item, Item> sourceToTarget = new HashMap<>();
 
   private Item item;
   private Item child;
-  private MappersByTargetFinder finder;
+  private ByTargetIndex finder;
 
   @Before
   public void init() {
@@ -40,7 +40,7 @@ public class MappersByTargetFinderTest extends BaseTestCase {
     MyItemMapper mapper = new MyItemMapper(item);
     mapper.attachRoot();
 
-    finder = new MappersByTargetFinder(mapper.getMappingContext());
+    finder = new ByTargetIndex(mapper.getMappingContext());
   }
 
   @Test

@@ -21,12 +21,12 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.Collection;
 
-public class MappersByTargetFinder {
+public class ByTargetIndex {
   private Registration myRegistration;
 
   private Multimap<Object, Mapper<?, ?>> myTargetToMappers = HashMultimap.create();
 
-  public MappersByTargetFinder(MappingContext ctx) {
+  public ByTargetIndex(MappingContext ctx) {
     for (Mapper<?, ?> mapper : ctx.getMappers()) {
       myTargetToMappers.put(mapper.getTarget(), mapper);
     }
