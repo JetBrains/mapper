@@ -18,7 +18,6 @@ package jetbrains.jetpad.model.composite;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,8 +25,12 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
   private List<Integer> myPath = new ArrayList<>();
 
   public TreePath(CompositeT composite) {
-    CompositeT current = composite;
-    while (current != null) {
+    this(composite, null);
+  }
+
+  public TreePath(CompositeT from, CompositeT to) {
+    CompositeT current = from;
+    while (current != null && current != to) {
       CompositeT parent = current.getParent();
       if (parent != null) {
         int index = parent.children().indexOf(current);
@@ -38,7 +41,9 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
       }
       current = parent;
     }
-
+    if (current != to) {
+      throw new IllegalStateException();
+    }
     Collections.reverse(myPath);
   }
 

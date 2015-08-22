@@ -48,9 +48,9 @@ public class TreePathTest {
 
   @Test
   public void pathComparison() {
-    assertTrue(new TreePath<>(root).compareTo(new TreePath<TestComposite>(child1)) < 0);
-    assertTrue(new TreePath<>(child1).compareTo(new TreePath<TestComposite>(child2)) < 0);
-    assertTrue(new TreePath<>(child1).compareTo(new TreePath<TestComposite>(child1)) == 0);
+    assertTrue(new TreePath<>(root).compareTo(new TreePath<>(child1)) < 0);
+    assertTrue(new TreePath<>(child1).compareTo(new TreePath<>(child2)) < 0);
+    assertTrue(new TreePath<>(child1).compareTo(new TreePath<>(child1)) == 0);
   }
 
   @Test
@@ -74,4 +74,12 @@ public class TreePathTest {
     assertSame(root, path.getParent().get(root));
   }
 
+  @Test
+  public void restoreFromNonRoot() {
+    TestComposite composite = new TestComposite();
+    child1.children().add(composite);
+
+    TreePath<TestComposite> path = new TreePath<>(composite, child1);
+    assertSame(composite, path.get(child1));
+  }
 }
