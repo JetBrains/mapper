@@ -87,7 +87,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   @Override
   public final Iterator<ItemT> iterator() {
     if (size() == 0) {
-      return Collections.emptyIterator();
+      return Collections.<ItemT>emptySet().iterator();
     }
     final Iterator<ItemT> iterator = getIterator();
     return new Iterator<ItemT>() {
