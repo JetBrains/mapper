@@ -23,7 +23,7 @@ import java.util.List;
 
 public final class TestEventDispatchThread implements EventDispatchThread {
   private int myCurrentTime;
-  private int myModicationCount;
+  private int myModificationCount;
   private List<RunnableRecord> myRecords = new ArrayList<>();
 
   public void executeUpdates() {
@@ -41,7 +41,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   private void executeCurrentUpdates() {
     int mc;
     do {
-      mc = myModicationCount;
+      mc = myModificationCount;
       List<RunnableRecord> toRemove = new ArrayList<>();
       for (RunnableRecord r : new ArrayList<>(myRecords)) {
         if (r.getTargetTime() == myCurrentTime) {
@@ -50,7 +50,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
         }
       }
       myRecords.removeAll(toRemove);
-    } while (myModicationCount != mc);
+    } while (myModificationCount != mc);
   }
 
   @Override
@@ -60,7 +60,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, Runnable r) {
-    myModicationCount++;
+    myModificationCount++;
     final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, r);
     myRecords.add(record);
     return new Registration() {
