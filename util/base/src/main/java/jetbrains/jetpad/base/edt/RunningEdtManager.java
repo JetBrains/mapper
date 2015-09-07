@@ -157,7 +157,7 @@ public class RunningEdtManager extends BaseEdtManager {
     myTasks.add(r);
   }
 
-  public void doSchedule(Runnable r) {
+  protected void doSchedule(Runnable r) {
     if (myExecuting) {
       myTasks.add(r);
     } else {
@@ -171,11 +171,11 @@ public class RunningEdtManager extends BaseEdtManager {
     }
   }
 
-  public Registration doSchedule(int delay, Runnable r) {
+  protected Registration doSchedule(int delay, Runnable r) {
     throw new UnsupportedOperationException();
   }
 
-  public Registration doScheduleRepeating(int period, Runnable r) {
+  protected Registration doScheduleRepeating(int period, Runnable r) {
     throw new UnsupportedOperationException();
   }
 
