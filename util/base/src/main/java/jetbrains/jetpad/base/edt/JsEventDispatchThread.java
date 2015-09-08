@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.base.edt;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
