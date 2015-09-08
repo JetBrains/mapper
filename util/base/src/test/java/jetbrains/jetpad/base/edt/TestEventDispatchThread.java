@@ -26,6 +26,10 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   private int myModificationCount;
   private List<RunnableRecord> myRecords = new ArrayList<>();
 
+  public boolean isEmpty() {
+    return myRecords.isEmpty();
+  }
+
   public void executeUpdates() {
     executeUpdates(0);
   }
