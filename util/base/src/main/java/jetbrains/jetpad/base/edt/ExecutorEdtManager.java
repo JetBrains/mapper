@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 
 public final class ExecutorEdtManager extends BaseEdtManager {
   private static final int BIG_TIMEOUT_DAYS = 1;
-  private final ExecutorEventDispatchThread myEdt;
+  private final ExecutorEdt myEdt;
 
   public ExecutorEdtManager() {
     this("");
@@ -31,7 +31,7 @@ public final class ExecutorEdtManager extends BaseEdtManager {
 
   public ExecutorEdtManager(String name) {
     super(name);
-    myEdt = new ExecutorEventDispatchThread(name);
+    myEdt = new ExecutorEdt(name);
   }
 
   @Override
@@ -99,12 +99,12 @@ public final class ExecutorEdtManager extends BaseEdtManager {
     return reg;
   }
 
-  private static class ExecutorEventDispatchThread implements EventDispatchThread {
+  private static class ExecutorEdt implements EventDispatchThread {
     private final String myName;
     private final ScheduledExecutorService myExecutor;
     private volatile Handler<Throwable> myErrorHandler = null;
 
-    ExecutorEventDispatchThread(String name) {
+    ExecutorEdt(String name) {
       myName = name;
       myExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
     }
@@ -130,7 +130,7 @@ public final class ExecutorEdtManager extends BaseEdtManager {
         myErrorHandler = new Handler<Throwable>() {
           @Override
           public void handle(Throwable t) {
-            ThrowableHandlers.handle(new RuntimeException(ExecutorEventDispatchThread.this + ": exception", t));
+            ThrowableHandlers.handle(new RuntimeException(ExecutorEdt.this + ": exception", t));
           }
         };
       }
