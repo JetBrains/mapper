@@ -55,8 +55,8 @@ public class EdtManagerPoolTest extends BaseTestCase {
   private void init(int poolSize) {
     pool = new EdtManagerPool("test pool", poolSize, new EdtManagerFactory() {
       @Override
-      public EventDispatchThreadManager createTaskManager(String taskManagerName) {
-        return new ExecutorEdtManager(taskManagerName);
+      public EventDispatchThreadManager createEdtManager(String name) {
+        return new ExecutorEdtManager(name);
       }
     });
   }

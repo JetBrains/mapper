@@ -62,7 +62,7 @@ public class EdtManagerPool {
       if (myManagers[index] != null) {
         throw new IllegalStateException();
       }
-      myManagers[index] = myFactory.createTaskManager(myName + "_" + index + "_" + myCreatedManagersNum++);
+      myManagers[index] = myFactory.createEdtManager(myName + "_" + index + "_" + myCreatedManagersNum++);
     }
     myWorkingAdapters[index]++;
   }

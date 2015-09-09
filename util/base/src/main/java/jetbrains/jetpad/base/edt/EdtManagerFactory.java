@@ -16,5 +16,5 @@
 package jetbrains.jetpad.base.edt;
 
 public interface EdtManagerFactory {
-  EventDispatchThreadManager createTaskManager(String taskManagerName);
+  EventDispatchThreadManager createEdtManager(String name);
 }
