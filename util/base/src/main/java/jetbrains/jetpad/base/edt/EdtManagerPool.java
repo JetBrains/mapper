@@ -19,7 +19,7 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.concurrent.CountDownLatch;
 
-public class EdtManagerPool implements EdtManagerFactory {
+public final class EdtManagerPool implements EdtManagerFactory {
   private final String myName;
   private final Object myLock;
   private final EdtManagerFactory myFactory;
