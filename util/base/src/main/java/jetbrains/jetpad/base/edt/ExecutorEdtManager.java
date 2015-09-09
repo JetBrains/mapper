@@ -20,14 +20,10 @@ import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-
-public class ExecutorEdtManager extends BaseEdtManager {
+public final class ExecutorEdtManager extends BaseEdtManager {
   private static final int BIG_TIMEOUT_DAYS = 1;
   private final ExecutorEventDispatchThread myEdt;
-  private volatile boolean myInitialized;
 
   public ExecutorEdtManager() {
     this("");
@@ -36,23 +32,6 @@ public class ExecutorEdtManager extends BaseEdtManager {
   public ExecutorEdtManager(String name) {
     super(name);
     myEdt = new ExecutorEventDispatchThread(name);
-  }
-
-  private EventDispatchThread getMyEdt() {
-    lazyInit();
-    return myEdt;
-  }
-
-  private void lazyInit() {
-    if (!myInitialized) {
-      myInitialized = true;
-      myEdt.setErrorHandler(new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable t) {
-          handleException(new RuntimeException(wrapMessage("exception"), t));
-        }
-      });
-    }
   }
 
   @Override
@@ -75,8 +54,8 @@ public class ExecutorEdtManager extends BaseEdtManager {
       Thread.currentThread().interrupt();
     }
     if (!terminated) {
-      handleException(new RuntimeException("failed to finish ExecutorEdtManager in " + BIG_TIMEOUT_DAYS +
-          " days"));
+      ThrowableHandlers.handle(new RuntimeException(wrapMessage("failed to finish ExecutorEdtManager in "
+          + BIG_TIMEOUT_DAYS + " days")));
     }
   }
 
@@ -88,26 +67,21 @@ public class ExecutorEdtManager extends BaseEdtManager {
   @Override
   public final void schedule(Runnable runnable) {
     try {
-      getMyEdt().schedule(runnable);
+      myEdt.schedule(runnable);
     } catch (RejectedExecutionException e) {
       throw new EdtException(e);
     }
   }
 
-
   private boolean isThreadInactive() {
     return myEdt.getExecutor().isShutdown();
-  }
-
-  protected void handleException(RuntimeException e) {
-    ThrowableHandlers.handle(e);
   }
 
   @Override
   public final Registration schedule(int delay, Runnable r) {
     Registration reg;
     try {
-      reg = getMyEdt().schedule(delay, r);
+      reg = myEdt.schedule(delay, r);
     } catch (RejectedExecutionException e) {
       throw new EdtException(e);
     }
@@ -118,7 +92,7 @@ public class ExecutorEdtManager extends BaseEdtManager {
   public final Registration scheduleRepeating(int period, Runnable r) {
     Registration reg;
     try {
-      reg = getMyEdt().scheduleRepeating(period, r);
+      reg = myEdt.scheduleRepeating(period, r);
     } catch (RejectedExecutionException e) {
       throw new EdtException(e);
     }
@@ -126,19 +100,13 @@ public class ExecutorEdtManager extends BaseEdtManager {
   }
 
   private static class ExecutorEventDispatchThread implements EventDispatchThread {
-    private static final Logger LOG = Logger.getLogger(ExecutorEventDispatchThread.class.getName());
-
+    private final String myName;
     private final ScheduledExecutorService myExecutor;
-    private volatile Handler<Throwable> myErrorHandler;
+    private volatile Handler<Throwable> myErrorHandler = null;
 
-    public ExecutorEventDispatchThread() {
-      myExecutor = Executors.newSingleThreadScheduledExecutor();
-      setErrorHandler();
-    }
-
-    public ExecutorEventDispatchThread(String name) {
-      myExecutor = Executors.newSingleThreadScheduledExecutor(new OurNamedThreadFactory(name));
-      setErrorHandler();
+    ExecutorEventDispatchThread(String name) {
+      myName = name;
+      myExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
     }
 
     @Override
@@ -158,6 +126,14 @@ public class ExecutorEdtManager extends BaseEdtManager {
     }
 
     private Runnable handleFailure(final Runnable r) {
+      if (myErrorHandler == null) {
+        myErrorHandler = new Handler<Throwable>() {
+          @Override
+          public void handle(Throwable t) {
+            ThrowableHandlers.handle(new RuntimeException(ExecutorEventDispatchThread.this + ": exception", t));
+          }
+        };
+      }
       return new Runnable() {
         @Override
         public void run() {
@@ -170,50 +146,40 @@ public class ExecutorEdtManager extends BaseEdtManager {
       };
     }
 
-    /**
-     * Do not use it directly, only for state checks and finalization.
-     */
+    // do not use it directly, only for state checks and finalization.
     ExecutorService getExecutor() {
       return myExecutor;
     }
 
-    public void setErrorHandler(Handler<Throwable> errorHandler) {
-      myErrorHandler = errorHandler;
+    @Override
+    public String toString() {
+      return "ExecutorEdt@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ')');
+    }
+  }
+
+  private static class FutureRegistration extends Registration {
+    private final Future<?> myFuture;
+
+    private FutureRegistration(Future<?> future) {
+      myFuture = future;
     }
 
-    public void setErrorHandler() {
-      setErrorHandler(new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable t) {
-          LOG.log(Level.SEVERE, "Runnable submitted to ExecutorEventDispatchThread failed", t);
-        }
-      });
+    @Override
+    protected void doRemove() {
+      myFuture.cancel(false);
+    }
+  }
+
+  private static class NamedThreadFactory implements ThreadFactory {
+    private final String myName;
+
+    NamedThreadFactory(String name) {
+      myName = name;
     }
 
-    private static class FutureRegistration extends Registration {
-      private final Future<?> future;
-
-      private FutureRegistration(Future<?> future) {
-        this.future = future;
-      }
-
-      @Override
-      protected void doRemove() {
-        future.cancel(false);
-      }
-    }
-
-    private static class OurNamedThreadFactory implements ThreadFactory {
-      private final String myName;
-
-      OurNamedThreadFactory(String name) {
-        myName = name;
-      }
-
-      @Override
-      public Thread newThread(Runnable r) {
-        return new Thread(r, myName);
-      }
+    @Override
+    public Thread newThread(Runnable r) {
+      return new Thread(r, myName);
     }
   }
 }
