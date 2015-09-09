@@ -17,7 +17,7 @@ package jetbrains.jetpad.base.edt;
 
 public class ExecutorEdtManagerFactory implements EdtManagerFactory {
   @Override
-  public EventDispatchThreadManager createEdtManager(String name) {
+  public EdtManager createEdtManager(String name) {
     return new ExecutorEdtManager(name);
   }
 }

@@ -22,7 +22,7 @@ import java.util.concurrent.CountDownLatch;
 public class EdtManagerPool {
   private final EdtManagerFactory myFactory;
   private final int myPoolSize;
-  private final EventDispatchThreadManager[] myManagers;
+  private final EdtManager[] myManagers;
   private final int[] myWorkingAdapters;
   private final String myName;
   private int myCurManager;
@@ -35,13 +35,13 @@ public class EdtManagerPool {
     myName = name;
     myPoolSize = poolSize;
     myFactory = factory;
-    myManagers = new EventDispatchThreadManager[myPoolSize];
+    myManagers = new EdtManager[myPoolSize];
     myWorkingAdapters = new int[myPoolSize];
     myCurManager = 0;
     myCreatedManagersNum = 0;
   }
 
-  public EventDispatchThreadManager createTaskManager(String name) {
+  public EdtManager createTaskManager(String name) {
     synchronized (myLock) {
       int cur = getCurManagerIndex();
       incWorkingAdapters(cur);
@@ -80,7 +80,7 @@ public class EdtManagerPool {
   //for test
   boolean isEmpty() {
     synchronized (myLock) {
-      for (EventDispatchThreadManager manager : myManagers) {
+      for (EdtManager manager : myManagers) {
         if (manager != null) {
           return false;
         }
@@ -90,7 +90,7 @@ public class EdtManagerPool {
   }
 
   //for test
-  boolean checkManager(EventDispatchThreadManager manager) {
+  boolean checkManager(EdtManager manager) {
     synchronized (myLock) {
       EdtManagerAdapter adapter = (EdtManagerAdapter) manager;
       return adapter.myManager == myManagers[adapter.myIndex];
@@ -99,10 +99,10 @@ public class EdtManagerPool {
 
   private class EdtManagerAdapter extends BaseEdtManager {
     //we can't use here only myIndex because myManagers[] is guarded by a lock
-    private final EventDispatchThreadManager myManager;
+    private final EdtManager myManager;
     private final int myIndex;
 
-    private EdtManagerAdapter(String name, EventDispatchThreadManager manager, int index) {
+    private EdtManagerAdapter(String name, EdtManager manager, int index) {
       super(name);
       myManager = manager;
       myIndex = index;

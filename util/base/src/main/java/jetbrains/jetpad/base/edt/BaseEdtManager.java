@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
-abstract class BaseEdtManager implements EventDispatchThreadManager, EventDispatchThread {
+abstract class BaseEdtManager implements EdtManager, EventDispatchThread {
   private final String myName;
 
   BaseEdtManager(String name) {

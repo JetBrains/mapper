@@ -30,17 +30,17 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings("NonJREEmulationClassesInClientCode")
 public class EdtManagerPoolTest extends BaseTestCase {
   private EdtManagerPool pool;
-  private Set<EventDispatchThreadManager> managers = new HashSet<>();
+  private Set<EdtManager> managers = new HashSet<>();
 
-  private EventDispatchThreadManager createManager() {
-    EventDispatchThreadManager manager = pool.createTaskManager("");
+  private EdtManager createManager() {
+    EdtManager manager = pool.createTaskManager("");
     managers.add(manager);
     return manager;
   }
 
   @After
   public void finish() {
-    for (EventDispatchThreadManager manager : managers) {
+    for (EdtManager manager : managers) {
       if (!manager.isStopped()) {
         manager.finish();
       }
@@ -55,7 +55,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
   private void init(int poolSize) {
     pool = new EdtManagerPool("test pool", poolSize, new EdtManagerFactory() {
       @Override
-      public EventDispatchThreadManager createEdtManager(String name) {
+      public EdtManager createEdtManager(String name) {
         return new ExecutorEdtManager(name);
       }
     });
@@ -68,7 +68,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
   @Test
   public void simpleTask() {
     init();
-    EventDispatchThreadManager manager = createManager();
+    EdtManager manager = createManager();
     final Value<Boolean> taskExecuted = new Value<>(false);
     manager.getEDT().schedule(new Runnable() {
       @Override
@@ -84,7 +84,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
   @Test(expected = RuntimeException.class)
   public void taskAfterFinished() {
     init();
-    EventDispatchThreadManager manager = createManager();
+    EdtManager manager = createManager();
     manager.finish();
     manager.getEDT().schedule(new Runnable() {
       @Override
@@ -96,7 +96,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
   @Test
   public void killManager() {
     init();
-    EventDispatchThreadManager manager = createManager();
+    EdtManager manager = createManager();
     final CountDownLatch latch = new CountDownLatch(1);
     manager.getEDT().schedule(new Runnable() {
       @Override
@@ -114,8 +114,8 @@ public class EdtManagerPoolTest extends BaseTestCase {
   @Test
   public void twoManagers() {
     init();
-    EventDispatchThreadManager manager1 = createManager();
-    EventDispatchThreadManager manager2 = createManager();
+    EdtManager manager1 = createManager();
+    EdtManager manager2 = createManager();
 
     final Value<Integer> v = new Value<>(0);
     manager1.getEDT().schedule(new Runnable() {
@@ -145,8 +145,8 @@ public class EdtManagerPoolTest extends BaseTestCase {
   @Test
   public void finishOneManager() {
     init();
-    EventDispatchThreadManager manager1 = createManager();
-    EventDispatchThreadManager manager2 = createManager();
+    EdtManager manager1 = createManager();
+    EdtManager manager2 = createManager();
 
     final Value<Boolean> taskExecuted = new Value<>(false);
     manager2.finish();
@@ -164,12 +164,12 @@ public class EdtManagerPoolTest extends BaseTestCase {
   @Test
   public void checkManager() {
     init();
-    EventDispatchThreadManager temp1 = createManager();
+    EdtManager temp1 = createManager();
 
-    EventDispatchThreadManager checking = createManager();
+    EdtManager checking = createManager();
 
     temp1.finish();
-    EventDispatchThreadManager temp2 = createManager();
+    EdtManager temp2 = createManager();
 
     assertTrue(pool.checkManager(checking));
   }

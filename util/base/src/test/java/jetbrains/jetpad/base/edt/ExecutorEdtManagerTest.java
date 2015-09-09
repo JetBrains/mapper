@@ -27,7 +27,7 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
 
   @Test(expected = RuntimeException.class)
   public void testSubmitAfterShutdown() {
-    EventDispatchThreadManager tm = new ExecutorEdtManager("My task manager");
+    EdtManager tm = new ExecutorEdtManager("MyEdt");
     EventDispatchThread edt = tm.getEDT();
     edt.schedule(new Runnable() {
       @Override
