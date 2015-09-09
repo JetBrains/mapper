@@ -19,19 +19,18 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.concurrent.CountDownLatch;
 
-public class EdtManagerPool {
+public class EdtManagerPool implements EdtManagerFactory {
+  private final String myName;
+  private final Object myLock;
   private final EdtManagerFactory myFactory;
   private final int myPoolSize;
   private final EdtManager[] myManagers;
   private final int[] myWorkingAdapters;
-  private final String myName;
   private int myCurManager;
   private int myCreatedManagersNum;
-  private final Object myLock;
 
   public EdtManagerPool(String name, int poolSize, EdtManagerFactory factory) {
     myLock = new Object();
-
     myName = name;
     myPoolSize = poolSize;
     myFactory = factory;
@@ -41,7 +40,8 @@ public class EdtManagerPool {
     myCreatedManagersNum = 0;
   }
 
-  public EdtManager createTaskManager(String name) {
+  @Override
+  public EdtManager createEdtManager(String name) {
     synchronized (myLock) {
       int cur = getCurManagerIndex();
       incWorkingAdapters(cur);
@@ -150,6 +150,5 @@ public class EdtManagerPool {
     public final Registration scheduleRepeating(int period, Runnable runnable) {
       return myManager.getEdt().scheduleRepeating(period, runnable);
     }
-
   }
 }

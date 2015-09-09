@@ -33,7 +33,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
   private Set<EdtManager> managers = new HashSet<>();
 
   private EdtManager createManager() {
-    EdtManager manager = pool.createTaskManager("");
+    EdtManager manager = pool.createEdtManager("");
     managers.add(manager);
     return manager;
   }
