@@ -97,15 +97,21 @@ public final class EdtManagerPool implements EdtManagerFactory {
     }
   }
 
-  private class EdtManagerAdapter extends BaseEdtManager {
+  private class EdtManagerAdapter implements EdtManager, EventDispatchThread {
+    private final String myName;
     //we can't use here only myIndex because myManagers[] is guarded by a lock
     private final EdtManager myManager;
     private final int myIndex;
 
     private EdtManagerAdapter(String name, EdtManager manager, int index) {
-      super(name);
+      myName = name;
       myManager = manager;
       myIndex = index;
+    }
+
+    @Override
+    public EventDispatchThread getEdt() {
+      return this;
     }
 
     @Override
@@ -149,6 +155,11 @@ public final class EdtManagerPool implements EdtManagerFactory {
     @Override
     public final Registration scheduleRepeating(int period, Runnable runnable) {
       return myManager.getEdt().scheduleRepeating(period, runnable);
+    }
+
+    @Override
+    public String toString() {
+      return "EdtManagerPool.EdtManagerAdapter@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
     }
   }
 }

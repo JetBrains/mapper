@@ -20,7 +20,8 @@ import jetbrains.jetpad.base.Registration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RunningEdtManager extends BaseEdtManager {
+public class RunningEdtManager implements EdtManager, EventDispatchThread {
+  private final String myName;
   private volatile boolean myFinished;
   private volatile boolean myExecuting = false;
   private volatile boolean myFlushing = false;
@@ -31,7 +32,12 @@ public class RunningEdtManager extends BaseEdtManager {
   }
 
   public RunningEdtManager(String name) {
-    super(name);
+    myName = name;
+  }
+
+  @Override
+  public EventDispatchThread getEdt() {
+    return this;
   }
 
   @Override
@@ -95,7 +101,7 @@ public class RunningEdtManager extends BaseEdtManager {
 
   private void checkCanStop() {
     if (myFinished) {
-      throw new IllegalStateException(wrapMessage("has already been stopped"));
+      throw new IllegalStateException(RunningEdtManager.this + ": has already been stopped");
     }
   }
 
@@ -115,7 +121,7 @@ public class RunningEdtManager extends BaseEdtManager {
 
   final void flush(Flusher flusher) {
     if (myFlushing) {
-      throw new IllegalStateException(wrapMessage("recursive flush is prohibited"));
+      throw new IllegalStateException((RunningEdtManager.this + ": recursive flush is prohibited"));
     }
     myFlushing = true;
     int executedTasksCounter = 0;
@@ -177,6 +183,11 @@ public class RunningEdtManager extends BaseEdtManager {
 
   protected Registration doScheduleRepeating(int period, Runnable r) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String toString() {
+    return "RunningEdtManager@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
   }
 
   interface Flusher {

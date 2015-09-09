@@ -21,8 +21,9 @@ import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.concurrent.*;
 
-public final class ExecutorEdtManager extends BaseEdtManager {
+public final class ExecutorEdtManager implements EdtManager, EventDispatchThread {
   private static final int BIG_TIMEOUT_DAYS = 1;
+  private final String myName;
   private final ExecutorEdt myEdt;
 
   public ExecutorEdtManager() {
@@ -30,8 +31,13 @@ public final class ExecutorEdtManager extends BaseEdtManager {
   }
 
   public ExecutorEdtManager(String name) {
-    super(name);
+    myName = name;
     myEdt = new ExecutorEdt(name);
+  }
+
+  @Override
+  public EventDispatchThread getEdt() {
+    return this;
   }
 
   @Override
@@ -54,8 +60,8 @@ public final class ExecutorEdtManager extends BaseEdtManager {
       Thread.currentThread().interrupt();
     }
     if (!terminated) {
-      ThrowableHandlers.handle(new RuntimeException(wrapMessage("failed to finish ExecutorEdtManager in "
-          + BIG_TIMEOUT_DAYS + " days")));
+      ThrowableHandlers.handle(new RuntimeException(ExecutorEdtManager.this
+          + ": failed to finish ExecutorEdtManager in " + BIG_TIMEOUT_DAYS + " days"));
     }
   }
 
@@ -99,13 +105,16 @@ public final class ExecutorEdtManager extends BaseEdtManager {
     return reg;
   }
 
-  private static class ExecutorEdt implements EventDispatchThread {
-    private final String myName;
+  @Override
+  public String toString() {
+    return "ExecutorEdtManager@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
+  }
+
+  private class ExecutorEdt implements EventDispatchThread {
     private final ScheduledExecutorService myExecutor;
     private volatile Handler<Throwable> myErrorHandler = null;
 
     ExecutorEdt(String name) {
-      myName = name;
       myExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
     }
 
