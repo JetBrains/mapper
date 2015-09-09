@@ -75,7 +75,7 @@ public class BufferingEdtManagerTest extends BaseTestCase {
     assertTrue(manager.isStopped());
   }
 
-  @Test(expected = EventDispatchThreadException.class)
+  @Test(expected = EdtException.class)
   public void addTaskAfterFinish() {
     final Value<Integer> taskCompleted = new Value<>(0);
     manager.getEDT().schedule(new Runnable() {

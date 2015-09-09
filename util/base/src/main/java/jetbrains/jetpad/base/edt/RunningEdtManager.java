@@ -88,7 +88,7 @@ public class RunningEdtManager extends BaseEdtManager {
 
   Registration checkCanSchedule() {
     if (isStopped()) {
-      throw new EventDispatchThreadException();
+      throw new EdtException();
     }
     return null;
   }

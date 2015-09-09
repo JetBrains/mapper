@@ -90,7 +90,7 @@ public class ExecutorEdtManager extends BaseEdtManager {
     try {
       getMyEdt().schedule(runnable);
     } catch (RejectedExecutionException e) {
-      throw new EventDispatchThreadException(e);
+      throw new EdtException(e);
     }
   }
 
@@ -109,7 +109,7 @@ public class ExecutorEdtManager extends BaseEdtManager {
     try {
       reg = getMyEdt().schedule(delay, r);
     } catch (RejectedExecutionException e) {
-      throw new EventDispatchThreadException(e);
+      throw new EdtException(e);
     }
     return reg;
   }
@@ -120,7 +120,7 @@ public class ExecutorEdtManager extends BaseEdtManager {
     try {
       reg = getMyEdt().scheduleRepeating(period, r);
     } catch (RejectedExecutionException e) {
-      throw new EventDispatchThreadException(e);
+      throw new EdtException(e);
     }
     return reg;
   }
