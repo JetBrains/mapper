@@ -35,15 +35,15 @@ public class RunningEdtManagerTest extends BaseTestCase {
   public void sequentialAddition() {
     final StringBuilder result = new StringBuilder();
 
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         result.append(1);
-        manager.getEDT().schedule(new Runnable() {
+        manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
             result.append(3);
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
                 result.append(5);
@@ -62,7 +62,7 @@ public class RunningEdtManagerTest extends BaseTestCase {
   @Test
   public void exceptionInTask() {
     try {
-      manager.getEDT().schedule(new Runnable() {
+      manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
             throw new RuntimeException();
@@ -72,7 +72,7 @@ public class RunningEdtManagerTest extends BaseTestCase {
     }
 
     final Value<Boolean> taskCompleted = new Value<>(false);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         taskCompleted.set(true);
@@ -86,22 +86,22 @@ public class RunningEdtManagerTest extends BaseTestCase {
   public void exceptionDuringFlush() {
     final Value<Integer> performedTasksCounter = new Value<>(0);
     try {
-      manager.getEDT().schedule(new Runnable() {
+      manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
                 performedTasksCounter.set(performedTasksCounter.get() + 1);
               }
             });
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
                 throw new UnsupportedOperationException();
               }
             });
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
                 performedTasksCounter.set(performedTasksCounter.get() + 1);
@@ -120,13 +120,13 @@ public class RunningEdtManagerTest extends BaseTestCase {
   public void recursiveFlush() {
     final Value<Integer> performedTasksCounter = new Value<>(0);
     try {
-      manager.getEDT().schedule(new Runnable() {
+      manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
-                manager.getEDT().schedule(new Runnable() {
+                manager.getEdt().schedule(new Runnable() {
                   @Override
                   public void run() {
                     performedTasksCounter.set(performedTasksCounter.get() + 1);
@@ -148,10 +148,10 @@ public class RunningEdtManagerTest extends BaseTestCase {
   @Test
   public void finishInsideTask() {
     final Value<Boolean> taskCompleted = new Value<>(false);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
-        manager.getEDT().schedule(new Runnable() {
+        manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
             taskCompleted.set(true);
@@ -167,10 +167,10 @@ public class RunningEdtManagerTest extends BaseTestCase {
   @Test
   public void killInsideTask() {
     final Value<Boolean> taskCompleted = new Value<>(false);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
-        manager.getEDT().schedule(new Runnable() {
+        manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
             taskCompleted.set(true);
@@ -186,14 +186,14 @@ public class RunningEdtManagerTest extends BaseTestCase {
   @Test
   public void addTaskAfterFinish() {
     final Value<Integer> taskCompleted = new Value<>(0);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
-        manager.getEDT().schedule(new Runnable() {
+        manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
             taskCompleted.set(1);
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
                 taskCompleted.set(2);

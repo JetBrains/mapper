@@ -70,7 +70,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
     init();
     EdtManager manager = createManager();
     final Value<Boolean> taskExecuted = new Value<>(false);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         taskExecuted.set(true);
@@ -86,7 +86,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
     init();
     EdtManager manager = createManager();
     manager.finish();
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
       }
@@ -98,7 +98,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
     init();
     EdtManager manager = createManager();
     final CountDownLatch latch = new CountDownLatch(1);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         try {
@@ -118,7 +118,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
     EdtManager manager2 = createManager();
 
     final Value<Integer> v = new Value<>(0);
-    manager1.getEDT().schedule(new Runnable() {
+    manager1.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         if (!(v.get() == 0)) {
@@ -127,7 +127,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
         v.set(1);
       }
     });
-    manager1.getEDT().schedule(new Runnable() {
+    manager1.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         if (!(v.get() == 1)) {
@@ -150,7 +150,7 @@ public class EdtManagerPoolTest extends BaseTestCase {
 
     final Value<Boolean> taskExecuted = new Value<>(false);
     manager2.finish();
-    manager1.getEDT().schedule(new Runnable() {
+    manager1.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         taskExecuted.set(true);

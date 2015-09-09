@@ -23,7 +23,7 @@ abstract class BaseEdtManager implements EdtManager, EventDispatchThread {
   }
 
   @Override
-  public final EventDispatchThread getEDT() {
+  public final EventDispatchThread getEdt() {
     return this;
   }
 

@@ -16,7 +16,7 @@
 package jetbrains.jetpad.base.edt;
 
 public interface EdtManager {
-  EventDispatchThread getEDT();
+  EventDispatchThread getEdt();
 
   void finish();
   void kill();

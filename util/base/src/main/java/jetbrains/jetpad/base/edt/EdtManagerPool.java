@@ -111,7 +111,7 @@ public class EdtManagerPool {
     @Override
     public void finish() {
       final CountDownLatch latch = new CountDownLatch(1);
-      myManager.getEDT().schedule(new Runnable() {
+      myManager.getEdt().schedule(new Runnable() {
         @Override
         public void run() {
           latch.countDown();
@@ -138,17 +138,17 @@ public class EdtManagerPool {
 
     @Override
     public final void schedule(Runnable runnable) {
-      myManager.getEDT().schedule(runnable);
+      myManager.getEdt().schedule(runnable);
     }
 
     @Override
     public final Registration schedule(int delay, Runnable runnable) {
-      return myManager.getEDT().schedule(delay, runnable);
+      return myManager.getEdt().schedule(delay, runnable);
     }
 
     @Override
     public final Registration scheduleRepeating(int period, Runnable runnable) {
-      return myManager.getEDT().scheduleRepeating(period, runnable);
+      return myManager.getEdt().scheduleRepeating(period, runnable);
     }
 
   }

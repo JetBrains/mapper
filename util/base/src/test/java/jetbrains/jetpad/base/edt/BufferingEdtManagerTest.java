@@ -34,13 +34,13 @@ public class BufferingEdtManagerTest extends BaseTestCase {
   @Test
   public void finishInTask() {
     final Value<Boolean> taskCompleted = new Value<>(false);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         manager.finish();
       }
     });
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         taskCompleted.set(true);
@@ -56,13 +56,13 @@ public class BufferingEdtManagerTest extends BaseTestCase {
   @Test
   public void killInsideTask() {
     final Value<Boolean> taskCompleted = new Value<>(false);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         manager.kill();
       }
     });
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
         taskCompleted.set(true);
@@ -78,14 +78,14 @@ public class BufferingEdtManagerTest extends BaseTestCase {
   @Test(expected = EdtException.class)
   public void addTaskAfterFinish() {
     final Value<Integer> taskCompleted = new Value<>(0);
-    manager.getEDT().schedule(new Runnable() {
+    manager.getEdt().schedule(new Runnable() {
       @Override
       public void run() {
-        manager.getEDT().schedule(new Runnable() {
+        manager.getEdt().schedule(new Runnable() {
           @Override
           public void run() {
             taskCompleted.set(1);
-            manager.getEDT().schedule(new Runnable() {
+            manager.getEdt().schedule(new Runnable() {
               @Override
               public void run() {
                 taskCompleted.set(2);
