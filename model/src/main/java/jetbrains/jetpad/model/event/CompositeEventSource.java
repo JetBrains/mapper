@@ -25,6 +25,7 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
   private List<EventSource<? extends EventT>> myEventSources = new ArrayList<>();
   private List<Registration> myRegistrations = new ArrayList<>();
 
+  @SafeVarargs
   CompositeEventSource(EventSource<? extends EventT>... sources) {
     for (EventSource<? extends EventT> s : sources) {
       add(s);

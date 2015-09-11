@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventSources {
+  @SafeVarargs
   public static <EventT> EventSource<EventT> composite(EventSource<? extends EventT>... sources) {
     return new CompositeEventSource<>(sources);
   }

@@ -661,6 +661,7 @@ public class Properties {
     };
   }
 
+  @SafeVarargs
   public static <ValueT> ReadableProperty<ValueT> firstNotNull(final ReadableProperty<ValueT>... values) {
     return new DerivedProperty<ValueT>(values) {
       @Override
@@ -779,6 +780,7 @@ public class Properties {
     };
   }
 
+  @SafeVarargs
   public static <ValueT> WritableProperty<ValueT> compose(final WritableProperty<? super ValueT>... props) {
     return new WritableProperty<ValueT>() {
       @Override
