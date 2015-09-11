@@ -15,6 +15,10 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.base.Supplier;
+
+import java.util.List;
+
 public class Persisters {
   private static final Persister<String> STRING_PERSISTER = new Persister<String>() {
     @Override
@@ -170,6 +174,70 @@ public class Persisters {
       @Override
       public String toString() {
         return "doublePersister[default = " + defaultValue + "]";
+      }
+    };
+  }
+
+  public static <T, ListT extends List<T>> Persister<ListT> listPersister(final Persister<T> itemPersister, final Supplier<ListT> empty) {
+    return new Persister<ListT>() {
+      @Override
+      public ListT deserialize(String value) {
+        boolean error = false;
+        ListT result = empty.get();
+        if (value == null) {
+          return result;
+        }
+        while (!value.isEmpty()) {
+          if (value.charAt(0) == 'n') {
+            result.add(null);
+            value = value.substring(1);
+          } else {
+            int numSize = 0;
+            while (numSize < value.length() && Character.isDigit(value.charAt(numSize))) {
+              numSize += 1;
+            }
+            if (numSize < 1) {
+              error = true;
+              break;
+            }
+            int len = Integer.parseInt(value.substring(0, numSize));
+            value = value.substring(numSize + 1);
+            if (len > value.length()) {
+              error = true;
+              break;
+            }
+            result.add(itemPersister.deserialize(value.substring(0, len)));
+            value = value.substring(len);
+          }
+        }
+        if (error) {
+          return empty.get();
+        } else {
+          return result;
+        }
+      }
+
+      @Override
+      public String serialize(ListT value) {
+        if (value == null) {
+          return null;
+        }
+        StringBuilder result = new StringBuilder();
+        for (T item : value) {
+          String serialized = itemPersister.serialize(item);
+          // Almost Netstring with 'n' for null
+          if (serialized == null) {
+            result.append('n');
+          } else {
+            result.append(serialized.length()).append(':').append(serialized);
+          }
+        }
+        return result.toString();
+      }
+
+      @Override
+      public String toString() {
+        return "listPersister[using = " + itemPersister + "]";
       }
     };
   }
