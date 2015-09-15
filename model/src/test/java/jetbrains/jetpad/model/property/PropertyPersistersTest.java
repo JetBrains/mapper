@@ -20,6 +20,11 @@ public class PropertyPersistersTest {
   }
 
   @Test
+  public void valuePropertyEmptyString() {
+    assertTrue(PropertyPersisters.valuePropertyPersister(Persisters.stringPersister()).deserialize("").get() == null);
+  }
+
+  @Test
   public void nullListOfStringProperties() {
     testNull(propListPersister);
   }
