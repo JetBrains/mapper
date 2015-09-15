@@ -83,6 +83,11 @@ public class PersistersTest {
     testBadListOfStrings("6:Hell,2:hi");
   }
 
+  @Test
+  public void courrptedListOfStringsWithoutColon() {
+    testBadListOfStrings("5");
+  }
+
 
   private <T> void testNull(Persister<T> persister) {
     T defaultValue = persister.deserialize(null);

@@ -201,11 +201,11 @@ public class Persisters {
               break;
             }
             int len = Integer.parseInt(value.substring(0, numSize));
-            value = value.substring(numSize + 1);
-            if (len > value.length()) {
+            if (value.length() < numSize + 1 + len) {
               error = true;
               break;
             }
+            value = value.substring(numSize + 1);
             result.add(itemPersister.deserialize(value.substring(0, len)));
             value = value.substring(len);
           }
