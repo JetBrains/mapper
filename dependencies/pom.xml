@@ -19,7 +19,7 @@
     <gwtplugin.version>2.7.0</gwtplugin.version>
 
     <jetty.version>8.1.2.v20120308</jetty.version>
-    <javancss.version>2.0</javancss.version>
+    <javancss.version>2.1</javancss.version>
 
     <jsr305.version>1.3.9</jsr305.version>
 
