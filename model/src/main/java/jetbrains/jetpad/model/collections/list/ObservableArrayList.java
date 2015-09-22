@@ -27,10 +27,6 @@ public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
       throw new ArrayIndexOutOfBoundsException(index);
     }
 
-    if (index >= size()) {
-      System.out.println();
-    }
-
     return myContainer.get(index);
   }
 
