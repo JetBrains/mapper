@@ -20,12 +20,17 @@ public class PropertyPersistersTest {
   }
 
   @Test
+  public void valuePropertyEmptyString() {
+    assertTrue(PropertyPersisters.valuePropertyPersister(Persisters.stringPersister()).deserialize("").get() == null);
+  }
+
+  @Test
   public void nullListOfStringProperties() {
     testNull(propListPersister);
   }
 
   @Test
-  public void testListOfStringProperties() {
+  public void listOfStringProperties() {
     List<Property<String>> testList = new ArrayList<>();
     testList.add(new ValueProperty<>("hello"));
     testList.add(new ValueProperty<>(":world,!2312:fds,v;"));
@@ -33,7 +38,7 @@ public class PropertyPersistersTest {
   }
 
   @Test
-  public void testListOfStringPropertiesWithNulls() {
+  public void listOfStringPropertiesWithNulls() {
     List<Property<String>> testList = new ArrayList<>();
     testList.add(new ValueProperty<String>(null));
     testList.add(null);

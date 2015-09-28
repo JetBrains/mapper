@@ -10,7 +10,7 @@ public class PropertyPersisters {
         if (value == null) {
           return null;
         }
-        if (value.charAt(0) == 'v') {
+        if (!value.isEmpty() && value.charAt(0) == 'v') {
           return new ValueProperty<>(itemPersister.deserialize(value.substring(1)));
         }
         return new ValueProperty<>();
