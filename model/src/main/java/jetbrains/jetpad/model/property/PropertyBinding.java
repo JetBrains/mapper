@@ -20,7 +20,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
 
 public class PropertyBinding {
-  public static <ValueT> Registration bindOneWay(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
+  public static <ValueT> Registration bindOneWay(
+      final ReadableProperty<ValueT> source, final WritableProperty<? super ValueT> target) {
     target.set(source.get());
     return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
       @Override
