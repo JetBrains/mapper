@@ -21,11 +21,11 @@ import jetbrains.jetpad.base.Registration;
 
 public class PropertyBinding {
   public static <ValueT> Registration bindOneWay(
-      final ReadableProperty<ValueT> source, final WritableProperty<? super ValueT> target) {
+      final ReadableProperty<? extends ValueT> source, final WritableProperty<? super ValueT> target) {
     target.set(source.get());
-    return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+    return source.addHandler(new EventHandler<PropertyChangeEvent<? extends ValueT>>() {
       @Override
-      public void onEvent(PropertyChangeEvent<ValueT> event) {
+      public void onEvent(PropertyChangeEvent<? extends ValueT> event) {
         target.set(event.getNewValue());
       }
     });
