@@ -18,8 +18,11 @@ package jetbrains.jetpad.base.edt;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
 public final class EdtManagerPool implements EdtManagerFactory {
+  private static final Logger LOG = Logger.getLogger(EdtManagerPool.class.getName());
+
   private final String myName;
   private final Object myLock;
   private final EdtManagerFactory myFactory;
@@ -38,6 +41,7 @@ public final class EdtManagerPool implements EdtManagerFactory {
     myWorkingAdapters = new int[myPoolSize];
     myCurManager = 0;
     myCreatedManagersNum = 0;
+    LOG.fine("Created EDT managers pool, name=" + name + ", size=" + poolSize);
   }
 
   @Override
@@ -45,7 +49,9 @@ public final class EdtManagerPool implements EdtManagerFactory {
     synchronized (myLock) {
       int cur = getCurManagerIndex();
       incWorkingAdapters(cur);
-      return new EdtManagerAdapter(name, myManagers[cur], cur);
+      EdtManagerAdapter adapter = new EdtManagerAdapter(name, myManagers[cur], cur);
+      LOG.fine("Created adapter " + adapter + " for " + myManagers[cur] + ", index=" + cur);
+      return adapter;
     }
   }
 
@@ -63,6 +69,7 @@ public final class EdtManagerPool implements EdtManagerFactory {
         throw new IllegalStateException();
       }
       myManagers[index] = myFactory.createEdtManager(myName + "_" + index + "_" + myCreatedManagersNum++);
+      LOG.fine("Pool " + myName + " created " + myManagers[index] + " at index " + index);
     }
     myWorkingAdapters[index]++;
   }
@@ -71,6 +78,7 @@ public final class EdtManagerPool implements EdtManagerFactory {
     synchronized (myLock) {
       myWorkingAdapters[index]--;
       if (myWorkingAdapters[index] == 0) {
+        LOG.fine("Pool " + myName + " is killing " + myManagers[index] + " at index " + index);
         myManagers[index].kill();
         myManagers[index] = null;
       }
