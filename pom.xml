@@ -27,6 +27,7 @@
     <module>util/values</module>
     <module>util/json</module>
     <module>util/geometry</module>
+    <module>util/plugin</module>
 
     <module>samples/todo</module>
   </modules>
