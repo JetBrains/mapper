@@ -26,9 +26,9 @@ public class Base64Coder {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < blocksLen; i++) {
       int base = i * 3;
-      int b1 = (bytes[base] & 0xFF);
-      int b2 = (bytes[base + 1] & 0xFF);
-      int b3 = (bytes[base + 2] & 0xFF);
+      int b1 = bytes[base] & 0xFF;
+      int b2 = bytes[base + 1] & 0xFF;
+      int b3 = bytes[base + 2] & 0xFF;
 
       result.append(ourTable.valueToCh(b1 >> 2));
       result.append(ourTable.valueToCh(((b1 & 0x3) << 4) + (b2 >> 4)));
@@ -38,13 +38,13 @@ public class Base64Coder {
 
     int lastBlock = blocksLen * 3 - 1;
     if (bytes.length % 3 == 1) {
-      byte b = bytes[lastBlock + 1];
+      int b = bytes[lastBlock + 1] & 0xFF;
       result.append(ourTable.valueToCh(b >> 2));
       result.append(ourTable.valueToCh((b & 0x3) << 4));
       result.append("==");
     } else if (bytes.length % 3 == 2) {
-      byte b1 = bytes[lastBlock + 1];
-      byte b2 = bytes[lastBlock + 2];
+      int b1 = bytes[lastBlock + 1] & 0xFF;
+      int b2 = bytes[lastBlock + 2] & 0xFF;
       result.append(ourTable.valueToCh(b1 >> 2));
       result.append(ourTable.valueToCh(((b1 & 0x3) << 4) + (b2 >> 4)));
       result.append(ourTable.valueToCh(((b2 & 0xF) << 2)));
@@ -84,5 +84,10 @@ public class Base64Coder {
       result[i] = (byte) ((int) bytes.get(i));
     }
     return result;
+  }
+
+  public static void main(String[] args) {
+    byte b = -1;
+    System.out.println(b & 0xFF);
   }
 }
