@@ -108,7 +108,11 @@ public class Asyncs {
     async.onResult(new Handler<SourceT>() {
       @Override
       public void handle(SourceT item) {
-        result.success(f.apply(item));
+        try {
+          result.success(f.apply(item));
+        } catch (Exception e) {
+          result.failure(e);
+        }
       }
     }, new Handler<Throwable>() {
       @Override
@@ -124,7 +128,13 @@ public class Asyncs {
     async.onResult(new Handler<SourceT>() {
       @Override
       public void handle(SourceT item) {
-        Async<TargetT> async = f.apply(item);
+        Async<TargetT> async;
+        try {
+          async = f.apply(item);
+        } catch (Exception e) {
+          result.failure(e);
+          return;
+        }
         if (async == null) {
           result.success(null);
         } else {
@@ -251,7 +261,19 @@ public class Asyncs {
 
   public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
     final SimpleAsync<ResultT> result = new SimpleAsync<>();
-    Async<ResultT> async = s.get();
+    Async<ResultT> async;
+    try {
+      async = s.get();
+    } catch (Exception e) {
+      untilSuccess(s).onSuccess(new Handler<ResultT>() {
+        @Override
+        public void handle(ResultT item) {
+          result.success(item);
+        }
+      });
+      return result;
+    }
+
     async.onResult(new Handler<ResultT>() {
       @Override
       public void handle(ResultT item) {
@@ -271,7 +293,7 @@ public class Asyncs {
     return result;
   }
 
-  public static <ValueT> Registration delegate(Async<ValueT> from, final SimpleAsync<ValueT> to) {
+  public static <ValueT> Registration delegate(Async<? extends ValueT> from, final SimpleAsync<? super ValueT> to) {
     return from.onResult(new Handler<ValueT>() {
       @Override
       public void handle(ValueT item) {

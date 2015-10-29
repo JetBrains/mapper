@@ -59,6 +59,17 @@ public class AsyncsTest {
   }
 
   @Test
+  public void mapException() {
+    Async<Integer> a = Asyncs.constant(1);
+    assertFailure(Asyncs.map(a, new Function<Integer, Integer>() {
+      @Override
+      public Integer apply(Integer input) {
+        throw new RuntimeException("test");
+      }
+    }));
+  }
+
+  @Test
   public void select() {
     Async<Integer> c = Asyncs.constant(239);
     Async<Integer> selected = Asyncs.select(c, new Function<Integer, Async<Integer>>() {
@@ -69,6 +80,17 @@ public class AsyncsTest {
     });
 
     assertSuccess(selected, 240);
+  }
+
+  @Test
+  public void selectException() {
+    Async<Integer> a = Asyncs.constant(1);
+    assertFailure(Asyncs.select(a, new Function<Integer, Async<Integer>>() {
+      @Override
+      public Async<Integer> apply(Integer input) {
+        throw new RuntimeException("test");
+      }
+    }));
   }
 
   @Test
@@ -132,6 +154,22 @@ public class AsyncsTest {
         return Asyncs.<Integer>constant(1);
       }
     }), 1);
+  }
+
+  @Test
+  public void untilSuccessException() {
+    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+      private int myCntr = 0;
+      @Override
+      public Async<Integer> get() {
+        myCntr++;
+        if (myCntr < 2) {
+          throw new RuntimeException();
+        } else {
+          return Asyncs.constant(myCntr);
+        }
+      }
+    }), 2);
   }
 
   @Test
