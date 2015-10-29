@@ -265,7 +265,12 @@ public class Asyncs {
     try {
       async = s.get();
     } catch (Exception e) {
-      result.failure(e);
+      untilSuccess(s).onSuccess(new Handler<ResultT>() {
+        @Override
+        public void handle(ResultT item) {
+          result.success(item);
+        }
+      });
       return result;
     }
 
