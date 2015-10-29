@@ -288,7 +288,7 @@ public class Asyncs {
     return result;
   }
 
-  public static <ValueT> Registration delegate(Async<ValueT> from, final SimpleAsync<ValueT> to) {
+  public static <ValueT> Registration delegate(Async<? extends ValueT> from, final SimpleAsync<? super ValueT> to) {
     return from.onResult(new Handler<ValueT>() {
       @Override
       public void handle(ValueT item) {
