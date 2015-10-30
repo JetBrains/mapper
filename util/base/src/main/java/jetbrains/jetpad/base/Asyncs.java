@@ -108,11 +108,14 @@ public class Asyncs {
     async.onResult(new Handler<SourceT>() {
       @Override
       public void handle(SourceT item) {
+        TargetT apply;
         try {
-          result.success(f.apply(item));
+          apply = f.apply(item);
         } catch (Exception e) {
           result.failure(e);
+          return;
         }
+        result.success(apply);
       }
     }, new Handler<Throwable>() {
       @Override
