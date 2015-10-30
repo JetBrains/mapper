@@ -83,24 +83,34 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
     if (alreadyHandled()) {
       throw new IllegalStateException();
     }
-    for (Handler<? super ItemT> handler : mySuccessHandlers) {
-      handler.handle(item);
-    }
-    clearHandlers();
     mySuccessItem = item;
     mySucceeded = true;
+
+    for (Handler<? super ItemT> handler : mySuccessHandlers) {
+      try {
+        handler.handle(item);
+      } catch (Exception e) {
+        ThrowableHandlers.handle(e);
+      }
+    }
+    clearHandlers();
   }
 
   public void failure(Throwable throwable) {
     if (alreadyHandled()) {
       throw new IllegalStateException();
     }
-    for (Handler<Throwable> handler : myFailureHandlers) {
-      handler.handle(throwable);
-    }
-    clearHandlers();
     myFailureThrowable = throwable;
     myFailed = true;
+
+    for (Handler<Throwable> handler : myFailureHandlers) {
+      try {
+        handler.handle(throwable);
+      } catch (Exception e) {
+        ThrowableHandlers.handle(e);
+      }
+    }
+    clearHandlers();
   }
 
   private void clearHandlers() {
@@ -110,5 +120,13 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
 
   private boolean alreadyHandled() {
     return mySucceeded || myFailed;
+  }
+
+  boolean hasSucceeded() {
+    return mySucceeded;
+  }
+
+  boolean hasFailed() {
+    return myFailed;
   }
 }
