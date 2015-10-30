@@ -58,6 +58,30 @@ public class AsyncsTest {
     }));
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void ignoreHandlerException() {
+    SimpleAsync<Integer> async = new SimpleAsync<>();
+    Async<Integer> res = Asyncs.map(async, new Function<Integer, Integer>() {
+      @Override
+      public Integer apply(Integer input) {
+        return input + 1;
+      }
+    });
+    res.onSuccess(new Handler<Integer>() {
+      @Override
+      public void handle(Integer item) {
+        throw new IllegalArgumentException();
+      }
+    });
+    res.onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        fail();
+      }
+    });
+    async.success(1);
+  }
+
   @Test
   public void mapException() {
     Async<Integer> a = Asyncs.constant(1);
