@@ -67,6 +67,7 @@ class SingleChildRoleSynchronizer<SourceT, TargetT> extends BaseRoleSynchronizer
   public void detach() {
     myChildRegistration.remove();
     myTargetProperty.set(null);
+    myTargetMapper.set(null);
   }
 
   private void sync() {
