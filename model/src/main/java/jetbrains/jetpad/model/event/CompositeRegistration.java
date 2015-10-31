@@ -50,5 +50,6 @@ public class CompositeRegistration extends Registration {
     for (Registration r : myRegistrations) {
       r.remove();
     }
+    myRegistrations.clear();
   }
 }

@@ -193,6 +193,7 @@ public abstract class Mapper<SourceT, TargetT> {
 
     myMappingContext = null;
     myDetached = true;
+    myParts = null;
   }
 
   protected void onBeforeAttach(MappingContext ctx) {
