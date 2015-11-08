@@ -28,13 +28,17 @@ public class ByTargetIndex {
 
   public ByTargetIndex(MappingContext ctx) {
     for (Mapper<?, ?> mapper : ctx.getMappers()) {
-      myTargetToMappers.put(mapper.getTarget(), mapper);
+      if (mapper.isFindable()) {
+        myTargetToMappers.put(mapper.getTarget(), mapper);
+      }
     }
 
     myRegistration = ctx.addListener(new MappingContextListener() {
       @Override
       public void onMapperRegistered(Mapper<?, ?> mapper) {
-        myTargetToMappers.put(mapper.getTarget(), mapper);
+        if (mapper.isFindable()) {
+          myTargetToMappers.put(mapper.getTarget(), mapper);
+        }
       }
 
       @Override
