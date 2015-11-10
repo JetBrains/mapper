@@ -19,21 +19,20 @@ import jetbrains.jetpad.base.Registration;
 
 public interface EventDispatchThread {
   /**
-   *
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown
    */
   void schedule(Runnable r);
 
   /**
-   *
+   * @param delay in milliseconds for the initial delay
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown
    */
   Registration schedule(int delay, Runnable r);
 
   /**
-   *
+   * @param period in milliseconds for the initial and between-event delay
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown
    */
