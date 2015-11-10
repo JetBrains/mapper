@@ -18,12 +18,9 @@ package jetbrains.jetpad.base.edt;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import jetbrains.jetpad.base.ThrowableHandlers;
 
 public final class JsEventDispatchThread implements EventDispatchThread {
-  private static final Logger LOG = Logger.getLogger(JsEventDispatchThread.class.getName());
   public static final JsEventDispatchThread INSTANCE = new JsEventDispatchThread();
 
   private JsEventDispatchThread() {
@@ -37,7 +34,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
         try {
           r.run();
         } catch (Throwable t) {
-          LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
+          ThrowableHandlers.handle(t);
         }
       }
     });
@@ -51,7 +48,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
         try {
           r.run();
         } catch (Throwable t) {
-          LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
+          ThrowableHandlers.handle(t);
         }
       }
     };
@@ -67,7 +64,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
         try {
           r.run();
         } catch (Throwable t) {
-          LOG.log(Level.SEVERE, "Runnable submitted to JsEventDispatchThread failed", t);
+          ThrowableHandlers.handle(t);
         }
       }
     };
