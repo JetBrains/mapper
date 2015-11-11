@@ -40,7 +40,7 @@ public class CollectionBinding {
 
   public static <ItemT> Registration bindOneWay(final ObservableSet<ItemT> source, final Set<ItemT> target) {
     target.addAll(source);
-    return source.addListener(new CollectionListener<ItemT>() {
+    return source.addListener(new CollectionAdapter<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
         target.add(event.getItem());
