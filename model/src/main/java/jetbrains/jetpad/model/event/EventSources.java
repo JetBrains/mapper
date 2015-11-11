@@ -1,6 +1,7 @@
 package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Selector;
@@ -24,14 +25,15 @@ public class EventSources {
         }
 
 
-        final Registration listReg = list.addHandler(new EventHandler<CollectionItemEvent<? extends ItemT>>() {
+        final Registration listReg = list.addListener(new CollectionAdapter<ItemT>() {
           @Override
-          public void onEvent(CollectionItemEvent<? extends ItemT> event) {
-            if (event.isAdded()) {
-              itemRegs.add(event.getIndex(), selector.select(event.getItem()).addHandler(handler));
-            } else {
-              itemRegs.remove(event.getIndex()).remove();
-            }
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+            itemRegs.add(event.getIndex(), selector.select(event.getItem()).addHandler(handler));
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+            itemRegs.remove(event.getIndex()).remove();
           }
         });
 
