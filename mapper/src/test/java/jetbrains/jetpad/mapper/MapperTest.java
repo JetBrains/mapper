@@ -16,6 +16,7 @@
 package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.model.collections.set.ObservableSet;
+import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
-public class MapperTest {
+public class MapperTest extends BaseTestCase {
   private Item source = createItemTree();
   private ItemMapper mapper;
   private Item target;
