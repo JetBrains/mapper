@@ -28,7 +28,7 @@ public class EventSources {
         final Registration listReg = list.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-            itemRegs.add(event.getIndex(), selector.select(event.getItem()).addHandler(handler));
+            itemRegs.add(event.getIndex(), selector.select(event.getNewItem()).addHandler(handler));
           }
 
           @Override

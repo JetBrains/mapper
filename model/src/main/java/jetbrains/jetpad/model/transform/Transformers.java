@@ -125,7 +125,7 @@ public class Transformers {
         final CollectionListener<SourceT> listener = new CollectionListener<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-            final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getItem());
+            final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
             to.add(event.getIndex(), transformation.getTarget());
             itemRegistrations.add(event.getIndex(), new Registration() {
               @Override
@@ -133,6 +133,18 @@ public class Transformers {
                 transformation.dispose();
               }
             });
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
+            final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
+            to.set(event.getIndex(), transformation.getTarget());
+            itemRegistrations.set(event.getIndex(), new Registration() {
+              @Override
+              protected void doRemove() {
+                transformation.dispose();
+              }
+            }).remove();
           }
 
           @Override
@@ -144,7 +156,7 @@ public class Transformers {
 
 
         for (int i = 0; i < from.size(); i++) {
-          listener.onItemAdded(new CollectionItemEvent<>(from.get(i), i, true));
+          listener.onItemAdded(new CollectionItemEvent<>(null, from.get(i), i, CollectionItemEvent.EventType.ADD));
         }
 
         final Registration reg = from.addListener(listener);
@@ -238,7 +250,7 @@ public class Transformers {
             myCollectionReg = from.addListener(myCollectionListener = new CollectionAdapter<ItemT>() {
               @Override
               public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-                ItemT item = event.getItem();
+                ItemT item = event.getNewItem();
                 watch(item, to);
 
                 int pos = Collections.binarySearch(to, item, comparator);
@@ -248,7 +260,7 @@ public class Transformers {
 
               @Override
               public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
-                ItemT item = event.getItem();
+                ItemT item = event.getOldItem();
 
                 int sortedIndex = to.indexOf(item);
                 if (sortedIndex == -1) {
@@ -310,8 +322,7 @@ public class Transformers {
                   }
                 }
                 if (needMove) {
-                  myCollectionListener.onItemRemoved(new CollectionItemEvent<>(item, -1, false));
-                  myCollectionListener.onItemAdded(new CollectionItemEvent<>(item, -1, true));
+                  myCollectionListener.onItemSet(new CollectionItemEvent<>(item, item, -1, CollectionItemEvent.EventType.SET));
                 }
               }
             }));
@@ -397,12 +408,12 @@ public class Transformers {
             myCollectionRegistration = from.addListener(new CollectionAdapter<SourceT>() {
               @Override
               public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-                add(event.getItem());
+                add(event.getNewItem());
               }
 
               @Override
               public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
-                SourceT item = event.getItem();
+                SourceT item = event.getOldItem();
                 if (!exists(item)) return;
                 for (Iterator<TargetT> i = to.iterator(); i.hasNext(); ) {
                   TargetT t = i.next();
@@ -464,7 +475,13 @@ public class Transformers {
             if (to.size() == n) {
               to.remove(n - 1);
             }
-            to.add(event.getIndex(), event.getItem());
+            to.add(event.getIndex(), event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+            if (event.getIndex() >= value.get()) return;
+            to.set(event.getIndex(), event.getNewItem());
           }
 
           @Override
@@ -550,19 +567,19 @@ public class Transformers {
         CollectionAdapter<SourceT> sourceListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(final CollectionItemEvent<? extends SourceT> event) {
-            SelectedT selected = f.apply(event.getItem());
+            SelectedT selected = f.apply(event.getNewItem());
             final Transformation<SelectedT, ? extends ObservableList<? extends ResultT>> transform = t.transform(selected);
             ObservableList<? extends ResultT> target = transform.getTarget();
 
-            int startIndex = getStartResultIndex(event.getItem(), from, sizes);
-            sizes.put(event.getItem(), target.size());
+            int startIndex = getStartResultIndex(event.getNewItem(), from, sizes);
+            sizes.put(event.getNewItem(), target.size());
             for (ResultT r: target) {
               to.add(startIndex++, r);
             }
 
-            final Registration reg = watch(event.getItem(), target);
+            final Registration reg = watch(event.getNewItem(), target);
 
-            registrations.put(event.getItem(), new Registration() {
+            registrations.put(event.getNewItem(), new Registration() {
               @Override
               protected void doRemove() {
                 reg.remove();
@@ -572,17 +589,17 @@ public class Transformers {
           }
 
           private <ItemT extends ResultT> Registration watch(final SourceT container, ObservableList<ItemT> list) {
-            return list.addListener(new CollectionListener<ItemT>() {
+            return list.addListener(new CollectionAdapter<ItemT>() {
               @Override
               public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
                 int startIndex = getStartResultIndex(container, from, sizes);
-                to.add(startIndex + event.getIndex(), event.getItem());
+                to.add(startIndex + event.getIndex(), event.getNewItem());
                 sizes.put(container, sizes.get(container) + 1);
               }
 
               @Override
               public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
-                to.remove(event.getItem());
+                to.remove(event.getOldItem());
                 sizes.put(container, sizes.get(container) - 1);
               }
             });
@@ -590,21 +607,21 @@ public class Transformers {
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
-            SelectedT selected = f.apply(event.getItem());
+            SelectedT selected = f.apply(event.getOldItem());
             Transformation<SelectedT, ? extends ObservableList<? extends ResultT>> transformation = t.transform(selected);
 
             to.removeAll(transformation.getTarget());
-            sizes.remove(event.getItem());
+            sizes.remove(event.getOldItem());
 
             transformation.dispose();
-            registrations.remove(event.getItem()).remove();
+            registrations.remove(event.getOldItem()).remove();
           }
         };
 
         final Registration sourceRegistration = from.addListener(sourceListener);
         int index = 0;
         for (SourceT s : from) {
-          sourceListener.onItemAdded(new CollectionItemEvent<>(s, index++, true));
+          sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, index++, CollectionItemEvent.EventType.ADD));
         }
 
         return new Transformation<ObservableList<SourceT>, ObservableList<ResultT>>() {
@@ -655,14 +672,14 @@ public class Transformers {
         CollectionAdapter<PropertyT> listener = new CollectionAdapter<PropertyT>() {
           @Override
           public void onItemAdded(final CollectionItemEvent<? extends PropertyT> listEvent) {
-            propRegistrations.add(listEvent.getIndex(), listEvent.getItem().addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+            propRegistrations.add(listEvent.getIndex(), listEvent.getNewItem().addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
               @Override
               public void onEvent(PropertyChangeEvent<ValueT> propEvent) {
-                int index = from.indexOf(listEvent.getItem());
+                int index = from.indexOf(listEvent.getNewItem());
                 to.set(index, propEvent.getNewValue());
               }
             }));
-            to.add(listEvent.getIndex(), listEvent.getItem().get());
+            to.add(listEvent.getIndex(), listEvent.getNewItem().get());
           }
 
           @Override
@@ -673,7 +690,7 @@ public class Transformers {
         };
 
         for (int i = 0; i < from.size(); i++) {
-          listener.onItemAdded(new CollectionItemEvent<>(from.get(i), i, true));
+          listener.onItemAdded(new CollectionItemEvent<>(null, from.get(i), i, CollectionItemEvent.EventType.ADD));
         }
 
         final Registration reg = from.addListener(listener);
@@ -720,12 +737,12 @@ public class Transformers {
         final CollectionListener<ResultT> nestedListener = new CollectionAdapter<ResultT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ResultT> event) {
-            to.add(event.getItem());
+            to.add(event.getNewItem());
           }
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends ResultT> event) {
-            to.remove(event.getItem());
+            to.remove(event.getOldItem());
           }
         };
 
@@ -733,12 +750,12 @@ public class Transformers {
         CollectionAdapter<SourceT> sourceListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-            SelectedT subcollection = f.apply(event.getItem());
+            SelectedT subcollection = f.apply(event.getNewItem());
             final Transformation<SelectedT, ? extends ObservableCollection<ResultT>> transform = t.transform(subcollection);
             ObservableCollection<ResultT> target = transform.getTarget();
             to.addAll(target);
             final Registration reg = target.addListener(nestedListener);
-            registrations.put(event.getItem(), new Registration() {
+            registrations.put(event.getNewItem(), new Registration() {
               @Override
               protected void doRemove() {
                 reg.remove();
@@ -749,16 +766,16 @@ public class Transformers {
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
-            SelectedT selected = f.apply(event.getItem());
+            SelectedT selected = f.apply(event.getOldItem());
             Transformation<SelectedT, ? extends ObservableCollection<ResultT>> transformation = t.transform(selected);
             to.removeAll(transformation.getTarget());
             transformation.dispose();
-            registrations.remove(event.getItem()).remove();
+            registrations.remove(event.getOldItem()).remove();
           }
         };
         final Registration sourceRegistration = from.addListener(sourceListener);
         for (SourceT s : from) {
-          sourceListener.onItemAdded(new CollectionItemEvent<>(s, -1, true));
+          sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, -1, CollectionItemEvent.EventType.ADD));
         }
 
         return new Transformation<ObservableCollection<SourceT>, ObservableCollection<ResultT>>() {
@@ -796,7 +813,12 @@ public class Transformers {
         final Registration registration = from.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-            to.add(event.getIndex(), event.getItem());
+            to.add(event.getIndex(), event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+            to.set(event.getIndex(), event.getNewItem());
           }
 
           @Override
@@ -837,12 +859,12 @@ public class Transformers {
         final Registration registration = from.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-            to.add(event.getItem());
+            to.add(event.getNewItem());
           }
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
-            to.remove(event.getItem());
+            to.remove(event.getOldItem());
           }
         });
         to.addAll(from);
@@ -881,7 +903,13 @@ public class Transformers {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             int pos = event.getIndex();
-            to.add(pos + 1, event.getItem());
+            to.add(pos + 1, event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
+            int pos = event.getIndex();
+            to.set(pos + 1, event.getNewItem());
           }
 
           @Override
@@ -931,8 +959,14 @@ public class Transformers {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             int pos = event.getIndex();
-            to.add(pos, event.getItem());
+            to.add(pos, event.getNewItem());
             fromSize += 1;
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
+            int pos = event.getIndex();
+            to.set(pos, event.getNewItem());
           }
 
           @Override
@@ -947,7 +981,13 @@ public class Transformers {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             int pos = event.getIndex();
-            to.add(pos + fromSize, event.getItem());
+            to.add(pos + fromSize, event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+            int pos = event.getIndex();
+            to.set(pos + fromSize, event.getNewItem());
           }
 
           @Override
@@ -1008,7 +1048,16 @@ public class Transformers {
             if (condition.get()) {
               pos += 1;
             }
-            to.add(pos, event.getItem());
+            to.add(pos, event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
+            int pos = event.getIndex();
+            if (condition.get()) {
+              pos += 1;
+            }
+            to.set(pos, event.getNewItem());
           }
 
           @Override
@@ -1081,12 +1130,12 @@ public class Transformers {
         final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-            to.add(event.getItem());
+            to.add(event.getNewItem());
           }
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
-            to.remove(event.getItem());
+            to.remove(event.getOldItem());
           }
         };
 
@@ -1155,7 +1204,15 @@ public class Transformers {
               to.remove(myPlaceholder);
               myPlaceholder = null;
             }
-            to.add(event.getIndex(), event.getItem());
+            to.add(event.getIndex(), event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+            if (myPlaceholder != null) {
+              throw new IllegalStateException();
+            }
+            to.set(event.getIndex(), event.getNewItem());
           }
 
           @Override
@@ -1311,12 +1368,12 @@ public class Transformers {
         final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-            to.add(function.apply(event.getItem()));
+            to.add(function.apply(event.getNewItem()));
           }
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
-            to.remove(function.apply(event.getItem()));
+            to.remove(function.apply(event.getOldItem()));
           }
         };
 
@@ -1358,7 +1415,12 @@ public class Transformers {
         final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-            to.add(event.getIndex(), function.apply(event.getItem()));
+            to.add(event.getIndex(), function.apply(event.getNewItem()));
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
+            to.set(event.getIndex(), function.apply(event.getNewItem()));
           }
 
           @Override

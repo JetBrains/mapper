@@ -40,7 +40,7 @@ public class ObservableHashSetTest {
   @Test
   public void add() {
     set.add("x");
-    Mockito.verify(listener).onItemAdded(new CollectionItemEvent<>("x", -1, true));
+    Mockito.verify(listener).onItemAdded(new CollectionItemEvent<>(null, "x", -1, CollectionItemEvent.EventType.ADD));
   }
 
   @Test
@@ -48,7 +48,7 @@ public class ObservableHashSetTest {
     set.add("x");
     Mockito.reset(listener);
     set.remove("x");
-    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<>("x", -1, false));
+    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<>("x", null, -1, CollectionItemEvent.EventType.REMOVE));
   }
 
   @Test
@@ -56,17 +56,17 @@ public class ObservableHashSetTest {
     set.add("x");
     Mockito.reset(listener);
     set.clear();
-    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<>("x", -1, false));
+    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<>("x", null, -1, CollectionItemEvent.EventType.REMOVE));
   }
 
   @Test
   public void nullValue() {
     set.add(null);
-    Mockito.verify(listener).onItemAdded(new CollectionItemEvent<String>(null, -1, true));
+    Mockito.verify(listener).onItemAdded(new CollectionItemEvent<String>(null, null, -1, CollectionItemEvent.EventType.ADD));
     assertEquals(1, set.size());
     Mockito.reset(listener);
     set.remove(null);
-    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<String>(null, -1, false));
+    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<String>(null, null, -1, CollectionItemEvent.EventType.REMOVE));
     assertTrue(set.isEmpty());
   }
 
@@ -78,7 +78,7 @@ public class ObservableHashSetTest {
     Iterator<String> i = set.iterator();
     String toRemove = i.next();
     i.remove();
-    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<>(toRemove, -1, false));
+    Mockito.verify(listener).onItemRemoved(new CollectionItemEvent<>(toRemove, null, -1, CollectionItemEvent.EventType.REMOVE));
     assertEquals(1, set.size());
   }
 
@@ -148,7 +148,7 @@ public class ObservableHashSetTest {
     set.addListener(listener);
     set.add("x");
     assertTrue(afterCalled.get());
-    Mockito.verify(listener, Mockito.never()).onItemAdded(new CollectionItemEvent<>("x", -1, true));
+    Mockito.verify(listener, Mockito.never()).onItemAdded(new CollectionItemEvent<>("x", null, -1, CollectionItemEvent.EventType.REMOVE));
   }
 
   @Test
@@ -171,6 +171,6 @@ public class ObservableHashSetTest {
     set.addListener(listener);
     set.remove("x");
     assertTrue(afterCalled.get());
-    Mockito.verify(listener, Mockito.never()).onItemRemoved(new CollectionItemEvent<>("x", -1, false));
+    Mockito.verify(listener, Mockito.never()).onItemRemoved(new CollectionItemEvent<>("x", null, -1, CollectionItemEvent.EventType.REMOVE));
   }
 }

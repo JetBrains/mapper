@@ -52,7 +52,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
           public void call(CollectionListener<ItemT> l) {
-            l.onItemAdded(new CollectionItemEvent<>(item, index, true));
+            l.onItemAdded(new CollectionItemEvent<>(null, item, index, CollectionItemEvent.EventType.ADD));
           }
         });
       }
@@ -82,7 +82,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
         myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
           @Override
           public void call(CollectionListener<ItemT> l) {
-            l.onItemRemoved(new CollectionItemEvent<>(item, index, false));
+            l.onItemRemoved(new CollectionItemEvent<>(item, null, index, CollectionItemEvent.EventType.REMOVE));
           }
         });
       }

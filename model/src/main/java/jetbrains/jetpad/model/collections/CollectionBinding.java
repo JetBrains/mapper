@@ -28,7 +28,12 @@ public class CollectionBinding {
     return source.addListener(new CollectionListener<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-        target.add(event.getIndex(), event.getItem());
+        target.add(event.getIndex(), event.getNewItem());
+      }
+
+      @Override
+      public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+        target.set(event.getIndex(), event.getNewItem());
       }
 
       @Override
@@ -43,12 +48,12 @@ public class CollectionBinding {
     return source.addListener(new CollectionAdapter<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-        target.add(event.getItem());
+        target.add(event.getNewItem());
       }
 
       @Override
       public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
-        target.remove(event.getItem());
+        target.remove(event.getOldItem());
       }
     });
   }

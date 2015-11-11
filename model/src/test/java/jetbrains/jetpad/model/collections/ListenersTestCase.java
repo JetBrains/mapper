@@ -97,6 +97,12 @@ public abstract class ListenersTestCase {
       public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
         throw new UnsupportedOperationException();
       }
+
+      @Override
+      public void onItemSet(CollectionItemEvent<? extends Integer> event) {
+        throw new UnsupportedOperationException();
+      }
+
       @Override
       public void onItemRemoved(CollectionItemEvent<? extends Integer> event) {
         throw new UnsupportedOperationException();
