@@ -16,6 +16,7 @@
 package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.base.diff.DifferenceBuilder;
+import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class DifferenceBuilderTest {
+public class DifferenceBuilderTest extends BaseTestCase {
   @Test
   public void listToEmpty() {
     assertConverges(Arrays.asList("a", "b", "c"), new ArrayList<String>());

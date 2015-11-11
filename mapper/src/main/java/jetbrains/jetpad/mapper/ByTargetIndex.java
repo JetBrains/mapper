@@ -36,13 +36,15 @@ public class ByTargetIndex {
     myRegistration = ctx.addListener(new MappingContextListener() {
       @Override
       public void onMapperRegistered(Mapper<?, ?> mapper) {
-        if (mapper.isFindable()) {
-          myTargetToMappers.put(mapper.getTarget(), mapper);
-        }
+        if (!mapper.isFindable()) return;
+
+        myTargetToMappers.put(mapper.getTarget(), mapper);
       }
 
       @Override
       public void onMapperUnregistered(Mapper<?, ?> mapper) {
+        if (!mapper.isFindable()) return;
+
         Object target = mapper.getTarget();
         if (!myTargetToMappers.get(target).contains(mapper)) {
           throw new IllegalStateException("unregistered unknown mapper " + mapper + " with target " + target);

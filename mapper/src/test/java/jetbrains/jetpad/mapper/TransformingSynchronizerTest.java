@@ -21,13 +21,14 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.transform.Transformers;
+import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-public class TransformingSynchronizerTest {
+public class TransformingSynchronizerTest extends BaseTestCase {
   private ObservableList<String> source;
   private MyMapper mapper;
   private ObservableList<String> target;
