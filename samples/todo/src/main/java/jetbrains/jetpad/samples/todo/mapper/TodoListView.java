@@ -16,10 +16,7 @@
 package jetbrains.jetpad.samples.todo.mapper;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.AnchorElement;
-import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.UListElement;
+import com.google.gwt.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import jetbrains.jetpad.mapper.gwt.BaseWithElement;
@@ -27,16 +24,31 @@ import jetbrains.jetpad.mapper.gwt.BaseWithElement;
 class TodoListView extends BaseWithElement {
   private static final TodoListViewUiBinder ourUiBinder = GWT.create(TodoListViewUiBinder.class);
   @UiField
+  InputElement addNew;
+  @UiField
+  InputElement toggleAll;
+  @UiField
   UListElement children;
   @UiField
-  SpanElement count;
+  UListElement active;
   @UiField
-  AnchorElement addNew;
+  UListElement complete;
   @UiField
-  AnchorElement clearCompleted;
+  Element count;
+  @UiField
+  SpanElement remainingTasks;
+  @UiField
+  AnchorElement showAll;
+  @UiField
+  AnchorElement showActive;
+  @UiField
+  AnchorElement showComplete;
+  @UiField
+  ButtonElement clearCompleted;
 
   public TodoListView() {
     setElement(ourUiBinder.createAndBindUi(this));
+    getElement().addClassName("centered");
   }
 
   interface TodoListViewUiBinder extends UiBinder<DivElement, TodoListView> {

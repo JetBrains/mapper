@@ -19,7 +19,10 @@ import com.google.gwt.query.client.Function;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import jetbrains.jetpad.mapper.Mapper;
+import jetbrains.jetpad.mapper.Synchronizer;
 import jetbrains.jetpad.mapper.Synchronizers;
+import jetbrains.jetpad.mapper.gwt.EditableText;
+import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.samples.todo.model.TodoListItem;
 
 import static com.google.gwt.query.client.GQuery.$;
@@ -32,9 +35,7 @@ class TodoListItemMapper extends Mapper<TodoListItem, TodoListItemView> {
     $(getTarget().delete).click(new Function() {
       @Override
       public boolean f(Event e) {
-        if (Window.confirm("Are you Sure")) {
-          getSource().removeFromParent();
-        }
+        getSource().removeFromParent();
         return false;
       }
     });
@@ -46,6 +47,6 @@ class TodoListItemMapper extends Mapper<TodoListItem, TodoListItemView> {
 
     conf.add(Synchronizers.forPropsTwoWay(getSource().text, editableTextOf(getTarget().text)));
     conf.add(Synchronizers.forPropsTwoWay(getSource().completed, checkbox(getTarget().checkbox)));
-    conf.add(Synchronizers.forPropsOneWay(getSource().completed, hasClass(getTarget().text, "completed")));
+    conf.add(Synchronizers.forPropsOneWay(getSource().completed, hasClass(getTarget().listItem, "completed")));
   }
 }

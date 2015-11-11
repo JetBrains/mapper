@@ -32,7 +32,7 @@ public class TodoEntryPoint implements EntryPoint {
     Mapper<TodoList, ? extends WithElement> mapper = new TodoListMapper(model);
     mapper.attachRoot();
 
-    $("#main").append(mapper.getTarget().getElement());
+    $("#wrapper").append(mapper.getTarget().getElement());
   }
 
   private TodoList createModel() {

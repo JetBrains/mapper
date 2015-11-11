@@ -1,15 +1,52 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
   <div>
-    <h1>Todo List (<span ui:field="count"></span>)</h1>
-    <ul ui:field="children" class="{style.list}">
-    </ul>
-    <a ui:field="addNew" href="#">Add New</a>
-    <a ui:field="clearCompleted" href="#">Clear Completed</a>
-  </div>
+    <section class="todoapp">
 
+      <header class="header">
+        <h1>todos</h1>
+        <input placeholder="What needs to be done?" class="new-todo" ui:field="addNew"></input>
+      </header>
+
+      <section class="main">
+        <input ui:field="toggleAll" class="toggle-all" type="checkbox"></input>
+        <label for="toggle-all">Mark all as complete</label>
+        <ul ui:field="children" class="todo-list"></ul>
+        <ul ui:field="active" class="todo-list" style="display:none;"></ul>
+        <ul ui:field="complete" class="todo-list" style="display:none;"></ul>
+      </section>
+
+      <footer class="footer" style="display:block;">
+        <span class="todo-count">
+          <strong ui:field="count"></strong>
+          <span class="word" ui:field="remainingTasks"></span>
+          left
+        </span>
+        <ul class="filters">
+          <li>
+            <a href="#/" class="inline selected" ui:field="showAll">All</a>
+          </li>
+          <li>
+            <a href="#/" class="inline" ui:field="showActive">Active</a>
+          </li>
+          <li>
+            <a href="#/" class="inline" ui:field="showComplete">Completed</a>
+          </li>
+        </ul>
+        <button ui:field="clearCompleted" class="clear-completed">Clear completed</button>
+      </footer>
+
+    </section>
+
+    <footer class="info">
+      <p>Click to edit a todo</p>
+      <p>Created by <a href="https://www.jetbrains.com/">JetBrains</a></p>
+      <p>Built with <a href="https://github.com/JetBrains/jetpad-mapper">Jetpad-Mapper</a></p>
+    </footer>
+  </div>
   <ui:style>
     .list {
-      list-style-type: none;
+    list-style-type: none;
     }
+    .inline { display:inline; }
   </ui:style>
 </ui:UiBinder>
