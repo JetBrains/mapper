@@ -62,29 +62,29 @@ public final class MappingContext {
   }
 
   protected void unregister(final Mapper<?, ?> mapper) {
-    if (!mapper.isFindable()) return;
-
-    Object source = mapper.getSource();
-    if (!myMappers.containsKey(source)) {
-      throw new IllegalStateException();
-    }
-    Object ms = myMappers.get(source);
-    if (ms instanceof Set) {
-      Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
-      mappers.remove(mapper);
-      if (mappers.size() == 1) {
-        myMappers.put(source, mappers.iterator().next());
-      }
-    } else {
-      if (ms != mapper) {
+    if (mapper.isFindable()) {
+      Object source = mapper.getSource();
+      if (!myMappers.containsKey(source)) {
         throw new IllegalStateException();
       }
-      myMappers.remove(source);
-    }
+      Object ms = myMappers.get(source);
+      if (ms instanceof Set) {
+        Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
+        mappers.remove(mapper);
+        if (mappers.size() == 1) {
+          myMappers.put(source, mappers.iterator().next());
+        }
+      } else {
+        if (ms != mapper) {
+          throw new IllegalStateException();
+        }
+        myMappers.remove(source);
+      }
 
-    Runnable onDispose = myOnDispose.remove(mapper);
-    if (onDispose != null) {
-      onDispose.run();
+      Runnable onDispose = myOnDispose.remove(mapper);
+      if (onDispose != null) {
+        onDispose.run();
+      }
     }
 
     myListeners.fire(new ListenerCaller<MappingContextListener>() {
