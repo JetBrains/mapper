@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.samples.todo.mapper;
 
+import com.google.gwt.aria.client.ListitemRole;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,9 +25,11 @@ import jetbrains.jetpad.mapper.gwt.BaseWithElement;
 class TodoListItemView extends BaseWithElement {
   private static final TodoListItemViewUiBinder ourUiBinder = GWT.create(TodoListItemViewUiBinder.class);
   @UiField
-  SpanElement text;
+  Element listItem;
   @UiField
-  AnchorElement delete;
+  LabelElement text;
+  @UiField
+  ButtonElement delete;
   @UiField
   InputElement checkbox;
 
