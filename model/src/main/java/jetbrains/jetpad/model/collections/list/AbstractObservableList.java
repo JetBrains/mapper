@@ -75,6 +75,34 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   protected void afterItemAdded(int index, ItemT item, boolean success) {
   }
 
+  @Override
+  public final ItemT set(final int index, final ItemT item) {
+    final ItemT old = get(index);
+    checkSet(index, old, item);
+    beforeItemSet(index, old, item);
+    boolean success = false;
+    try {
+      doSet(index, item);
+      success = true;
+      if (myListeners != null) {
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemSet(new CollectionItemEvent<>(old, item, index, CollectionItemEvent.EventType.SET));
+          }
+        });
+      }
+    } finally {
+      afterItemSet(index, old, item, success);
+    }
+    return old;
+  }
+
+  protected void doSet(int index, ItemT item) {
+    doRemove(index);
+    doAdd(index, item);
+  }
+
   protected void beforeItemSet(int index, ItemT oldItem, ItemT newItem) {
   }
 

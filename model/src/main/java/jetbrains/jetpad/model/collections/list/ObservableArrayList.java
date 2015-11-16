@@ -36,16 +36,14 @@ public class ObservableArrayList<ItemT> extends AbstractObservableList<ItemT> {
   }
 
   @Override
-  public ItemT set(int index, ItemT t) {
-    ItemT result = remove(index);
-    add(index, t);
-    return result;
-  }
-
-  @Override
   protected void doAdd(int index, ItemT item) {
     ensureContainerInitialized();
     myContainer.add(index, item);
+  }
+
+  @Override
+  protected void doSet(int index, ItemT item) {
+    myContainer.set(index, item);
   }
 
   @Override

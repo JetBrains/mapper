@@ -23,7 +23,8 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   }
 
   public ObservableSingleItemList(ItemT item) {
-    doSet(item);
+    myItem = item;
+    myEmpty = false;
   }
 
   public ItemT getItem() {
@@ -48,13 +49,6 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   }
 
   @Override
-  public ItemT set(int index, ItemT t) {
-    ItemT oldValue = myEmpty ? null : remove(index);
-    add(index, t);
-    return oldValue;
-  }
-
-  @Override
   protected void checkAdd(int index, ItemT item) {
     super.checkAdd(index, item);
     if (!myEmpty) {
@@ -63,18 +57,24 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   }
 
   @Override
+  protected void checkSet(int index, ItemT oldItem, ItemT newItem) {
+    super.checkRemove(index, oldItem);
+  }
+
+  @Override
   protected void doAdd(int index, ItemT item) {
-    doSet(item);
+    myItem = item;
+    myEmpty = false;
+  }
+
+  @Override
+  protected void doSet(int index, ItemT item) {
+    myItem = item;
   }
 
   @Override
   protected void doRemove(int index) {
     myItem = null;
     myEmpty = true;
-  }
-
-  private void doSet(ItemT item) {
-    myItem = item;
-    myEmpty = false;
   }
 }
