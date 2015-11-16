@@ -91,7 +91,7 @@ public abstract class ListenersTestCase {
     }
   }
 
-  private CollectionListener<Integer> createThrowingListener() {
+  protected CollectionListener<Integer> createThrowingListener() {
     return new CollectionListener<Integer>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends Integer> event) {

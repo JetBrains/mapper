@@ -40,6 +40,7 @@ public class ObservableSingleItemListTest {
 
   @Test
   public void setNullValue() {
+    list.add(0);
     list.set(0, null);
     assertEquals(1, list.size());
     assertNull(list.getItem());

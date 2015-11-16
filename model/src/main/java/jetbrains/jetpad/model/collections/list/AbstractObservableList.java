@@ -34,6 +34,12 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
     }
   }
 
+  protected void checkSet(int index, ItemT oldItem, ItemT newItem) {
+    if (index < 0 || index >= size()) {
+      throw new IndexOutOfBoundsException("Set: index=" + index + ", size=" + size());
+    }
+  }
+
   protected void checkRemove(int index, ItemT item) {
     if (index < 0 || index >= size()) {
       throw new IndexOutOfBoundsException("Remove: index=" + index + ", size=" + size());
@@ -67,6 +73,12 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   protected void afterItemAdded(int index, ItemT item, boolean success) {
+  }
+
+  protected void beforeItemSet(int index, ItemT oldItem, ItemT newItem) {
+  }
+
+  protected void afterItemSet(int index, ItemT oldItem, ItemT newItem, boolean success) {
   }
 
   @Override

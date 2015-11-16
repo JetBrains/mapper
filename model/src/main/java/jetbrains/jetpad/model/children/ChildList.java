@@ -77,6 +77,18 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
   }
 
   @Override
+  protected void checkSet(int index, ChildT oldItem, ChildT newItem) {
+    super.checkSet(index, oldItem, newItem);
+    checkRemove(index, oldItem);
+    checkAdd(index, newItem);
+  }
+
+  @Override
+  protected void beforeItemSet(int index, ChildT oldItem, ChildT newItem) {
+    beforeItemAdded(index, newItem);
+  }
+
+  @Override
   protected void checkRemove(int index, ChildT item) {
     super.checkRemove(index, item);
     if (item.parent().get() != myParent) {

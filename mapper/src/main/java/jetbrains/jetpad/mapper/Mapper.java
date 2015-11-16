@@ -292,6 +292,14 @@ public abstract class Mapper<SourceT, TargetT> {
     }
 
     @Override
+    protected void checkSet(int index, MapperT oldItem, MapperT newItem) {
+      Mapper.this.checkCanRemove(oldItem);
+      Mapper.this.checkCanAdd(newItem);
+
+      super.checkSet(index, oldItem, newItem);
+    }
+
+    @Override
     protected void checkRemove(int index, MapperT item) {
       Mapper.this.checkCanRemove(item);
 
@@ -305,6 +313,13 @@ public abstract class Mapper<SourceT, TargetT> {
       }
       addChild(item);
       super.beforeItemAdded(index, item);
+    }
+
+    @Override
+    protected void beforeItemSet(int index, MapperT oldItem, MapperT newItem) {
+      removeChild(oldItem);
+      addChild(newItem);
+      super.beforeItemSet(index, oldItem, newItem);
     }
 
     @Override
