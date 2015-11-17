@@ -25,22 +25,33 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   @Override
   public Registration onSuccess(Handler<? super ItemT> successHandler) {
     synchronized (myAsync) {
-      return myAsync.onSuccess(successHandler);
+      return safeReg(myAsync.onSuccess(successHandler));
     }
   }
 
   @Override
   public Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler) {
     synchronized (myAsync) {
-      return myAsync.onResult(successHandler, failureHandler);
+      return safeReg(myAsync.onResult(successHandler, failureHandler));
     }
   }
 
   @Override
   public Registration onFailure(Handler<Throwable> failureHandler) {
     synchronized (myAsync) {
-      return myAsync.onFailure(failureHandler);
+      return safeReg(myAsync.onFailure(failureHandler)) ;
     }
+  }
+
+  private Registration safeReg(final Registration r) {
+    return new Registration() {
+      @Override
+      protected void doRemove() {
+        synchronized (myAsync) {
+          r.remove();
+        }
+      }
+    };
   }
 
   public void success(ItemT item) {
