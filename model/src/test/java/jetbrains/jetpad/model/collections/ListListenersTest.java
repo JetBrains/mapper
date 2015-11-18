@@ -16,19 +16,22 @@
 package jetbrains.jetpad.model.collections;
 
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
+import jetbrains.jetpad.model.collections.list.ObservableList;
+import org.junit.Test;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ListListenersTest extends ListenersTestCase {
   @Override
-  protected MyCollection createCollection() {
+  protected MyList createCollection() {
     return new TestObservableArrayList();
   }
 
   @Override
-  protected MyCollection createThrowingOnAddCollection() {
+  protected MyList createThrowingOnAddCollection() {
     return new TestObservableArrayList() {
       @Override
       protected void doAdd(int index, Integer item) {
@@ -37,8 +40,17 @@ public class ListListenersTest extends ListenersTestCase {
     };
   }
 
+  protected MyList createThrowingOnSetCollection() {
+    return new TestObservableArrayList() {
+      @Override
+      protected void doSet(int index, Integer item) {
+        throw new IllegalStateException();
+      }
+    };
+  }
+
   @Override
-  protected MyCollection createThrowingOnRemoveCollection() {
+  protected MyList createThrowingOnRemoveCollection() {
     return new TestObservableArrayList() {
       @Override
       protected void doRemove(int index) {
@@ -47,9 +59,56 @@ public class ListListenersTest extends ListenersTestCase {
     };
   }
 
-  private static class TestObservableArrayList extends ObservableArrayList<Integer> implements MyCollection {
+  @Test
+  public void beforeAfterAreCalledOnSet() {
+    MyList c = createCollection();
+    c.add(0);
+    c.set(0, 4);
+    c.remove(0);
+    assertTrue(c.isEmpty());
+    assertEquals(1, c.getBeforeItemAddedCallsNumber());
+    assertEquals(1, c.getBeforeItemSetCallsNumber());
+    assertEquals(1, c.getBeforeItemRemovedCallsNumber());
+    c.verifyBeforeAfter();
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void beforeAfterOnSetArentAffectedByListenerExceptions() {
+    MyList c = createCollection();
+    c.add(0);
+    c.addListener(createThrowingListener());
+    try {
+      c.set(0, 5);
+    } finally {
+      c.verifyBeforeAfter();
+      c.verifyLastSuccess(true);
+      c.assertContentEquals(5);
+    }
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void setFailureDoesntAffectBeforeAfter() {
+    MyList c = createThrowingOnSetCollection();
+    c.add(0);
+    c.addListener(createThrowingListener());
+    try {
+      c.set(0, 5);
+    } finally {
+      c.verifyBeforeAfter();
+      c.verifyLastSuccess(false);
+      c.assertContentEquals(0);
+    }
+  }
+
+  protected interface MyList extends MyCollection, ObservableList<Integer> {
+    int getBeforeItemSetCallsNumber();
+  }
+
+  private static class TestObservableArrayList extends ObservableArrayList<Integer> implements MyList {
     private int beforeItemAddedCalled;
     private int afterItemAddedCalled;
+    private int beforeItemSetCalled;
+    private int afterItemSetCalled;
     private int beforeItemRemovedCalled;
     private int afterItemRemovedCalled;
     private boolean successful;
@@ -62,6 +121,17 @@ public class ListListenersTest extends ListenersTestCase {
     @Override
     protected void afterItemAdded(int index, Integer item, boolean success) {
       afterItemAddedCalled++;
+      successful = success;
+    }
+
+    @Override
+    protected void beforeItemSet(int index, Integer oldItem, Integer newItem) {
+      beforeItemSetCalled++;
+    }
+
+    @Override
+    protected void afterItemSet(int index, Integer oldItem, Integer newItem, boolean success) {
+      afterItemSetCalled++;
       successful = success;
     }
 
@@ -84,12 +154,18 @@ public class ListListenersTest extends ListenersTestCase {
     @Override
     public void verifyBeforeAfter() {
       assertEquals(afterItemAddedCalled, beforeItemAddedCalled);
+      assertEquals(afterItemSetCalled, beforeItemSetCalled);
       assertEquals(afterItemRemovedCalled, beforeItemRemovedCalled);
     }
 
     @Override
     public int getBeforeItemAddedCallsNumber() {
       return beforeItemAddedCalled;
+    }
+
+    @Override
+    public int getBeforeItemSetCallsNumber() {
+      return beforeItemSetCalled;
     }
 
     @Override

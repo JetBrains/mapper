@@ -42,6 +42,11 @@ public abstract class SimpleCollectionProperty<ItemT, ValueT> extends BaseDerive
       }
 
       @Override
+      public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+        somethingChanged();
+      }
+
+      @Override
       public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
         somethingChanged();
       }

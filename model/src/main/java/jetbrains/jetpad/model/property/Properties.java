@@ -825,7 +825,15 @@ public class Properties {
             if (coll.size() != 1) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(null, event.getItem()));
+            handler.onEvent(new PropertyChangeEvent<ItemT>(null, event.getNewItem()));
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+            if (event.getIndex() != 0) {
+              throw new IllegalStateException();
+            }
+            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), event.getNewItem()));
           }
 
           @Override
@@ -833,7 +841,7 @@ public class Properties {
             if (!coll.isEmpty()) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getItem(), null));
+            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), null));
           }
         });
       }

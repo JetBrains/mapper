@@ -17,33 +17,83 @@ package jetbrains.jetpad.model.collections;
 
 import jetbrains.jetpad.model.event.ListenerEvent;
 
+import java.util.Objects;
+
 public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListener<ItemT>> {
-  private ItemT myItem;
-  private boolean myAdded;
+  public enum EventType {
+    ADD, SET, REMOVE
+  }
+  private ItemT myOldItem;
+  private ItemT myNewItem;
+  private EventType myType;
   private int myIndex;
 
-  public CollectionItemEvent(ItemT item, int index, boolean added) {
-    myItem = item;
+  public CollectionItemEvent(ItemT oldItem, ItemT newItem, int index, EventType type) {
+    if (EventType.ADD.equals(type) && oldItem != null || EventType.REMOVE.equals(type) && newItem != null) {
+      throw new IllegalStateException();
+    }
+    myOldItem = oldItem;
+    myNewItem = newItem;
     myIndex = index;
-    myAdded = added;
+    myType = type;
   }
 
+  @Deprecated
+  public CollectionItemEvent(ItemT item, int index, boolean isAdd) {
+    if (isAdd) {
+      myNewItem = item;
+      myType = EventType.ADD;
+    } else {
+      myOldItem = item;
+      myType = EventType.REMOVE;
+    }
+    myIndex = index;
+  }
+
+  /**
+   * @deprecated  Use {@link #getOldItem()} or {@link #getNewItem()} instead.
+   */
+  @Deprecated
   public ItemT getItem() {
-    return myItem;
+    if (EventType.ADD.equals(myType)) {
+      return myNewItem;
+    } else if (EventType.REMOVE.equals(myType)) {
+      return myOldItem;
+    } else {
+      throw new UnsupportedOperationException("Events of this type do not have a designated item");
+    }
+  }
+
+  public ItemT getOldItem() {
+    return myOldItem;
+  }
+
+  public ItemT getNewItem() {
+    return myNewItem;
   }
 
   public int getIndex() {
     return myIndex;
   }
 
+  /**
+   * @deprecated  Use {@link #getType()} instead.
+   */
+  @Deprecated
   public boolean isAdded() {
-    return myAdded;
+    return EventType.ADD.equals(myType);
+  }
+
+  public EventType getType() {
+    return myType;
   }
 
   @Override
   public void dispatch(CollectionListener<ItemT> l) {
-    if (myAdded) {
+    if (EventType.ADD.equals(myType)) {
       l.onItemAdded(this);
+    } else if (EventType.SET.equals(myType)) {
+      l.onItemSet(this);
     } else {
       l.onItemRemoved(this);
     }
@@ -53,26 +103,25 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     CollectionItemEvent that = (CollectionItemEvent) o;
 
-    if (myAdded != that.myAdded) return false;
-    if (myIndex != that.myIndex) return false;
-    if (myItem != null ? !myItem.equals(that.myItem) : that.myItem != null) return false;
-
-    return true;
+    return Objects.equals(myOldItem, that.myOldItem) && Objects.equals(myNewItem, that.myNewItem) &&
+           Objects.equals(myType, that.myType) && myIndex == that.myIndex;
   }
 
   @Override
   public int hashCode() {
-    int result = myItem != null ? myItem.hashCode() : 0;
-    result = 31 * result + (myAdded ? 1 : 0);
-    result = 31 * result + myIndex;
-    return result;
+    return Objects.hash(myOldItem, myNewItem, myType, myIndex);
   }
 
   @Override
   public String toString() {
-    return myItem + " " + (myAdded ? "added" : "removed") + " at " + myIndex;
+    if (EventType.ADD.equals(myType)) {
+      return myNewItem + " added at " + myIndex;
+    } else if (EventType.SET.equals(myType)) {
+      return myOldItem + " replaced with " + myNewItem + " at " + myIndex;
+    } else {
+      return myOldItem + " removed at " + myIndex;
+    }
   }
 }

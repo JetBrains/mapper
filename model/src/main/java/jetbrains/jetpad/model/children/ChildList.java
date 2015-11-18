@@ -27,12 +27,12 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
     addListener(new CollectionAdapter<ChildT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ChildT> event) {
-        event.getItem().myParent.flush();
+        event.getNewItem().myParent.flush();
       }
 
       @Override
       public void onItemRemoved(CollectionItemEvent<? extends ChildT> event) {
-        ChildT item = event.getItem();
+        ChildT item = event.getOldItem();
         item.myParent.set(null);
         item.myPositionData = null;
         item.myParent.flush();
@@ -74,6 +74,18 @@ public class ChildList<ParentT, ChildT extends HasParent<? super ParentT, ? supe
         ChildList.this.remove(item);
       }
     };
+  }
+
+  @Override
+  protected void checkSet(int index, ChildT oldItem, ChildT newItem) {
+    super.checkSet(index, oldItem, newItem);
+    checkRemove(index, oldItem);
+    checkAdd(index, newItem);
+  }
+
+  @Override
+  protected void beforeItemSet(int index, ChildT oldItem, ChildT newItem) {
+    beforeItemAdded(index, newItem);
   }
 
   @Override

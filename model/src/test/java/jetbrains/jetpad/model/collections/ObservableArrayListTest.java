@@ -52,7 +52,7 @@ public class ObservableArrayListTest {
 
     list.add(item);
 
-    assertEvent(0, item, true);
+    assertEvent(0, null, item, CollectionItemEvent.EventType.ADD);
   }
 
   @Test
@@ -61,7 +61,7 @@ public class ObservableArrayListTest {
 
     list.remove(item);
 
-    assertEvent(0, item, false);
+    assertEvent(0, item, null, CollectionItemEvent.EventType.REMOVE);
   }
 
   @Test
@@ -76,7 +76,7 @@ public class ObservableArrayListTest {
   public void addAtOkIndex() {
     String item = "xyz";
     list.add(0, item);
-    assertEvent(0, item, true);
+    assertEvent(0, null, item, CollectionItemEvent.EventType.ADD);
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
@@ -94,7 +94,7 @@ public class ObservableArrayListTest {
     final String item = addSampleItem();
     String removed = list.remove(0);
     assertEquals(item, removed);
-    assertEvent(0, item, false);
+    assertEvent(0, item, null, CollectionItemEvent.EventType.REMOVE);
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
@@ -115,7 +115,7 @@ public class ObservableArrayListTest {
     Iterator<String> i = list.iterator();
     i.next();
     i.remove();
-    assertEvent(0, "xyz", false);
+    assertEvent(0, "xyz", null, CollectionItemEvent.EventType.REMOVE);
   }
 
   private String addSampleItem() {
@@ -125,12 +125,10 @@ public class ObservableArrayListTest {
     return item;
   }
 
-  private void assertEvent(int index, String item, boolean added) {
+  private void assertEvent(int index, String oldItem, String newItem, CollectionItemEvent.EventType type) {
     assertEquals(1, events.size());
 
     CollectionItemEvent<? extends String> event = events.get(0);
-    assertSame(item, event.getItem());
-    assertEquals(index, event.getIndex());
-    assertTrue(added == event.isAdded());
+    assertEquals(new CollectionItemEvent<>(oldItem, newItem, index, type), event);
   }
 }
