@@ -15,12 +15,17 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
+import java.util.logging.Logger;
+
 public final class JsEventDispatchThread implements EventDispatchThread {
+  private static final Logger LOG = Logger.getLogger(JsEventDispatchThread.class.getName());
+
   public static final JsEventDispatchThread INSTANCE = new JsEventDispatchThread();
 
   private JsEventDispatchThread() {
@@ -33,6 +38,11 @@ public final class JsEventDispatchThread implements EventDispatchThread {
       public void execute() {
         try {
           r.run();
+        } catch (JavaScriptException jse) {
+          if (jse.isThrownSet()) {
+            LOG.severe("Caught JavaScriptException, wrapped error is: " + jse.getThrown());
+          }
+          ThrowableHandlers.handle(jse);
         } catch (Throwable t) {
           ThrowableHandlers.handle(t);
         }
@@ -47,6 +57,11 @@ public final class JsEventDispatchThread implements EventDispatchThread {
       public void run() {
         try {
           r.run();
+        } catch (JavaScriptException jse) {
+          if (jse.isThrownSet()) {
+            LOG.severe("Caught JavaScriptException, wrapped error is: " + jse.getThrown());
+          }
+          ThrowableHandlers.handle(jse);
         } catch (Throwable t) {
           ThrowableHandlers.handle(t);
         }
@@ -63,6 +78,11 @@ public final class JsEventDispatchThread implements EventDispatchThread {
       public void run() {
         try {
           r.run();
+        } catch (JavaScriptException jse) {
+          if (jse.isThrownSet()) {
+            LOG.severe("Caught JavaScriptException, wrapped error is: " + jse.getThrown());
+          }
+          ThrowableHandlers.handle(jse);
         } catch (Throwable t) {
           ThrowableHandlers.handle(t);
         }
