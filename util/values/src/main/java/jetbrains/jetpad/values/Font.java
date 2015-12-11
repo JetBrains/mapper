@@ -16,35 +16,43 @@
 package jetbrains.jetpad.values;
 
 public class Font {
-  private FontFamily myFamily;
-  private int mySize;
-  private boolean myBold;
-  private boolean myItalic;
+  public final FontFamily family;
+  public final int size;
+  public final boolean bold;
+  public final boolean italic;
 
   public Font(FontFamily family, int size) {
     this(family, size, false, false);
   }
 
   public Font(FontFamily family, int size, boolean bold, boolean italic) {
-    myFamily = family;
-    mySize = size;
-    myBold = bold;
-    myItalic = italic;
+    if (family == null) {
+      throw new IllegalArgumentException("Null font family");
+    }
+    this.family = family;
+    this.size = size;
+    this.bold = bold;
+    this.italic = italic;
   }
 
-  public FontFamily getFamily() {
-    return myFamily;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Font)) return false;
+
+    Font font = (Font) o;
+    if (size != font.size) return false;
+    if (bold != font.bold) return false;
+    if (italic != font.italic) return false;
+    return family.toString().equals(font.family.toString());
   }
 
-  public int getSize() {
-    return mySize;
-  }
-
-  public boolean isBold() {
-    return myBold;
-  }
-
-  public boolean isItalic() {
-    return myItalic;
+  @Override
+  public int hashCode() {
+    int result = family.toString().hashCode();
+    result = 31 * result + size;
+    result = 31 * result + (bold ? 1 : 0);
+    result = 31 * result + (italic ? 1 : 0);
+    return result;
   }
 }
