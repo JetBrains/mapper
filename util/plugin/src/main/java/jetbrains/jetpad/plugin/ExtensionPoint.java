@@ -26,4 +26,20 @@ public final class ExtensionPoint<ExtensionT> {
   public String toString() {
     return "ExtensionPoint " + myName;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    ExtensionPoint<?> that = (ExtensionPoint<?>) o;
+
+    return myName.equals(that.myName);
+
+  }
+
+  @Override
+  public int hashCode() {
+    return myName.hashCode();
+  }
 }
