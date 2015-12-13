@@ -17,6 +17,7 @@ package jetbrains.jetpad.values;
 
 public class FontFamily {
   public static final FontFamily MONOSPACED = new MonospacedFontFamily();
+  public static final FontFamily SERIF = new NamedFontFamily("serif");
 
   public static FontFamily forName(String name) {
     return new NamedFontFamily(name);
