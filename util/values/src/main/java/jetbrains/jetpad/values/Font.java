@@ -47,4 +47,26 @@ public class Font {
   public boolean isItalic() {
     return myItalic;
   }
+
+  @Override
+  public String toString() {
+    return myFamily + " " + mySize + (myBold ? " bold" : "") + (myItalic ? " italic" : "");
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Font)) return false;
+    Font font = (Font) o;
+    return myFamily == font.myFamily && mySize == font.mySize && myBold == font.myBold && myItalic == font.myItalic;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myFamily.hashCode();
+    result = 31 * result + mySize;
+    result = 31 * result + (myBold ? 1 : 0);
+    result = 31 * result + (myItalic ? 1 : 0);
+    return result;
+  }
 }
