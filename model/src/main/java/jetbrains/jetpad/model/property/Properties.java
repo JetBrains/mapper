@@ -24,7 +24,9 @@ import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
+import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
+import jetbrains.jetpad.model.collections.list.UnmodifiableObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 
@@ -792,7 +794,6 @@ public class Properties {
     };
   }
 
-
   public static <ItemT> Property<ItemT> forSingleItemCollection(final ObservableCollection<ItemT> coll) {
     if (coll.size() > 1) {
       throw new IllegalStateException("Collection " + coll + " has more than one item");
@@ -825,7 +826,7 @@ public class Properties {
             if (coll.size() != 1) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(null, event.getNewItem()));
+            handler.onEvent(new PropertyChangeEvent<>(null, event.getNewItem()));
           }
 
           @Override
@@ -833,7 +834,7 @@ public class Properties {
             if (event.getIndex() != 0) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), event.getNewItem()));
+            handler.onEvent(new PropertyChangeEvent<>(event.getOldItem(), event.getNewItem()));
           }
 
           @Override
@@ -841,7 +842,7 @@ public class Properties {
             if (!coll.isEmpty()) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), null));
+            handler.onEvent(new PropertyChangeEvent<>(event.getOldItem(), null));
           }
         });
       }
@@ -851,5 +852,95 @@ public class Properties {
         return "singleItemCollection(" + coll + ")";
       }
     };
+  }
+
+  public static <ValueT, ItemT> ObservableList<ItemT> selectList(ReadableProperty<ValueT> p, Selector<ValueT, ObservableList<ItemT>> s) {
+    return new UnmodifiableObservableList<>(new SelectorDerivedList<>(p, s));
+  }
+
+  private static class SelectorDerivedList<ValueT, ItemT> extends ObservableArrayList<ItemT> implements EventHandler<PropertyChangeEvent<ValueT>> {
+    private Registration mySrcPropertyRegistration = Registration.EMPTY;
+    private Registration mySrcListRegistration = Registration.EMPTY;
+
+    private final Selector<ValueT, ObservableList<ItemT>> mySelector;
+    private final ReadableProperty<ValueT> mySource;
+
+    private boolean myFollowing = false;
+
+    public SelectorDerivedList(ReadableProperty<ValueT> source, Selector<ValueT, ObservableList<ItemT>> fun) {
+      mySource = source;
+      mySelector = fun;
+    }
+
+    @Override
+    public void onEvent(PropertyChangeEvent<ValueT> event) {
+      if (event.getOldValue() != null) {
+        clear();
+      }
+
+      observeSelected(doSelect());
+    }
+
+    private ObservableList<ItemT> doSelect() {
+      ValueT sourceVal = mySource.get();
+      if (sourceVal != null) {
+        ObservableList<ItemT> res = mySelector.select(sourceVal);
+        if (res != null) return res;
+      }
+
+      return new ObservableArrayList<>();
+    }
+
+    private void observeSelected(ObservableList<ItemT> srcList) {
+      mySrcListRegistration.remove();
+
+      for (int i=0; i<srcList.size(); i++) {
+        add(i, srcList.get(i));
+      }
+
+      mySrcListRegistration = srcList.addListener(new CollectionAdapter<ItemT>() {
+        @Override
+        public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+          add(event.getIndex(), event.getItem());
+        }
+
+        @Override
+        public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+          remove(event.getIndex());
+        }
+      });
+    }
+
+    @Override
+    public ItemT get(int index) {
+      if (myFollowing) {
+        return super.get(index);
+      } else {
+        return doSelect().get(index);
+      }
+    }
+
+    @Override
+    public int size() {
+      if (myFollowing) {
+        return super.size();
+      } else {
+        return doSelect().size();
+      }
+    }
+
+    @Override
+    protected void onListenersAdded() {
+      mySrcPropertyRegistration = mySource.addHandler(this);
+      observeSelected(doSelect());
+      myFollowing = true;
+    }
+
+    @Override
+    protected void onListenersRemoved() {
+      mySrcPropertyRegistration.remove();
+      mySrcListRegistration.remove();
+      myFollowing = false;
+    }
   }
 }
