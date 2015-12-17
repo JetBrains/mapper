@@ -27,11 +27,14 @@ public class Listeners<ListenerT> {
   private FireData<ListenerT> myFireData = null;
 
   public boolean isEmpty() {
-    if (myListeners == null) return true;
-    return myListeners.isEmpty();
+    return myListeners == null || myListeners.isEmpty();
   }
 
   public Registration add(final ListenerT l) {
+    if (isEmpty()) {
+      beforeFirstAdded();
+    }
+
     if (myFireData != null) {
       if (myFireData.toAdd == null) {
         myFireData.toAdd = new ArrayList<>(1);
@@ -60,6 +63,10 @@ public class Listeners<ListenerT> {
         } else {
           myListeners.remove(l);
         }
+
+        if (isEmpty()) {
+          afterLastRemoved();
+        }
       }
     };
   }
@@ -76,6 +83,12 @@ public class Listeners<ListenerT> {
       }
     }
     afterFire();
+  }
+
+  protected void beforeFirstAdded() {
+  }
+
+  protected void afterLastRemoved() {
   }
 
   private boolean isRemoved(ListenerT l) {

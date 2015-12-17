@@ -64,22 +64,20 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
   @Override
   public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<>();
-    }
-    if (myHandlers.isEmpty()) {
-      myValue = doGet();
-      doAddListeners();
-    }
-    final Registration reg = myHandlers.add(handler);
-    return new Registration() {
-      @Override
-      protected void doRemove() {
-        reg.remove();
-        if (myHandlers.isEmpty()) {
+      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+        @Override
+        protected void beforeFirstAdded() {
+          myValue = doGet();
+          doAddListeners();
+        }
+
+        @Override
+        protected void afterLastRemoved() {
           doRemoveListeners();
           myHandlers = null;
         }
-      }
-    };
+      };
+    }
+    return myHandlers.add(handler);
   }
 }

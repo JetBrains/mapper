@@ -142,8 +142,19 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
   public Registration addListener(CollectionListener<ItemT> listener) {
     if (myListeners == null) {
-      myListeners = new Listeners<>();
+      myListeners = new Listeners<CollectionListener<ItemT>>() {
+        @Override
+        protected void beforeFirstAdded() {
+          onListenersAdded();
+        }
+
+        @Override
+        protected void afterLastRemoved() {
+          onListenersRemoved();
+        }
+      };
     }
+
     return myListeners.add(listener);
   }
 
@@ -161,5 +172,11 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       }
     };
     return addListener(listener);
+  }
+
+  protected void onListenersAdded() {
+  }
+
+  protected void onListenersRemoved() {
   }
 }
