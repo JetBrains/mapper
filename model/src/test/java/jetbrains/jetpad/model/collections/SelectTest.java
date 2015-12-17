@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.property;
+package jetbrains.jetpad.model.collections;
 
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.model.collections.CollectionItemEvent;
-import jetbrains.jetpad.model.collections.CollectionListener;
-import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
+import jetbrains.jetpad.model.collections.list.ObservableCollections;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
+import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
+import jetbrains.jetpad.model.property.Selector;
+import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,7 +33,7 @@ import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.*
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class CollectionSelectionTest {
+public class SelectTest {
   @Test
   public void nonListenedList() {
     Property<Boolean> src = new ValueProperty<>(false);
@@ -158,7 +160,7 @@ public class CollectionSelectionTest {
   }
 
   private ObservableList<String> testList(Property<Boolean> src, final ObservableList<String> selected) {
-    return Properties.selectList(
+    return ObservableCollections.selectList(
       src,
       new Selector<Boolean, ObservableList<String>>() {
         @Override
@@ -174,7 +176,7 @@ public class CollectionSelectionTest {
   }
 
   private ObservableCollection<String> testCollection(Property<Boolean> src, final ObservableCollection<String> selected) {
-    return Properties.selectCollection(
+    return ObservableCollections.selectCollection(
       src,
       new Selector<Boolean, ObservableCollection<String>>() {
         @Override
