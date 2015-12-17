@@ -142,8 +142,19 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
   public Registration addListener(CollectionListener<ItemT> listener) {
     if (myListeners == null) {
-      myListeners = new Listeners<>();
+      myListeners = new Listeners<CollectionListener<ItemT>>() {
+        @Override
+        protected void beforeFirstAdded() {
+          onListenersAdded();
+        }
+
+        @Override
+        protected void afterLastRemoved() {
+          onListenersRemoved();
+        }
+      };
     }
+
     return myListeners.add(listener);
   }
 
@@ -161,5 +172,13 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       }
     };
     return addListener(listener);
+  }
+
+  // The following methods are intended for implementation of derived lists, similar to DerivedProperty.
+
+  protected void onListenersAdded() {
+  }
+
+  protected void onListenersRemoved() {
   }
 }

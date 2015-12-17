@@ -21,7 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class CompositeEventSource<EventT> implements EventSource<EventT> {
-  private Listeners<EventHandler<? super EventT>> myHandlers = new Listeners<>();
+  private Listeners<EventHandler<? super EventT>> myHandlers = new Listeners<EventHandler<? super EventT>>() {
+    @Override
+    protected void beforeFirstAdded() {
+      for (EventSource<? extends EventT> src : myEventSources) {
+        addHandlerTo(src);
+      }
+    }
+
+    @Override
+    protected void afterLastRemoved() {
+      for (Registration hr : myRegistrations) {
+        hr.remove();
+      }
+      myRegistrations.clear();
+    }
+  };
   private List<EventSource<? extends EventT>> myEventSources = new ArrayList<>();
   private List<Registration> myRegistrations = new ArrayList<>();
 
@@ -42,25 +57,7 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
 
   @Override
   public Registration addHandler(final EventHandler<? super EventT> handler) {
-    if (myHandlers.isEmpty()) {
-      for (EventSource<? extends EventT> src : myEventSources) {
-        addHandlerTo(src);
-      }
-    }
-
-    final Registration reg = myHandlers.add(handler);
-    return new Registration() {
-      @Override
-      protected void doRemove() {
-        reg.remove();
-        if (myHandlers.isEmpty()) {
-          for (Registration hr : myRegistrations) {
-            hr.remove();
-          }
-          myRegistrations.clear();
-        }
-      }
-    };
+    return myHandlers.add(handler);
   }
 
   private <PartEventT extends EventT> void addHandlerTo(EventSource<PartEventT> src) {
