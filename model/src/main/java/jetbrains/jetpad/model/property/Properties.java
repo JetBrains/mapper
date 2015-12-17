@@ -792,7 +792,6 @@ public class Properties {
     };
   }
 
-
   public static <ItemT> Property<ItemT> forSingleItemCollection(final ObservableCollection<ItemT> coll) {
     if (coll.size() > 1) {
       throw new IllegalStateException("Collection " + coll + " has more than one item");
