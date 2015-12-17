@@ -943,4 +943,94 @@ public class Properties {
       myFollowing = false;
     }
   }
+
+  public static <ValueT, ItemT> ObservableCollection<ItemT> selectCollection(ReadableProperty<ValueT> p, Selector<ValueT, ObservableCollection<ItemT>> s) {
+    return new UnmodifiableObservableList<>(new SelectorDerivedCollection<>(p, s));
+  }
+
+  private static class SelectorDerivedCollection<ValueT, ItemT> extends ObservableArrayList<ItemT> implements EventHandler<PropertyChangeEvent<ValueT>> {
+    private Registration mySrcPropertyRegistration = Registration.EMPTY;
+    private Registration mySrcListRegistration = Registration.EMPTY;
+
+    private final Selector<ValueT, ObservableCollection<ItemT>> mySelector;
+    private final ReadableProperty<ValueT> mySource;
+
+    private boolean myFollowing = false;
+
+    public SelectorDerivedCollection(ReadableProperty<ValueT> source, Selector<ValueT, ObservableCollection<ItemT>> fun) {
+      mySource = source;
+      mySelector = fun;
+    }
+
+    @Override
+    public void onEvent(PropertyChangeEvent<ValueT> event) {
+      if (event.getOldValue() != null) {
+        clear();
+      }
+
+      observeSelected(doSelect());
+    }
+
+    private ObservableCollection<ItemT> doSelect() {
+      ValueT sourceVal = mySource.get();
+      if (sourceVal != null) {
+        ObservableCollection<ItemT> res = mySelector.select(sourceVal);
+        if (res != null) return res;
+      }
+
+      return new ObservableArrayList<>();
+    }
+
+    private void observeSelected(ObservableCollection<ItemT> srcCollection) {
+      mySrcListRegistration.remove();
+
+      for (ItemT i : srcCollection) {
+        add(i);
+      }
+
+      mySrcListRegistration = srcCollection.addListener(new CollectionAdapter<ItemT>() {
+        @Override
+        public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+          add(event.getItem());
+        }
+
+        @Override
+        public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+          remove(event.getItem());
+        }
+      });
+    }
+
+    @Override
+    public boolean contains(Object o) {
+      if (myFollowing) {
+        return super.contains(o);
+      } else {
+        return doSelect().contains(o);
+      }
+    }
+
+    @Override
+    public int size() {
+      if (myFollowing) {
+        return super.size();
+      } else {
+        return doSelect().size();
+      }
+    }
+
+    @Override
+    protected void onListenersAdded() {
+      mySrcPropertyRegistration = mySource.addHandler(this);
+      observeSelected(doSelect());
+      myFollowing = true;
+    }
+
+    @Override
+    protected void onListenersRemoved() {
+      mySrcPropertyRegistration.remove();
+      mySrcListRegistration.remove();
+      myFollowing = false;
+    }
+  }
 }

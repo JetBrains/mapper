@@ -18,8 +18,10 @@ package jetbrains.jetpad.model.property;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
+import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
+import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
 import org.junit.Test;
 
@@ -29,13 +31,68 @@ import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.*
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class ListSelectionTest {
+public class CollectionSelectionTest {
   @Test
-  public void nonListened() {
+  public void nonListenedList() {
     Property<Boolean> src = new ValueProperty<>(false);
     final ObservableList<String> selected = new ObservableArrayList<>();
     ObservableList<String> res = testList(src, selected);
 
+    testNonListened(src, selected, res);
+  }
+
+  @Test
+  public void nonListenedCollection() {
+    Property<Boolean> src = new ValueProperty<>(false);
+    final ObservableCollection<String> selected = new ObservableHashSet<>();
+    ObservableCollection<String> res = testCollection(src, selected);
+
+    testNonListened(src, selected, res);
+  }
+
+  @Test
+  public void listenedList() {
+    Property<Boolean> src = new ValueProperty<>(false);
+    final ObservableList<String> selected = new ObservableArrayList<>();
+    ObservableList<String> res = testList(src, selected);
+
+    testListened(src, selected, res);
+  }
+
+  @Test
+  public void listenedCollection() {
+    Property<Boolean> src = new ValueProperty<>(false);
+    final ObservableCollection<String> selected = new ObservableHashSet<>();
+    ObservableCollection<String> res = testCollection(src, selected);
+
+    testListened(src, selected, res);
+  }
+
+  @Test
+  public void listRegistrations() {
+    final AtomicInteger propertyLsnrs = new AtomicInteger();
+    final AtomicInteger collectionLsnrs = new AtomicInteger();
+    Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
+    ObservableList<String> selected = listenersCountingList(collectionLsnrs);
+
+    ObservableList<String> res = testList(src, selected);
+
+    testRegistrations(src, res, propertyLsnrs, collectionLsnrs);
+  }
+
+  @Test
+  public void collectionRegistrations() {
+    final AtomicInteger propertyLsnrs = new AtomicInteger();
+    final AtomicInteger collectionLsnrs = new AtomicInteger();
+    Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
+    ObservableList<String> selected = listenersCountingList(collectionLsnrs);
+
+    ObservableCollection<String> res = testCollection(src, selected);
+
+    testRegistrations(src, res, propertyLsnrs, collectionLsnrs);
+  }
+
+  private void testNonListened(Property<Boolean> src, ObservableCollection<String> selected, ObservableCollection<String> res) {
     assertEquals(0, res.size());
 
     selected.add("1");
@@ -52,11 +109,7 @@ public class ListSelectionTest {
   }
 
   @SuppressWarnings("unchecked")
-  @Test
-  public void listened() {
-    Property<Boolean> src = new ValueProperty<>(false);
-    final ObservableList<String> selected = new ObservableArrayList<>();
-    ObservableList<String> res = testList(src, selected);
+  private void testListened(Property<Boolean> src, ObservableCollection<String> selected, ObservableCollection<String> res) {
     CollectionListener<String> mock = mock(CollectionListener.class);
     res.addListener(mock);
 
@@ -79,14 +132,7 @@ public class ListSelectionTest {
   }
 
   @SuppressWarnings("unchecked")
-  @Test
-  public void registrationRemoval() {
-    final AtomicInteger propertyLsnrs = new AtomicInteger();
-    final AtomicInteger collectionLsnrs = new AtomicInteger();
-    Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
-    ObservableList<String> selected = listenersCountingList(collectionLsnrs);
-
-    ObservableList<String> res = testList(src, selected);
+  private void testRegistrations(Property<Boolean> src, ObservableCollection<String> res, AtomicInteger propertyLsnrs, AtomicInteger collectionLsnrs) {
     assertEquals(0, propertyLsnrs.get());
     assertEquals(0, collectionLsnrs.get());
 
@@ -127,34 +173,50 @@ public class ListSelectionTest {
     );
   }
 
-  private ObservableArrayList<String> listenersCountingList(final AtomicInteger collectionLsnrs) {
+  private ObservableCollection<String> testCollection(Property<Boolean> src, final ObservableCollection<String> selected) {
+    return Properties.selectCollection(
+      src,
+      new Selector<Boolean, ObservableCollection<String>>() {
+        @Override
+        public ObservableCollection<String> select(Boolean source) {
+          if (source) {
+            return selected;
+          } else {
+            return null;
+          }
+        }
+      }
+    );
+  }
+
+  private ObservableList<String> listenersCountingList(final AtomicInteger counter) {
     return new ObservableArrayList<String>() {
       @Override
       public Registration addListener(CollectionListener<String> listener) {
         final Registration r = super.addListener(listener);
-        collectionLsnrs.incrementAndGet();
+        counter.incrementAndGet();
         return new Registration() {
           @Override
           protected void doRemove() {
             r.remove();
-            collectionLsnrs.decrementAndGet();
+            counter.decrementAndGet();
           }
         };
       }
     };
   }
 
-  private ValueProperty<Boolean> listenersCountingProperty(final AtomicInteger propertyLsnrs) {
+  private Property<Boolean> listenersCountingProperty(final AtomicInteger counter) {
     return new ValueProperty<Boolean>(false) {
       @Override
       public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
         final Registration r = super.addHandler(handler);
-        propertyLsnrs.incrementAndGet();
+        counter.incrementAndGet();
         return new Registration() {
           @Override
           protected void doRemove() {
             r.remove();
-            propertyLsnrs.decrementAndGet();
+            counter.decrementAndGet();
           }
         };
       }
