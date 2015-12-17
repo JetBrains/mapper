@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public abstract class PluginContext {
-  public abstract <ExtensionT> PluginContext add(ExtensionPoint<ExtensionT> ep, Collection<ExtensionT> exts);
+  public abstract <ExtensionT> PluginContext add(ExtensionPoint<ExtensionT> ep, Collection<? extends ExtensionT> exts);
 
   @SafeVarargs
   public final <ExtensionT> PluginContext add(ExtensionPoint<ExtensionT> ep, ExtensionT... exts) {

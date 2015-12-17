@@ -43,7 +43,7 @@ public class PluginConfigurationBuilder {
     for (Plugin p : myPlugins) {
       p.install(new PluginContext() {
         @Override
-        public <ExtensionT> PluginContext add(ExtensionPoint<ExtensionT> ep, Collection<ExtensionT> exts) {
+        public <ExtensionT> PluginContext add(ExtensionPoint<ExtensionT> ep, Collection<? extends ExtensionT> exts) {
           if (exts.isEmpty()) {
             return this;
           }
