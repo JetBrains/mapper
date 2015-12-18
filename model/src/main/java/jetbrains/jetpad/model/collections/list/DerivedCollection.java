@@ -27,8 +27,8 @@ public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends Obser
   private final ReadableProperty<ValueT> mySource;
   private final Selector<ValueT, CollectionT> mySelector;
 
-  private Registration mySrcPropertyRegistration = Registration.EMPTY;
-  private Registration mySrcListRegistration = Registration.EMPTY;
+  private Registration mySourcePropertyRegistration = Registration.EMPTY;
+  private Registration mySourceListRegistration = Registration.EMPTY;
 
   private boolean myFollowing = false;
 
@@ -61,21 +61,21 @@ public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends Obser
       clear();
     }
 
-    mySrcListRegistration.remove();
-    mySrcListRegistration = follow(doSelect());
+    mySourceListRegistration.remove();
+    mySourceListRegistration = follow(doSelect());
   }
 
   @Override
   protected void onListenersAdded() {
-    mySrcPropertyRegistration = mySource.addHandler(this);
-    mySrcListRegistration = follow(doSelect());
+    mySourcePropertyRegistration = mySource.addHandler(this);
+    mySourceListRegistration = follow(doSelect());
     myFollowing = true;
   }
 
   @Override
   protected void onListenersRemoved() {
-    mySrcPropertyRegistration.remove();
-    mySrcListRegistration.remove();
+    mySourcePropertyRegistration.remove();
+    mySourceListRegistration.remove();
     myFollowing = false;
   }
 
