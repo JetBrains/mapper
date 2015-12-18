@@ -22,7 +22,7 @@ import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.Selector;
 
-public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends ObservableCollection<?>>
+abstract class SelectedCollection<ValueT, ItemT, CollectionT extends ObservableCollection<?>>
   extends ObservableArrayList<ItemT> implements EventHandler<PropertyChangeEvent<ValueT>> {
   private final ReadableProperty<ValueT> mySource;
   private final Selector<ValueT, CollectionT> mySelector;
@@ -32,7 +32,7 @@ public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends Obser
 
   private boolean myFollowing = false;
 
-  protected DerivedCollection(ReadableProperty<ValueT> source, Selector<ValueT, CollectionT> selector) {
+  protected SelectedCollection(ReadableProperty<ValueT> source, Selector<ValueT, CollectionT> selector) {
     mySource = source;
     mySelector = selector;
   }
@@ -45,7 +45,7 @@ public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends Obser
     return myFollowing;
   }
 
-  protected CollectionT doSelect() {
+  protected CollectionT select() {
     ValueT sourceVal = mySource.get();
     if (sourceVal != null) {
       CollectionT res = mySelector.select(sourceVal);
@@ -62,13 +62,13 @@ public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends Obser
     }
 
     mySourceListRegistration.remove();
-    mySourceListRegistration = follow(doSelect());
+    mySourceListRegistration = follow(select());
   }
 
   @Override
   protected void onListenersAdded() {
     mySourcePropertyRegistration = mySource.addHandler(this);
-    mySourceListRegistration = follow(doSelect());
+    mySourceListRegistration = follow(select());
     myFollowing = true;
   }
 
@@ -84,7 +84,7 @@ public abstract class DerivedCollection<ValueT, ItemT, CollectionT extends Obser
     if (isFollowing()) {
       return super.size();
     } else {
-      return doSelect().size();
+      return select().size();
     }
   }
 }

@@ -139,7 +139,7 @@ public class ObservableCollections {
   }
 
   private static class SelectorDerivedCollection<ValueT, ItemT>
-      extends DerivedCollection<ValueT, ItemT, ObservableCollection<ItemT>> {
+      extends SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>> {
     public SelectorDerivedCollection(ReadableProperty<ValueT> source, Selector<ValueT, ObservableCollection<ItemT>> fun) {
       super(source, fun);
     }
@@ -173,7 +173,7 @@ public class ObservableCollections {
       if (isFollowing()) {
         return super.contains(o);
       } else {
-        return doSelect().contains(o);
+        return select().contains(o);
       }
     }
   }
@@ -184,7 +184,7 @@ public class ObservableCollections {
   }
 
   private static class SelectorDerivedList<ValueT, ItemT>
-      extends DerivedCollection<ValueT, ItemT, ObservableList<ItemT>> {
+      extends SelectedCollection<ValueT, ItemT, ObservableList<ItemT>> {
     public SelectorDerivedList(ReadableProperty<ValueT> source, Selector<ValueT, ObservableList<ItemT>> fun) {
       super(source, fun);
     }
@@ -218,7 +218,7 @@ public class ObservableCollections {
       if (isFollowing()) {
         return super.get(index);
       } else {
-        return doSelect().get(index);
+        return select().get(index);
       }
     }
   }
