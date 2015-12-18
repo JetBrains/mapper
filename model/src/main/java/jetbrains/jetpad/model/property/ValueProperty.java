@@ -62,21 +62,16 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
   @Override
   public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
-      myHandlers = new Listeners<>();
-    }
-
-    final Registration reg = myHandlers.add(handler);
-    return new Registration() {
-      @Override
-      protected void doRemove() {
-        reg.remove();
-        if (myHandlers.isEmpty()) {
+      myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+        @Override
+        protected void afterLastRemoved() {
           myHandlers = null;
         }
-      }
-    };
-  }
+      };
+    }
 
+    return myHandlers.add(handler);
+  }
 
   @Override
   public String getPropExpr() {
