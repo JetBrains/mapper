@@ -19,20 +19,9 @@ import com.google.common.base.Function;
 import jetbrains.jetpad.base.Registration;
 
 public class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
-  private Listeners<EventHandler<? super TargetEventT>> myHandlers = new Listeners<>();
-  private EventSource<SourceEventT> mySourceEventSource;
-  private Function<SourceEventT, TargetEventT> myFunction;
-
-  private Registration mySourceHandler;
-
-  public MappingEventSource(EventSource<SourceEventT> sourceEventSource, Function<SourceEventT, TargetEventT> function) {
-    mySourceEventSource = sourceEventSource;
-    myFunction = function;
-  }
-
-  @Override
-  public Registration addHandler(final EventHandler<? super TargetEventT> handler) {
-    if (myHandlers.isEmpty()) {
+  private Listeners<EventHandler<? super TargetEventT>> myHandlers = new Listeners<EventHandler<? super TargetEventT>>() {
+    @Override
+    protected void beforeFirstAdded() {
       mySourceHandler = mySourceEventSource.addHandler(new EventHandler<SourceEventT>() {
         @Override
         public void onEvent(SourceEventT item) {
@@ -46,16 +35,24 @@ public class MappingEventSource<SourceEventT, TargetEventT> implements EventSour
         }
       });
     }
-    final Registration reg = myHandlers.add(handler);
 
-    return new Registration() {
-      @Override
-      protected void doRemove() {
-        reg.remove();
-        if (myHandlers.isEmpty()) {
-          mySourceHandler.remove();
-        }
-      }
-    };
+    @Override
+    protected void afterLastRemoved() {
+      mySourceHandler.remove();
+    }
+  };
+  private EventSource<SourceEventT> mySourceEventSource;
+  private Function<SourceEventT, TargetEventT> myFunction;
+
+  private Registration mySourceHandler;
+
+  public MappingEventSource(EventSource<SourceEventT> sourceEventSource, Function<SourceEventT, TargetEventT> function) {
+    mySourceEventSource = sourceEventSource;
+    myFunction = function;
+  }
+
+  @Override
+  public Registration addHandler(final EventHandler<? super TargetEventT> handler) {
+    return myHandlers.add(handler);
   }
 }
