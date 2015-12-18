@@ -150,22 +150,20 @@ public class ObservableCollections {
     }
 
     @Override
-    protected void follow(ObservableCollection<ItemT> srcCollection) {
-      mySrcListRegistration.remove();
-
+    protected Registration follow(ObservableCollection<ItemT> srcCollection) {
       for (ItemT i : srcCollection) {
         add(i);
       }
 
-      mySrcListRegistration = srcCollection.addListener(new CollectionAdapter<ItemT>() {
+      return srcCollection.addListener(new CollectionAdapter<ItemT>() {
         @Override
         public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-          add(event.getItem());
+          add(event.getNewItem());
         }
 
         @Override
         public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
-          remove(event.getItem());
+          remove(event.getOldItem());
         }
       });
     }
@@ -197,17 +195,15 @@ public class ObservableCollections {
     }
 
     @Override
-    protected void follow(ObservableList<ItemT> srcList) {
-      mySrcListRegistration.remove();
-
+    protected Registration follow(ObservableList<ItemT> srcList) {
       for (int i=0; i<srcList.size(); i++) {
         add(i, srcList.get(i));
       }
 
-      mySrcListRegistration = srcList.addListener(new CollectionAdapter<ItemT>() {
+      return srcList.addListener(new CollectionAdapter<ItemT>() {
         @Override
         public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-          add(event.getIndex(), event.getItem());
+          add(event.getIndex(), event.getNewItem());
         }
 
         @Override
