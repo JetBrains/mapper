@@ -58,7 +58,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public long getCurrentTime() {
+  public long getCurrentTimeMillis() {
     return myCurrentTime;
   }
 
