@@ -7,9 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ListItemPropertyTest {
   @Rule
@@ -164,6 +162,79 @@ public class ListItemPropertyTest {
   }
 
   @Test
+  public void indexFiresOnListAdd() {
+    ObservableList<Integer> list = createList(5);
+    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
+    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
+
+    CountingHandler<Integer> p1indexCounter = new CountingHandler<>();
+    p1.index.addHandler(p1indexCounter);
+    CountingHandler<Integer> p2indexCounter = new CountingHandler<>();
+    p2.index.addHandler(p2indexCounter);
+
+    RecordingHandler<Integer> p2indexRecording = new RecordingHandler<>();
+    p2.index.addHandler(p2indexRecording);
+
+    list.add(2, 22);
+
+    assertEquals(0, p1indexCounter.getCounter());
+    assertEquals(1, p2indexCounter.getCounter());
+    assertEquals(2, p2indexRecording.getOldValue().intValue());
+    assertEquals(3, p2indexRecording.getNewValue().intValue());
+  }
+
+  @Test
+  public void indexFiresOnListRemove() {
+    ObservableList<Integer> list = createList(5);
+    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
+    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
+    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
+
+    CountingHandler<Integer> p1indexCounter = new CountingHandler<>();
+    p1.index.addHandler(p1indexCounter);
+    CountingHandler<Integer> p2indexCounter = new CountingHandler<>();
+    p2.index.addHandler(p2indexCounter);
+    CountingHandler<Integer> p3indexCounter = new CountingHandler<>();
+    p3.index.addHandler(p3indexCounter);
+
+    RecordingHandler<Integer> p2indexRecording = new RecordingHandler<>();
+    p2.index.addHandler(p2indexRecording);
+    RecordingHandler<Integer> p3indexRecording = new RecordingHandler<>();
+    p3.index.addHandler(p3indexRecording);
+
+    list.remove(2);
+
+    assertEquals(0, p1indexCounter.getCounter());
+    assertEquals(1, p2indexCounter.getCounter());
+    assertEquals(1, p3indexCounter.getCounter());
+    assertEquals(2, p2indexRecording.getOldValue().intValue());
+    assertNull(p2indexRecording.getNewValue());
+    assertEquals(3, p3indexRecording.getOldValue().intValue());
+    assertEquals(2, p3indexRecording.getNewValue().intValue());
+  }
+
+  @Test
+  public void indexFiresNotOnListSet() {
+    ObservableList<Integer> list = createList(5);
+    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
+    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
+    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
+
+    CountingHandler<Integer> p1indexCounter = new CountingHandler<>();
+    p1.index.addHandler(p1indexCounter);
+    CountingHandler<Integer> p2indexCounter = new CountingHandler<>();
+    p2.index.addHandler(p2indexCounter);
+    CountingHandler<Integer> p3indexCounter = new CountingHandler<>();
+    p3.index.addHandler(p3indexCounter);
+
+    list.set(2, 22);
+
+    assertEquals(0, p1indexCounter.getCounter());
+    assertEquals(0, p2indexCounter.getCounter());
+    assertEquals(0, p3indexCounter.getCounter());
+  }
+
+  @Test
   public void disposeImmediately() {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
@@ -181,6 +252,33 @@ public class ListItemPropertyTest {
     p.dispose();
     exception.expect(IllegalStateException.class);
     p.dispose();
+  }
+
+  @Test
+  public void indexFiresNotOnDispose() {
+    ObservableList<Integer> list = createList(5);
+    ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
+
+    CountingHandler<Integer> iCounter = new CountingHandler<>();
+    p.index.addHandler(iCounter);
+
+    p.dispose();
+
+    assertEquals(0, iCounter.getCounter());
+  }
+
+  @Test
+  public void indexFiresNotOnDisposeInvalid() {
+    ObservableList<Integer> list = createList(5);
+    ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
+
+    CountingHandler<Integer> iCounter = new CountingHandler<>();
+    p.index.addHandler(iCounter);
+
+    list.remove(1);
+    assertEquals(1, iCounter.getCounter());
+    p.dispose();
+    assertEquals(1, iCounter.getCounter());
   }
 
 
