@@ -9,6 +9,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
+import javax.annotation.Nonnull;
+
 public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT>, Disposable {
   private ObservableList<ValueT> list;
   private int index;
@@ -16,7 +18,7 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> handlers = new Listeners<>();
   private Registration reg;
 
-  public ListItemProperty(ObservableList<ValueT> list, int index) {
+  public ListItemProperty(@Nonnull ObservableList<ValueT> list, int index) {
     if (index < 0 || index >= list.size()) {
       throw new IndexOutOfBoundsException("Can’t point to a non-existent item");
     }
@@ -50,6 +52,13 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
           ListItemProperty.this.index -= 1;
         } else if (event.getIndex() == ListItemProperty.this.index) {
           ListItemProperty.this.valid = false;
+          final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<ValueT>(event.getOldItem(), null);
+          handlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+            @Override
+            public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
+              l.onEvent(e);
+            }
+          });
         }
       }
     });
