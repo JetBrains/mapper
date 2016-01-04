@@ -17,6 +17,7 @@ package jetbrains.jetpad.base.edt;
 
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,6 +142,8 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
     myExecuting = true;
     try {
       doExecuteTask(r);
+    } catch (Throwable t) {
+      ThrowableHandlers.handle(t);
     } finally {
       myExecuting = false;
     }
