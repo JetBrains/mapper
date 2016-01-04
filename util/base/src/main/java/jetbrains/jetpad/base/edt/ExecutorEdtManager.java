@@ -71,7 +71,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public final void schedule(Runnable runnable) {
+  public void schedule(Runnable runnable) {
     try {
       myEdt.schedule(runnable);
     } catch (RejectedExecutionException e) {
@@ -84,7 +84,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public final Registration schedule(int delay, Runnable r) {
+  public Registration schedule(int delay, Runnable r) {
     Registration reg;
     try {
       reg = myEdt.schedule(delay, r);
@@ -95,7 +95,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public final Registration scheduleRepeating(int period, Runnable r) {
+  public Registration scheduleRepeating(int period, Runnable r) {
     Registration reg;
     try {
       reg = myEdt.scheduleRepeating(period, r);
@@ -124,7 +124,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     }
 
     @Override
-    public Registration schedule(int delay, final Runnable r) {
+    public Registration schedule(int delay, Runnable r) {
       return new FutureRegistration(myExecutor.schedule(handleFailure(r), delay, TimeUnit.MILLISECONDS));
     }
 
