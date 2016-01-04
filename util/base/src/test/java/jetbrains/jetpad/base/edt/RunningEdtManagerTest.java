@@ -20,9 +20,7 @@ import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RunningEdtManagerTest extends BaseTestCase {
   private final RunningEdtManager manager = new RunningEdtManager();
@@ -130,7 +128,7 @@ public class RunningEdtManagerTest extends BaseTestCase {
                   @Override
                   public void run() {
                     performedTasksCounter.set(performedTasksCounter.get() + 1);
-                    manager.flushAll();
+                    manager.flush();
                   }
                 });
                 performedTasksCounter.set(performedTasksCounter.get() + 1);
