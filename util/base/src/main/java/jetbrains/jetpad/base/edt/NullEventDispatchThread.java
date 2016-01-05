@@ -19,16 +19,21 @@ import jetbrains.jetpad.base.Registration;
 
 public final class NullEventDispatchThread implements EventDispatchThread {
   @Override
+  public long getCurrentTimeMillis() {
+    return 0L;
+  }
+
+  @Override
   public void schedule(Runnable r) {
   }
 
   @Override
-  public Registration schedule(int delay, Runnable r) {
+  public Registration schedule(int delayMillis, Runnable r) {
     return Registration.EMPTY;
   }
 
   @Override
-  public Registration scheduleRepeating(int period, Runnable r) {
+  public Registration scheduleRepeating(int periodMillis, Runnable r) {
     return Registration.EMPTY;
   }
 }

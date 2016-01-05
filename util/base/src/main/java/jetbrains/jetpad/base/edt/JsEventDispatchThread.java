@@ -28,14 +28,12 @@ public final class JsEventDispatchThread implements EventDispatchThread {
 
   public static final JsEventDispatchThread INSTANCE = new JsEventDispatchThread();
 
-  private static void handleJsException(JavaScriptException jse) {
-    if (jse.isThrownSet()) {
-      LOG.severe("Caught JavaScriptException, wrapped error is: " + jse.getThrown());
-    }
-    ThrowableHandlers.handle(jse);
+  private JsEventDispatchThread() {
   }
 
-  private JsEventDispatchThread() {
+  @Override
+  public long getCurrentTimeMillis() {
+    return System.currentTimeMillis();
   }
 
   @Override
@@ -43,51 +41,50 @@ public final class JsEventDispatchThread implements EventDispatchThread {
     Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
       @Override
       public void execute() {
-        try {
-          r.run();
-        } catch (JavaScriptException jse) {
-          handleJsException(jse);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+        doExecute(r);
       }
     });
   }
 
   @Override
-  public Registration schedule(int delay, final Runnable r) {
-    final Timer timer = new Timer() {
+  public Registration schedule(int delayMillis, final Runnable r) {
+    Timer timer = new Timer() {
       @Override
       public void run() {
-        try {
-          r.run();
-        } catch (JavaScriptException jse) {
-          handleJsException(jse);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+        doExecute(r);
       }
     };
-    timer.schedule(delay);
+    timer.schedule(delayMillis);
     return timerReg(timer);
   }
 
   @Override
-  public Registration scheduleRepeating(int period, final Runnable r) {
-    final Timer timer = new Timer() {
+  public Registration scheduleRepeating(final int periodMillis, final Runnable r) {
+    Timer timer = new Timer() {
+      private long myLastInvocation = 0L;
       @Override
       public void run() {
-        try {
-          r.run();
-        } catch (JavaScriptException jse) {
-          handleJsException(jse);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+        long current = getCurrentTimeMillis();
+        if (current - myLastInvocation < periodMillis) return;
+        myLastInvocation = current;
+        doExecute(r);
       }
     };
-    timer.scheduleRepeating(period);
+    timer.scheduleRepeating(periodMillis);
     return timerReg(timer);
+  }
+
+  private void doExecute(Runnable r) {
+    try {
+      r.run();
+    } catch (JavaScriptException jse) {
+      if (jse.isThrownSet()) {
+        LOG.severe("Caught JavaScriptException, wrapped error is: " + jse.getThrown());
+      }
+      ThrowableHandlers.handle(jse);
+    } catch (Throwable t) {
+      ThrowableHandlers.handle(t);
+    }
   }
 
   private Registration timerReg(final Timer timer) {

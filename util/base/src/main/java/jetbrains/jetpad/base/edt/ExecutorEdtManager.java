@@ -71,6 +71,11 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
+  public long getCurrentTimeMillis() {
+    return myEdt.getCurrentTimeMillis();
+  }
+
+  @Override
   public void schedule(Runnable runnable) {
     try {
       myEdt.schedule(runnable);
@@ -84,10 +89,10 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public Registration schedule(int delay, Runnable r) {
+  public Registration schedule(int delayMillis, Runnable r) {
     Registration reg;
     try {
-      reg = myEdt.schedule(delay, r);
+      reg = myEdt.schedule(delayMillis, r);
     } catch (RejectedExecutionException e) {
       throw new EdtException(e);
     }
@@ -95,10 +100,10 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public Registration scheduleRepeating(int period, Runnable r) {
+  public Registration scheduleRepeating(int periodMillis, Runnable r) {
     Registration reg;
     try {
-      reg = myEdt.scheduleRepeating(period, r);
+      reg = myEdt.scheduleRepeating(periodMillis, r);
     } catch (RejectedExecutionException e) {
       throw new EdtException(e);
     }
@@ -119,19 +124,24 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     }
 
     @Override
+    public long getCurrentTimeMillis() {
+      return System.currentTimeMillis();
+    }
+
+    @Override
     public void schedule(Runnable r) {
       myExecutor.submit(handleFailure(r));
     }
 
     @Override
-    public Registration schedule(int delay, Runnable r) {
-      return new FutureRegistration(myExecutor.schedule(handleFailure(r), delay, TimeUnit.MILLISECONDS));
+    public Registration schedule(int delayMillis, Runnable r) {
+      return new FutureRegistration(myExecutor.schedule(handleFailure(r), delayMillis, TimeUnit.MILLISECONDS));
     }
 
     @Override
-    public Registration scheduleRepeating(int period, Runnable r) {
+    public Registration scheduleRepeating(int periodMillis, Runnable r) {
       return new FutureRegistration(
-          myExecutor.scheduleAtFixedRate(handleFailure(r), period, period, TimeUnit.MILLISECONDS));
+          myExecutor.scheduleAtFixedRate(handleFailure(r), periodMillis, periodMillis, TimeUnit.MILLISECONDS));
     }
 
     private Runnable handleFailure(final Runnable r) {

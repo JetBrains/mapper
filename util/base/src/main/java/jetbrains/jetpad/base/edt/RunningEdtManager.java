@@ -63,21 +63,26 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   }
 
   @Override
+  public long getCurrentTimeMillis() {
+    return System.currentTimeMillis();
+  }
+
+  @Override
   public final void schedule(Runnable r) {
     checkCanSchedule();
     doSchedule(r);
   }
 
   @Override
-  public final Registration schedule(int delay, Runnable r) {
+  public final Registration schedule(int delayMillis, Runnable r) {
     checkCanSchedule();
-    return doSchedule(delay, r);
+    return doSchedule(delayMillis, r);
   }
 
   @Override
-  public final Registration scheduleRepeating(int period, Runnable r) {
+  public final Registration scheduleRepeating(int periodMillis, Runnable r) {
     checkCanSchedule();
-    return doScheduleRepeating(period, r);
+    return doScheduleRepeating(periodMillis, r);
   }
 
   private void checkCanSchedule() {

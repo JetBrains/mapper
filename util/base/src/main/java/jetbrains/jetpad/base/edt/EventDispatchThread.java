@@ -18,6 +18,9 @@ package jetbrains.jetpad.base.edt;
 import jetbrains.jetpad.base.Registration;
 
 public interface EventDispatchThread {
+
+  long getCurrentTimeMillis();
+
   /**
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown
@@ -25,16 +28,16 @@ public interface EventDispatchThread {
   void schedule(Runnable r);
 
   /**
-   * @param delay in milliseconds for the initial delay
+   * @param delayMillis in milliseconds for the initial delay
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown
    */
-  Registration schedule(int delay, Runnable r);
+  Registration schedule(int delayMillis, Runnable r);
 
   /**
-   * @param period in milliseconds for the initial and between-event delay
+   * @param periodMillis in milliseconds for the initial and between-event delay
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown
    */
-  Registration scheduleRepeating(int period, Runnable r);
+  Registration scheduleRepeating(int periodMillis, Runnable r);
 }
