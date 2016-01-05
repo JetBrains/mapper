@@ -15,17 +15,19 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import com.google.common.base.Supplier;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RunningEdtManager implements EdtManager, EventDispatchThread {
-  private final String myName;
-  private volatile boolean myFinished;
-  private volatile boolean myExecuting = false;
-  private volatile boolean myFlushing = false;
-  private final List<Runnable> myTasks = new ArrayList<>();
+  private String myName;
+  private List<Runnable> myTasks = new ArrayList<>();
+  private boolean myFinished = false;
+  private boolean myExecuting = false;
+  private boolean myFlushing = false;
 
   public RunningEdtManager() {
     this("");
@@ -41,22 +43,16 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   }
 
   @Override
-  public void finish() {
+  public final void finish() {
     checkCanStop();
-    final int tasksLeft = myTasks.size();
     if (!myFlushing) {
-      flush(new Flusher() {
-        @Override
-        public int getLimit() {
-          return tasksLeft;
-        }
-      });
+      flush(myTasks.size());
     }
     shutdown();
   }
 
   @Override
-  public void kill() {
+  public final void kill() {
     checkCanStop();
     myTasks.clear();
     shutdown();
@@ -67,36 +63,32 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   }
 
   @Override
+  public long getCurrentTimeMillis() {
+    return System.currentTimeMillis();
+  }
+
+  @Override
   public final void schedule(Runnable r) {
-    if (checkCanSchedule() != null) {
-      return;
-    }
+    checkCanSchedule();
     doSchedule(r);
   }
 
   @Override
-  public final Registration schedule(int delay, Runnable r) {
-    Registration reg = checkCanSchedule();
-    if (reg != null) {
-      return reg;
-    }
-    return doSchedule(delay, r);
+  public final Registration schedule(int delayMillis, Runnable r) {
+    checkCanSchedule();
+    return doSchedule(delayMillis, r);
   }
 
   @Override
-  public final Registration scheduleRepeating(int period, Runnable r) {
-    Registration reg = checkCanSchedule();
-    if (reg != null) {
-      return reg;
-    }
-    return doScheduleRepeating(period, r);
+  public final Registration scheduleRepeating(int periodMillis, Runnable r) {
+    checkCanSchedule();
+    return doScheduleRepeating(periodMillis, r);
   }
 
-  Registration checkCanSchedule() {
+  private void checkCanSchedule() {
     if (isStopped()) {
       throw new EdtException();
     }
-    return null;
   }
 
   private void checkCanStop() {
@@ -106,27 +98,36 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   }
 
   @Override
-  public boolean isStopped() {
+  public final boolean isStopped() {
     return myFinished;
   }
 
-  final void flushAll() {
-    flush(new Flusher() {
+  public final void flush() {
+    flush(new Supplier<Integer>() {
       @Override
-      public int getLimit() {
+      public Integer get() {
         return myTasks.size();
       }
     });
   }
 
-  final void flush(Flusher flusher) {
+  public final void flush(final int tasksNum) {
+    flush(new Supplier<Integer>() {
+      @Override
+      public Integer get() {
+        return tasksNum;
+      }
+    });
+  }
+
+  private void flush(Supplier<Integer> tasksCount) {
     if (myFlushing) {
       throw new IllegalStateException((RunningEdtManager.this + ": recursive flush is prohibited"));
     }
     myFlushing = true;
     int executedTasksCounter = 0;
     try {
-      for (int i = 0; i < flusher.getLimit(); i++) {
+      for (int i = 0; i < tasksCount.get(); i++) {
         executedTasksCounter++;
         executeTask(myTasks.get(i));
       }
@@ -146,6 +147,8 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
     myExecuting = true;
     try {
       doExecuteTask(r);
+    } catch (Throwable t) {
+      ThrowableHandlers.handle(t);
     } finally {
       myExecuting = false;
     }
@@ -172,7 +175,7 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
       }
       executeTask(r);
       if (!isStopped()) {
-        flushAll();
+        flush();
       }
     }
   }
@@ -188,9 +191,5 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   @Override
   public String toString() {
     return "RunningEdtManager@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
-  }
-
-  interface Flusher {
-    int getLimit();
   }
 }

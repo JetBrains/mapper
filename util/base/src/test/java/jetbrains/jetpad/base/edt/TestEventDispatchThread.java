@@ -48,8 +48,8 @@ public final class TestEventDispatchThread implements EventDispatchThread {
       mc = myModificationCount;
       List<RunnableRecord> toRemove = new ArrayList<>();
       for (RunnableRecord r : new ArrayList<>(myRecords)) {
-        if (r.getTargetTime() == myCurrentTime) {
-          r.run();
+        if (r.myTargetTime == myCurrentTime) {
+          r.myRunnable.run();
           toRemove.add(r);
         }
       }
@@ -58,14 +58,19 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
+  public long getCurrentTimeMillis() {
+    return myCurrentTime;
+  }
+
+  @Override
   public void schedule(Runnable r) {
     schedule(0, r);
   }
 
   @Override
-  public Registration schedule(int delay, Runnable r) {
+  public Registration schedule(int delayMillis, Runnable r) {
     myModificationCount++;
-    final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, r);
+    final RunnableRecord record = new RunnableRecord(myCurrentTime + delayMillis, r);
     myRecords.add(record);
     return new Registration() {
       @Override
@@ -76,14 +81,14 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public Registration scheduleRepeating(final int period, final Runnable r) {
+  public Registration scheduleRepeating(final int periodMillis, final Runnable r) {
     final Value<Boolean> cancelled = new Value<>(false);
-    schedule(period, new Runnable() {
+    schedule(periodMillis, new Runnable() {
       @Override
       public void run() {
         if (cancelled.get()) return;
         r.run();
-        schedule(period, this);
+        schedule(periodMillis, this);
       }
     });
     return new Registration() {
@@ -94,21 +99,13 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     };
   }
 
-  private class RunnableRecord {
-    private int myTargetTime;
-    private Runnable myRunnable;
+  private static class RunnableRecord {
+    private final int myTargetTime;
+    private final Runnable myRunnable;
 
     private RunnableRecord(int targetTime, Runnable runnable) {
       myTargetTime = targetTime;
       myRunnable = runnable;
-    }
-
-    int getTargetTime() {
-      return myTargetTime;
-    }
-
-    void run() {
-      myRunnable.run();
     }
   }
 }

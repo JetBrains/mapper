@@ -78,7 +78,7 @@ public final class EdtManagerPool implements EdtManagerFactory {
     synchronized (myLock) {
       myWorkingAdapters[index]--;
       if (myWorkingAdapters[index] == 0) {
-        LOG.fine("Pool " + myName + " is killing " + myManagers[index] + " at index " + index);
+        LOG.fine("Pool " + myName + " shut down " + myManagers[index] + " at index " + index);
         myManagers[index].kill();
         myManagers[index] = null;
       }
@@ -151,18 +151,23 @@ public final class EdtManagerPool implements EdtManagerFactory {
     }
 
     @Override
-    public final void schedule(Runnable runnable) {
+    public long getCurrentTimeMillis() {
+      return myManager.getEdt().getCurrentTimeMillis();
+    }
+
+    @Override
+    public void schedule(Runnable runnable) {
       myManager.getEdt().schedule(runnable);
     }
 
     @Override
-    public final Registration schedule(int delay, Runnable runnable) {
-      return myManager.getEdt().schedule(delay, runnable);
+    public Registration schedule(int delayMillis, Runnable runnable) {
+      return myManager.getEdt().schedule(delayMillis, runnable);
     }
 
     @Override
-    public final Registration scheduleRepeating(int period, Runnable runnable) {
-      return myManager.getEdt().scheduleRepeating(period, runnable);
+    public Registration scheduleRepeating(int periodMillis, Runnable runnable) {
+      return myManager.getEdt().scheduleRepeating(periodMillis, runnable);
     }
 
     @Override

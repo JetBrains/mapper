@@ -28,13 +28,18 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
+  public long getCurrentTimeMillis() {
+    return System.currentTimeMillis();
+  }
+
+  @Override
   public void schedule(Runnable r) {
     SwingUtilities.invokeLater(r);
   }
 
   @Override
-  public Registration schedule(int delay, final Runnable r) {
-    final Timer timer = new Timer(delay, null);
+  public Registration schedule(int delayMillis, final Runnable r) {
+    final Timer timer = new Timer(delayMillis, null);
     timer.setRepeats(false);
     timer.addActionListener(new ActionListener() {
       @Override
@@ -47,8 +52,8 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public Registration scheduleRepeating(int period, final Runnable r) {
-    final Timer timer = new Timer(period, null);
+  public Registration scheduleRepeating(int periodMillis, final Runnable r) {
+    final Timer timer = new Timer(periodMillis, null);
     timer.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
