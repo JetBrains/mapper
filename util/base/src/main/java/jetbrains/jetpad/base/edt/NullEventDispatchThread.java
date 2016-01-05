@@ -19,6 +19,11 @@ import jetbrains.jetpad.base.Registration;
 
 public final class NullEventDispatchThread implements EventDispatchThread {
   @Override
+  public long getCurrentTime() {
+    return 0L;
+  }
+
+  @Override
   public void schedule(Runnable r) {
   }
 

@@ -63,6 +63,11 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   }
 
   @Override
+  public long getCurrentTime() {
+    return System.currentTimeMillis();
+  }
+
+  @Override
   public final void schedule(Runnable r) {
     checkCanSchedule();
     doSchedule(r);

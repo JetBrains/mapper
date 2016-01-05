@@ -18,6 +18,9 @@ package jetbrains.jetpad.base.edt;
 import jetbrains.jetpad.base.Registration;
 
 public interface EventDispatchThread {
+
+  long getCurrentTime();
+
   /**
    * @param r Runnable to be scheduled
    * @throws EdtException in case of failure, e.g. if the thread has been shutdown

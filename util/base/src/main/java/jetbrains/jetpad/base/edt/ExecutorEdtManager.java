@@ -71,6 +71,11 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
+  public long getCurrentTime() {
+    return myEdt.getCurrentTime();
+  }
+
+  @Override
   public void schedule(Runnable runnable) {
     try {
       myEdt.schedule(runnable);
@@ -116,6 +121,11 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
     ExecutorEdt(String name) {
       myExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
+    }
+
+    @Override
+    public long getCurrentTime() {
+      return System.currentTimeMillis();
     }
 
     @Override
