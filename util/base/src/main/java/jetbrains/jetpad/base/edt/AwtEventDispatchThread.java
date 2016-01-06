@@ -28,6 +28,11 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
+  public long getCurrentTime() {
+    return System.currentTimeMillis();
+  }
+
+  @Override
   public void schedule(Runnable r) {
     SwingUtilities.invokeLater(r);
   }

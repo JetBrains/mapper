@@ -48,13 +48,18 @@ public final class TestEventDispatchThread implements EventDispatchThread {
       mc = myModificationCount;
       List<RunnableRecord> toRemove = new ArrayList<>();
       for (RunnableRecord r : new ArrayList<>(myRecords)) {
-        if (r.getTargetTime() == myCurrentTime) {
-          r.run();
+        if (r.myTargetTime == myCurrentTime) {
+          r.myRunnable.run();
           toRemove.add(r);
         }
       }
       myRecords.removeAll(toRemove);
     } while (myModificationCount != mc);
+  }
+
+  @Override
+  public long getCurrentTime() {
+    return myCurrentTime;
   }
 
   @Override
@@ -94,21 +99,13 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     };
   }
 
-  private class RunnableRecord {
-    private int myTargetTime;
-    private Runnable myRunnable;
+  private static class RunnableRecord {
+    private final int myTargetTime;
+    private final Runnable myRunnable;
 
     private RunnableRecord(int targetTime, Runnable runnable) {
       myTargetTime = targetTime;
       myRunnable = runnable;
-    }
-
-    int getTargetTime() {
-      return myTargetTime;
-    }
-
-    void run() {
-      myRunnable.run();
     }
   }
 }
