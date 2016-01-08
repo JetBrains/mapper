@@ -19,7 +19,7 @@ import jetbrains.jetpad.base.Registration;
 
 public final class NullEventDispatchThread implements EventDispatchThread {
   @Override
-  public long getCurrentTime() {
+  public long getCurrentTimeMillis() {
     return 0L;
   }
 

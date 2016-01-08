@@ -32,7 +32,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public long getCurrentTime() {
+  public long getCurrentTimeMillis() {
     return System.currentTimeMillis();
   }
 
@@ -64,7 +64,7 @@ public final class JsEventDispatchThread implements EventDispatchThread {
       private long myLastInvocation = 0L;
       @Override
       public void run() {
-        long current = getCurrentTime();
+        long current = getCurrentTimeMillis();
         if (current - myLastInvocation < period) return;
         myLastInvocation = current;
         doExecute(r);

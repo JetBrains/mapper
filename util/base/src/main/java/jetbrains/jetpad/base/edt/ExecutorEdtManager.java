@@ -71,8 +71,8 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public long getCurrentTime() {
-    return myEdt.getCurrentTime();
+  public long getCurrentTimeMillis() {
+    return myEdt.getCurrentTimeMillis();
   }
 
   @Override
@@ -124,7 +124,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     }
 
     @Override
-    public long getCurrentTime() {
+    public long getCurrentTimeMillis() {
       return System.currentTimeMillis();
     }
 

@@ -151,8 +151,8 @@ public final class EdtManagerPool implements EdtManagerFactory {
     }
 
     @Override
-    public long getCurrentTime() {
-      return myManager.getEdt().getCurrentTime();
+    public long getCurrentTimeMillis() {
+      return myManager.getEdt().getCurrentTimeMillis();
     }
 
     @Override

@@ -19,7 +19,7 @@ import jetbrains.jetpad.base.Registration;
 
 public interface EventDispatchThread {
 
-  long getCurrentTime();
+  long getCurrentTimeMillis();
 
   /**
    * @param r Runnable to be scheduled

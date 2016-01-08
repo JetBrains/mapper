@@ -28,7 +28,7 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public long getCurrentTime() {
+  public long getCurrentTimeMillis() {
     return System.currentTimeMillis();
   }
 
