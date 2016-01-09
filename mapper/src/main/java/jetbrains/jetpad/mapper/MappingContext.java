@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.mapper;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
@@ -111,7 +113,7 @@ public final class MappingContext {
    * Try using this method as little as possible. Nice to use method which returns one mapper instead
    */
   public <S> Set<Mapper<? super S, ?>> getMappers(Mapper<?, ?> ancestor, S source) {
-    Set<Mapper<? super S, ?>> mappers = getMappers(source);
+    Set<Mapper<? super S, ?>> mappers = getMappers(source, Predicates.<Mapper<?, ?>>alwaysTrue());
     Set<Mapper<? super S, ?>> result = null;
     for (Mapper<? super S, ?> m : mappers) {
       if (Mappers.isDescendant(ancestor, m)) {
@@ -131,25 +133,40 @@ public final class MappingContext {
     return result;
   }
 
-  Set<Mapper<?, ?>> getMappers() {
+  public Set<Mapper<?, ?>> selectMappers(Predicate<Mapper<?, ?>> selector) {
     Set<Mapper<?, ?>> mappers = new HashSet<>();
     for (Object source : myMappers.keySet()) {
-      mappers.addAll(getMappers(source));
+      mappers.addAll(getMappers(source, selector));
     }
     return mappers;
   }
 
-  private <S> Set<Mapper<? super S, ?>> getMappers(S source) {
-    if (!(myMappers.containsKey(source))) {
+  Set<Mapper<?, ?>> getMappers() {
+    Set<Mapper<?, ?>> mappers = new HashSet<>();
+    for (Object source : myMappers.keySet()) {
+      mappers.addAll(getMappers(source, Predicates.<Mapper<?, ?>>alwaysTrue()));
+    }
+    return mappers;
+  }
+
+  private <S> Set<Mapper<? super S, ?>> getMappers(S source, Predicate<Mapper<?, ?>> selector) {
+    if (!myMappers.containsKey(source)) {
       return Collections.emptySet();
     }
     Object mappers = myMappers.get(source);
     if (mappers instanceof Mapper) {
-      return Collections.<Mapper<? super S, ?>>singleton((Mapper<? super S, ?>) mappers);
+      Mapper<? super S, ?> mapper = (Mapper<? super S, ?>) mappers;
+      if (selector.apply(mapper)) {
+        return Collections.<Mapper<? super S, ?>>singleton(mapper);
+      } else {
+        return Collections.EMPTY_SET;
+      }
     } else {
       Set<Mapper<? super S, ?>> result = new HashSet<>();
       for (Mapper<?, ?> m : (Set<Mapper<? super S, ?>>) mappers) {
-        result.add((Mapper<? super S, ?>) m);
+        if (selector.apply(m)) {
+          result.add((Mapper<? super S, ?>) m);
+        }
       }
       return result;
     }

@@ -15,10 +15,16 @@
  */
 package jetbrains.jetpad.mapper;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MappingContextTest extends BaseTestCase {
@@ -65,6 +71,53 @@ public class MappingContextTest extends BaseTestCase {
     mapper.detach();
 
     assertTrue(mapperUnregistered.get());
+  }
+
+  @Test
+  public void selectMapper() {
+    final Mapper m1 = new ItemMapper(new Item());
+    final Mapper m2 = new ItemMapper(new Item());
+
+    for (Mapper<?, ?> m : new Mapper[] { m1, m2 }) {
+      m.attach(context);
+    }
+
+    Set<Mapper<?, ?>> selection = context.selectMappers(new Predicate<Mapper<?, ?>>() {
+      @Override
+      public boolean apply(Mapper<?, ?> mapper) {
+        return mapper == m1;
+      }
+    });
+
+    assertEquals(selection, Sets.newHashSet(m1));
+  }
+
+  @Test
+  public void selectMappers() {
+    final Item i1 = new Item();
+    Mapper m1 = new ItemMapper(i1);
+    Mapper n1 = new ItemMapper(i1);
+    Mapper m2 = new ItemMapper(new Item());
+
+    for (Mapper<?, ?> m : new Mapper[] { m1, n1, m2 }) {
+      m.attach(context);
+    }
+
+    Set<Mapper<?, ?>> selection = context.selectMappers(new Predicate<Mapper<?, ?>>() {
+      @Override
+      public boolean apply(Mapper<?, ?> mapper) {
+        return mapper.getSource() == i1;
+      }
+    });
+    assertEquals(selection, Sets.newHashSet(m1, n1));
+  }
+
+  @Test
+  public void notFound() {
+    Mapper m = new ItemMapper(new Item());
+    m.attach(context);
+    Set<Mapper<?, ?>> selection = context.selectMappers(Predicates.<Mapper<?, ?>>alwaysFalse());
+    assertTrue(selection.isEmpty());
   }
 
   private ItemMapper createNonFindableMapper() {
