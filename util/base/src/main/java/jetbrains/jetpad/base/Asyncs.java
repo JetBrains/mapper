@@ -126,7 +126,7 @@ public class Asyncs {
     return result;
   }
 
-  public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<SourceT, Async<TargetT>> f) {
+  public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<? super SourceT, Async<TargetT>> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async.onResult(new Handler<SourceT>() {
       @Override
