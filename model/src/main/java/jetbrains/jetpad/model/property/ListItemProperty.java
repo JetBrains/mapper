@@ -9,25 +9,22 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
-import javax.annotation.Nonnull;
-
 public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT>, Disposable {
-  private ObservableList<ValueT> list;
-
-  private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> handlers = new Listeners<>();
-  private Registration reg;
-  private boolean disposed = false;
+  private ObservableList<ValueT> myList;
+  private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers = new Listeners<>();
+  private Registration myReg;
+  private boolean myDisposed = false;
 
   public final Property<Integer> index = new ValueProperty<>();
 
-  public ListItemProperty(@Nonnull ObservableList<ValueT> list, int index) {
+  public ListItemProperty(ObservableList<ValueT> list, int index) {
     if (index < 0 || index >= list.size()) {
       throw new IndexOutOfBoundsException("Can’t point to a non-existent item");
     }
-    this.list = list;
+    this.myList = list;
     this.index.set(index);
 
-    reg = list.addListener(new CollectionAdapter<ValueT>() {
+    myReg = list.addListener(new CollectionAdapter<ValueT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ValueT> event) {
         if (event.getIndex() <= ListItemProperty.this.index.get()) {
@@ -39,7 +36,7 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
       public void onItemSet(CollectionItemEvent<? extends ValueT> event) {
         if (event.getIndex() == ListItemProperty.this.index.get()) {
           final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<>(event.getOldItem(), event.getNewItem());
-          handlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+          myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
             @Override
             public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
               l.onEvent(e);
@@ -55,7 +52,7 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
         } else if (event.getIndex() == ListItemProperty.this.index.get()) {
           invalidate();
           final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<ValueT>(event.getOldItem(), null);
-          handlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+          myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
             @Override
             public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
               l.onEvent(e);
@@ -68,13 +65,13 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
 
   @Override
   public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
-    return handlers.add(handler);
+    return myHandlers.add(handler);
   }
 
   @Override
   public ValueT get() {
     if (isValid()) {
-      return list.get(index.get());
+      return myList.get(index.get());
     } else {
       return null;
     }
@@ -83,7 +80,7 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
   @Override
   public void set(ValueT value) {
     if (isValid()) {
-      list.set(index.get(), value);
+      myList.set(index.get(), value);
     } else {
       throw new IllegalStateException("Property points to an invalid item, can’t set");
     }
@@ -95,17 +92,17 @@ public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> imple
 
   protected void invalidate() {
     index.set(null);
-    reg.dispose();
+    myReg.dispose();
   }
 
   @Override
   public void dispose() {
-    if (disposed) {
+    if (myDisposed) {
       throw new IllegalStateException("Double dispose");
     }
     if (isValid()) {
-      reg.dispose();
+      myReg.dispose();
     }
-    disposed = true;
+    myDisposed = true;
   }
 }
