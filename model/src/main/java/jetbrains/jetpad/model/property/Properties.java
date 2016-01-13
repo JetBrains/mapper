@@ -168,11 +168,11 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<SourceT, ReadableProperty<TargetT>> fun) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<? super SourceT, ReadableProperty<TargetT>> fun) {
     return select(source, fun, null);
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
     final Supplier<TargetT> calc = new Supplier<TargetT>() {
       @Override
       public TargetT get() {
