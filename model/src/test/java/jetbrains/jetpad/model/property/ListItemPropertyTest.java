@@ -2,7 +2,8 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.event.EventHandler;
+import jetbrains.jetpad.model.property.PropertyEventHandlers.CountingHandler;
+import jetbrains.jetpad.model.property.PropertyEventHandlers.RecordingHandler;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -288,36 +289,5 @@ public class ListItemPropertyTest {
       list.add(i);
     }
     return list;
-  }
-
-  public static class CountingHandler<ItemT> implements EventHandler<PropertyChangeEvent<ItemT>> {
-    private int counter = 0;
-
-    @Override
-    public void onEvent(PropertyChangeEvent<ItemT> event) {
-      counter += 1;
-    }
-
-    public int getCounter() {
-      return counter;
-    }
-  }
-
-  public static class RecordingHandler<ItemT> implements EventHandler<PropertyChangeEvent<ItemT>> {
-    private ItemT oldValue, newValue;
-
-    @Override
-    public void onEvent(PropertyChangeEvent<ItemT> event) {
-      oldValue = event.getOldValue();
-      newValue = event.getNewValue();
-    }
-
-    public ItemT getOldValue() {
-      return oldValue;
-    }
-
-    public ItemT getNewValue() {
-      return newValue;
-    }
   }
 }
