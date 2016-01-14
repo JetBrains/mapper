@@ -38,32 +38,6 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
     myType = type;
   }
 
-  @Deprecated
-  public CollectionItemEvent(ItemT item, int index, boolean isAdd) {
-    if (isAdd) {
-      myNewItem = item;
-      myType = EventType.ADD;
-    } else {
-      myOldItem = item;
-      myType = EventType.REMOVE;
-    }
-    myIndex = index;
-  }
-
-  /**
-   * @deprecated  Use {@link #getOldItem()} or {@link #getNewItem()} instead.
-   */
-  @Deprecated
-  public ItemT getItem() {
-    if (EventType.ADD.equals(myType)) {
-      return myNewItem;
-    } else if (EventType.REMOVE.equals(myType)) {
-      return myOldItem;
-    } else {
-      throw new UnsupportedOperationException("Events of this type do not have a designated item");
-    }
-  }
-
   public ItemT getOldItem() {
     return myOldItem;
   }
@@ -74,14 +48,6 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
 
   public int getIndex() {
     return myIndex;
-  }
-
-  /**
-   * @deprecated  Use {@link #getType()} instead.
-   */
-  @Deprecated
-  public boolean isAdded() {
-    return EventType.ADD.equals(myType);
   }
 
   public EventType getType() {
