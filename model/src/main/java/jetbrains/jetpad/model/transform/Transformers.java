@@ -485,7 +485,7 @@ public class Transformers {
                 syncCollections(new Runnable() {
                   @Override
                   public void run() {
-                    Property<ItemT> newProperty = new ValueProperty<>(event.getNewItem());
+                    Property<ItemT> newProperty = new ValueProperty<ItemT>(event.getNewItem());
                     Registration newPropertyReg = newProperty.addHandler(propertyValueChangePropagator);
                     myPropertiesRegs.add(event.getIndex(), newPropertyReg);
                     to.add(event.getIndex(), newProperty);
