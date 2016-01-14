@@ -97,16 +97,32 @@ public class MapperTest extends BaseTestCase {
   }
 
   @Test
+  public void removeItemFromAdapted() {
+    source.observableChildrenForAdapter.remove(0);
+
+    assertMapped();
+  }
+
+  @Test
+  public void addItemToAdapted() {
+    source.observableChildrenForAdapter.add(new Item());
+
+    assertMapped();
+  }
+
+  @Test
   public void rolesAreCleanedOnDetach() {
     assertFalse(target.observableChildren.isEmpty());
     assertFalse(target.children.isEmpty());
     assertFalse(target.transformedChildren.isEmpty());
+    assertFalse(target.observableChildrenForAdapter.isEmpty());
 
     mapper.detachRoot();
 
     assertTrue(target.observableChildren.isEmpty());
     assertTrue(target.children.isEmpty());
     assertTrue(target.transformedChildren.isEmpty());
+    assertTrue(target.observableChildrenForAdapter.isEmpty());
   }
 
   @Test
@@ -187,6 +203,7 @@ public class MapperTest extends BaseTestCase {
       result.observableChildren.add(child);
       result.children.add(child);
       result.transformedChildren.add(child);
+      result.observableChildrenForAdapter.add(child);
     }
 
     return result;

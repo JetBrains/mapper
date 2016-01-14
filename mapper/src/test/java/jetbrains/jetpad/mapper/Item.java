@@ -47,6 +47,7 @@ class Item {
   public final ObservableList<Item> transformedChildren = new ObservableArrayList<>();
   public final Property<Item> singleChild = new ValueProperty<>();
   public final Property<String> name = new ValueProperty<>();
+  public final ObservableList<Item> observableChildrenForAdapter = new ObservableArrayList<>();
 
   Item() {
   }
@@ -61,6 +62,7 @@ class Item {
         && contentsEqual(observableChildren, item.observableChildren)
         && contentsEqual(children, item.children)
         && contentsEqual(transformedChildren, item.transformedChildren)
-        && contentsEqual(singleChild.get(), item.singleChild.get());
+        && contentsEqual(singleChild.get(), item.singleChild.get())
+        && contentsEqual(observableChildrenForAdapter, item.observableChildrenForAdapter);
   }
 }
