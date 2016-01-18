@@ -51,7 +51,7 @@ public abstract class BaseId implements Serializable {
       String oldName = ourNamesMap.get(id);
 
       if (oldName != null && name != null && !oldName.equals(name)) {
-        throw new IllegalStateException("Duplicate name : [id = " + id + ", oldName = " + oldName + ", name = " + name + "]");
+        throw new IllegalStateException("Duplicate id : [id = " + id + ", oldName = " + oldName + ", name = " + name + "]");
       }
 
       if (name != null) {
