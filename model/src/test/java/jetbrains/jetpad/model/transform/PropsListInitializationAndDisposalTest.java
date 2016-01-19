@@ -23,7 +23,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static jetbrains.jetpad.model.transform.Transformers.toPropsListTwoWay;
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class PropsListInitializationAndDisposalTest extends BasePropsListTestCase {
   private boolean disposeNeeded = false;
