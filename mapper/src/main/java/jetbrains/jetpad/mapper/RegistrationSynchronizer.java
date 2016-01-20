@@ -10,7 +10,7 @@ public abstract class RegistrationSynchronizer implements Synchronizer {
     myReg = doAttach(ctx);
   }
 
-  abstract Registration doAttach(SynchronizerContext ctx);
+  protected abstract Registration doAttach(SynchronizerContext ctx);
 
   @Override
   public final void detach() {

@@ -99,7 +99,7 @@ public class Synchronizers {
   Synchronizer forPropsOneWay(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
     return new RegistrationSynchronizer() {
       @Override
-      Registration doAttach(SynchronizerContext ctx) {
+      protected Registration doAttach(SynchronizerContext ctx) {
         target.set(source.get());
         return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
           @Override
@@ -143,7 +143,7 @@ public class Synchronizers {
       final ObservableCollection<ElementT> collection, final Runnable sync) {
     return new RegistrationSynchronizer() {
       @Override
-      Registration doAttach(SynchronizerContext ctx) {
+      protected Registration doAttach(SynchronizerContext ctx) {
         Registration r = collection.addListener(new CollectionAdapter<ElementT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ElementT> event) {
@@ -164,7 +164,7 @@ public class Synchronizers {
   public static Synchronizer forRegistration(final Supplier<Registration> reg) {
     return new RegistrationSynchronizer() {
       @Override
-      Registration doAttach(SynchronizerContext ctx) {
+      protected Registration doAttach(SynchronizerContext ctx) {
         return reg.get();
       }
     };
@@ -173,7 +173,7 @@ public class Synchronizers {
   public static Synchronizer forRegistration(final Registration r) {
     return new RegistrationSynchronizer() {
       @Override
-      Registration doAttach(SynchronizerContext ctx) {
+      protected Registration doAttach(SynchronizerContext ctx) {
         return r;
       }
     };
@@ -200,7 +200,7 @@ public class Synchronizers {
   public static Synchronizer forEventSource(final EventSource<?> src, final Runnable r) {
     return new RegistrationSynchronizer() {
       @Override
-      Registration doAttach(SynchronizerContext ctx) {
+      protected Registration doAttach(SynchronizerContext ctx) {
         r.run();
         return src.addHandler(new EventHandler<Object>() {
           @Override
@@ -215,7 +215,7 @@ public class Synchronizers {
   public static <EventT> Synchronizer forEventSource(final EventSource<EventT> src, final Handler<EventT> h) {
     return new RegistrationSynchronizer() {
       @Override
-      Registration doAttach(SynchronizerContext ctx) {
+      protected Registration doAttach(SynchronizerContext ctx) {
         return src.addHandler(new EventHandler<EventT>() {
           @Override
           public void onEvent(EventT event) {
