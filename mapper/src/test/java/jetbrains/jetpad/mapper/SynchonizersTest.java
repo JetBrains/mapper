@@ -15,13 +15,19 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ValueProperty;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class SynchonizersTest extends BaseTestCase {
   @Test
@@ -45,5 +51,38 @@ public class SynchonizersTest extends BaseTestCase {
     mapper.attachRoot();
 
     assertEquals(1, (int)runNum.get());
+  }
+
+  @Test
+  public void forEventSourceHandler() {
+    final Property<Integer> prop = new ValueProperty<>();
+    final List<Integer> handled = new ArrayList<>();
+
+    Mapper<Void, Void> mapper = new Mapper<Void, Void>(null, null) {
+      @Override
+      protected void registerSynchronizers(SynchronizersConfiguration conf) {
+        super.registerSynchronizers(conf);
+        conf.add(Synchronizers.forEventSource(
+          prop,
+          new Handler<PropertyChangeEvent<Integer>>() {
+            @Override
+            public void handle(PropertyChangeEvent<Integer> item) {
+              handled.add(item.getNewValue());
+            }
+          }));
+      }
+    };
+
+    mapper.attachRoot();
+    assertTrue(handled.isEmpty());
+
+    prop.set(1);
+    prop.set(2);
+    prop.set(3);
+    assertEquals(Arrays.asList(1, 2, 3), handled);
+
+    mapper.detachRoot();
+    prop.set(4);
+    assertEquals(Arrays.asList(1, 2, 3), handled);
   }
 }

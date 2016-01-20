@@ -16,6 +16,7 @@
 package jetbrains.jetpad.mapper;
 
 import com.google.common.base.Supplier;
+import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -96,23 +97,16 @@ public class Synchronizers {
 
   public static <ValueT>
   Synchronizer forPropsOneWay(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
-    return new Synchronizer() {
-      private Registration myRegistration;
-
+    return new RegistrationSynchronizer() {
       @Override
-      public void attach(SynchronizerContext ctx) {
+      Registration doAttach(SynchronizerContext ctx) {
         target.set(source.get());
-        myRegistration = source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+        return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<ValueT> event) {
             target.set(event.getNewValue());
           }
         });
-      }
-
-      @Override
-      public void detach() {
-        myRegistration.remove();
       }
     };
   }
@@ -147,12 +141,10 @@ public class Synchronizers {
 
   public static <ElementT> Synchronizer forCollection(
       final ObservableCollection<ElementT> collection, final Runnable sync) {
-    return new Synchronizer() {
-      private Registration myCollectionRegistration;
-
+    return new RegistrationSynchronizer() {
       @Override
-      public void attach(SynchronizerContext ctx) {
-        myCollectionRegistration = collection.addListener(new CollectionAdapter<ElementT>() {
+      Registration doAttach(SynchronizerContext ctx) {
+        Registration r = collection.addListener(new CollectionAdapter<ElementT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ElementT> event) {
             sync.run();
@@ -164,40 +156,25 @@ public class Synchronizers {
           }
         });
         sync.run();
-      }
-
-      @Override
-      public void detach() {
-        myCollectionRegistration.remove();
+        return r;
       }
     };
   }
 
   public static Synchronizer forRegistration(final Supplier<Registration> reg) {
-    return new Synchronizer() {
-      Registration myReg;
-
+    return new RegistrationSynchronizer() {
       @Override
-      public void attach(SynchronizerContext ctx) {
-        myReg = reg.get();
-      }
-
-      @Override
-      public void detach() {
-        myReg.remove();
+      Registration doAttach(SynchronizerContext ctx) {
+        return reg.get();
       }
     };
   }
 
   public static Synchronizer forRegistration(final Registration r) {
-    return new Synchronizer() {
+    return new RegistrationSynchronizer() {
       @Override
-      public void attach(SynchronizerContext ctx) {
-      }
-
-      @Override
-      public void detach() {
-        r.remove();
+      Registration doAttach(SynchronizerContext ctx) {
+        return r;
       }
     };
   }
@@ -221,23 +198,30 @@ public class Synchronizers {
   }
 
   public static Synchronizer forEventSource(final EventSource<?> src, final Runnable r) {
-    return new Synchronizer() {
-      private Registration myReg;
-
+    return new RegistrationSynchronizer() {
       @Override
-      public void attach(SynchronizerContext ctx) {
+      Registration doAttach(SynchronizerContext ctx) {
         r.run();
-        myReg = src.addHandler(new EventHandler<Object>() {
+        return src.addHandler(new EventHandler<Object>() {
           @Override
           public void onEvent(Object event) {
             r.run();
           }
         });
       }
+    };
+  }
 
+  public static <EventT> Synchronizer forEventSource(final EventSource<EventT> src, final Handler<EventT> h) {
+    return new RegistrationSynchronizer() {
       @Override
-      public void detach() {
-        myReg.remove();
+      Registration doAttach(SynchronizerContext ctx) {
+        return src.addHandler(new EventHandler<EventT>() {
+          @Override
+          public void onEvent(EventT event) {
+            h.handle(event);
+          }
+        });
       }
     };
   }
