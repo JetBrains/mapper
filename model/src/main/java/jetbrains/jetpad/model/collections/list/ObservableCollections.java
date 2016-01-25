@@ -196,7 +196,7 @@ public class ObservableCollections {
 
     @Override
     protected Registration follow(ObservableList<ItemT> srcList) {
-      for (int i=0; i<srcList.size(); i++) {
+      for (int i = 0; i < srcList.size(); i++) {
         add(i, srcList.get(i));
       }
 
