@@ -23,16 +23,53 @@ import java.util.*;
 
 public final class MappingContext {
   private Map<Object, Object> myMappers = new HashMap<>();
+  private Set<Mapping<?, ?>> myMappings = new HashSet<>();
   private Map<Mapper<?, ?>, Runnable> myOnDispose = new HashMap<>();
+  @SuppressWarnings("deprecation")
   private Listeners<MappingContextListener> myListeners = new Listeners<>();
+  private Listeners<MappingsListener> myMappingsListeners = new Listeners<>();
 
   public MappingContext() {
   }
 
+  /**
+   * @deprecated Use {@link #addListener(MappingsListener)} instead.
+   */
+  @SuppressWarnings("deprecation")
+  @Deprecated
   public Registration addListener(MappingContextListener l) {
     return myListeners.add(l);
   }
 
+  /**
+   * Note that this listener gets notified for every mapping,
+   * including non-findable mappers.
+   */
+  public Registration addListener(MappingsListener l) {
+    return myMappingsListeners.add(l);
+  }
+
+  protected void registerMapping(final Mapping<?, ?> mapping) {
+    myMappings.add(mapping);
+    myMappingsListeners.fire(new ListenerCaller<MappingsListener>() {
+      @Override
+      public void call(MappingsListener l) {
+        l.onMappingRegistered(mapping);
+      }
+    });
+  }
+
+  protected void unregisterMapping(final Mapping<?, ?> mapping) {
+    myMappingsListeners.fire(new ListenerCaller<MappingsListener>() {
+      @Override
+      public void call(MappingsListener l) {
+          l.onMappingUnregistered(mapping);
+      }
+    });
+    myMappings.remove(mapping);
+  }
+
+  @SuppressWarnings({"deprecation", "unchecked"})
   protected void register(final Mapper<?, ?> mapper) {
     if (mapper.isFindable()) {
       Object source = mapper.getSource();
@@ -52,6 +89,7 @@ public final class MappingContext {
         }
       }
     }
+    myMappings.add(mapper);
 
     myListeners.fire(new ListenerCaller<MappingContextListener>() {
       @Override
@@ -59,8 +97,15 @@ public final class MappingContext {
         l.onMapperRegistered(mapper);
       }
     });
+    myMappingsListeners.fire(new ListenerCaller<MappingsListener>() {
+      @Override
+      public void call(MappingsListener l) {
+        l.onMappingRegistered(mapper);
+      }
+    });
   }
 
+  @SuppressWarnings({"deprecation", "unchecked"})
   protected void unregister(final Mapper<?, ?> mapper) {
     if (mapper.isFindable()) {
       Object source = mapper.getSource();
@@ -87,10 +132,18 @@ public final class MappingContext {
       }
     }
 
+    myMappings.remove(mapper);
+
     myListeners.fire(new ListenerCaller<MappingContextListener>() {
       @Override
       public void call(MappingContextListener l) {
         l.onMapperUnregistered(mapper);
+      }
+    });
+    myMappingsListeners.fire(new ListenerCaller<MappingsListener>() {
+      @Override
+      public void call(MappingsListener l) {
+        l.onMappingUnregistered(mapper);
       }
     });
   }
@@ -139,6 +192,7 @@ public final class MappingContext {
     return mappers;
   }
 
+  @SuppressWarnings("unchecked")
   private <S> Set<Mapper<? super S, ?>> getMappers(S source) {
     if (!(myMappers.containsKey(source))) {
       return Collections.emptySet();
@@ -153,5 +207,9 @@ public final class MappingContext {
       }
       return result;
     }
+  }
+
+  public Collection<Mapping<?, ?>> getMappings() {
+    return Collections.unmodifiableCollection(myMappings);
   }
 }

@@ -21,6 +21,10 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.Collection;
 
+/**
+ * @deprecated Use {@link MappingIndex} instead.
+ */
+@Deprecated
 public class ByTargetIndex {
   private Registration myRegistration;
 

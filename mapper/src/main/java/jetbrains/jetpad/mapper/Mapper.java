@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * Mapper is an
  */
-public abstract class Mapper<SourceT, TargetT> {
+public abstract class Mapper<SourceT, TargetT> implements Mapping<SourceT, TargetT> {
   private static final Object[] EMPTY_PARTS = new Object[0];
 
   private SourceT mySource;
@@ -84,10 +85,12 @@ public abstract class Mapper<SourceT, TargetT> {
     return getMappingContext().getMapper(this, source);
   }
 
+  @Override
   public final SourceT getSource() {
     return mySource;
   }
 
+  @Override
   public final TargetT getTarget() {
     return myTarget;
   }
@@ -130,7 +133,6 @@ public abstract class Mapper<SourceT, TargetT> {
       ThrowableHandlers.handle(t);
     }
 
-
     myMappingContext = ctx;
 
     instantiateSynchronizers();
@@ -149,6 +151,17 @@ public abstract class Mapper<SourceT, TargetT> {
           @Override
           public Mapper<?, ?> getMapper() {
             return Mapper.this;
+          }
+
+          @Override
+          public Registration registerMapping(final Mapping<?, ?> mapping) {
+            myMappingContext.registerMapping(mapping);
+            return new Registration() {
+              @Override
+              protected void doRemove() {
+                myMappingContext.unregisterMapping(mapping);
+              }
+            };
           }
         });
       }

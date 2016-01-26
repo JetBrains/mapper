@@ -15,7 +15,10 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Registration;
+
 public interface SynchronizerContext {
   MappingContext getMappingContext();
   Mapper<?, ?> getMapper();
+  Registration registerMapping(final Mapping<?, ?> mapping);
 }
