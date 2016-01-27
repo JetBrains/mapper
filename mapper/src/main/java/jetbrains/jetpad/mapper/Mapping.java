@@ -15,11 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
-/**
- * @deprecated Use {@link MappingsListener} instead.
- */
-@Deprecated
-public interface MappingContextListener {
-  void onMapperRegistered(Mapper<?, ?> mapper);
-  void onMapperUnregistered(Mapper<?, ?> mapper);
+public interface Mapping<SourceT, TargetT> {
+  SourceT getSource();
+  TargetT getTarget();
 }
