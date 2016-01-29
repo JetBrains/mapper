@@ -82,4 +82,19 @@ public class TreePathTest {
     TreePath<TestComposite> path = new TreePath<>(composite, child1);
     assertSame(composite, path.get(child1));
   }
+
+  @Test
+  public void persistance() {
+    TestComposite layer2 = new TestComposite();
+    child1.children().add(layer2);
+
+    TreePath<TestComposite> rootPath = new TreePath<>(root);
+    assertEquals(rootPath, TreePath.<TestComposite>deserialize(rootPath.serialize()));
+
+    TreePath<TestComposite> layer1path = new TreePath<>(child1, root);
+    assertEquals(layer1path, TreePath.<TestComposite>deserialize(layer1path.serialize()));
+
+    TreePath<TestComposite> layer2path = new TreePath<>(layer2, root);
+    assertEquals(layer2path, TreePath.<TestComposite>deserialize(layer2path.serialize()));
+  }
 }
