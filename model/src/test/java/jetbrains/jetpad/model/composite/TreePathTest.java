@@ -84,7 +84,7 @@ public class TreePathTest {
   }
 
   @Test
-  public void persistance() {
+  public void persistence() {
     TestComposite layer2 = new TestComposite();
     child1.children().add(layer2);
 
