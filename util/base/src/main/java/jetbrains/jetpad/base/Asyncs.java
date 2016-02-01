@@ -310,6 +310,31 @@ public class Asyncs {
     });
   }
 
+  public static <FirstT, SecondT> Async<Pair<FirstT, SecondT>> pair(final Async<FirstT> first, Async<SecondT> second) {
+    final SimpleAsync<Pair<FirstT, SecondT>> res = new SimpleAsync<>();
+    SimpleAsync<Void> proxy = new SimpleAsync<>();
+    final PairedAsync<FirstT> firstPaired = new PairedAsync<>(first);
+    final PairedAsync<SecondT> secondPaired = new PairedAsync<>(second);
+    proxy.onResult(new Handler<Void>() {
+      @Override
+      public void handle(Void item) {
+        if (firstPaired.mySucceeded && secondPaired.mySucceeded) {
+          res.success(new Pair<>(firstPaired.myItem, secondPaired.myItem));
+        } else {
+          res.failure(new Throwable("internal error in pair async"));
+        }
+      }
+    }, new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable item) {
+        res.failure(item);
+      }
+    });
+    firstPaired.pair(secondPaired, proxy);
+    secondPaired.pair(firstPaired, proxy);
+    return res;
+  }
+
   @GwtIncompatible("Uses threading primitives")
   public static <ResultT> ResultT get(Async<ResultT> async) {
     return get(async, new Awaiter() {
@@ -368,5 +393,41 @@ public class Asyncs {
   @GwtIncompatible("Uses threading primitives")
   private interface Awaiter {
     void await(CountDownLatch latch) throws InterruptedException;
+  }
+
+  private static class PairedAsync<ItemT> {
+    private Async<ItemT> myAsync;
+    private ItemT myItem;
+    private Boolean mySucceeded = false;
+    private Registration myReg = null;
+
+    public PairedAsync(Async<ItemT> async) {
+      myAsync = async;
+    }
+
+    private <AnotherItemT> void pair(final PairedAsync<AnotherItemT> anotherInfo, final SimpleAsync<Void> async) {
+      if (async.hasSucceeded() || async.hasFailed()) {
+        return;
+      }
+      myReg = myAsync.onResult(new Handler<ItemT>() {
+        @Override
+        public void handle(ItemT item) {
+          myItem = item;
+          mySucceeded = true;
+          if (anotherInfo.mySucceeded) {
+            async.success(null);
+          }
+        }
+      }, new Handler<Throwable>() {
+        @Override
+        public void handle(Throwable item) {
+          //reg == null can happen in case if myAsync fails instantly
+          if (anotherInfo.myReg != null) {
+            anotherInfo.myReg.remove();
+          }
+          async.failure(item);
+        }
+      });
+    }
   }
 }
