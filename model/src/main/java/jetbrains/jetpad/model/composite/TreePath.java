@@ -21,8 +21,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>>{
+public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>> {
   private List<Integer> myPath = new ArrayList<>();
+
+  public static <CompositeT extends Composite<CompositeT>> TreePath<CompositeT> deserialize(String text) {
+    if (text.isEmpty()) {
+      return new TreePath<>(Collections.<Integer>emptyList());
+    }
+
+    String[] split = text.split(",");
+    List<Integer> path = new ArrayList<>(split.length);
+    for (String p : split) {
+      try {
+        path.add(Integer.parseInt(p));
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("Failed to parse TreePath: " + text, e);
+      }
+    }
+    return new TreePath<>(path);
+  }
 
   public TreePath(CompositeT composite) {
     this(composite, null);
@@ -95,6 +112,19 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     newPath.addAll(myPath);
     newPath.add(index);
     return new TreePath<>(newPath);
+  }
+
+  public String serialize() {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (int p : myPath) {
+      if (!first) {
+        sb.append(',');
+      }
+      sb.append(p);
+      first = false;
+    }
+    return sb.toString();
   }
 
   @Override
