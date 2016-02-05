@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.model.id;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -50,9 +53,19 @@ public class BaseIdGenerator {
 
     try (PrintWriter writer = new PrintWriter(out)) {
       for (int i = 0; i < numIds; i++) {
-        writer.println("\"" + new MyId().getId() + "\"");
+        String idString = "\"" + new MyId().getId() + "\"";
+        if (i == 0) {
+          copyToClipboard(idString);
+        }
+        writer.println(idString);
       }
     }
+  }
+
+  private static void copyToClipboard(String idString) {
+    StringSelection stringSelection = new StringSelection(idString);
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(stringSelection, null);
   }
 
   private static class MyId extends BaseId {}
