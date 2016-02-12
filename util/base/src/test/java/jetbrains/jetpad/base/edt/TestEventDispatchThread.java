@@ -30,6 +30,15 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     return myRecords.isEmpty();
   }
 
+  public boolean nothingScheduled(int time) {
+    for (RunnableRecord record : myRecords) {
+      if (record.myTargetTime <= myCurrentTime + time) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public void executeUpdates() {
     executeUpdates(0);
   }
