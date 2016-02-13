@@ -39,10 +39,14 @@ import static com.google.gwt.query.client.GQuery.$;
 
 public class DomUtil {
   public static List<Node> elementChildren(final Element e) {
+    return nodeChildren(e);
+  }
+
+  public static List<Node> nodeChildren(final Node n) {
     return new AbstractList<Node>() {
       @Override
       public Node get(int index) {
-        return e.getChild(index);
+        return n.getChild(index);
       }
 
       @Override
@@ -52,7 +56,7 @@ public class DomUtil {
         }
 
         Node child = get(index);
-        e.replaceChild(child, element);
+        n.replaceChild(child, element);
         return child;
       }
 
@@ -63,23 +67,23 @@ public class DomUtil {
         }
 
         if (index == 0) {
-          e.insertFirst(element);
+          n.insertFirst(element);
         } else {
-          Node prev = e.getChild(index - 1);
-          e.insertAfter(element, prev);
+          Node prev = n.getChild(index - 1);
+          n.insertAfter(element, prev);
         }
       }
 
       @Override
       public Node remove(int index) {
-        Node child = e.getChild(index);
-        e.removeChild(child);
+        Node child = n.getChild(index);
+        n.removeChild(child);
         return child;
       }
 
       @Override
       public int size() {
-        return e.getChildCount();
+        return n.getChildCount();
       }
     };
   }
