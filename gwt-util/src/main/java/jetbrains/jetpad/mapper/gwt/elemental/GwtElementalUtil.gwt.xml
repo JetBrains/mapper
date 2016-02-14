@@ -5,11 +5,8 @@
   >
 <module>
   <source path="">
-    <exclude name="elemental/**" />
   </source>
-  <inherits name="com.google.gwt.query.Query"/>
-  <inherits name="com.google.gwt.dom.DOM"/>
-  <inherits name="com.google.gwt.user.DOM"/>
   <inherits name="jetbrains.jetpad.geometry.Geometry"/>
   <inherits name="jetbrains.jetpad.mapper.Mapper"/>
+  <inherits name="elemental.Elemental" />
 </module>

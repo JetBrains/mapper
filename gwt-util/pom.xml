@@ -43,5 +43,11 @@
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-elemental</artifactId>
+      <version>${gwt.version}</version>
+    </dependency>
   </dependencies>
 </project>
