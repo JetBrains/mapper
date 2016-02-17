@@ -162,7 +162,7 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
     // so create all of them at once, and dynamically select which one to display
 
     // unfiltered list
-    conf.add(forObservableRole(this, getSource().items, withElementChildren(getTarget().children),
+    conf.add(forObservableRole(this, getSource().items, withAnimatedElementChildren(getTarget().children),
             new MapperFactory<TodoListItem, WithElement>() {
               @Override
               public Mapper<? extends TodoListItem, ? extends WithElement> createMapper(TodoListItem source) {
@@ -171,7 +171,7 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
             }));
 
     // list filtered by active
-    conf.add(forObservableRole(this, getSource().items, xfnActive, withElementChildren(getTarget().active),
+    conf.add(forObservableRole(this, getSource().items, xfnActive, withAnimatedElementChildren(getTarget().active),
             new MapperFactory<TodoListItem, WithElement>() {
               @Override
               public Mapper<? extends TodoListItem, ? extends WithElement> createMapper(TodoListItem source) {
@@ -180,7 +180,7 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
             }));
 
     // list filtered by complete
-    conf.add(forObservableRole(this, getSource().items, xfnComplete, withElementChildren(getTarget().complete),
+    conf.add(forObservableRole(this, getSource().items, xfnComplete, withAnimatedElementChildren(getTarget().complete),
             new MapperFactory<TodoListItem, WithElement>() {
               @Override
               public Mapper<? extends TodoListItem, ? extends WithElement> createMapper(TodoListItem source) {
