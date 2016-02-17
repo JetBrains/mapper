@@ -19,12 +19,9 @@ import com.google.common.base.Supplier;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.query.client.css.TakesCssValue;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
-import jetbrains.jetpad.base.animation.AnimatedList;
-import jetbrains.jetpad.base.animation.Animation;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
@@ -88,38 +85,6 @@ public class DomUtil {
     };
   }
 
-  public static List<Node> animatedChildren(Element e, final int delay) {
-    return new AnimatedList<Node>(elementChildren(e)) {
-      @Override
-      public Animation addAnimation(Node n) {
-        return DomAnimations.fadeIn(n, delay);
-      }
-
-      @Override
-      public Animation removeAnimation(Node n) {
-        return DomAnimations.fadeOut(n, delay);
-      }
-    };
-  }
-
-  public static List<Node> animatedChildren(Element e) {
-    return animatedChildren(e, 300);
-  }
-
-  public static List<Node> animatedChildren(Element e, final com.google.common.base.Function<Node, Animation> add, final com.google.common.base.Function<Node, Animation> remove) {
-    return new AnimatedList<Node>(elementChildren(e)) {
-      @Override
-      public Animation addAnimation(Node n) {
-        return add.apply(n);
-      }
-
-      @Override
-      public Animation removeAnimation(Node n) {
-        return remove.apply(n);
-      }
-    };
-  }
-
   public static List<WithElement> withElementChildren(final Element e) {
     return withElementChildren(elementChildren(e));
   }
@@ -158,18 +123,6 @@ public class DomUtil {
         return items.size();
       }
     };
-  }
-
-  public static List<WithElement> withAnimatedElementChildren(Element e) {
-    return withElementChildren(animatedChildren(e));
-  }
-
-  public static List<WithElement> withAnimatedElementChildren(Element e, int delay) {
-    return withElementChildren(animatedChildren(e, delay));
-  }
-
-  public static List<WithElement> withAnimatedElementChildren(Element e, final com.google.common.base.Function<Node, Animation> add, final com.google.common.base.Function<Node, Animation> remove) {
-    return withElementChildren(animatedChildren(e, add, remove));
   }
 
   public static WritableProperty<String> innerTextOf(final Element e) {
@@ -279,28 +232,6 @@ public class DomUtil {
           $(el).attr(attr, value);
         } else {
           $(el).removeAttr(attr);
-        }
-      }
-    };
-  }
-
-  public static WritableProperty<Boolean> cssValue(final Element el, final TakesCssValue<?> css, String value) {
-    return new WritableProperty<Boolean>() {
-      @Override
-      public void set(Boolean value) {
-        $(el).css(css, value);
-      }
-    };
-  }
-
-  public static WritableProperty<Boolean> hasCssValue(final Element el, final TakesCssValue<?> css, final String value) {
-    return new WritableProperty<Boolean>() {
-      @Override
-      public void set(Boolean val) {
-        if (val) {
-          $(el).css(css, value);
-        } else {
-          $(el).css(css, null);
         }
       }
     };
