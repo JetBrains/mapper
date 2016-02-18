@@ -94,6 +94,60 @@ public class SelectTest {
     testRegistrations(src, res, propertyLsnrs, collectionLsnrs);
   }
 
+  @Test
+  public void listInnerUnfollow() {
+    final AtomicInteger propertyLsnrs = new AtomicInteger();
+    final AtomicInteger collectionLsnrs = new AtomicInteger();
+    final Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
+    ObservableList<String> selected = listenersCountingList(collectionLsnrs);
+
+    ObservableList<String> res = testList(src, selected);
+
+    final Registration r1 = res.addListener(new CollectionAdapter<String>());
+    final AtomicInteger handlerPass = new AtomicInteger();
+    src.addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {
+      @Override
+      public void onEvent(PropertyChangeEvent<Boolean> event) {
+        handlerPass.incrementAndGet();
+        if (handlerPass.get() == 1) {
+          r1.remove();
+        }
+        src.set(false);
+      }
+    });
+    src.set(true);
+  }
+
+  @Test
+  public void collectionNonEmpty() {
+    final Property<Boolean> src = new ValueProperty<>(true);
+
+    ObservableList<String> selected = new ObservableArrayList<>();
+    selected.add("1");
+    selected.add("2");
+    selected.add("3");
+
+    ObservableCollection<String> res = testCollection(src, selected);
+
+    res.addListener(new CollectionAdapter<String>());
+    assertEquals(3, res.size());
+  }
+
+  @Test
+  public void listNonEmpty() {
+    final Property<Boolean> src = new ValueProperty<>(true);
+
+    ObservableList<String> selected = new ObservableArrayList<>();
+    selected.add("1");
+    selected.add("2");
+    selected.add("3");
+
+    ObservableList<String> res = testList(src, selected);
+
+    res.addListener(new CollectionAdapter<String>());
+    assertEquals(3, res.size());
+  }
+
   private void testNonListened(Property<Boolean> src, ObservableCollection<String> selected, ObservableCollection<String> res) {
     assertEquals(0, res.size());
 

@@ -68,15 +68,15 @@ abstract class SelectedCollection<ValueT, ItemT, CollectionT extends ObservableC
   @Override
   protected void onListenersAdded() {
     mySourcePropertyRegistration = mySource.addHandler(this);
-    mySourceListRegistration = follow(select());
     myFollowing = true;
+    mySourceListRegistration = follow(select());
   }
 
   @Override
   protected void onListenersRemoved() {
     mySourcePropertyRegistration.remove();
-    mySourceListRegistration.remove();
     myFollowing = false;
+    mySourceListRegistration.remove();
   }
 
   @Override
