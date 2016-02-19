@@ -21,10 +21,7 @@ import jetbrains.jetpad.model.collections.list.ObservableCollections;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.property.Property;
-import jetbrains.jetpad.model.property.PropertyChangeEvent;
-import jetbrains.jetpad.model.property.Selector;
-import jetbrains.jetpad.model.property.ValueProperty;
+import jetbrains.jetpad.model.property.*;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +31,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class SelectTest {
+  public static final int TEST_LIST_SIZE = 3;
+
   @Test
   public void nonListenedList() {
     Property<Boolean> src = new ValueProperty<>(false);
@@ -120,32 +119,58 @@ public class SelectTest {
 
   @Test
   public void collectionNonEmpty() {
-    final Property<Boolean> src = new ValueProperty<>(true);
-
-    ObservableList<String> selected = new ObservableArrayList<>();
-    selected.add("1");
-    selected.add("2");
-    selected.add("3");
-
-    ObservableCollection<String> res = testCollection(src, selected);
+    ObservableCollection<String> res = testCollection(Properties.constant(true), newTestList());
 
     res.addListener(new CollectionAdapter<String>());
-    assertEquals(3, res.size());
+    assertEquals(TEST_LIST_SIZE, res.size());
   }
 
   @Test
   public void listNonEmpty() {
-    final Property<Boolean> src = new ValueProperty<>(true);
-
-    ObservableList<String> selected = new ObservableArrayList<>();
-    selected.add("1");
-    selected.add("2");
-    selected.add("3");
-
-    ObservableList<String> res = testList(src, selected);
+    ObservableList<String> res = testList(Properties.constant(true), newTestList());
 
     res.addListener(new CollectionAdapter<String>());
-    assertEquals(3, res.size());
+    assertEquals(TEST_LIST_SIZE, res.size());
+  }
+
+  @Test
+  public void listNonEmptyIterator() {
+    ObservableList<String> res = testList(Properties.constant(true), newTestList());
+
+    assertEquals(TEST_LIST_SIZE, res.size());
+    for (String s : res) {
+      assertNotNull(s);
+    }
+
+    res.addListener(new CollectionAdapter<String>());
+    assertEquals(TEST_LIST_SIZE, res.size());
+    for (String s : res) {
+      assertNotNull(s);
+    }
+  }
+
+  @Test
+  public void collectionNonEmptyIterator() {
+    ObservableCollection<String> res = testCollection(Properties.constant(true), newTestList());
+
+    assertEquals(TEST_LIST_SIZE, res.size());
+    for (String s : res) {
+      assertNotNull(s);
+    }
+
+    res.addListener(new CollectionAdapter<String>());
+    assertEquals(TEST_LIST_SIZE, res.size());
+    for (String s : res) {
+      assertNotNull(s);
+    }
+  }
+
+  private ObservableList<String> newTestList() {
+    ObservableList<String> test = new ObservableArrayList<>();
+    for (int i = 0; i < TEST_LIST_SIZE; i++) {
+      test.add(String.valueOf(i));
+    }
+    return test;
   }
 
   private void testNonListened(Property<Boolean> src, ObservableCollection<String> selected, ObservableCollection<String> res) {
@@ -213,7 +238,7 @@ public class SelectTest {
     assertEquals(0, collectionLsnrs.get());
   }
 
-  private ObservableList<String> testList(Property<Boolean> src, final ObservableList<String> selected) {
+  private ObservableList<String> testList(ReadableProperty<Boolean> src, final ObservableList<String> selected) {
     return ObservableCollections.selectList(
       src,
       new Selector<Boolean, ObservableList<String>>() {
@@ -229,7 +254,7 @@ public class SelectTest {
     );
   }
 
-  private ObservableCollection<String> testCollection(Property<Boolean> src, final ObservableCollection<String> selected) {
+  private ObservableCollection<String> testCollection(ReadableProperty<Boolean> src, final ObservableCollection<String> selected) {
     return ObservableCollections.selectCollection(
       src,
       new Selector<Boolean, ObservableCollection<String>>() {
