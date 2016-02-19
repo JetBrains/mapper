@@ -13,7 +13,7 @@
     <junit.version>4.11</junit.version>
     <mockito.version>1.9.5</mockito.version>
 
-    <guava.version>20.0-SNAPSHOT</guava.version>
+    <guava.version>15.0</guava.version>
     <gwtquery.version>1.4.2</gwtquery.version>
     <gwt.version>2.7.0</gwt.version>
     <gwtplugin.version>2.7.0</gwtplugin.version>
@@ -189,19 +189,6 @@
       <url>http://repository.jetbrains.com/jetpad</url>
     </snapshotRepository>
   </distributionManagement>
-
-
-  <repositories>
-    <repository>
-      <id>oss-sonatype</id>
-      <name>oss-sonatype</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
 
   <scm>
     <developerConnection>scm:git:https://github.com/JetBrains/jetpad-mapper.git</developerConnection>
