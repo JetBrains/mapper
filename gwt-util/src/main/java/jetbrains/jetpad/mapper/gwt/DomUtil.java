@@ -90,39 +90,7 @@ public class DomUtil {
   }
 
   static List<WithElement> withElementChildren(final List<Node> base) {
-    final List<WithElement> items = new ArrayList<>();
-
-    return new AbstractList<WithElement>() {
-      @Override
-      public WithElement get(int index) {
-        return items.get(index);
-      }
-
-      @Override
-      public WithElement set(int index, WithElement element) {
-        WithElement result = items.set(index, element);
-        base.set(index, result.getElement());
-        return result;
-      }
-
-      @Override
-      public void add(int index, WithElement element) {
-        items.add(index, element);
-        base.add(index, element.getElement());
-      }
-
-      @Override
-      public WithElement remove(int index) {
-        WithElement result = items.remove(index);
-        base.remove(index);
-        return result;
-      }
-
-      @Override
-      public int size() {
-        return items.size();
-      }
-    };
+    return new WithElementChildrenList(base);
   }
 
   public static WritableProperty<String> innerTextOf(final Element e) {
@@ -286,4 +254,42 @@ public class DomUtil {
 
   }
 
+  private static class WithElementChildrenList extends AbstractList<WithElement> {
+    private final List<WithElement> myItems = new ArrayList<>();
+    private final List<Node> myBase;
+
+    public WithElementChildrenList(List<Node> base) {
+      myBase = base;
+    }
+
+    @Override
+    public WithElement get(int index) {
+      return myItems.get(index);
+    }
+
+    @Override
+    public WithElement set(int index, WithElement element) {
+      WithElement result = myItems.set(index, element);
+      myBase.set(index, result.getElement());
+      return result;
+    }
+
+    @Override
+    public void add(int index, WithElement element) {
+      myItems.add(index, element);
+      myBase.add(index, element.getElement());
+    }
+
+    @Override
+    public WithElement remove(int index) {
+      WithElement result = myItems.remove(index);
+      myBase.remove(index);
+      return result;
+    }
+
+    @Override
+    public int size() {
+      return myItems.size();
+    }
+  }
 }
