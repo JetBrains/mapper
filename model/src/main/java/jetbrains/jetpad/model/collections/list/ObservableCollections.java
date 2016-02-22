@@ -16,19 +16,13 @@
 package jetbrains.jetpad.model.collections.list;
 
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.model.collections.CollectionAdapter;
-import jetbrains.jetpad.model.collections.CollectionItemEvent;
-import jetbrains.jetpad.model.collections.CollectionListener;
-import jetbrains.jetpad.model.collections.ObservableCollection;
+import jetbrains.jetpad.model.collections.*;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ObservableCollections {
   private static final ObservableList EMPTY_LIST = new AbstractObservableList() {
@@ -135,7 +129,7 @@ public class ObservableCollections {
 
   public static <ValueT, ItemT> ObservableCollection<ItemT> selectCollection(
       ReadableProperty<ValueT> p, Selector<ValueT, ObservableCollection<ItemT>> s) {
-    return new UnmodifiableObservableList<>(new SelectorDerivedCollection<>(p, s));
+    return new UnmodifiableObservableCollection<>(new SelectorDerivedCollection<>(p, s));
   }
 
   private static class SelectorDerivedCollection<ValueT, ItemT>
@@ -174,6 +168,15 @@ public class ObservableCollections {
         return super.contains(o);
       } else {
         return select().contains(o);
+      }
+    }
+
+    @Override
+    public Iterator<ItemT> iterator() {
+      if (isFollowing()) {
+        return super.iterator();
+      } else {
+        return select().iterator();
       }
     }
   }
@@ -219,6 +222,15 @@ public class ObservableCollections {
         return super.get(index);
       } else {
         return select().get(index);
+      }
+    }
+
+    @Override
+    public Iterator<ItemT> iterator() {
+      if (isFollowing()) {
+        return super.iterator();
+      } else {
+        return select().iterator();
       }
     }
   }
