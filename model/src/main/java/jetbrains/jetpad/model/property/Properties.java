@@ -406,7 +406,7 @@ public class Properties {
     return not(equals(p1, p2));
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> map(final ReadableProperty<SourceT> prop, final Function<SourceT, TargetT> f) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> map(final ReadableProperty<SourceT> prop, final Function<? super SourceT, ? extends TargetT> f) {
     return new DerivedProperty<TargetT>(prop) {
       @Override
       public TargetT doGet() {
@@ -420,7 +420,7 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> Property<TargetT> map(final Property<SourceT> prop, final Function<SourceT, TargetT> sToT, final Function<TargetT, SourceT> tToS) {
+  public static <SourceT, TargetT> Property<TargetT> map(final Property<SourceT> prop, final Function<? super SourceT, ? extends TargetT> sToT, final Function<? super TargetT, ? extends SourceT> tToS) {
     class TransformedProperty implements Property<TargetT> {
       @Override
       public TargetT get() {
