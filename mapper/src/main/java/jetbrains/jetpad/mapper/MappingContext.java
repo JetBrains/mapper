@@ -16,15 +16,20 @@
 package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
 import java.util.*;
 
 public final class MappingContext {
+  public static final MappingContextProperty<CompositeRegistration> ON_DISPOSE =
+    new MappingContextProperty<>("OnDispose");
+
   private Map<Object, Object> myMappers = new HashMap<>();
-  private Map<Mapper<?, ?>, Runnable> myOnDispose = new HashMap<>();
   private Listeners<MappingContextListener> myListeners = new Listeners<>();
+
+  private Map<MappingContextProperty<?>, Object> myProperties = new HashMap<>();
 
   public MappingContext() {
   }
@@ -80,11 +85,6 @@ public final class MappingContext {
         }
         myMappers.remove(source);
       }
-
-      Runnable onDispose = myOnDispose.remove(mapper);
-      if (onDispose != null) {
-        onDispose.run();
-      }
     }
 
     myListeners.fire(new ListenerCaller<MappingContextListener>() {
@@ -129,6 +129,26 @@ public final class MappingContext {
       return Collections.emptySet();
     }
     return result;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <ValueT> void put(MappingContextProperty<ValueT> property, ValueT value) {
+    if (myProperties.containsKey(property)) {
+      throw new IllegalStateException("Property " + property + " already defined");
+    }
+    if (value == null) {
+      throw new IllegalArgumentException("Trying to set null as a value of " + property);
+    }
+    myProperties.put(property, value);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <ValueT> ValueT get(MappingContextProperty<ValueT> property) {
+    Object value = myProperties.get(property);
+    if (value == null) {
+      throw new IllegalStateException("Property " + property + " not found");
+    }
+    return (ValueT)value;
   }
 
   Set<Mapper<?, ?>> getMappers() {
