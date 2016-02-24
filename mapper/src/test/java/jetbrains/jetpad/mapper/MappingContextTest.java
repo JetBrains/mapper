@@ -19,10 +19,12 @@ import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MappingContextTest extends BaseTestCase {
-  MappingContext context = new MappingContext();
+  public static final MappingContextProperty<String> TEST = new MappingContextProperty<>("test");
+
+  private MappingContext context = new MappingContext();
 
   @Test
   public void registerNonFindableMapper() {
@@ -65,6 +67,28 @@ public class MappingContextTest extends BaseTestCase {
     mapper.detach();
 
     assertTrue(mapperUnregistered.get());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void unknowPropertyFails() {
+    context.get(TEST);
+  }
+
+  @Test
+  public void putGet() {
+    context.put(TEST, "value");
+    assertEquals("value", context.get(TEST));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void putAllowedOnce() {
+    context.put(TEST, "value");
+    context.put(TEST, "another value");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullNotAllowed() {
+    context.put(TEST, null);
   }
 
   private ItemMapper createNonFindableMapper() {
