@@ -26,6 +26,26 @@ public abstract class Registration implements Disposable {
     }
   };
 
+  public static Registration from(final Disposable disposable) {
+    return new Registration() {
+      @Override
+      protected void doRemove() {
+        disposable.dispose();
+      }
+    };
+  }
+
+  public static Registration from(final Disposable... disposables) {
+    return new Registration() {
+      @Override
+      protected void doRemove() {
+        for (Disposable d : disposables) {
+          d.dispose();
+        }
+      }
+    };
+  }
+
   private boolean myRemoved;
 
   protected abstract void doRemove();
@@ -33,7 +53,7 @@ public abstract class Registration implements Disposable {
   //this method should never be overridden except Registration.EMPTY
   public void remove() {
     if (myRemoved) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Registration already removed");
     }
     myRemoved = true;
     doRemove();
