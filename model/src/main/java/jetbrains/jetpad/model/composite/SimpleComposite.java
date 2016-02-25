@@ -15,10 +15,6 @@
  */
 package jetbrains.jetpad.model.composite;
 
-import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.property.ReadableProperty;
-
-public interface Composite<CompositeT extends Composite<CompositeT>> extends SimpleComposite<CompositeT> {
-  ReadableProperty<CompositeT> parent();
-  ObservableList<CompositeT> children();
+public interface SimpleComposite<ParentT extends SimpleComposite<?>> {
+  ParentT getParent();
 }
