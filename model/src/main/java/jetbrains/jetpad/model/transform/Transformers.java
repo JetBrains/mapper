@@ -127,24 +127,15 @@ public class Transformers {
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
             to.add(event.getIndex(), transformation.getTarget());
-            itemRegistrations.add(event.getIndex(), new Registration() {
-              @Override
-              protected void doRemove() {
-                transformation.dispose();
-              }
-            });
+            itemRegistrations.add(event.getIndex(), Registration.from(transformation));
           }
 
           @Override
           public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
             final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
             to.set(event.getIndex(), transformation.getTarget());
-            itemRegistrations.set(event.getIndex(), new Registration() {
-              @Override
-              protected void doRemove() {
-                transformation.dispose();
-              }
-            }).remove();
+            itemRegistrations.set(event.getIndex(), Registration.from(transformation))
+              .remove();
           }
 
           @Override
