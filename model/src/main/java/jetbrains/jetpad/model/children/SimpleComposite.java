@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.children;
 import jetbrains.jetpad.model.property.DelayedValueProperty;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
-public class HasParent<ParentT, SiblingT> {
+public class SimpleComposite<ParentT, SiblingT> {
   final DelayedValueProperty<ParentT> myParent = new DelayedValueProperty<>();
   PositionData<? extends SiblingT> myPositionData;
 

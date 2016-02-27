@@ -18,13 +18,13 @@ package jetbrains.jetpad.model.composite;
 import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.children.ChildList;
-import jetbrains.jetpad.model.children.HasParent;
+import jetbrains.jetpad.model.children.SimpleComposite;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
 class TestComposite
-    extends HasParent<TestComposite, TestComposite>
+    extends SimpleComposite<TestComposite, TestComposite>
     implements NavComposite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
   private ObservableList<TestComposite> myChildren = new ChildList<>(this);
   private Property<Boolean> myVisible = new ValueProperty<>(true);
