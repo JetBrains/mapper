@@ -22,6 +22,8 @@ import jetbrains.jetpad.base.Registration;
 import java.util.Collection;
 
 public class ByTargetIndex {
+  public static final MappingContextProperty<ByTargetIndex> KEY = new MappingContextProperty<>("ByTargetIndex");
+
   private Registration myRegistration;
 
   private Multimap<Object, Mapper<?, ?>> myTargetToMappers = HashMultimap.create();
@@ -47,7 +49,7 @@ public class ByTargetIndex {
 
         Object target = mapper.getTarget();
         if (!myTargetToMappers.get(target).contains(mapper)) {
-          throw new IllegalStateException("unregistered unknown mapper " + mapper + " with target " + target);
+          throw new IllegalStateException("unregistered mapper " + mapper + " with target " + target);
         }
         myTargetToMappers.get(target).remove(mapper);
       }
