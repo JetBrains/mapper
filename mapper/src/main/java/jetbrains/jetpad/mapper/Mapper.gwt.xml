@@ -4,6 +4,8 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd"
         >
 <module>
-  <source path="" />
+  <source path="">
+    <include name="*.java" />
+  </source>
   <inherits name="jetbrains.jetpad.model.Model"/>
 </module>
