@@ -17,12 +17,23 @@ package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>> {
-  private List<Integer> myPath = new ArrayList<>();
+
+  public static <CompositeT extends Composite<CompositeT>> List<CompositeT> sort(List<CompositeT> composites) {
+    final Map<CompositeT, TreePath<CompositeT>> paths = new HashMap<>();
+    for (CompositeT composite : composites) {
+      paths.put(composite, new TreePath<>(composite));
+    }
+    Collections.sort(composites, new Comparator<CompositeT>() {
+      @Override
+      public int compare(CompositeT composite1, CompositeT composite2) {
+        return paths.get(composite1).compareTo(paths.get(composite2));
+      }
+    });
+    return composites;
+  }
 
   public static <CompositeT extends Composite<CompositeT>> TreePath<CompositeT> deserialize(String text) {
     if (text.isEmpty()) {
@@ -40,6 +51,8 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     }
     return new TreePath<>(path);
   }
+
+  private List<Integer> myPath = new ArrayList<>();
 
   public TreePath(CompositeT composite) {
     this(composite, null);
