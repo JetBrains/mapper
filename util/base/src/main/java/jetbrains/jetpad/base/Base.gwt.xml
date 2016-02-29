@@ -4,6 +4,8 @@
   "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd"
   >
 <module>
+  <super-source path="jre"/>
+
   <source path="">
     <exclude name="edt/AwtEventDispatchThread.java" />
     <exclude name="edt/ExecutorEventDispatchThread.java" />

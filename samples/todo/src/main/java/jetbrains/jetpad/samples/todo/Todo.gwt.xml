@@ -7,7 +7,6 @@
   <source path=""/>
 
   <inherits name="jetbrains.jetpad.mapper.gwt.GwtMapper"/>
-  <inherits name="jetbrains.jetpad.model.ModelGwt"/>
 
   <add-linker name="xsiframe"/>
   <entry-point class="jetbrains.jetpad.samples.todo.TodoEntryPoint"/>

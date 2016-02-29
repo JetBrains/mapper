@@ -19,7 +19,6 @@
 
     <module>mapper</module>
     <module>model</module>
-    <module>model-gwt</module>
     <module>gwt-util</module>
 
     <module>util/test</module>
