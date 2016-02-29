@@ -42,11 +42,11 @@ class Item {
     return true;
   }
 
-  public final ObservableList<Item> observableChildren = new ObservableArrayList<>();
-  public final List<Item> children = new ArrayList<>();
-  public final ObservableList<Item> transformedChildren = new ObservableArrayList<>();
-  public final Property<Item> singleChild = new ValueProperty<>();
-  public final Property<String> name = new ValueProperty<>();
+  final ObservableList<Item> observableChildren = new ObservableArrayList<>();
+  final List<Item> children = new ArrayList<>();
+  final ObservableList<Item> transformedChildren = new ObservableArrayList<>();
+  final Property<Item> singleChild = new ValueProperty<>();
+  final Property<String> name = new ValueProperty<>();
 
   Item() {
   }

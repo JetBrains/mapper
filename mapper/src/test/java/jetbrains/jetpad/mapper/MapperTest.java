@@ -192,7 +192,7 @@ public class MapperTest extends BaseTestCase {
     return result;
   }
 
-  class TestMapper extends Mapper<Object, Object> {
+  private static class TestMapper extends Mapper<Object, Object> {
     ObservableSet<Mapper<?,?>> children;
     TestMapper child;
 

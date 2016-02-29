@@ -31,14 +31,11 @@ public final class MappingContext {
 
   private Map<MappingContextProperty<?>, Object> myProperties = new HashMap<>();
 
-  public MappingContext() {
-  }
-
   public Registration addListener(MappingContextListener l) {
     return myListeners.add(l);
   }
 
-  protected void register(final Mapper<?, ?> mapper) {
+  void register(final Mapper<?, ?> mapper) {
     if (mapper.isFindable()) {
       Object source = mapper.getSource();
       if (!(myMappers.containsKey(source))) {
@@ -66,7 +63,7 @@ public final class MappingContext {
     });
   }
 
-  protected void unregister(final Mapper<?, ?> mapper) {
+  void unregister(final Mapper<?, ?> mapper) {
     if (mapper.isFindable()) {
       Object source = mapper.getSource();
       if (!myMappers.containsKey(source)) {
