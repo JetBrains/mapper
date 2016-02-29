@@ -17,11 +17,12 @@ package jetbrains.jetpad.mapper;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import jetbrains.jetpad.base.Disposable;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.Collection;
 
-public class ByTargetIndex {
+public class ByTargetIndex implements Disposable {
   public static final MappingContextProperty<ByTargetIndex> KEY = new MappingContextProperty<>("ByTargetIndex");
 
   private Registration myRegistration;
