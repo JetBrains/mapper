@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
+import com.google.common.collect.Iterators;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -23,13 +24,13 @@ import jetbrains.jetpad.model.collections.set.ObservableSet;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
- * Mapper is an
+ * Mapper is an object encapsulating some mapping (usually UI) from source to target.
  */
 public abstract class Mapper<SourceT, TargetT> {
   private static final Object[] EMPTY_PARTS = new Object[0];
@@ -44,7 +45,6 @@ public abstract class Mapper<SourceT, TargetT> {
 
   /**
    * Construct a mapper with SourceT source and TargetT target
-   *
    * NB: DO NOT create disposable resources in constructors. Use either registerSynchronizers or onAttach method.
    */
   public Mapper(SourceT source, TargetT target) {
@@ -130,27 +130,29 @@ public abstract class Mapper<SourceT, TargetT> {
       ThrowableHandlers.handle(t);
     }
 
-
     myMappingContext = ctx;
 
     instantiateSynchronizers();
 
     myMappingContext.register(this);
 
+    SynchronizerContext synchronizerContext = null;
     for (Object part : myParts) {
       if (part instanceof Synchronizer) {
-        Synchronizer s = (Synchronizer) part;
-        s.attach(new SynchronizerContext() {
-          @Override
-          public MappingContext getMappingContext() {
-            return myMappingContext;
-          }
+        if (synchronizerContext == null) {
+          synchronizerContext = new SynchronizerContext() {
+            @Override
+            public MappingContext getMappingContext() {
+              return myMappingContext;
+            }
 
-          @Override
-          public Mapper<?, ?> getMapper() {
-            return Mapper.this;
-          }
-        });
+            @Override
+            public Mapper<?, ?> getMapper() {
+              return Mapper.this;
+            }
+          };
+        }
+        ((Synchronizer) part).attach(synchronizerContext);
       }
     }
 
@@ -182,12 +184,12 @@ public abstract class Mapper<SourceT, TargetT> {
         }
       }
       if (part instanceof ChildContainer) {
-        ChildContainer cc = (ChildContainer) part;
-        for (Mapper<?, ?> m : cc.getChildren()) {
-          m.detach();
+        for (Iterator<? extends Mapper<?, ?>> i = ((ChildContainer) part).childrenIterator(); i.hasNext(); ) {
+          i.next().detach();
         }
       }
     }
+
 
     myMappingContext.unregister(this);
 
@@ -218,6 +220,50 @@ public abstract class Mapper<SourceT, TargetT> {
     System.arraycopy(myParts, 0, newParts, 0, index);
     System.arraycopy(myParts, index + 1, newParts, index, myParts.length - index - 1);
     myParts = newParts;
+  }
+
+  public final Iterator<Synchronizer> synchronizersIterator() {
+    return new PartsIterator<Synchronizer>() {
+      @Override
+      protected Synchronizer getNext() {
+        return (Synchronizer) myParts[myIndex];
+      }
+
+      @Override
+      protected int toNext(int index) {
+        for (; index < myParts.length; index++) {
+          if (myParts[index] instanceof Synchronizer) {
+            break;
+          }
+        }
+        return index;
+      }
+    };
+  }
+
+  public final Iterator<Mapper<?, ?>> childrenIterator() {
+    return new PartsIterator<Mapper<?,?>>() {
+      private Iterator<? extends Mapper<?, ?>> myChildContainerIterator;
+
+      @Override
+      protected Mapper<?, ?> getNext() {
+        return myChildContainerIterator.next();
+      }
+
+      @Override
+      protected int toNext(int index) {
+        if (myChildContainerIterator != null && myChildContainerIterator.hasNext()) {
+          return index;
+        }
+        for (; index < myParts.length; index++) {
+          if (myParts[index] instanceof ChildContainer) {
+            myChildContainerIterator = ((ChildContainer) myParts[index]).childrenIterator();
+            break;
+          }
+        }
+        return index;
+      }
+    };
   }
 
   public final <MapperT extends Mapper<?, ?>> ObservableList<MapperT> createChildList() {
@@ -277,9 +323,10 @@ public abstract class Mapper<SourceT, TargetT> {
     }
 
     @Override
-    public List<Mapper<?, ?>> getChildren() {
-      if (get() == null) return Collections.emptyList();
-      return Collections.<Mapper<?, ?>>singletonList(get());
+    public Iterator<Mapper<?, ?>> childrenIterator() {
+      MapperT value = get();
+      if (value == null) return Collections.emptyIterator();
+      return Iterators.<Mapper<?, ?>>singletonIterator(value);
     }
   }
 
@@ -337,8 +384,8 @@ public abstract class Mapper<SourceT, TargetT> {
     }
 
     @Override
-    public List<Mapper<?, ?>> getChildren() {
-      return new ArrayList<Mapper<?, ?>>(this);
+    public Iterator<? extends Mapper<?, ?>> childrenIterator() {
+      return iterator();
     }
   }
 
@@ -362,9 +409,7 @@ public abstract class Mapper<SourceT, TargetT> {
       if (isEmpty()) {
         addPart(this);
       }
-
       addChild(item);
-
       super.beforeItemAdded(item);
     }
 
@@ -383,16 +428,43 @@ public abstract class Mapper<SourceT, TargetT> {
     }
 
     @Override
-    public List<Mapper<?, ?>> getChildren() {
-      return new ArrayList<Mapper<?, ?>>(this);
+    public Iterator<? extends Mapper<?, ?>> childrenIterator() {
+      return iterator();
     }
   }
 
   private interface ChildContainer {
-    List<Mapper<?, ?>> getChildren();
+    Iterator<? extends Mapper<?, ?>> childrenIterator();
   }
 
   public interface SynchronizersConfiguration {
     void add(Synchronizer sync);
+  }
+
+  private abstract class PartsIterator<ItemT> implements Iterator<ItemT> {
+    protected int myIndex = toNext(0);
+
+    protected abstract ItemT getNext();
+    protected abstract int toNext(int index);
+
+    @Override
+    public boolean hasNext() {
+      return myIndex < myParts.length;
+    }
+
+    @Override
+    public ItemT next() {
+      if (!hasNext()) {
+        throw new NoSuchElementException();
+      }
+      ItemT next = getNext();
+      myIndex = toNext(myIndex + 1);
+      return next;
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
   }
 }
