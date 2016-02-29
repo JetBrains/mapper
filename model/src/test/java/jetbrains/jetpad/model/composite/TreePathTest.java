@@ -18,9 +18,12 @@ package jetbrains.jetpad.model.composite;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 public class TreePathTest {
@@ -51,6 +54,13 @@ public class TreePathTest {
     assertTrue(new TreePath<>(root).compareTo(new TreePath<>(child1)) < 0);
     assertTrue(new TreePath<>(child1).compareTo(new TreePath<>(child2)) < 0);
     assertTrue(new TreePath<>(child1).compareTo(new TreePath<>(child1)) == 0);
+  }
+
+  @Test
+  public void sortByPath() {
+    List<TestComposite> composites = new ArrayList<>(Arrays.asList(child2, child1, root));
+    TreePath.sort(composites);
+    assertEquals(Arrays.asList(root, child1, child2), composites);
   }
 
   @Test
