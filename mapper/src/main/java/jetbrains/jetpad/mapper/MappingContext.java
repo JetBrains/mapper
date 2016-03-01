@@ -128,10 +128,9 @@ public final class MappingContext {
     return result;
   }
 
-  @SuppressWarnings("unchecked")
   public <ValueT> void put(MappingContextProperty<ValueT> property, ValueT value) {
     if (myProperties.containsKey(property)) {
-      throw new IllegalStateException("Property " + property + " already defined");
+      throw new IllegalStateException("Property " + property + " is already defined");
     }
     if (value == null) {
       throw new IllegalArgumentException("Trying to set null as a value of " + property);
@@ -139,13 +138,8 @@ public final class MappingContext {
     myProperties.put(property, value);
   }
 
-  @SuppressWarnings("unchecked")
   public <ValueT> ValueT get(MappingContextProperty<ValueT> property) {
-    Object value = myProperties.get(property);
-    if (value == null) {
-      throw new IllegalStateException("Property " + property + " not found");
-    }
-    return (ValueT)value;
+    return (ValueT) myProperties.get(property);
   }
 
   Set<Mapper<?, ?>> getMappers() {
