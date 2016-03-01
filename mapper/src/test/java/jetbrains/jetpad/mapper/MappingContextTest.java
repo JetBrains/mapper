@@ -22,7 +22,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class MappingContextTest extends BaseTestCase {
-  public static final MappingContextProperty<String> TEST = new MappingContextProperty<>("test");
+  private static final MappingContextProperty<String> TEST = new MappingContextProperty<>("test");
 
   private MappingContext context = new MappingContext();
 
@@ -70,8 +70,27 @@ public class MappingContextTest extends BaseTestCase {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void unknowPropertyFails() {
+  public void unknownPropertyFails() {
     context.get(TEST);
+  }
+
+  @Test
+  public void containsProperty() {
+    assertFalse(context.contains(TEST));
+    context.put(TEST, "value");
+    assertTrue(context.contains(TEST));
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void removeUnknownProperty() {
+    context.remove(TEST);
+  }
+
+  @Test
+  public void removeProperty() {
+    context.put(TEST, "value");
+    assertEquals("value", context.remove(TEST));
+    assertFalse(context.contains(TEST));
   }
 
   @Test
