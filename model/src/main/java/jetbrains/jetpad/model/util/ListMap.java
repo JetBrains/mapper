@@ -46,7 +46,7 @@ public class ListMap<K, V> {
     return new AbstractSet<K>() {
       @Override
       public Iterator<K> iterator() {
-        return mapIterator(false);
+        return mapIterator(IteratorKind.KEY);
       }
 
       @Override
@@ -64,7 +64,7 @@ public class ListMap<K, V> {
     return new AbstractCollection<V>() {
       @Override
       public Iterator<V> iterator() {
-        return mapIterator(true);
+        return mapIterator(IteratorKind.VALUE);
       }
 
       @Override
@@ -73,7 +73,21 @@ public class ListMap<K, V> {
       }
     };
   }
-  
+
+  public Set<Entry> entrySet() {
+    return new AbstractSet<Entry>() {
+      @Override
+      public Iterator<Entry> iterator() {
+        return mapIterator(IteratorKind.ENTRY);
+      }
+
+      @Override
+      public int size() {
+        return ListMap.this.size();
+      }
+    };
+  }
+
   public int size() {
     return myData.length / 2;
   }
@@ -118,7 +132,7 @@ public class ListMap<K, V> {
     return builder.toString();
   }
 
-  private<T> Iterator<T> mapIterator(final boolean valueIterator) {
+  private<T> Iterator<T> mapIterator(final IteratorKind kind) {
     return new Iterator<T>() {
       int index = 0;
       boolean nextCalled = false;
@@ -133,7 +147,7 @@ public class ListMap<K, V> {
           throw new NoSuchElementException();
         }
         nextCalled = true;
-        T value = (T) myData[index + (valueIterator ? 1 : 0)];
+        T value = (T) kind.createItem(ListMap.this, index);
         index += 2;
         return value;
       }
@@ -169,5 +183,40 @@ public class ListMap<K, V> {
     System.arraycopy(myData, 0, newArray, 0, index);
     System.arraycopy(myData, index + 2, newArray, index, myData.length - index - 2);
     myData = newArray;
+  }
+
+  public class Entry {
+    private final int myIndex;
+    private Entry(int index) {
+      myIndex = index;
+    }
+    public K key() {
+      return (K) myData[myIndex];
+    }
+    public V value() {
+      return (V) myData[myIndex + 1];
+    }
+  }
+
+  private enum IteratorKind {
+    KEY {
+      @Override
+      protected Object createItem(ListMap map, int index) {
+        return map.myData[index];
+      }
+    },
+    VALUE {
+      @Override
+      protected Object createItem(ListMap map, int index) {
+        return map.myData[index + 1];
+      }
+    },
+    ENTRY {
+      @Override
+      protected Object createItem(ListMap map, int index) {
+        return map.new Entry(index);
+      }
+    };
+    protected abstract Object createItem(ListMap map, int index);
   }
 }

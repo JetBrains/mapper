@@ -116,6 +116,11 @@ public class ListMapTest {
     List<String> listVals = new ArrayList<>(list.values());
     Collections.sort(listVals);
     assertEquals(mapVals, listVals);
+
+    assertEquals(map.keySet(), entriesToKeys(list.entrySet()));
+    List<String> listValsFromEntries = entriesToValues(list.entrySet());
+    Collections.sort(listValsFromEntries);
+    assertEquals(mapVals, listValsFromEntries);
   } 
      
   private void doNextOp() {
@@ -147,5 +152,21 @@ public class ListMapTest {
   private String nextString() {    
     int index = random.nextInt(10);
     return Integer.toString(index);
+  }
+
+  private Set<String> entriesToKeys(Set<ListMap<String, String>.Entry> entries) {
+    Set<String> keys = new HashSet<>();
+    for (ListMap<String, String>.Entry entry : entries) {
+      keys.add(entry.key());
+    }
+    return keys;
+  }
+
+  private List<String> entriesToValues(Set<ListMap<String, String>.Entry> entries) {
+    List<String> values = new ArrayList<>(entries.size());
+    for (ListMap<String, String>.Entry entry : entries) {
+      values.add(entry.value());
+    }
+    return values;
   }
 }
