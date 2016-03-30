@@ -258,9 +258,6 @@ public class Composites {
   }
 
   public static boolean isDescendant(Object ancestor, HasParent<?> descendant) {
-    if (ancestor == null) {
-      throw new IllegalArgumentException("Null ancestor");
-    }
     while (true) {
       if (ancestor == descendant) return true;
       if (descendant.getParent() == null) return false;
