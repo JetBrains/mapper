@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
-import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,14 +39,14 @@ public class Composites {
     if (c.nextSibling() != null) return false;
     if (c.prevSibling() != null) return false;
 
-    ObservableList<CompositeT> children = c.getParent().children();
+    List<CompositeT> children = c.getParent().children();
     if (children.size() != 1) return true;
     if (children.get(0) != c) return true;
 
     return false;
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends SimpleComposite<CompositeT>>
   CompositeT nextSibling(CompositeT c) {
     CompositeT parent = c.getParent();
     if (parent == null) return null;
@@ -59,7 +58,7 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends SimpleComposite<CompositeT>>
   CompositeT prevSibling(CompositeT c) {
     CompositeT parent = c.getParent();
     if (parent == null) return null;
@@ -128,7 +127,7 @@ public class Composites {
     }
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
+  public static <CompositeT extends SimpleComposite<CompositeT>>
   Iterable<CompositeT> ancestors(final CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
@@ -265,7 +264,7 @@ public class Composites {
     }
   }
 
-  private static <CompositeT extends Composite<CompositeT>>
+  private static <CompositeT extends SimpleComposite<CompositeT>>
   List<CompositeT> reverseAncestors(CompositeT c) {
     List<CompositeT> result = toList(ancestors(c));
     Collections.reverse(result);
@@ -281,7 +280,7 @@ public class Composites {
     return result;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasVisibility>
   boolean isLastChild(CompositeT v) {
     CompositeT parent = v.getParent();
     if (parent == null) return false;
@@ -293,7 +292,7 @@ public class Composites {
     return true;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasVisibility>
   boolean isFirstChild(CompositeT cell) {
     CompositeT parent = cell.getParent();
     if (parent == null) return false;
@@ -306,12 +305,12 @@ public class Composites {
     return true;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasFocusability & HasVisibility>
   CompositeT firstFocusable(CompositeT v) {
     return firstFocusable(v, true);
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasFocusability & HasVisibility>
   CompositeT firstFocusable(CompositeT v, boolean deepest) {
     for (CompositeT cv : v.children()) {
       if (!cv.visible().get()) continue;
@@ -326,12 +325,12 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasFocusability & HasVisibility>
   CompositeT lastFocusable(CompositeT c) {
     return lastFocusable(c, true);
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasFocusability & HasVisibility>
   CompositeT lastFocusable(CompositeT v, boolean deepest) {
     List<CompositeT> children = v.children();
     for (int i = children.size() - 1; i >= 0; i--) {
@@ -348,7 +347,7 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasVisibility>
   boolean isVisible(CompositeT v) {
     if (!v.visible().get()) return false;
     CompositeT parent = v.getParent();
@@ -356,7 +355,7 @@ public class Composites {
     return isVisible(parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasFocusability>
   CompositeT focusableParent(CompositeT v) {
     CompositeT parent = v.getParent();
     if (parent == null) return null;
@@ -364,7 +363,7 @@ public class Composites {
     return focusableParent(parent);
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
+  public static <CompositeT extends SimpleComposite<CompositeT> & HasFocusability & HasVisibility>
   boolean isFocusable(CompositeT v) {
     if (!v.focusable().get()) return false;
 
