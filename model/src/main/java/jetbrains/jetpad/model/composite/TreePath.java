@@ -15,13 +15,11 @@
  */
 package jetbrains.jetpad.model.composite;
 
-import jetbrains.jetpad.model.collections.list.ObservableList;
-
 import java.util.*;
 
-public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>> {
+public class TreePath<CompositeT extends SimpleComposite<CompositeT>> implements Comparable<TreePath<CompositeT>> {
 
-  public static <CompositeT extends Composite<CompositeT>> void sort(List<CompositeT> composites) {
+  public static <CompositeT extends SimpleComposite<CompositeT>> void sort(List<CompositeT> composites) {
     final Map<CompositeT, TreePath<CompositeT>> paths = new HashMap<>();
     for (CompositeT composite : composites) {
       paths.put(composite, new TreePath<>(composite));
@@ -34,7 +32,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     });
   }
 
-  public static <CompositeT extends Composite<CompositeT>> TreePath<CompositeT> deserialize(String text) {
+  public static <CompositeT extends SimpleComposite<CompositeT>> TreePath<CompositeT> deserialize(String text) {
     if (text.isEmpty()) {
       return new TreePath<>(Collections.<Integer>emptyList());
     }
@@ -94,7 +92,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
   public boolean isValid(CompositeT root) {
     CompositeT current = root;
     for (Integer i : myPath) {
-      ObservableList<CompositeT> children = current.children();
+      List<CompositeT> children = current.children();
       if (i >= children.size()) {
         return false;
       }
