@@ -15,8 +15,6 @@
  */
 package jetbrains.jetpad.model.composite;
 
-import jetbrains.jetpad.model.collections.list.ObservableList;
-
 import java.util.*;
 
 public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>> {
@@ -94,7 +92,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
   public boolean isValid(CompositeT root) {
     CompositeT current = root;
     for (Integer i : myPath) {
-      ObservableList<CompositeT> children = current.children();
+      List<CompositeT> children = current.children();
       if (i >= children.size()) {
         return false;
       }
