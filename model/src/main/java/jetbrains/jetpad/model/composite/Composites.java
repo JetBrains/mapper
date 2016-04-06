@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
-import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +39,7 @@ public class Composites {
     if (c.nextSibling() != null) return false;
     if (c.prevSibling() != null) return false;
 
-    ObservableList<CompositeT> children = c.getParent().children();
+    List<CompositeT> children = c.getParent().children();
     if (children.size() != 1) return true;
     if (children.get(0) != c) return true;
 

@@ -19,14 +19,15 @@ import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.children.ChildList;
 import jetbrains.jetpad.model.children.SimpleComposite;
-import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ValueProperty;
+
+import java.util.List;
 
 class TestComposite
     extends SimpleComposite<TestComposite, TestComposite>
     implements NavComposite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
-  private ObservableList<TestComposite> myChildren = new ChildList<>(this);
+  private List<TestComposite> myChildren = new ChildList<>(this);
   private Property<Boolean> myVisible = new ValueProperty<>(true);
   private Property<Boolean> myFocusable = new ValueProperty<>(true);
   private Rectangle myBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
@@ -37,7 +38,7 @@ class TestComposite
   }
 
   @Override
-  public ObservableList<TestComposite> children() {
+  public List<TestComposite> children() {
     return myChildren;
   }
 
