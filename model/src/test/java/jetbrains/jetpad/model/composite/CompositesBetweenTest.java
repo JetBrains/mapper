@@ -19,6 +19,7 @@ import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.*;
@@ -58,9 +59,9 @@ public class CompositesBetweenTest extends BaseTestCase {
   @Test
   public void same() {
     SimpleComposite root = new SimpleComposite("root");
-    assertEquals(asList(root), Composites.allBetween(root, root));
+    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(root, root));
 
-    assertEquals(asList(g), Composites.allBetween(g, g));
+    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(g, g));
   }
 
   @Test(expected=IllegalArgumentException.class)
@@ -68,32 +69,37 @@ public class CompositesBetweenTest extends BaseTestCase {
     Composites.allBetween(e, new SimpleComposite("alien"));
   }
 
+  @Test(expected=IllegalArgumentException.class)
+  public void reversed() {
+    Composites.allBetween(f, e);
+  }
+
   @Test
   public void neighbors() {
-    assertEquals(asList(e, f), Composites.allBetween(e, f));
-    assertEquals(asList(u, v, w, x, y), Composites.allBetween(u, y));
-    assertEquals(asList(v, w, x, y), Composites.allBetween(v, y));
-    assertEquals(asList(u, v, w, x), Composites.allBetween(u, x));
-    assertEquals(asList(v, w, x), Composites.allBetween(v, x));
+    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(e, f));
+    assertEquals(asList(v, w, x), Composites.allBetween(u, y));
+    assertEquals(asList(w, x), Composites.allBetween(v, y));
+    assertEquals(asList(v, w), Composites.allBetween(u, x));
+    assertEquals(asList(w), Composites.allBetween(v, x));
   }
 
   @Test
   public void down() {
-    assertEquals(asList(k, l, r, s, t), Composites.allBetween(k, t));
-    assertEquals(asList(k, l, r, s), Composites.allBetween(k, s));
-    assertEquals(asList(l, r, s, t), Composites.allBetween(l, t));
-    assertEquals(asList(l, r, s), Composites.allBetween(l, s));
+    assertEquals(asList(l, r, s), Composites.allBetween(k, t));
+    assertEquals(asList(l, r), Composites.allBetween(k, s));
+    assertEquals(asList(r, s), Composites.allBetween(l, t));
+    assertEquals(asList(r), Composites.allBetween(l, s));
   }
 
   @Test
   public void up() {
-    assertEquals(asList(e, f, g), Composites.allBetween(e, g));
-    assertEquals(asList(f, g), Composites.allBetween(f, g));
-    assertEquals(asList(f, g, c, k, l, r), Composites.allBetween(f, r));
-    assertEquals(asList(f, g, c, k, l, r, s, t, m, h, i), Composites.allBetween(f, i));
-    assertEquals(asList(s, t, i, o, p), Composites.allBetween(s, p));
-    assertEquals(asList(s, t, i, o, p, u, v, w, x, y), Composites.allBetween(s, y));
-    assertEquals(asList(s, t, i, o, p, u, v, w), Composites.allBetween(s, w));
+    assertEquals(asList(f), Composites.allBetween(e, g));
+    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(f, g));
+    assertEquals(asList(g, c, k, l), Composites.allBetween(f, r));
+    assertEquals(asList(g, c, k, l, r, s, t, m, h), Composites.allBetween(f, i));
+    assertEquals(asList(t, i, o), Composites.allBetween(s, p));
+    assertEquals(asList(t, i, o, p, u, v, w, x), Composites.allBetween(s, y));
+    assertEquals(asList(t, i, o, p, u, v), Composites.allBetween(s, w));
   }
 
   private static class SimpleComposite implements NavComposite<SimpleComposite> {

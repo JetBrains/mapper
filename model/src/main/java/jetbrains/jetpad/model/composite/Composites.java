@@ -406,31 +406,7 @@ public class Composites {
   }
 
   private static <ValueT> Iterable<ValueT> iterate(final ValueT initial, final Function<ValueT, ValueT> trans) {
-    return new Iterable<ValueT>() {
-      @Override
-      public Iterator<ValueT> iterator() {
-        return new Iterator<ValueT>() {
-          private ValueT myCurrent = trans.apply(initial);
-
-          @Override
-          public boolean hasNext() {
-            return myCurrent != null;
-          }
-
-          @Override
-          public ValueT next() {
-            ValueT result = myCurrent;
-            myCurrent = trans.apply(myCurrent);
-            return result;
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-        };
-      }
-    };
+    return iterateFrom(trans.apply(initial), trans);
   }
 
   private static <ValueT> Iterable<ValueT> iterateFrom(final ValueT initial, final Function<ValueT, ValueT> trans) {
@@ -464,10 +440,13 @@ public class Composites {
     };
   }
 
+  /**
+   * Returns a lists that includes all nodes that have some parent strictly between
+   * some parents of {@code from} and {@code from}.
+   */
   public static <CompositeT extends NavComposite<CompositeT>>
       List<CompositeT> allBetween(CompositeT from, CompositeT to) {
     List<CompositeT> res = new ArrayList<>();
-    res.add(from);
 
     if (to != from) {
       includeClosed(from, to, res);
@@ -477,10 +456,10 @@ public class Composites {
   }
 
   private static <CompositeT extends NavComposite<CompositeT>>
-      boolean includeClosed(CompositeT left, CompositeT to, List<CompositeT> res) {
+      void includeClosed(CompositeT left, CompositeT to, List<CompositeT> res) {
     for (CompositeT next = left.nextSibling(); next != null; next = next.nextSibling()) {
       if (includeOpen(next, to, res)) {
-        return true;
+        return;
       }
     }
 
@@ -488,14 +467,13 @@ public class Composites {
       throw new IllegalArgumentException("Right bound not found in left's bound hierarchy. to=" + to);
     }
 
-    return includeClosed(left.getParent(), to, res);
+    includeClosed(left.getParent(), to, res);
   }
 
   private static <CompositeT extends NavComposite<CompositeT>>
       boolean includeOpen(CompositeT node, CompositeT to, List<CompositeT> res) {
 
     if (node == to) {
-      res.add(node);
       return true;
     }
 
