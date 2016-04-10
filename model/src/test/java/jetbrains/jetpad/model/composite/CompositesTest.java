@@ -110,6 +110,11 @@ public class CompositesTest {
   }
 
   @Test
+  public void simpleAncestorsFrom() {
+    assertEquals(Arrays.asList(leaf11, child1, root), Composites.toList(Composites.ancestorsFrom(leaf11)));
+  }
+
+  @Test
   public void simpleAncestors() {
     assertEquals(Arrays.asList(child1, root), Composites.toList(Composites.ancestors(leaf11)));
   }

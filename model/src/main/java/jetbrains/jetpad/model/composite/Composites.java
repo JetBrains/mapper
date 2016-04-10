@@ -17,10 +17,7 @@ package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Composites {
   private static CompositesWithBounds ourWithBounds = new CompositesWithBounds(0);
@@ -127,6 +124,22 @@ public class Composites {
     }
   }
 
+  /**
+   * @return Iterable containing the current node and all ancestors.
+   */
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> ancestorsFrom(final CompositeT current) {
+    return iterateFrom(current, new Function<CompositeT, CompositeT>() {
+      @Override
+      public CompositeT apply(CompositeT input) {
+        return input.getParent();
+      }
+    });
+  }
+
+  /**
+   * @return Iterable containing all ancestors, but not the current node.
+   */
   public static <CompositeT extends Composite<CompositeT>>
   Iterable<CompositeT> ancestors(final CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
@@ -393,11 +406,15 @@ public class Composites {
   }
 
   private static <ValueT> Iterable<ValueT> iterate(final ValueT initial, final Function<ValueT, ValueT> trans) {
+    return iterateFrom(trans.apply(initial), trans);
+  }
+
+  private static <ValueT> Iterable<ValueT> iterateFrom(final ValueT initial, final Function<ValueT, ValueT> trans) {
     return new Iterable<ValueT>() {
       @Override
       public Iterator<ValueT> iterator() {
         return new Iterator<ValueT>() {
-          private ValueT myCurrent = trans.apply(initial);
+          private ValueT myCurrent = initial;
 
           @Override
           public boolean hasNext() {
@@ -406,6 +423,9 @@ public class Composites {
 
           @Override
           public ValueT next() {
+            if (myCurrent == null) {
+              throw new NoSuchElementException();
+            }
             ValueT result = myCurrent;
             myCurrent = trans.apply(myCurrent);
             return result;
@@ -418,6 +438,53 @@ public class Composites {
         };
       }
     };
+  }
+
+  /**
+   * Returns a lists that includes all nodes that have some parent strictly between
+   * some parents of {@code from} and {@code from}.
+   */
+  public static <CompositeT extends NavComposite<CompositeT>>
+      List<CompositeT> allBetween(CompositeT from, CompositeT to) {
+    List<CompositeT> res = new ArrayList<>();
+
+    if (to != from) {
+      includeClosed(from, to, res);
+    }
+
+    return res;
+  }
+
+  private static <CompositeT extends NavComposite<CompositeT>>
+      void includeClosed(CompositeT left, CompositeT to, List<CompositeT> res) {
+    for (CompositeT next = left.nextSibling(); next != null; next = next.nextSibling()) {
+      if (includeOpen(next, to, res)) {
+        return;
+      }
+    }
+
+    if (left.getParent() == null) {
+      throw new IllegalArgumentException("Right bound not found in left's bound hierarchy. to=" + to);
+    }
+
+    includeClosed(left.getParent(), to, res);
+  }
+
+  private static <CompositeT extends NavComposite<CompositeT>>
+      boolean includeOpen(CompositeT node, CompositeT to, List<CompositeT> res) {
+
+    if (node == to) {
+      return true;
+    }
+
+    for (CompositeT c : node.children()) {
+      if (includeOpen(c, to, res)) {
+        return true;
+      }
+    }
+
+    res.add(node);
+    return false;
   }
 
   //has bounds
