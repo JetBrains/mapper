@@ -1368,6 +1368,46 @@ public class Transformers {
     };
   }
 
+  public static <SourceT> Transformer<ObservableList<SourceT>, ObservableList<SourceT>> reverse() {
+    return new BaseTransformer<ObservableList<SourceT>, ObservableList<SourceT>>() {
+      @Override
+      public Transformation<ObservableList<SourceT>, ObservableList<SourceT>> transform(ObservableList<SourceT> from) {
+        return transform(from, new ObservableArrayList<SourceT>());
+      }
+
+      @Override
+      public Transformation<ObservableList<SourceT>, ObservableList<SourceT>> transform(
+          final ObservableList<SourceT> from, final ObservableList<SourceT> to) {
+        if (!to.isEmpty()) {
+          throw new IllegalStateException("'to' list should be empty: " + to);
+        }
+        final Registration fromRegistration = from.addListener(new CollectionAdapter<SourceT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
+            int index = from.size() - event.getIndex() - 1;
+            to.add(index, event.getNewItem());
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
+            int index = to.size() - event.getIndex() - 1;
+            to.set(index, event.getNewItem());
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<? extends SourceT> event) {
+            int index = to.size() - event.getIndex() - 1;
+            to.remove(index);
+          }
+        });
+        for (ListIterator<SourceT> i = from.listIterator(from.size()); i.hasPrevious(); ) {
+          to.add(i.previous());
+        }
+        return new SimpleTransformation<>(from, to, fromRegistration);
+      }
+    };
+  }
+
   private static class SimpleTransformation<SourceT, TargetT> extends Transformation<SourceT, TargetT> {
     private final SourceT mySource;
     private final TargetT myTarget;
