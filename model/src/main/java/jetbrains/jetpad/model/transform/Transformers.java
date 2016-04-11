@@ -27,7 +27,10 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.property.*;
+import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
+import jetbrains.jetpad.model.property.ReadableProperty;
+import jetbrains.jetpad.model.property.ValueProperty;
 
 import java.util.*;
 
@@ -151,25 +154,15 @@ public class Transformers {
         }
 
         final Registration reg = from.addListener(listener);
-        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
+        return new SimpleTransformation<>(from, to, new Registration() {
           @Override
-          public ObservableList<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
+          protected void doRemove() {
             for (Registration r : itemRegistrations) {
               r.remove();
             }
             reg.remove();
           }
-        };
+        });
       }
     };
   }
@@ -669,23 +662,7 @@ public class Transformers {
           to.add(from.get(i));
         }
 
-        return new Transformation<ObservableList<ItemT>, ObservableList<ItemT>>() {
-          @Override
-          public ObservableList<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<ItemT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromReg.remove();
-            propReg.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, new CompositeRegistration(fromReg, propReg));
       }
     };
   }
@@ -773,25 +750,15 @@ public class Transformers {
           sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, index++, CollectionItemEvent.EventType.ADD));
         }
 
-        return new Transformation<ObservableList<SourceT>, ObservableList<ResultT>>() {
+        return new SimpleTransformation<>(from, to, new Registration() {
           @Override
-          public ObservableList<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<ResultT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
+          protected void doRemove() {
             for (SourceT s : from) {
               registrations.remove(s).remove();
             }
             sourceRegistration.remove();
           }
-        };
+        });
       }
 
       private int getStartResultIndex(SourceT event, ObservableList<SourceT> sourceList, Map<SourceT, Integer> sizes) {
@@ -843,19 +810,9 @@ public class Transformers {
         }
 
         final Registration reg = from.addListener(listener);
-        return new Transformation<ObservableList<PropertyT>, ObservableList<ValueT>>() {
+        return new SimpleTransformation<>(from, to, new Registration() {
           @Override
-          public ObservableList<PropertyT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<ValueT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
+          protected void doRemove() {
             reg.remove();
             for (Registration r : propRegistrations) {
               r.remove();
@@ -863,7 +820,7 @@ public class Transformers {
             propRegistrations.clear();
             to.clear();
           }
-        };
+        });
       }
     };
   }
@@ -927,25 +884,15 @@ public class Transformers {
           sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, -1, CollectionItemEvent.EventType.ADD));
         }
 
-        return new Transformation<ObservableCollection<SourceT>, ObservableCollection<ResultT>>() {
+        return new SimpleTransformation<>(from, to, new Registration() {
           @Override
-          public ObservableCollection<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableCollection<ResultT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
+          protected void doRemove() {
             for (SourceT s : from) {
               registrations.remove(s).remove();
             }
             sourceRegistration.remove();
           }
-        };
+        });
       }
     };
   }
@@ -977,22 +924,7 @@ public class Transformers {
         });
         to.addAll(from);
 
-        return new Transformation<ObservableList<ItemT>, ObservableList<ItemT>>() {
-          @Override
-          public ObservableList<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<ItemT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            registration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, registration);
       }
     };
   }
@@ -1018,22 +950,7 @@ public class Transformers {
         });
         to.addAll(from);
 
-        return new Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>>() {
-          @Override
-          public ObservableCollection<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableCollection<ItemT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            registration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, registration);
       }
     };
   }
@@ -1071,24 +988,7 @@ public class Transformers {
         to.add(item);
         to.addAll(from);
 
-        final Registration fromRegistration = from.addListener(fromListener);
-
-        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
-          @Override
-          public ObservableList<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, from.addListener(fromListener));
       }
     };
   }
@@ -1150,26 +1050,8 @@ public class Transformers {
         fromSize = from.size();
         to.addAll(items);
 
-        final Registration fromRegistration = from.addListener(fromListener);
-        final Registration itemsRegistration = items.addListener(itemsListener);
-
-        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
-          @Override
-          public ObservableList<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-            itemsRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to,
+            new CompositeRegistration(from.addListener(fromListener), items.addListener(itemsListener)));
       }
     };
   }
@@ -1235,26 +1117,8 @@ public class Transformers {
         }
         to.addAll(from);
 
-        final Registration fromRegistration = from.addListener(fromListener);
-        final Registration conditionRegistration = condition.addHandler(conditionHandler);
-
-        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
-          @Override
-          public ObservableList<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-            conditionRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to,
+            new CompositeRegistration(from.addListener(fromListener), condition.addHandler(conditionHandler)));
       }
     };
   }
@@ -1304,26 +1168,8 @@ public class Transformers {
         }
         to.addAll(from);
 
-        final Registration fromRegistration = from.addListener(fromListener);
-        final Registration conditionRegistration = condition.addHandler(conditionHandler);
-
-        return new Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
-          @Override
-          public ObservableCollection<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableCollection<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-            conditionRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to,
+            new CompositeRegistration(from.addListener(fromListener), condition.addHandler(conditionHandler)));
       }
     };
   }
@@ -1377,22 +1223,7 @@ public class Transformers {
           }
         });
 
-        return new Transformation<ObservableList<ItemT>, List<ItemT>>() {
-          @Override
-          public ObservableList<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public List<ItemT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, fromRegistration);
       }
     };
   }
@@ -1423,29 +1254,12 @@ public class Transformers {
         };
         sync.run();
 
-        final Registration r = from.addHandler(new EventHandler<PropertyChangeEvent<ItemT>>() {
+        return new SimpleTransformation<>(from, to, from.addHandler(new EventHandler<PropertyChangeEvent<ItemT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<ItemT> event) {
             sync.run();
           }
-        });
-
-        return new Transformation<ReadableProperty<ItemT>, ObservableList<ItemT>>() {
-          @Override
-          public ReadableProperty<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<ItemT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            r.remove();
-          }
-        };
+        }));
       }
     };
   }
@@ -1477,29 +1291,12 @@ public class Transformers {
         };
         sync.run();
 
-        final Registration r = from.addHandler(new EventHandler<PropertyChangeEvent<ItemT>>() {
+        return new SimpleTransformation<>(from, to, from.addHandler(new EventHandler<PropertyChangeEvent<ItemT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<ItemT> event) {
             sync.run();
           }
-        });
-
-        return new Transformation<ReadableProperty<ItemT>, ObservableCollection<ItemT>>() {
-          @Override
-          public ReadableProperty<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableCollection<ItemT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            r.remove();
-          }
-        };
+        }));
       }
     };
   }
@@ -1529,24 +1326,8 @@ public class Transformers {
         for (SourceT source: from) {
           to.add(function.apply(source));
         }
-        final Registration fromRegistration = from.addListener(fromListener);
 
-        return new Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
-          @Override
-          public ObservableCollection<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableCollection<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, from.addListener(fromListener));
       }
     };
   }
@@ -1581,25 +1362,36 @@ public class Transformers {
         for (SourceT source: from) {
           to.add(function.apply(source));
         }
-        final Registration fromRegistration = from.addListener(fromListener);
 
-        return new Transformation<ObservableList<SourceT>, ObservableList<TargetT>>() {
-          @Override
-          public ObservableList<SourceT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<TargetT> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            fromRegistration.remove();
-          }
-        };
+        return new SimpleTransformation<>(from, to, from.addListener(fromListener));
       }
     };
+  }
+
+  private static class SimpleTransformation<SourceT, TargetT> extends Transformation<SourceT, TargetT> {
+    private final SourceT mySource;
+    private final TargetT myTarget;
+    private final Registration myDisposeRegistration;
+
+    SimpleTransformation(SourceT source, TargetT target, Registration disposeRegistration) {
+      mySource = source;
+      myTarget = target;
+      myDisposeRegistration = disposeRegistration;
+    }
+
+    @Override
+    public SourceT getSource() {
+      return mySource;
+    }
+
+    @Override
+    public TargetT getTarget() {
+      return myTarget;
+    }
+
+    @Override
+    protected void doDispose() {
+      myDisposeRegistration.remove();
+    }
   }
 }
