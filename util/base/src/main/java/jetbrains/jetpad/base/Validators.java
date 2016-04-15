@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
