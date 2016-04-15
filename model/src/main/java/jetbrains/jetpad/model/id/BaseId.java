@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.model.id;
 
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.base64.Base64URLSafeCoder;
 
 import java.io.Serializable;

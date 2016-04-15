@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.model.property;
 
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;

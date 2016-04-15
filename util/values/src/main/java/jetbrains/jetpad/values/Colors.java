@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.values;
 
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Persister;
 
 public class Colors {

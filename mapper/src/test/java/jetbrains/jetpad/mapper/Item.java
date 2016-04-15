@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.mapper;
 
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Property;

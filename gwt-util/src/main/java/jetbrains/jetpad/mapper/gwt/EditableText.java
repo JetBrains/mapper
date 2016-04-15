@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.mapper.gwt;
 
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.KeyCodes;

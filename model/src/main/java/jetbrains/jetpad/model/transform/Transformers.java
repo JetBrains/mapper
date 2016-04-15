@@ -16,7 +16,7 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.*;
-import com.google.common.base.Objects;
+import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
