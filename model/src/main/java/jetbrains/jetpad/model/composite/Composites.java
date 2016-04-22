@@ -124,6 +124,15 @@ public class Composites {
     }
   }
 
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT root(CompositeT current) {
+    for (CompositeT c = current; ; c = c.getParent()) {
+      if (c.getParent() == null) {
+        return c;
+      }
+    }
+  }
+
   /**
    * @return Iterable containing the current node and all ancestors.
    */
@@ -269,6 +278,43 @@ public class Composites {
     }
   }
 
+  /**
+   * @return Lowest common ancestor for the given nodes
+   *  or {@code null} when they have no common ancestors.
+   */
+  public static <CompositeT extends Composite<CompositeT>>
+  CompositeT commonAncestor(CompositeT object1, CompositeT object2) {
+    if (object1 == object2) {
+      return object1;
+    } else if (isDescendant(object1, object2)) {
+      return object1;
+    } else if (isDescendant(object2, object1)) {
+      return object2;
+    }
+
+    Stack<CompositeT> stack1 = new Stack<>();
+    Stack<CompositeT> stack2 = new Stack<>();
+    for (CompositeT c : ancestorsFrom(object1)) {
+      stack1.push(c);
+    }
+    for (CompositeT c : ancestorsFrom(object2)) {
+      stack2.push(c);
+    }
+
+    if (stack1.isEmpty() || stack2.isEmpty()) {
+      return null;
+    } else {
+      do {
+        CompositeT pop1 = stack1.pop();
+        CompositeT pop2 = stack2.pop();
+        if (pop1 != pop2) {
+          return pop1.getParent();
+        }
+      } while (!stack1.isEmpty() && !stack2.isEmpty());
+      return null;
+    }
+  }
+
   public static boolean isDescendant(Object ancestor, HasParent<?> descendant) {
     while (true) {
       if (ancestor == descendant) return true;
@@ -405,7 +451,7 @@ public class Composites {
     return null;
   }
 
-  private static <ValueT> Iterable<ValueT> iterate(final ValueT initial, final Function<ValueT, ValueT> trans) {
+  private static <ValueT> Iterable<ValueT> iterate(ValueT initial, Function<ValueT, ValueT> trans) {
     return iterateFrom(trans.apply(initial), trans);
   }
 
