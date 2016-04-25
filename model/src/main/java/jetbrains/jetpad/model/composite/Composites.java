@@ -292,8 +292,8 @@ public class Composites {
       return object2;
     }
 
-    Stack<CompositeT> stack1 = new Stack<>();
-    Stack<CompositeT> stack2 = new Stack<>();
+    ArrayDeque<CompositeT> stack1 = new ArrayDeque<>();
+    ArrayDeque<CompositeT> stack2 = new ArrayDeque<>();
     for (CompositeT c : ancestorsFrom(object1)) {
       stack1.push(c);
     }
