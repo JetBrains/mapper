@@ -42,14 +42,22 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
   @Override
   public void finish() {
+    ensureCanShutdown();
     myEdt.getExecutor().shutdown();
     waitTermination();
   }
 
   @Override
   public void kill() {
+    ensureCanShutdown();
     myEdt.getExecutor().shutdownNow();
     waitTermination();
+  }
+
+  private void ensureCanShutdown() {
+    if (myName != null && myName.equals(Thread.currentThread().getName())) {
+      throw new IllegalStateException("Cannot kill or finish ExecutorEdtManager from its own thread");
+    }
   }
 
   private void waitTermination() {
