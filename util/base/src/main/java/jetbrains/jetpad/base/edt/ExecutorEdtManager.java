@@ -19,11 +19,14 @@ import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ExecutorEdtManager implements EdtManager, EventDispatchThread {
   private static final int BIG_TIMEOUT_DAYS = 1;
-  private final String myName;
+  private final NamedThreadFactory myThreadFactory;
   private final ExecutorEdt myEdt;
 
   public ExecutorEdtManager() {
@@ -31,8 +34,8 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   public ExecutorEdtManager(String name) {
-    myName = name;
-    myEdt = new ExecutorEdt(name);
+    myThreadFactory = new NamedThreadFactory(name);
+    myEdt = new ExecutorEdt(myThreadFactory);
   }
 
   @Override
@@ -55,8 +58,8 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   private void ensureCanShutdown() {
-    if (myName != null && myName.equals(Thread.currentThread().getName())) {
-      throw new IllegalStateException("Cannot kill or finish ExecutorEdtManager from its own thread");
+    if (myThreadFactory.inProducedThread()) {
+      throw new IllegalStateException(ExecutorEdtManager.this + ": cannot kill or finish from its own thread");
     }
   }
 
@@ -67,9 +70,10 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
+    myThreadFactory.dispose();
     if (!terminated) {
       ThrowableHandlers.handle(new RuntimeException(ExecutorEdtManager.this
-          + ": failed to finish ExecutorEdtManager in " + BIG_TIMEOUT_DAYS + " days"));
+          + ": failed to terminate in " + BIG_TIMEOUT_DAYS + " days"));
     }
   }
 
@@ -120,15 +124,15 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
   @Override
   public String toString() {
-    return "ExecutorEdtManager@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
+    return "ExecutorEdtManager@" + Integer.toHexString(hashCode()) + myThreadFactory.getPrintName();
   }
 
-  private class ExecutorEdt implements EventDispatchThread {
+  private static class ExecutorEdt implements EventDispatchThread {
     private final ScheduledExecutorService myExecutor;
     private volatile Handler<Throwable> myErrorHandler = null;
 
-    ExecutorEdt(String name) {
-      myExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
+    ExecutorEdt(ThreadFactory threadFactory) {
+      myExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
     }
 
     @Override
@@ -157,7 +161,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
         myErrorHandler = new Handler<Throwable>() {
           @Override
           public void handle(Throwable t) {
-            ThrowableHandlers.handle(new RuntimeException(ExecutorEdt.this + ": exception", t));
+            ThrowableHandlers.handle(new RuntimeException("Exception in " + ExecutorEdt.this + ": ", t));
           }
         };
       }
@@ -180,14 +184,14 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
     @Override
     public String toString() {
-      return "ExecutorEdt@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ')');
+      return "ExecutorEdt@" + Integer.toHexString(hashCode()) + " " + Thread.currentThread().getName();
     }
   }
 
   private static class FutureRegistration extends Registration {
     private final Future<?> myFuture;
 
-    private FutureRegistration(Future<?> future) {
+    FutureRegistration(Future<?> future) {
       myFuture = future;
     }
 
@@ -199,14 +203,35 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
   private static class NamedThreadFactory implements ThreadFactory {
     private final String myName;
+    private final AtomicInteger myCounter = new AtomicInteger(0);
+    private final Set<Thread> myThreads = new HashSet<>(1);
 
     NamedThreadFactory(String name) {
+      if (name == null) {
+        throw new IllegalArgumentException();
+      }
       myName = name;
     }
 
     @Override
     public Thread newThread(Runnable r) {
-      return new Thread(r, myName);
+      int index = myCounter.getAndIncrement();
+      String name = index == 0 ? myName : myName + "-" + index;
+      Thread thread = new Thread(r, name);
+      myThreads.add(thread);
+      return thread;
+    }
+
+    boolean inProducedThread() {
+      return myThreads.contains(Thread.currentThread());
+    }
+
+    String getPrintName() {
+      return "".equals(myName) ? "" : " (" + myName + ")";
+    }
+
+    void dispose() {
+      myThreads.clear();
     }
   }
 }

@@ -16,6 +16,7 @@
 package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Handler;
+import jetbrains.jetpad.base.Runnables;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.test.BaseTestCase;
 import jetbrains.jetpad.test.Slow;
@@ -31,11 +32,10 @@ import static org.junit.Assert.assertTrue;
 
 @Slow
 public class ExecutorEdtManagerTest extends BaseTestCase {
-  private boolean mySuccess;
 
   @Test(expected = RuntimeException.class)
   public void testSubmitAfterShutdown() {
-    EdtManager manager = new ExecutorEdtManager("MyEdt");
+    EdtManager manager = new ExecutorEdtManager("MyEdt1");
     EventDispatchThread edt = manager.getEdt();
     edt.schedule(new Runnable() {
       @Override
@@ -49,13 +49,14 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
       }
     });
     manager.finish();
+    final AtomicBoolean executed = new AtomicBoolean(false);
     edt.schedule(new Runnable() {
       @Override
       public void run() {
-        mySuccess = true;
+        executed.set(true);
       }
     });
-    assertFalse(mySuccess);
+    assertFalse(executed.get());
   }
 
   @Test
@@ -79,7 +80,7 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
   }
 
   private void shutdownFromItself(final Handler<EdtManager> shutdowner) {
-    final EdtManager manager = new ExecutorEdtManager("MyEdt");
+    final EdtManager manager = new ExecutorEdtManager("MyEdt2");
     final AtomicBoolean caught = new AtomicBoolean(false);
     final CountDownLatch latch = new CountDownLatch(1);
     manager.getEdt().schedule(new Runnable() {
@@ -95,6 +96,13 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
       }
     });
 
+    await(latch);
+    assertTrue(caught.get());
+    assertFalse(manager.isStopped());
+    manager.finish();
+  }
+
+  private void await(CountDownLatch latch) {
     try {
       if (!latch.await(100, TimeUnit.MILLISECONDS)) {
         Assert.fail("Timeout exceeded");
@@ -102,8 +110,25 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-    assertTrue(caught.get());
-    assertFalse(manager.isStopped());
-    manager.finish();
+  }
+
+  @Test
+  public void finishFromThreadWithEqualName() {
+    final EdtManager manager = new ExecutorEdtManager("MyEdt3");
+    manager.getEdt().schedule(Runnables.EMPTY); // to force thread creation
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    Thread other = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        manager.finish();
+        latch.countDown();
+      }
+    }, "MyEdt3");
+    other.start();
+    await(latch);
+    other.interrupt();
+
+    assertTrue(manager.isStopped());
   }
 }
