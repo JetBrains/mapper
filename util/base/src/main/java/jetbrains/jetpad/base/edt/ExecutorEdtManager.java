@@ -23,8 +23,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 public final class ExecutorEdtManager implements EdtManager, EventDispatchThread {
+  private static final Logger LOG = Logger.getLogger(ExecutorEdtManager.class.getName());
   private static final int BIG_TIMEOUT_DAYS = 1;
   private final NamedThreadFactory myThreadFactory;
   private final ExecutorEdt myEdt;
@@ -36,6 +38,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   public ExecutorEdtManager(String name) {
     myThreadFactory = new NamedThreadFactory(name);
     myEdt = new ExecutorEdt(myThreadFactory);
+    LOG.info("Created " + ExecutorEdtManager.this);
   }
 
   @Override
@@ -64,6 +67,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   private void waitTermination() {
+    LOG.info("Terminate " + ExecutorEdtManager.this);
     boolean terminated = false;
     try {
       terminated = myEdt.getExecutor().awaitTermination(BIG_TIMEOUT_DAYS, TimeUnit.DAYS);
