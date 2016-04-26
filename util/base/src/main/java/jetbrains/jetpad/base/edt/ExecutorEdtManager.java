@@ -20,10 +20,12 @@ import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public final class ExecutorEdtManager implements EdtManager, EventDispatchThread {
+  private static final Logger LOG = Logger.getLogger(ExecutorEdtManager.class.getName());
   private static final int BIG_TIMEOUT_DAYS = 1;
-  private final String myName;
+  private final NamedThreadFactory myThreadFactory;
   private final ExecutorEdt myEdt;
 
   public ExecutorEdtManager() {
@@ -31,8 +33,9 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   public ExecutorEdtManager(String name) {
-    myName = name;
-    myEdt = new ExecutorEdt(name);
+    myThreadFactory = new NamedThreadFactory(name);
+    myEdt = new ExecutorEdt(myThreadFactory);
+    LOG.info("Created " + ExecutorEdtManager.this);
   }
 
   @Override
@@ -42,17 +45,26 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
   @Override
   public void finish() {
+    ensureCanShutdown();
     myEdt.getExecutor().shutdown();
     waitTermination();
   }
 
   @Override
   public void kill() {
+    ensureCanShutdown();
     myEdt.getExecutor().shutdownNow();
     waitTermination();
   }
 
+  private void ensureCanShutdown() {
+    if (myThreadFactory.inProducedThread()) {
+      throw new IllegalStateException(ExecutorEdtManager.this + ": cannot kill or finish from its own thread");
+    }
+  }
+
   private void waitTermination() {
+    LOG.info("Start termination " + ExecutorEdtManager.this);
     boolean terminated = false;
     try {
       terminated = myEdt.getExecutor().awaitTermination(BIG_TIMEOUT_DAYS, TimeUnit.DAYS);
@@ -61,8 +73,9 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     }
     if (!terminated) {
       ThrowableHandlers.handle(new RuntimeException(ExecutorEdtManager.this
-          + ": failed to finish ExecutorEdtManager in " + BIG_TIMEOUT_DAYS + " days"));
+          + ": failed to terminate in " + BIG_TIMEOUT_DAYS + " days"));
     }
+    LOG.info("Terminated " + ExecutorEdtManager.this);
   }
 
   @Override
@@ -112,15 +125,15 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
   @Override
   public String toString() {
-    return "ExecutorEdtManager@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
+    return "ExecutorEdtManager@" + Integer.toHexString(hashCode()) + myThreadFactory.getPrintName();
   }
 
-  private class ExecutorEdt implements EventDispatchThread {
+  private static class ExecutorEdt implements EventDispatchThread {
     private final ScheduledExecutorService myExecutor;
     private volatile Handler<Throwable> myErrorHandler = null;
 
-    ExecutorEdt(String name) {
-      myExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
+    ExecutorEdt(ThreadFactory threadFactory) {
+      myExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
     }
 
     @Override
@@ -149,7 +162,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
         myErrorHandler = new Handler<Throwable>() {
           @Override
           public void handle(Throwable t) {
-            ThrowableHandlers.handle(new RuntimeException(ExecutorEdt.this + ": exception", t));
+            ThrowableHandlers.handle(new RuntimeException("Exception in " + ExecutorEdt.this + ": ", t));
           }
         };
       }
@@ -172,14 +185,14 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
     @Override
     public String toString() {
-      return "ExecutorEdt@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ')');
+      return "ExecutorEdt@" + Integer.toHexString(hashCode()) + " " + Thread.currentThread().getName();
     }
   }
 
   private static class FutureRegistration extends Registration {
     private final Future<?> myFuture;
 
-    private FutureRegistration(Future<?> future) {
+    FutureRegistration(Future<?> future) {
       myFuture = future;
     }
 
@@ -190,15 +203,41 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   private static class NamedThreadFactory implements ThreadFactory {
+    private final Object myId = new Object();
     private final String myName;
 
     NamedThreadFactory(String name) {
+      if (name == null) {
+        throw new IllegalArgumentException();
+      }
       myName = name;
     }
 
     @Override
     public Thread newThread(Runnable r) {
-      return new Thread(r, myName);
+      return new MyThread(myId, r, myName);
+    }
+
+    boolean inProducedThread() {
+      Thread currentThread = Thread.currentThread();
+      return currentThread instanceof MyThread && myId == ((MyThread) currentThread).getEdtId();
+    }
+
+    String getPrintName() {
+      return "".equals(myName) ? "" : " (" + myName + ")";
+    }
+  }
+
+  private static class MyThread extends Thread {
+    private final Object myEdtId;
+
+    MyThread(Object edtId, Runnable target, String name) {
+      super(target, name);
+      myEdtId = edtId;
+    }
+
+    Object getEdtId() {
+      return myEdtId;
     }
   }
 }
