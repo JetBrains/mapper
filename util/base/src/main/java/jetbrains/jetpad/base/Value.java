@@ -17,6 +17,9 @@ package jetbrains.jetpad.base;
 
 import com.google.common.base.Supplier;
 
+/**
+ * Mutable container for ValueT. Used mainly to change values from inside of anonymous class/function
+ */
 public final class Value<ValueT> implements Supplier<ValueT> {
   private ValueT myValue;
 
