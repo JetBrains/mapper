@@ -15,8 +15,11 @@
  */
 package jetbrains.jetpad.mapper;
 
+/**
+ * Synchronizer is a reusable part of {@link jetbrains.jetpad.mapper.Mapper}
+ */
 public interface Synchronizer {
-  public static final Synchronizer[] EMPTY_ARRAY = new Synchronizer[0];
+  Synchronizer[] EMPTY_ARRAY = new Synchronizer[0];
 
   void attach(SynchronizerContext ctx);
   void detach();

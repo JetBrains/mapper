@@ -30,7 +30,32 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Mapper is an object encapsulating some mapping (usually UI) from source to target.
+ * Mapper is an object encapsulating a mapping (usually UI related) from source to target.
+ *
+ * Responsibilities of a Mapper:
+ *  - create and configure view
+ *  - create and configure {@link jetbrains.jetpad.mapper.Synchronizer}s
+ *  - configure listeners and handlers on the view
+ *
+ * Mapper can be in one of three states:
+ *  - not attached
+ *  - attached
+ *  - detached
+ *
+ * not attached -> attached
+ *  - Mapper is not attached
+ *  - onBeforeAttach()
+ *  - registerSynchronizers()
+ *  - Mapper is attached
+ *  - onAttach()
+ *
+ * attached -> detached
+ *  - attached
+ *  - onDetach()
+ *  - detached
+ *
+ * @param <SourceT> - source object
+ * @param <TargetT> - target object. Usually it's some kind of view
  */
 public abstract class Mapper<SourceT, TargetT> {
   private static final Object[] EMPTY_PARTS = new Object[0];
@@ -56,10 +81,16 @@ public abstract class Mapper<SourceT, TargetT> {
     return myParent;
   }
 
+  /**
+   * @return Whether this mapper should be findable in {@link jetbrains.jetpad.mapper.MappingContext}
+   */
   protected boolean isFindable() {
     return true;
   }
 
+  /**
+   * Lifecycle method to register {@link jetbrains.jetpad.mapper.Synchronizer}s in this mapper
+   */
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
   }
 
