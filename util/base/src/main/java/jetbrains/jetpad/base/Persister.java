@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.base;
 
+/**
+ * Converter of T's instance to/from a string
+ */
 public interface Persister<T> {
   T deserialize(String value);
   String serialize(T value);
