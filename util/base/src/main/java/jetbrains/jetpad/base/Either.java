@@ -17,6 +17,9 @@ package jetbrains.jetpad.base;
 
 import java.util.Objects;
 
+/**
+ * Container which can contain value of type L or R
+ */
 public abstract class Either<L, R> {
 
   public static <L, R> Either<L, R> left(L left) {
@@ -37,7 +40,7 @@ public abstract class Either<L, R> {
   public abstract R getRight();
 
   private static class Left<L, R> extends Either<L, R> {
-    private L myLeft;
+    private final L myLeft;
 
     private Left(L left) {
       myLeft = left;
@@ -78,7 +81,7 @@ public abstract class Either<L, R> {
   }
 
   private static class Right<L, R> extends Either<L, R> {
-    private R myRight;
+    private final R myRight;
 
     private Right(R right) {
       myRight = right;
