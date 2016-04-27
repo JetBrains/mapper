@@ -15,6 +15,11 @@
  */
 package jetbrains.jetpad.mapper;
 
+
+/**
+ * A simple kind of synchronizer which doesn't listen to a model and refreshes its part of output only when
+ * the refresh() method is explicitly called.
+ */
 public interface RefreshableSynchronizer extends Synchronizer {
   void refresh();
 }
