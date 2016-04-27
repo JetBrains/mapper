@@ -15,6 +15,12 @@
  */
 package jetbrains.jetpad.mapper;
 
+/**
+ * An entity which gets called when new mapper is attached to a MappingContext.
+ * Use it to modifying every mapper view in some way:
+ *  - install some handlers on a view
+ *  - pass a configuration into a Mapper
+ */
 public interface MapperProcessor<SourceT, TargetT> {
   public static final MapperProcessor[] EMPTY_ARRAY = new MapperProcessor[0];
 
