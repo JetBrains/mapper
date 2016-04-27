@@ -50,7 +50,7 @@ public abstract class Registration implements Disposable {
 
   protected abstract void doRemove();
 
-  //this method should never be overridden except Registration.EMPTY
+  //this method should never be overridden except in Registration.EMPTY
   public void remove() {
     if (myRemoved) {
       throw new IllegalStateException("Registration already removed");
