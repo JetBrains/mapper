@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.base.Function;
+
 public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
@@ -40,6 +42,20 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   public Registration onFailure(Handler<Throwable> failureHandler) {
     synchronized (myAsync) {
       return safeReg(myAsync.onFailure(failureHandler)) ;
+    }
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> map(Function<? super ItemT, ? extends ResultT> success) {
+    synchronized (myAsync) {
+      return myAsync.map(success);
+    }
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> then(Function<? super ItemT, Async<ResultT>> success) {
+    synchronized (myAsync) {
+      return myAsync.then(success);
     }
   }
 

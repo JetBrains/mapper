@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.base.Function;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,18 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
         }
       }
     };
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
+    SimpleAsync<ResultT> result = new SimpleAsync<>();
+    Asyncs.delegate(Asyncs.map(this, success), result);
+    return result;
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> then(final Function<? super ItemT, Async<ResultT>> success) {
+    return Asyncs.select(this, success);
   }
 
   public void success(ItemT item) {

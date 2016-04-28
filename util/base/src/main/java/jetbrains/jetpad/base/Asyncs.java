@@ -20,6 +20,7 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -71,6 +72,22 @@ public class Asyncs {
       public Registration onFailure(Handler<Throwable> failureHandler) {
         return Registration.EMPTY;
       }
+
+      @Override
+      public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
+        Function<? super ValueT, ResultT> newFunction = new Function<ValueT, ResultT>() {
+          @Override
+          public ResultT apply(ValueT value) {
+            return success.apply(value);
+          }
+        };
+        return Asyncs.map(this, newFunction);
+      }
+
+      @Override
+      public <ResultT> Async<ResultT> then(Function<? super ValueT, Async<ResultT>> success) {
+        return Asyncs.select(this, success);
+      }
     };
   }
 
@@ -91,6 +108,22 @@ public class Asyncs {
         failureHandler.handle(t);
         return Registration.EMPTY;
       }
+
+      @Override
+      public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
+        Function<? super ValueT, ResultT> newFunction = new Function<ValueT, ResultT>() {
+          @Override
+          public ResultT apply(ValueT value) {
+            return success.apply(value);
+          }
+        };
+        return Asyncs.map(this, newFunction);
+      }
+
+      @Override
+      public <ResultT> Async<ResultT> then(Function<? super ValueT, Async<ResultT>> success) {
+        return Asyncs.select(this, success);
+      }
     };
   }
 
@@ -103,6 +136,7 @@ public class Asyncs {
     });
   }
 
+  @Deprecated
   public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async.onResult(new Handler<SourceT>() {
@@ -126,6 +160,7 @@ public class Asyncs {
     return result;
   }
 
+  @Deprecated
   public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<? super SourceT, Async<TargetT>> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async.onResult(new Handler<SourceT>() {

@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.base.Function;
+
 /**
  * Asynchronous computation
  */
@@ -22,4 +24,24 @@ public interface Async<ItemT> {
   Registration onSuccess(Handler<? super ItemT> successHandler);
   Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler);
   Registration onFailure(Handler<Throwable> failureHandler);
+
+  /**
+   * This method must always create new async every time it's called.
+   *
+   * @param success   handler to transform async result.
+   * @param <ResultT> resulting async value type.
+   * @return async that is fulfilled when parent async does.
+   */
+  <ResultT> Async<ResultT> map(Function<? super ItemT, ? extends ResultT> success);
+
+  /**
+   * Should comply with A+ promise 'then' method except it has no failure handler.
+   * See <a href="https://promisesaplus.com/">A+ promise spec</a> for more detail.
+   * This method must always create new async every time it's called.
+   *
+   * @param success   handler to pass parent async result to another async
+   * @param <ResultT> resulting async value type
+   * @return async that is fulfilled when async resulting from handler does
+   */
+  <ResultT> Async<ResultT> then(Function<? super ItemT, Async<ResultT>> success);
 }
