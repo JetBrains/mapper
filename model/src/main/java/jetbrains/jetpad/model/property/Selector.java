@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.model.property;
 
+/**
+ * One method interface which is used in flatMap/bind like operations
+ */
 public interface Selector<SourceT, TargetT> {
   TargetT select(SourceT source);
 }

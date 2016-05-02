@@ -18,6 +18,10 @@ package jetbrains.jetpad.model.property;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
 
+/**
+ * Simplified version of {@link BaseDerivedProperty} which can depend only on other properties instead of
+ * generic observable objects
+ */
 public abstract class DerivedProperty<ValueT> extends BaseDerivedProperty<ValueT> {
   private Registration[] myRegistrations;
   private ReadableProperty<?>[] myDeps;

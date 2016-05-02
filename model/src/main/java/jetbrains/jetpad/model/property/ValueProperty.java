@@ -21,6 +21,9 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
+/**
+ * A simple implementation of Read/Write property which stores the value in a field
+ */
 public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT> {
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
   private ValueT myValue;

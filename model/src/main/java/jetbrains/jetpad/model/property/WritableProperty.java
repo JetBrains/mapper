@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.model.property;
 
+/**
+ * An object which allows writing to a value stored somewhere
+ */
 public interface WritableProperty<ValueT> {
   void set(ValueT value);
 }

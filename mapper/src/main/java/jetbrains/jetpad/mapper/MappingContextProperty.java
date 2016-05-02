@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.mapper;
 
+/**
+ * Typed key object for putting user data into {@link MappingContext}
+ */
 public final class MappingContextProperty<ValueT> {
   private final String myName;
 

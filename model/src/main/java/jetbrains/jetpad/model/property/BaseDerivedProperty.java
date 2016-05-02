@@ -21,6 +21,9 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
+/**
+ * Base class for creation of derived properties, i.e. properties whose values are calculated based on other values
+  */
 public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<ValueT> {
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
   private ValueT myValue;
@@ -29,10 +32,19 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
     myValue = initialValue;
   }
 
+  /**
+   * Start listening to the objects which our value depend on
+   */
   protected abstract void doAddListeners();
 
+  /**
+   * Stop listening to the objects which our value depende on
+   */
   protected abstract void doRemoveListeners();
 
+  /**
+   * Calculates dependent value
+   */
   protected abstract ValueT doGet();
 
   @Override

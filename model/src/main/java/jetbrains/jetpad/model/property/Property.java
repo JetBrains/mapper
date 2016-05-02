@@ -15,5 +15,8 @@
  */
 package jetbrains.jetpad.model.property;
 
+/**
+ * Read/Write property
+ */
 public interface Property<ValueT> extends ReadableProperty<ValueT>, WritableProperty<ValueT> {
 }

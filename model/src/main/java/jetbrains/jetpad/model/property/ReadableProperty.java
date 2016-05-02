@@ -18,6 +18,9 @@ package jetbrains.jetpad.model.property;
 import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.event.EventSource;
 
+/**
+ * An object which gives access to a value stored somewhere as well as ability to listen to changes to it.
+ */
 public interface ReadableProperty<ValueT> extends EventSource<PropertyChangeEvent<ValueT>>, Supplier<ValueT> {
   String getPropExpr();
 }

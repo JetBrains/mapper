@@ -24,7 +24,10 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
-public class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT>, Disposable {
+/**
+ * Property which represents a value in an observable list at particular index
+ */
+public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT>, Disposable {
   private ObservableList<ValueT> myList;
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers = new Listeners<>();
   private Registration myReg;

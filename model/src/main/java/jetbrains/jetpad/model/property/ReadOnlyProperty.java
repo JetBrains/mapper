@@ -18,7 +18,10 @@ package jetbrains.jetpad.model.property;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
 
-public class ReadOnlyProperty<ValueT> extends BaseReadableProperty<ValueT> {
+/**
+ * Read only wrapper for a property
+ */
+public final class ReadOnlyProperty<ValueT> extends BaseReadableProperty<ValueT> {
   private ReadableProperty<ValueT> myProperty;
 
   public ReadOnlyProperty(ReadableProperty<ValueT> property) {
