@@ -23,6 +23,9 @@ import java.util.List;
  * Role might be:
  *  - a property
  *  - a collections
+ *
+ *  @param <SourceT> - context object's type
+ *  @param <TargetT> - type of objects which are contained in the role
  */
 public interface RoleSynchronizer<SourceT, TargetT> extends Synchronizer {
   List<Mapper<? extends SourceT, ? extends TargetT>> getMappers();
