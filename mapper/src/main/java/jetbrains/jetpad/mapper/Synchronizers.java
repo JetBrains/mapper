@@ -138,10 +138,16 @@ public class Synchronizers {
     };
   }
 
+  /**
+   * Creates a synchronizer which invokes the specified runnable on changes to the property
+   */
   public static <ValueT> Synchronizer forProperty(final ReadableProperty<ValueT> property, final Runnable sync) {
     return forEventSource(property, sync);
   }
 
+  /**
+   * Creates a synchronizer which invokes the specified runnable on changes to the collection
+   */
   public static <ElementT> Synchronizer forCollection(
       final ObservableCollection<ElementT> collection, final Runnable sync) {
     return new RegistrationSynchronizer() {
