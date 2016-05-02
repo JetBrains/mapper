@@ -29,6 +29,9 @@ import jetbrains.jetpad.model.transform.Transformer;
 
 import java.util.List;
 
+/**
+ * Utility class for synchronizer creation
+ */
 public class Synchronizers {
   public static <SourceT, TargetT>
   SimpleRoleSynchronizer<SourceT, TargetT> forSimpleRole(
@@ -179,6 +182,10 @@ public class Synchronizers {
     };
   }
 
+  /**
+   * Compose a list of synchronizer into one. Synchronizers are attached
+   * in the order in which they are passed and detached in the reverse order
+   */
   public static Synchronizer composite(final Synchronizer... syncs) {
     return new Synchronizer() {
       @Override
@@ -190,13 +197,16 @@ public class Synchronizers {
 
       @Override
       public void detach() {
-        for (Synchronizer s : syncs) {
-          s.detach();
+        for (int i = syncs.length - 1; i >= 0; i--) {
+          syncs[i].detach();
         }
       }
     };
   }
 
+  /**
+   * Creates a synchronizer which invokes the specified runnable on an event from the passed {@link EventSource}
+   */
   public static Synchronizer forEventSource(final EventSource<?> src, final Runnable r) {
     return new RegistrationSynchronizer() {
       @Override
@@ -212,6 +222,12 @@ public class Synchronizers {
     };
   }
 
+  /**
+   * Creates a synchronizer which invokes a handler with an event as a parameter when such an event happens on
+   * the passed {@link EventSource}
+   *
+   * NB: It isn't called on attach
+   */
   public static <EventT> Synchronizer forEventSource(final EventSource<EventT> src, final Handler<EventT> h) {
     return new RegistrationSynchronizer() {
       @Override

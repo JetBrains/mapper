@@ -22,6 +22,9 @@ import jetbrains.jetpad.base.Registration;
 
 import java.util.Collection;
 
+/**
+ * Index which allows efficient lookup of mappers in specified mapping context by their target
+ */
 public class ByTargetIndex implements Disposable {
   public static final MappingContextProperty<ByTargetIndex> KEY = new MappingContextProperty<>("ByTargetIndex");
 

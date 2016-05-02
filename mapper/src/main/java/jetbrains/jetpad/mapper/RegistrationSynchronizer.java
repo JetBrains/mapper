@@ -17,6 +17,11 @@ package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.base.Registration;
 
+/**
+ * Synchronizer which:
+ * - create a registration on attach
+ * - remove this registration on detach
+ */
 public abstract class RegistrationSynchronizer implements Synchronizer {
   private Registration myReg;
 
