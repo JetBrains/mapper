@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.mapper;
 
+/**
+ * Context passed to the registerSynchronizers method.
+ */
 public interface SynchronizerContext {
   MappingContext getMappingContext();
   Mapper<?, ?> getMapper();
