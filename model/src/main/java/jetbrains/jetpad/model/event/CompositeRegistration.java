@@ -21,7 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompositeRegistration extends Registration {
+/**
+ * Registration which consists of several subregistrations.
+ * Useful as an utility to aggregate registration and them dispose them with one call.
+ */
+public final class CompositeRegistration extends Registration {
   private List<Registration> myRegistrations;
 
   public CompositeRegistration(Registration... regs) {
