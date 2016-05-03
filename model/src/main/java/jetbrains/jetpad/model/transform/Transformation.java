@@ -17,6 +17,9 @@ package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Disposable;
 
+/**
+ * A dynamic transformation from a mutable object of type SourceT to a mutable object of TargetT.
+ */
 public abstract class Transformation<SourceT, TargetT> implements Disposable {
   private boolean myDisposed;
 

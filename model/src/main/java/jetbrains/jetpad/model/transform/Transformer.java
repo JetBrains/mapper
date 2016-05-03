@@ -15,6 +15,14 @@
  */
 package jetbrains.jetpad.model.transform;
 
+/**
+ * Factory for a dynamic transformation from a mutable object of type SourceT to a mutable object of TargetT.
+ *
+ * Such transformations involve listening to the state of object, so we should dispose of them. That's why
+ * normal function will not work.
+ *
+ * You can chain such factories with the andThen method.
+ */
 public interface Transformer<SourceT, TargetT> {
   Transformation<SourceT, TargetT> transform(SourceT from);
   Transformation<SourceT, TargetT> transform(SourceT from, TargetT to);
