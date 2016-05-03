@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.model.event;
 
-public class EventListeners<ListenerT, EventT extends ListenerEvent<ListenerT>> extends Listeners<ListenerT> {
+public final class EventListeners<ListenerT, EventT extends ListenerEvent<ListenerT>> extends Listeners<ListenerT> {
   public void fire(final EventT event) {
     fire(new ListenerCaller<ListenerT>() {
       @Override

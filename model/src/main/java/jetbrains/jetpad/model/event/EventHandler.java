@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.model.event;
 
+/**
+ * Handler for events fired by {@link EventSource}
+ */
 public interface EventHandler<EventT> {
   void onEvent(EventT event);
 }

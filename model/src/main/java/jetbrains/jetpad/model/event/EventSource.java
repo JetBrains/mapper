@@ -17,6 +17,9 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
+/**
+ * Source of events of type EventT
+ */
 public interface EventSource<EventT> {
   Registration addHandler(EventHandler<? super EventT> handler);
 }

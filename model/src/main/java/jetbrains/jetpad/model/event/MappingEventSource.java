@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.event;
 import com.google.common.base.Function;
 import jetbrains.jetpad.base.Registration;
 
-public class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
+final class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
   private Listeners<EventHandler<? super TargetEventT>> myHandlers = new Listeners<EventHandler<? super TargetEventT>>() {
     @Override
     protected void beforeFirstAdded() {
@@ -46,7 +46,7 @@ public class MappingEventSource<SourceEventT, TargetEventT> implements EventSour
 
   private Registration mySourceHandler;
 
-  public MappingEventSource(EventSource<SourceEventT> sourceEventSource, Function<SourceEventT, TargetEventT> function) {
+  MappingEventSource(EventSource<SourceEventT> sourceEventSource, Function<SourceEventT, TargetEventT> function) {
     mySourceEventSource = sourceEventSource;
     myFunction = function;
   }

@@ -15,6 +15,10 @@
  */
 package jetbrains.jetpad.model.event;
 
+/**
+ * Interface which should be implemented by events which you fire via {@link EventListeners}
+ * @param <ListenerT>
+ */
 public interface ListenerEvent<ListenerT> {
   void dispatch(ListenerT l);
 }

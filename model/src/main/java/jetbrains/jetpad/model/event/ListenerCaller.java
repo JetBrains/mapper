@@ -15,6 +15,9 @@
  */
 package jetbrains.jetpad.model.event;
 
+/**
+ * Object which calls listeners inside of {@link Listeners}
+ */
 public interface ListenerCaller<ListenerT> {
   void call(ListenerT l);
 }

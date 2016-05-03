@@ -22,6 +22,12 @@ import jetbrains.jetpad.base.ThrowableHandlers;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Reusable container for listeners.
+ * It supports:
+ * - managing listeners
+ * - firing events
+ */
 public class Listeners<ListenerT> {
   private List<ListenerT> myListeners = null;
   private FireData<ListenerT> myFireData = null;
