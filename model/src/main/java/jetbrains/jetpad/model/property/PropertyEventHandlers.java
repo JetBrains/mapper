@@ -19,7 +19,7 @@ import jetbrains.jetpad.model.event.EventHandler;
 
 
 public class PropertyEventHandlers {
-  public static class CountingHandler<ItemT> implements EventHandler<PropertyChangeEvent<ItemT>> {
+  public static final class CountingHandler<ItemT> implements EventHandler<PropertyChangeEvent<ItemT>> {
     private int counter = 0;
 
     @Override
@@ -32,7 +32,7 @@ public class PropertyEventHandlers {
     }
   }
 
-  public static class RecordingHandler<ItemT> implements EventHandler<PropertyChangeEvent<ItemT>> {
+  public static final class RecordingHandler<ItemT> implements EventHandler<PropertyChangeEvent<ItemT>> {
     private ItemT oldValue, newValue;
 
     @Override

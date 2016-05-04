@@ -19,6 +19,9 @@ import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
 
+/**
+ * Derived property based on a Supplier<Value> and a set of dependencies
+ */
 public final class SimpleDerivedProperty<ValueT> extends BaseDerivedProperty<ValueT> {
   private ReadableProperty<?>[] myDependencies;
   private Registration[] myRegistrations;

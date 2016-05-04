@@ -23,6 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Generic id class for typed ids.
+ *
+ * Supports:
+ * - storing a random id
+ * - maintaining debug map, so that we can have readable names and efficient representation at the same time
+ */
 public abstract class BaseId implements Serializable {
   private static final char SEPARATOR = '.';
 

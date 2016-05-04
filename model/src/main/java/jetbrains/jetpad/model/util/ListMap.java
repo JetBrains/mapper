@@ -19,6 +19,11 @@ import jetbrains.jetpad.base.Objects;
 
 import java.util.*;
 
+/**
+ * Memory efficient implementation of a map based on an array.
+ *
+ * It works better than a HashMap and TreeMap on small sized collections.
+ */
 public class ListMap<K, V> {
   private static final Object[] EMPTY_ARRAY = new Object[0];
 

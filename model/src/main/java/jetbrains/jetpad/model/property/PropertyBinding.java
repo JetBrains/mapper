@@ -19,6 +19,9 @@ import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
 
+/**
+ * One and two-way property binding support
+ */
 public class PropertyBinding {
   public static <ValueT> Registration bindOneWay(
       final ReadableProperty<? extends ValueT> source, final WritableProperty<? super ValueT> target) {

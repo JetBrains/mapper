@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.model.property;
 
-public class PropertyChangeEvent<ValueT> {
+public final class PropertyChangeEvent<ValueT> {
   private ValueT myOldValue;
   private ValueT myNewValue;
 
