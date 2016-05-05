@@ -66,9 +66,9 @@ public class BooleanPropertiesTest {
 
   @Test
   public void multipleAnd() {
-    assertTrue(AdvancedProperties.and(TRUE, TRUE, TRUE).get());
-    assertFalse(AdvancedProperties.and(TRUE, FALSE, TRUE).get());
-    assertFalse(AdvancedProperties.and(TRUE, NULL, FALSE).get());
-    assertNull(AdvancedProperties.and(TRUE, NULL, TRUE).get());
+    assertTrue(Properties.and(TRUE, TRUE, TRUE).get());
+    assertFalse(Properties.and(TRUE, FALSE, TRUE).get());
+    assertFalse(Properties.and(TRUE, NULL, FALSE).get());
+    assertNull(Properties.and(TRUE, NULL, TRUE).get());
   }
 }
