@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 import java.util.*;
 
@@ -279,8 +280,7 @@ public class Composites {
   }
 
   /**
-   * @return Lowest common ancestor for the given nodes
-   *  or {@code null} when they have no common ancestors.
+   * @return Lowest common ancestor for the given nodes or {@code null} when they have no common ancestors.
    */
   public static <CompositeT extends Composite<CompositeT>>
   CompositeT commonAncestor(CompositeT object1, CompositeT object2) {
@@ -406,8 +406,7 @@ public class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasVisibility>
-  boolean isVisible(CompositeT v) {
+  public static <CompositeT extends Composite<CompositeT> & HasVisibility> boolean isVisible(CompositeT v) {
     if (!v.visible().get()) return false;
     CompositeT parent = v.getParent();
     if (parent == null) return true;
@@ -424,15 +423,21 @@ public class Composites {
 
   public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
   boolean isFocusable(CompositeT v) {
-    if (!v.focusable().get()) return false;
+    return v.focusable().get() && isVisible(v);
+  }
 
-    CompositeT current = v;
-    while (current != null) {
-      if (!current.visible().get()) return false;
-      current = current.getParent();
+  public static <CompositeT extends NavComposite<CompositeT>> CompositeT next(CompositeT c, Predicate<CompositeT> p) {
+    for (CompositeT next : nextNavOrder(c)) {
+      if (p.apply(next)) return next;
     }
+    return null;
+  }
 
-    return true;
+  public static <CompositeT extends NavComposite<CompositeT>> CompositeT prev(CompositeT v, Predicate<CompositeT> p) {
+    for (CompositeT prev : prevNavOrder(v)) {
+      if (p.apply(prev)) return prev;
+    }
+    return null;
   }
 
   public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility>

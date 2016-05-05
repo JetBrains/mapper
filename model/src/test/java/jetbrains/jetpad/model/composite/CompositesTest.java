@@ -15,15 +15,21 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import com.google.common.base.Predicate;
 import jetbrains.jetpad.geometry.Rectangle;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class CompositesTest {
   private TestComposite root = create(0, 0, 2, 2);
@@ -44,7 +50,7 @@ public class CompositesTest {
   @Test
   public void removeFromParent() {
     Composites.removeFromParent(leaf11);
-    assertEquals(Arrays.asList(leaf12), child1.children());
+    assertEquals(Collections.singletonList(leaf12), child1.children());
   }
 
   @Test
@@ -309,6 +315,68 @@ public class CompositesTest {
     leaf12.focusable().set(false);
 
     assertSame(leaf11, Composites.prevFocusable(leaf21));
+  }
+
+  @Test
+  public void nextSatisfying() {
+    assertSame(leaf21, Composites.next(leaf12, new Predicate<TestComposite>() {
+      @Override
+      public boolean apply(TestComposite c) {
+        return c.focusable().get();
+      }
+    }));
+  }
+
+  @Test
+  public void prevSatisfying() {
+    assertSame(leaf12, Composites.prev(leaf21, new Predicate<TestComposite>() {
+      @Override
+      public boolean apply(TestComposite c) {
+        return c.focusable().get();
+      }
+    }));
+  }
+
+  @Test
+  public void nextStepsOverNotSatisfying() {
+    leaf21.visible().set(false);
+    assertSame(leaf22, Composites.next(leaf12, new Predicate<TestComposite>() {
+      @Override
+      public boolean apply(TestComposite c) {
+        return c.visible().get();
+      }
+    }));
+  }
+
+  @Test
+  public void prevStepsOverNotSatisfying() {
+    leaf21.visible().set(false);
+    assertSame(leaf12, Composites.prev(leaf22, new Predicate<TestComposite>() {
+      @Override
+      public boolean apply(TestComposite c) {
+        return c.visible().get();
+      }
+    }));
+  }
+
+  @Test
+  public void noNext() {
+    assertNull(Composites.next(leaf22, new Predicate<TestComposite>() {
+      @Override
+      public boolean apply(TestComposite c) {
+        return c.visible().get();
+      }
+    }));
+  }
+
+  @Test
+  public void noPrev() {
+    assertNull(Composites.prev(leaf11, new Predicate<TestComposite>() {
+      @Override
+      public boolean apply(TestComposite c) {
+        return c.visible().get();
+      }
+    }));
   }
 
   @Test
