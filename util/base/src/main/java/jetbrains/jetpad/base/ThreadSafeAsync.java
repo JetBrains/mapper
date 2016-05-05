@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.base.Function;
+
 public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
@@ -40,6 +42,72 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   public Registration onFailure(Handler<Throwable> failureHandler) {
     synchronized (myAsync) {
       return safeReg(myAsync.onFailure(failureHandler)) ;
+    }
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
+    synchronized (myAsync) {
+      final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
+      myAsync.onResult(new Handler<ItemT>() {
+        @Override
+        public void handle(ItemT item) {
+          ResultT apply;
+          try {
+            apply = success.apply(item);
+          } catch (Exception e) {
+            result.failure(e);
+            return;
+          }
+          result.success(apply);
+        }
+      }, new Handler<Throwable>() {
+        @Override
+        public void handle(Throwable item) {
+          result.failure(item);
+        }
+      });
+      return result;
+    }
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
+    synchronized (myAsync) {
+      final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
+      myAsync.onResult(new Handler<ItemT>() {
+        @Override
+        public void handle(ItemT item) {
+          Async<ResultT> async;
+          try {
+            async = success.apply(item);
+          } catch (Exception e) {
+            result.failure(e);
+            return;
+          }
+          if (async == null) {
+            result.success(null);
+          } else {
+            async.onResult(new Handler<ResultT>() {
+              @Override
+              public void handle(ResultT item) {
+                result.success(item);
+              }
+            }, new Handler<Throwable>() {
+              @Override
+              public void handle(Throwable item) {
+                result.failure(item);
+              }
+            });
+          }
+        }
+      }, new Handler<Throwable>() {
+        @Override
+        public void handle(Throwable item) {
+          result.failure(item);
+        }
+      });
+      return result;
     }
   }
 

@@ -15,11 +15,30 @@
  */
 package jetbrains.jetpad.base;
 
+import com.google.common.base.Function;
+
 /**
  * Asynchronous computation
+ * You must eventually call either succeedHandler or failureHandler.
+ * If you imply a condition on handlers calls (i.e. synchronization)
+ * you should imply the same conditions on map/flatMap handlers, and vice versa.
  */
 public interface Async<ItemT> {
   Registration onSuccess(Handler<? super ItemT> successHandler);
   Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler);
   Registration onFailure(Handler<Throwable> failureHandler);
+
+  /**
+   * This method must always create new async every time it's called.
+   * Every error thrown in {@code success} should fail async with corresponding {@code Throwable}
+   */
+  <ResultT> Async<ResultT> map(Function<? super ItemT, ? extends ResultT> success);
+
+  /**
+   * Should comply with A+ promise 'then' method except it has no failure handler.
+   * See <a href="https://promisesaplus.com/">A+ promise spec</a> for more detail.
+   * This method must always create new async every time it's called.
+   * Every error thrown in {@code success} should fail async with corresponding {@code Throwable}
+   */
+  <ResultT> Async<ResultT> flatMap(Function<? super ItemT, Async<ResultT>> success);
 }
