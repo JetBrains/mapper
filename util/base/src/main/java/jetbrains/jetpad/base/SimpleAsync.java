@@ -89,7 +89,7 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   @Override
-  public <ResultT> Async<ResultT> then(final Function<? super ItemT, Async<ResultT>> success) {
+  public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
     return Asyncs.select(this, success);
   }
 

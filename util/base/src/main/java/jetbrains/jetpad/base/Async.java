@@ -19,6 +19,9 @@ import com.google.common.base.Function;
 
 /**
  * Asynchronous computation
+ * You must eventually call either succeedHandler or failureHandler.
+ * If you imply a condition on handlers calls (i.e. synchronization)
+ * you should imply the same conditions on map/flatMap handlers, and vice versa.
  */
 public interface Async<ItemT> {
   Registration onSuccess(Handler<? super ItemT> successHandler);
@@ -27,10 +30,7 @@ public interface Async<ItemT> {
 
   /**
    * This method must always create new async every time it's called.
-   *
-   * @param success   handler to transform async result.
-   * @param <ResultT> resulting async value type.
-   * @return async that is fulfilled when parent async does.
+   * Every error thrown in {@code success} should fail async with corresponding {@code Throwable}
    */
   <ResultT> Async<ResultT> map(Function<? super ItemT, ? extends ResultT> success);
 
@@ -38,10 +38,7 @@ public interface Async<ItemT> {
    * Should comply with A+ promise 'then' method except it has no failure handler.
    * See <a href="https://promisesaplus.com/">A+ promise spec</a> for more detail.
    * This method must always create new async every time it's called.
-   *
-   * @param success   handler to pass parent async result to another async
-   * @param <ResultT> resulting async value type
-   * @return async that is fulfilled when async resulting from handler does
+   * Every error thrown in {@code success} should fail async with corresponding {@code Throwable}
    */
-  <ResultT> Async<ResultT> then(Function<? super ItemT, Async<ResultT>> success);
+  <ResultT> Async<ResultT> flatMap(Function<? super ItemT, Async<ResultT>> success);
 }

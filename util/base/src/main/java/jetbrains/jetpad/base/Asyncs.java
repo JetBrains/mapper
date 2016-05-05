@@ -75,17 +75,11 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        Function<? super ValueT, ResultT> newFunction = new Function<ValueT, ResultT>() {
-          @Override
-          public ResultT apply(ValueT value) {
-            return success.apply(value);
-          }
-        };
-        return Asyncs.map(this, newFunction);
+        return Asyncs.map(this, success);
       }
 
       @Override
-      public <ResultT> Async<ResultT> then(Function<? super ValueT, Async<ResultT>> success) {
+      public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
         return Asyncs.select(this, success);
       }
     };
@@ -111,17 +105,11 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        Function<? super ValueT, ResultT> newFunction = new Function<ValueT, ResultT>() {
-          @Override
-          public ResultT apply(ValueT value) {
-            return success.apply(value);
-          }
-        };
-        return Asyncs.map(this, newFunction);
+        return Asyncs.map(this, success);
       }
 
       @Override
-      public <ResultT> Async<ResultT> then(Function<? super ValueT, Async<ResultT>> success) {
+      public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
         return Asyncs.select(this, success);
       }
     };
@@ -137,7 +125,7 @@ public class Asyncs {
   }
 
   @Deprecated
-  public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, TargetT> f) {
+  public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, ? extends TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
     async.onResult(new Handler<SourceT>() {
       @Override
