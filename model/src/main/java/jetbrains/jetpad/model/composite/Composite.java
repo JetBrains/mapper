@@ -17,6 +17,12 @@ package jetbrains.jetpad.model.composite;
 
 import java.util.List;
 
+/**
+ * Generic composite structure. Examples of such structure:
+ * - component tree in UI framework
+ * - XML parse tree
+ * - AST
+ */
 public interface Composite<CompositeT extends Composite<CompositeT>> extends HasParent<CompositeT> {
   List<CompositeT> children();
 }
