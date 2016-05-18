@@ -17,17 +17,22 @@ package jetbrains.jetpad.model.collections;
 
 import jetbrains.jetpad.model.event.EventHandler;
 
-public class CollectionEventHandlers {
-  public static final class CountingHandler<ItemT> implements EventHandler<CollectionItemEvent<? extends ItemT>> {
-    private int counter = 0;
+import java.util.ArrayList;
+import java.util.List;
 
-    public int getCounter() {
-      return counter;
-    }
+public final class RecordingCollectionEventHandler<ItemT> implements EventHandler<CollectionItemEvent<? extends ItemT>> {
+  private List<CollectionItemEvent<? extends ItemT>> myEvents = new ArrayList<>();
 
-    @Override
-    public void onEvent(CollectionItemEvent<? extends ItemT> event) {
-      counter += 1;
-    }
+  public int getCounter() {
+    return myEvents.size();
+  }
+
+  List<CollectionItemEvent<? extends ItemT>> getEvents() {
+    return myEvents;
+  }
+
+  @Override
+  public void onEvent(CollectionItemEvent<? extends ItemT> event) {
+    myEvents.add(event);
   }
 }
