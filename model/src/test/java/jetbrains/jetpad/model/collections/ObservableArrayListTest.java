@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.SET;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ObservableArrayListTest {
   private ObservableList<String> list = new ObservableArrayList<>();
@@ -116,6 +118,16 @@ public class ObservableArrayListTest {
     i.next();
     i.remove();
     assertEvent(0, "xyz", null, CollectionItemEvent.EventType.REMOVE);
+  }
+
+  @Test
+  public void oneHandlerEventOnSet() {
+    addSampleItem();
+    RecordingCollectionEventHandler<String> counter = new RecordingCollectionEventHandler<>();
+    list.addHandler(counter);
+    list.set(0, "abc");
+    assertEquals(1, counter.getCounter());
+    assertEquals(SET, counter.getEvents().get(0).getType());
   }
 
   private String addSampleItem() {
