@@ -22,9 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class TestEventDispatchThread implements EventDispatchThread {
+  private final String myName;
+
   private int myCurrentTime;
   private int myModificationCount;
   private List<RunnableRecord> myRecords = new ArrayList<>();
+  private boolean myFinished = false;
+
+  public TestEventDispatchThread() {
+    this("");
+  }
+
+  public TestEventDispatchThread(String name) {
+    myName = name;
+  }
+
+  public String getName() {
+    return myName;
+  }
 
   public boolean isEmpty() {
     return myRecords.isEmpty();
@@ -39,31 +54,47 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     return true;
   }
 
-  public void executeUpdates() {
-    executeUpdates(0);
+  public int executeUpdates() {
+    return executeUpdates(0);
   }
 
-  public void executeUpdates(int passedTime) {
-    executeCurrentUpdates();
+  public int executeUpdates(int passedTime) {
+    int runCommandsNum = 0;
+    runCommandsNum += executeCurrentUpdates();
     for (int i = 0; i < passedTime; i++) {
       myCurrentTime++;
-      executeCurrentUpdates();
+      runCommandsNum += executeCurrentUpdates();
     }
+    return runCommandsNum;
   }
 
-  private void executeCurrentUpdates() {
+  private int executeCurrentUpdates() {
+    int runCommandsNum = 0;
     int mc;
     do {
       mc = myModificationCount;
-      List<RunnableRecord> toRemove = new ArrayList<>();
-      for (RunnableRecord r : new ArrayList<>(myRecords)) {
-        if (r.myTargetTime == myCurrentTime) {
-          r.myRunnable.run();
-          toRemove.add(r);
-        }
-      }
-      myRecords.removeAll(toRemove);
+      List<RunnableRecord> current = getCurrentRecords();
+      run(current);
+      runCommandsNum += current.size();
+      myRecords.removeAll(current);
     } while (myModificationCount != mc);
+    return runCommandsNum;
+  }
+
+  private void run(List<RunnableRecord> current) {
+    for (RunnableRecord r : current) {
+      r.myRunnable.run();
+    }
+  }
+
+  private List<RunnableRecord> getCurrentRecords() {
+    List<RunnableRecord> records = new ArrayList<>();
+    for (RunnableRecord record : myRecords) {
+      if (record.myTargetTime == myCurrentTime) {
+        records.add(record);
+      }
+    }
+    return records;
   }
 
   @Override
@@ -78,6 +109,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, Runnable r) {
+    checkCanSchedule();
     myModificationCount++;
     final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, r);
     myRecords.add(record);
@@ -91,6 +123,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration scheduleRepeating(final int period, final Runnable r) {
+    checkCanSchedule();
     final Value<Boolean> cancelled = new Value<>(false);
     schedule(period, new Runnable() {
       @Override
@@ -106,6 +139,43 @@ public final class TestEventDispatchThread implements EventDispatchThread {
         cancelled.set(true);
       }
     };
+  }
+
+  @Override
+  public String toString() {
+    return "TestEdt@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
+  }
+
+  private void checkCanSchedule() {
+    if (myFinished) {
+      throw new EdtException();
+    }
+  }
+
+  private void checkCanStop() {
+    if (myFinished) {
+      throw new IllegalStateException(this + " has been already finished");
+    }
+  }
+
+  void finish() {
+    checkCanStop();
+    run(getCurrentRecords());
+    shutdown();
+  }
+
+  void kill() {
+    checkCanStop();
+    shutdown();
+  }
+
+  private void shutdown() {
+    myRecords.clear();
+    myFinished = true;
+  }
+
+  boolean isFinished() {
+    return myFinished;
   }
 
   private static class RunnableRecord {
