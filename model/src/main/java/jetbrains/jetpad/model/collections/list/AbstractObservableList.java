@@ -15,13 +15,12 @@
  */
 package jetbrains.jetpad.model.collections.list;
 
-import jetbrains.jetpad.model.collections.CollectionAdapter;
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
-import jetbrains.jetpad.base.Registration;
 
 import java.util.AbstractList;
 
@@ -160,9 +159,14 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
   @Override
   public Registration addHandler(final EventHandler<? super CollectionItemEvent<? extends ItemT>> handler) {
-    final CollectionListener<ItemT> listener = new CollectionAdapter<ItemT>() {
+    final CollectionListener<ItemT> listener = new CollectionListener<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+        handler.onEvent(event);
+      }
+
+      @Override
+      public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
         handler.onEvent(event);
       }
 
