@@ -180,10 +180,13 @@ public class Synchronizers {
   }
 
   public static Synchronizer forRegistration(final Registration r) {
-    return new RegistrationSynchronizer() {
+    return new Synchronizer() {
       @Override
-      protected Registration doAttach(SynchronizerContext ctx) {
-        return r;
+      public void attach(SynchronizerContext ctx) {}
+
+      @Override
+      public void detach() {
+        r.remove();
       }
     };
   }
