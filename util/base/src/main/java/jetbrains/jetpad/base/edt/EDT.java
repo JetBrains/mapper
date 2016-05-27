@@ -17,7 +17,7 @@ package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Value;
 
-public class EDT {
+public class Edt {
   public static Runnable validateInEdt(final EventDispatchThread validateOn, final Runnable validator) {
     final Value<Boolean> valid = new Value<>(true);
 
