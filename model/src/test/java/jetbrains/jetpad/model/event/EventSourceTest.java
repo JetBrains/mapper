@@ -16,11 +16,10 @@
 package jetbrains.jetpad.model.event;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import jetbrains.jetpad.test.BaseTestCase;
-import org.junit.Assert;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,6 +36,17 @@ public class EventSourceTest extends BaseTestCase {
         @Override
         public String apply(String input) {
           return input.toUpperCase();
+        }
+      }));
+  }
+
+  @Test
+  public void filter() {
+    assertEvents(Arrays.asList("a", "e"),
+      EventSources.filter(letters, new Predicate<String>() {
+        @Override
+        public boolean apply(String s) {
+          return "a".equals(s) || "e".equals(s);
         }
       }));
   }
