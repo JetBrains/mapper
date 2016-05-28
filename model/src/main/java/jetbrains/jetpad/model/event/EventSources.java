@@ -44,9 +44,6 @@ public class EventSources {
     };
   }
 
-  /**
-   * Joins several {@link EventSource}s into one
-   */
   @SafeVarargs
   public static <EventT> EventSource<EventT> composite(EventSource<? extends EventT>... sources) {
     return new CompositeEventSource<>(sources);
@@ -68,16 +65,10 @@ public class EventSources {
     };
   }
 
-  /**
-   * Maps one type of event source to another
-   */
   public static <SourceEventT, TargetEventT> EventSource<TargetEventT> map(EventSource<SourceEventT> src, Function<SourceEventT, TargetEventT> f) {
     return new MappingEventSource<>(src, f);
   }
 
-  /**
-   * Joins observable list of {@link EventSource}s into one {@link EventSource}
-   */
   public static <EventT, ItemT> EventSource<EventT> selectList(final ObservableList<ItemT> list, final Selector<ItemT, EventSource<? extends EventT>> selector) {
     return new EventSource<EventT>() {
       @Override
