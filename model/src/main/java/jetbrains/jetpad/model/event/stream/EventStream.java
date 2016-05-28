@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.event.stream;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.EventSources;
@@ -46,6 +47,19 @@ public final class EventStream<EventT> {
           return EventStreamItem.error(input.getError());
         } else {
           return EventStreamItem.finalItem();
+        }
+      }
+    }));
+  }
+
+  public EventStream<EventT> filter(final Predicate<? super EventT> pred) {
+    return new EventStream<>(EventSources.filter(myEventSource, new Predicate<EventStreamItem<EventT>>() {
+      @Override
+      public boolean apply(EventStreamItem<EventT> input) {
+        if (input.isEvent()) {
+          return pred.apply(input.getEvent());
+        } else {
+          return true;
         }
       }
     }));

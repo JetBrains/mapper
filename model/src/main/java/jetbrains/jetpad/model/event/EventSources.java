@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.event;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -32,6 +33,22 @@ public class EventSources {
   @SafeVarargs
   public static <EventT> EventSource<EventT> composite(EventSource<? extends EventT>... sources) {
     return new CompositeEventSource<>(sources);
+  }
+
+  public static <EventT> EventSource<EventT> filter(final EventSource<EventT> source, final Predicate<? super EventT> pred) {
+    return new EventSource<EventT>() {
+      @Override
+      public Registration addHandler(final EventHandler<? super EventT> handler) {
+        return source.addHandler(new EventHandler<EventT>() {
+          @Override
+          public void onEvent(EventT event) {
+            if (pred.apply(event)) {
+              handler.onEvent(event);
+            }
+          }
+        });
+      }
+    };
   }
 
   /**
