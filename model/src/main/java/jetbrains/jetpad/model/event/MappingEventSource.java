@@ -19,32 +19,8 @@ import com.google.common.base.Function;
 import jetbrains.jetpad.base.Registration;
 
 final class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
-  private Listeners<EventHandler<? super TargetEventT>> myHandlers = new Listeners<EventHandler<? super TargetEventT>>() {
-    @Override
-    protected void beforeFirstAdded() {
-      mySourceHandler = mySourceEventSource.addHandler(new EventHandler<SourceEventT>() {
-        @Override
-        public void onEvent(SourceEventT item) {
-          final TargetEventT targetEvent = myFunction.apply(item);
-          myHandlers.fire(new ListenerCaller<EventHandler<? super TargetEventT>>() {
-            @Override
-            public void call(EventHandler<? super TargetEventT> item) {
-              item.onEvent(targetEvent);
-            }
-          });
-        }
-      });
-    }
-
-    @Override
-    protected void afterLastRemoved() {
-      mySourceHandler.remove();
-    }
-  };
   private EventSource<SourceEventT> mySourceEventSource;
   private Function<SourceEventT, TargetEventT> myFunction;
-
-  private Registration mySourceHandler;
 
   MappingEventSource(EventSource<SourceEventT> sourceEventSource, Function<SourceEventT, TargetEventT> function) {
     mySourceEventSource = sourceEventSource;
@@ -53,6 +29,11 @@ final class MappingEventSource<SourceEventT, TargetEventT> implements EventSourc
 
   @Override
   public Registration addHandler(final EventHandler<? super TargetEventT> handler) {
-    return myHandlers.add(handler);
+    return mySourceEventSource.addHandler(new EventHandler<SourceEventT>() {
+      @Override
+      public void onEvent(SourceEventT event) {
+        handler.onEvent(myFunction.apply(event));
+      }
+    });
   }
 }

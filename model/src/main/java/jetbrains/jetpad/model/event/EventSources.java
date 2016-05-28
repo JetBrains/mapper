@@ -28,6 +28,23 @@ import java.util.List;
 
 public class EventSources {
   /**
+   * Event source which always dispatched the same events on subscription. It's useful for testing and
+   * composition. In Rx-like libraries a similar thing is called cold observable.
+   */
+  @SafeVarargs
+  public static <EventT> EventSource<EventT> of(final EventT... events) {
+    return new EventSource<EventT>() {
+      @Override
+      public Registration addHandler(EventHandler<? super EventT> handler) {
+        for (EventT e : events) {
+          handler.onEvent(e);
+        }
+        return Registration.EMPTY;
+      }
+    };
+  }
+
+  /**
    * Joins several {@link EventSource}s into one
    */
   @SafeVarargs
