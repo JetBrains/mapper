@@ -42,7 +42,7 @@ public final class EventStream<EventT> {
       @Override
       public EventStreamItem<TargetEventT> apply(EventStreamItem<EventT> input) {
         if (input.isEvent()) {
-          return EventStreamItem.event(f.apply(input.getEvent()));
+          return EventStreamItem.<TargetEventT>event(f.apply(input.getEvent()));
         } else if (input.isError()) {
           return EventStreamItem.error(input.getError());
         } else {
