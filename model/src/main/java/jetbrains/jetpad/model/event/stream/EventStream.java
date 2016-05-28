@@ -25,8 +25,8 @@ import jetbrains.jetpad.model.event.Listeners;
  * This class is inspired by different implementations of observable/event streams, including: Rx, RxJava, bacon.js,
  * Dart Stream API, etc.
  *
- * RxJava doesn't work in GWT, but is used heavily in Java code so we class names were chosen to be distinct from
- * classes there to avoid naming conflicts.
+ * RxJava doesn't work in GWT, but is used heavily in Java code so class names were chosen to be distinct from
+ * classes there to avoid naming conflicts in server side code
  */
 public final class EventStream<EventT> {
   private EventSource<EventStreamItem<EventT>> myEventSource;

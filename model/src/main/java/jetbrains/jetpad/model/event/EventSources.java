@@ -66,7 +66,6 @@ public class EventSources {
           }
         });
 
-
         return new Registration() {
           @Override
           protected void doRemove() {
