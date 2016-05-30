@@ -15,11 +15,14 @@
  */
 package jetbrains.jetpad.model.event;
 
+import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.Value;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class ListenersTest {
   private Listeners<Listener> myListeners;
@@ -55,6 +58,35 @@ public class ListenersTest {
     fireAndCheck(2);
   }
 
+  @Test
+  public void exceptionInListenerAndInThrowableHandlers() {
+    Registration addReg = myListeners.add(new Listener() {
+      @Override
+      public void act() {
+        throw new RuntimeException();
+      }
+    });
+
+    final Value<RuntimeException> exception = new Value<>(null);
+
+    //default ThrowableHandlers test handler throws exception
+    try {
+      myListeners.fire(new ListenerCaller<Listener>() {
+        @Override
+        public void call(Listener l) {
+          l.act();
+        }
+      });
+    } catch (RuntimeException e) {
+      exception.set(e);
+    }
+
+    addReg.remove();
+
+    assertNotNull(exception.get());
+    assertEquals(0, myListeners.size());
+  }
+
   private void fireAndCheck(int expectedListenersSize) {
     assertEquals(1, myListeners.size());
     myListeners.fire(new ListenerCaller<Listener>() {
@@ -76,7 +108,7 @@ public class ListenersTest {
     };
   }
 
-  private static interface Listener {
+  private interface Listener {
     void act();
   }
 }

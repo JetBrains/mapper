@@ -80,15 +80,19 @@ public class Listeners<ListenerT> {
   public void fire(final ListenerCaller<ListenerT> h) {
     if (isEmpty()) return;
     beforeFire();
-    for (ListenerT l : myListeners) {
-      if (isRemoved(l)) continue;
-      try {
-        h.call(l);
-      } catch (Throwable t) {
-        ThrowableHandlers.handle(t);
+    //exception can be thrown from ThrowableHandlers.handle()
+    try {
+      for (ListenerT l : myListeners) {
+        if (isRemoved(l)) continue;
+        try {
+          h.call(l);
+        } catch (Throwable t) {
+          ThrowableHandlers.handle(t);
+        }
       }
+    } finally {
+      afterFire();
     }
-    afterFire();
   }
 
   protected void beforeFirstAdded() {
