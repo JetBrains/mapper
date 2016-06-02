@@ -18,6 +18,7 @@ package jetbrains.jetpad.model.event.stream;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.EventSources;
 import jetbrains.jetpad.model.event.Listeners;
@@ -31,7 +32,6 @@ import jetbrains.jetpad.model.event.Listeners;
  */
 public final class EventStream<EventT> {
   private EventSource<EventStreamItem<EventT>> myEventSource;
-  private Listeners<EventStreamListener<EventT>> myListeners = new Listeners<>();
 
   public EventStream(EventSource<EventStreamItem<EventT>> eventSource) {
     myEventSource = eventSource;
@@ -65,7 +65,18 @@ public final class EventStream<EventT> {
     }));
   }
 
-  public Registration addListener(EventStreamListener<EventT> l) {
-    return myListeners.add(l);
+  public Registration addListener(final EventStreamListener<EventT> l) {
+    return myEventSource.addHandler(new EventHandler<EventStreamItem<EventT>>() {
+      @Override
+      public void onEvent(EventStreamItem<EventT> event) {
+        if (event.isEvent()) {
+          l.onEvent(event.getEvent());
+        } else if (event.isError()) {
+          l.onError(event.getError());
+        } else {
+          l.onEnd();
+        }
+      }
+    });
   }
 }
