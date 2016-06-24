@@ -825,6 +825,76 @@ public class Transformers {
     };
   }
 
+  /**
+   * Select only those with the highest priority. Warning: target collection
+   * is not protected from outside writes.
+   * @param getPriority The greater is number, the higher is priority.
+   */
+  public static <ItemT>
+  Transformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>> highestPriority(final Function<ItemT, Integer> getPriority) {
+    return new BaseTransformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>>() {
+      @Override
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(ObservableCollection<ItemT> from) {
+        return transform(from, new ObservableArrayList<ItemT>());
+      }
+
+      @Override
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(final ObservableCollection<ItemT> from, final ObservableCollection<ItemT> to) {
+        abstract class FromListAdapter extends CollectionAdapter<ItemT> {
+          abstract void initToList();
+        }
+
+        FromListAdapter listener = new FromListAdapter() {
+          private int myHighestPriority;
+
+          @Override
+          void initToList() {
+            myHighestPriority = Integer.MIN_VALUE;
+            for (ItemT item : from) {
+              insertToToList(item);
+            }
+          }
+
+          private void insertToToList(ItemT item) {
+            //noinspection ConstantConditions
+            int newItemPrio = getPriority.apply(item);
+            if (newItemPrio > myHighestPriority) {
+              to.clear();
+              to.add(item);
+              myHighestPriority = newItemPrio;
+            } else if (newItemPrio == myHighestPriority) {
+              to.add(item);
+            }
+          }
+
+          @Override
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+            insertToToList(event.getNewItem());
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+            ItemT oldItem = event.getOldItem();
+            //noinspection ConstantConditions
+            int oldItemPrio = getPriority.apply(oldItem);
+            if (oldItemPrio > myHighestPriority) {
+              throw new IllegalStateException(String.valueOf(oldItem));
+            } else if (oldItemPrio == myHighestPriority) {
+              to.remove(oldItem);
+              if (to.isEmpty()) {
+                initToList();
+              }
+            }
+          }
+        };
+
+        listener.initToList();
+
+        return new SimpleTransformation<>(from, to, from.addListener(listener));
+      }
+    };
+  }
+
   public static <SourceT, TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> flatten(final Function<SourceT, ObservableCollection<TargetT>> f) {
     return Transformers.flatten(f, Transformers.<ObservableCollection<TargetT>>identity());
