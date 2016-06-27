@@ -829,7 +829,7 @@ public class Transformers {
    * Select only those with the highest priority. Null items are not allowed.
    * Warning: target collection is not protected from outside writes.
    * @param getPriority The greater is number, the higher is priority. Null priority
-   * is not allowed.
+   * is not allowed. The same priority must always be returned for the same element.
    */
   public static <ItemT>
   Transformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>> highestPriority(
@@ -860,6 +860,9 @@ public class Transformers {
           }
 
           private void insertToToCollection(ItemT item) {
+            if (item == null) {
+              throw new IllegalArgumentException("Null items are not allowed");
+            }
             //noinspection ConstantConditions
             int newItemPrio = getPriority.apply(item);
             if (newItemPrio > myHighestPriority) {
