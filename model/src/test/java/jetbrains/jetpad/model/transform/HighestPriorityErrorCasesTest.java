@@ -17,6 +17,7 @@ package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import org.junit.Before;
@@ -61,15 +62,30 @@ public class HighestPriorityErrorCasesTest {
     from.remove(sample);
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void nullGetPriority() {
     Transformers.highestPriority(null).transform(from);
     from.add(new Object());
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void nullPriority() {
     Transformers.highestPriority(NULL_PRIORITY).transform(from);
     from.add(new Object());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void priorityGotNull() {
+    final Value<Integer> priorityValue = new Value<>(0);
+    Transformers.highestPriority(new Function<Object, Integer>() {
+      @Override
+      public Integer apply(Object o) {
+        return priorityValue.get();
+      }
+    }).transform(from);
+    Object sample;
+    from.addAll(Arrays.asList(sample = new Object(), new Object()));
+    priorityValue.set(null);
+    from.remove(sample);
   }
 }

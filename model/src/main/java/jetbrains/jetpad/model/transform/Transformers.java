@@ -834,6 +834,9 @@ public class Transformers {
   public static <ItemT>
   Transformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>> highestPriority(
       final Function<ItemT, Integer> getPriority) {
+    if (getPriority == null) {
+      throw new IllegalArgumentException("Null getPriority is not allowed");
+    }
     return new BaseTransformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>>() {
       @Override
       public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(
@@ -864,8 +867,10 @@ public class Transformers {
               throw new IllegalArgumentException("Null items are not allowed");
             }
             //noinspection ConstantConditions
-            int newItemPrio = getPriority.apply(item);
-            if (newItemPrio > myHighestPriority) {
+            Integer newItemPrio = getPriority.apply(item);
+            if (newItemPrio == null) {
+              throw new IllegalArgumentException("Null priorities are not allowed, item=" + item);
+            } else if (newItemPrio > myHighestPriority) {
               to.clear();
               to.add(item);
               myHighestPriority = newItemPrio;
@@ -883,8 +888,10 @@ public class Transformers {
           public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
             ItemT oldItem = event.getOldItem();
             //noinspection ConstantConditions
-            int oldItemPrio = getPriority.apply(oldItem);
-            if (oldItemPrio > myHighestPriority) {
+            Integer oldItemPrio = getPriority.apply(oldItem);
+            if (oldItemPrio == null) {
+              throw new IllegalStateException("Old item priority unexpectedly got null, item=" + oldItem);
+            } else if (oldItemPrio > myHighestPriority) {
               // Can happen only in case of getPriority or concurrency issue
               throw new IllegalStateException("Abnormal state: found missed high-priority item " + oldItem
                   + ", oldItemPrio=" + oldItemPrio + ", myHighestPriority=" + myHighestPriority);
