@@ -111,11 +111,6 @@ public class HighestPriorityTest {
     assertItems("cc");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void nullItem() {
-    from.add(null);
-  }
-
   private void assertItems(String ... items) {
     assertEquals(items.length, to.size());
     assertTrue(to.containsAll(Arrays.asList(items)));
