@@ -826,36 +826,40 @@ public class Transformers {
   }
 
   /**
-   * Select only those with the highest priority. Warning: target collection
-   * is not protected from outside writes.
-   * @param getPriority The greater is number, the higher is priority.
+   * Select only those with the highest priority. Null items are not allowed.
+   * Warning: target collection is not protected from outside writes.
+   * @param getPriority The greater is number, the higher is priority. Null priority
+   * is not allowed.
    */
   public static <ItemT>
-  Transformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>> highestPriority(final Function<ItemT, Integer> getPriority) {
+  Transformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>> highestPriority(
+      final Function<ItemT, Integer> getPriority) {
     return new BaseTransformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>>() {
       @Override
-      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(ObservableCollection<ItemT> from) {
-        return transform(from, new ObservableArrayList<ItemT>());
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(
+          ObservableCollection<ItemT> from) {
+        return transform(from, new ObservableHashSet<ItemT>());
       }
 
       @Override
-      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(final ObservableCollection<ItemT> from, final ObservableCollection<ItemT> to) {
-        abstract class FromListAdapter extends CollectionAdapter<ItemT> {
-          abstract void initToList();
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(
+          final ObservableCollection<ItemT> from, final ObservableCollection<ItemT> to) {
+        abstract class FromCollectionAdapter extends CollectionAdapter<ItemT> {
+          abstract void initToCollection();
         }
 
-        FromListAdapter listener = new FromListAdapter() {
+        FromCollectionAdapter listener = new FromCollectionAdapter() {
           private int myHighestPriority;
 
           @Override
-          void initToList() {
+          void initToCollection() {
             myHighestPriority = Integer.MIN_VALUE;
             for (ItemT item : from) {
-              insertToToList(item);
+              insertToToCollection(item);
             }
           }
 
-          private void insertToToList(ItemT item) {
+          private void insertToToCollection(ItemT item) {
             //noinspection ConstantConditions
             int newItemPrio = getPriority.apply(item);
             if (newItemPrio > myHighestPriority) {
@@ -869,7 +873,7 @@ public class Transformers {
 
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-            insertToToList(event.getNewItem());
+            insertToToCollection(event.getNewItem());
           }
 
           @Override
@@ -878,17 +882,19 @@ public class Transformers {
             //noinspection ConstantConditions
             int oldItemPrio = getPriority.apply(oldItem);
             if (oldItemPrio > myHighestPriority) {
-              throw new IllegalStateException(String.valueOf(oldItem));
+              // Can happen only in case of getPriority or concurrency issue
+              throw new IllegalStateException("Abnormal state: found missed high-priority item " + oldItem
+                  + ", oldItemPrio=" + oldItemPrio + ", myHighestPriority=" + myHighestPriority);
             } else if (oldItemPrio == myHighestPriority) {
               to.remove(oldItem);
               if (to.isEmpty()) {
-                initToList();
+                initToCollection();
               }
             }
           }
         };
 
-        listener.initToList();
+        listener.initToCollection();
 
         return new SimpleTransformation<>(from, to, from.addListener(listener));
       }
