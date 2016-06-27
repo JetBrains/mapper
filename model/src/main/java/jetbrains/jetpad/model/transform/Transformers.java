@@ -825,6 +825,92 @@ public class Transformers {
     };
   }
 
+  /**
+   * Select only those with the highest priority. Null items are not allowed.
+   * Warning: target collection is not protected from outside writes.
+   * @param getPriority The greater is number, the higher is priority. Null priority
+   * is not allowed. The same priority must always be returned for the same element.
+   */
+  public static <ItemT>
+  Transformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>> highestPriority(
+      final Function<ItemT, Integer> getPriority) {
+    if (getPriority == null) {
+      throw new IllegalArgumentException("Null getPriority is not allowed");
+    }
+    return new BaseTransformer<ObservableCollection<ItemT>, ObservableCollection<ItemT>>() {
+      @Override
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(
+          ObservableCollection<ItemT> from) {
+        return transform(from, new ObservableHashSet<ItemT>());
+      }
+
+      @Override
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(
+          final ObservableCollection<ItemT> from, final ObservableCollection<ItemT> to) {
+        abstract class FromCollectionAdapter extends CollectionAdapter<ItemT> {
+          abstract void initToCollection();
+        }
+
+        FromCollectionAdapter listener = new FromCollectionAdapter() {
+          private int myHighestPriority;
+
+          @Override
+          void initToCollection() {
+            myHighestPriority = Integer.MIN_VALUE;
+            for (ItemT item : from) {
+              insertToToCollection(item);
+            }
+          }
+
+          private void insertToToCollection(ItemT item) {
+            if (item == null) {
+              throw new IllegalArgumentException("Null items are not allowed");
+            }
+            //noinspection ConstantConditions
+            Integer newItemPrio = getPriority.apply(item);
+            if (newItemPrio == null) {
+              throw new IllegalArgumentException("Null priorities are not allowed, item=" + item);
+            } else if (newItemPrio > myHighestPriority) {
+              to.clear();
+              to.add(item);
+              myHighestPriority = newItemPrio;
+            } else if (newItemPrio == myHighestPriority) {
+              to.add(item);
+            }
+          }
+
+          @Override
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+            insertToToCollection(event.getNewItem());
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+            ItemT oldItem = event.getOldItem();
+            //noinspection ConstantConditions
+            Integer oldItemPrio = getPriority.apply(oldItem);
+            if (oldItemPrio == null) {
+              throw new IllegalStateException("Old item priority unexpectedly got null, item=" + oldItem);
+            } else if (oldItemPrio > myHighestPriority) {
+              // Can happen only in case of getPriority or concurrency issue
+              throw new IllegalStateException("Abnormal state: found missed high-priority item " + oldItem
+                  + ", oldItemPrio=" + oldItemPrio + ", myHighestPriority=" + myHighestPriority);
+            } else if (oldItemPrio == myHighestPriority) {
+              to.remove(oldItem);
+              if (to.isEmpty()) {
+                initToCollection();
+              }
+            }
+          }
+        };
+
+        listener.initToCollection();
+
+        return new SimpleTransformation<>(from, to, from.addListener(listener));
+      }
+    };
+  }
+
   public static <SourceT, TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> flatten(final Function<SourceT, ObservableCollection<TargetT>> f) {
     return Transformers.flatten(f, Transformers.<ObservableCollection<TargetT>>identity());
