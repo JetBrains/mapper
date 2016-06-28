@@ -250,6 +250,18 @@ public class DomUtil {
     };
   }
 
+  public static WritableProperty<WithElement> withElementOneChild(final Element el) {
+    return new WritableProperty<WithElement>() {
+      @Override
+      public void set(WithElement value) {
+        el.removeAllChildren();
+        if (value != null && value.getElement() != null) {
+          el.appendChild(value.getElement());
+        }
+      }
+    };
+  }
+
   public static ReadableProperty<Vector> dimension(final Element el) {
     return timerBasedProperty(new Supplier<Vector>() {
       @Override
