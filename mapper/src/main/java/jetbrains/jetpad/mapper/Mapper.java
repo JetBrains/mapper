@@ -63,7 +63,7 @@ public abstract class Mapper<SourceT, TargetT> {
   private SourceT mySource;
   private TargetT myTarget;
   private MappingContext myMappingContext;
-  private boolean myDetached;
+  private State myState = State.NOT_ATTACHED;
 
   private Object[] myParts = EMPTY_PARTS;
   private Mapper<?, ?> myParent;
@@ -151,7 +151,7 @@ public abstract class Mapper<SourceT, TargetT> {
     if (myMappingContext != null) {
       throw new IllegalStateException("Mapper is already attached");
     }
-    if (myDetached) {
+    if (myState != State.NOT_ATTACHED) {
       throw new IllegalStateException("Mapper can't be reused because it was already detached");
     }
 
@@ -161,6 +161,7 @@ public abstract class Mapper<SourceT, TargetT> {
       ThrowableHandlers.handle(t);
     }
 
+    myState = State.ATTACHING;
     myMappingContext = ctx;
 
     instantiateSynchronizers();
@@ -183,6 +184,8 @@ public abstract class Mapper<SourceT, TargetT> {
         });
       }
     }
+
+    myState = State.ATTACHED;
 
     try {
       onAttach(ctx);
@@ -221,7 +224,7 @@ public abstract class Mapper<SourceT, TargetT> {
     myMappingContext.unregister(this);
 
     myMappingContext = null;
-    myDetached = true;
+    myState = State.DETACHED;
     myParts = null;
   }
 
@@ -492,5 +495,12 @@ public abstract class Mapper<SourceT, TargetT> {
     public void remove() {
       throw new UnsupportedOperationException();
     }
+  }
+
+  private enum State {
+    NOT_ATTACHED,
+    ATTACHING,
+    ATTACHED,
+    DETACHED
   }
 }
