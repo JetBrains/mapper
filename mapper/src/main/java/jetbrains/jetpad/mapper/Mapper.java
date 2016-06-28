@@ -161,7 +161,7 @@ public abstract class Mapper<SourceT, TargetT> {
       ThrowableHandlers.handle(t);
     }
 
-    myState = State.ATTACHING;
+    myState = State.ATTACHING_SYNCHONIZERS;
     myMappingContext = ctx;
 
     instantiateSynchronizers();
@@ -182,6 +182,15 @@ public abstract class Mapper<SourceT, TargetT> {
             return Mapper.this;
           }
         });
+      }
+    }
+
+    myState = State.ATTACHING_CHILDREN;
+    for (Object part : myParts) {
+      if (part instanceof ChildContainer) {
+        for (Mapper<?, ?> m : (ChildContainer<?>) part) {
+          m.attach(ctx);
+        }
       }
     }
 
@@ -319,8 +328,14 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   private void addChild(Mapper<?, ?> child) {
+    if (myState != State.ATTACHING_SYNCHONIZERS && myState != State.ATTACHING_CHILDREN && myState != State.ATTACHED) {
+      throw new IllegalStateException("State =  " + myState);
+    }
+
     child.myParent = Mapper.this;
-    child.attach(myMappingContext);
+    if (myState != State.ATTACHING_SYNCHONIZERS) {
+      child.attach(myMappingContext);
+    }
   }
 
   private void removeChild(Mapper<?, ?> child) {
@@ -499,7 +514,8 @@ public abstract class Mapper<SourceT, TargetT> {
 
   private enum State {
     NOT_ATTACHED,
-    ATTACHING,
+    ATTACHING_SYNCHONIZERS,
+    ATTACHING_CHILDREN,
     ATTACHED,
     DETACHED
   }
