@@ -39,13 +39,20 @@ import java.util.NoSuchElementException;
  *
  * Mapper can be in one of three states:
  *  - not attached
+ *  - attaching synchronizers
+ *  - attaching children
  *  - attached
  *  - detached
  *
- * not attached -> attached
+ * not attached -> attaching synchronizers
  *  - Mapper is not attached
  *  - onBeforeAttach()
+ *
+ * attaching synchronizers -> attaching children
  *  - registerSynchronizers()
+ *
+ *  attaching children -> attached
+ *  - attaching children
  *  - Mapper is attached
  *  - onAttach()
  *
@@ -161,7 +168,7 @@ public abstract class Mapper<SourceT, TargetT> {
       ThrowableHandlers.handle(t);
     }
 
-    myState = State.ATTACHING_SYNCHONIZERS;
+    myState = State.ATTACHING_SYNCHRONIZERS;
     myMappingContext = ctx;
 
     instantiateSynchronizers();
@@ -328,12 +335,12 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   private void addChild(Mapper<?, ?> child) {
-    if (myState != State.ATTACHING_SYNCHONIZERS && myState != State.ATTACHING_CHILDREN && myState != State.ATTACHED) {
+    if (myState != State.ATTACHING_SYNCHRONIZERS && myState != State.ATTACHING_CHILDREN && myState != State.ATTACHED) {
       throw new IllegalStateException("State =  " + myState);
     }
 
     child.myParent = Mapper.this;
-    if (myState != State.ATTACHING_SYNCHONIZERS) {
+    if (myState != State.ATTACHING_SYNCHRONIZERS) {
       child.attach(myMappingContext);
     }
   }
@@ -514,7 +521,7 @@ public abstract class Mapper<SourceT, TargetT> {
 
   private enum State {
     NOT_ATTACHED,
-    ATTACHING_SYNCHONIZERS,
+    ATTACHING_SYNCHRONIZERS,
     ATTACHING_CHILDREN,
     ATTACHED,
     DETACHED
