@@ -120,6 +120,10 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
     });
   }
 
+  public String getName() {
+    return myName;
+  }
+
   private void flush(Supplier<Integer> tasksCount) {
     if (myFlushing) {
       throw new IllegalStateException((RunningEdtManager.this + ": recursive flush is prohibited"));
