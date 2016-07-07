@@ -80,16 +80,20 @@ public class ThrowableHandlers {
     return false;
   }
 
-  private static class MyEventSource {
-    private List<Handler<? super Throwable>> myHandlers = new ArrayList<>();
+  static int getHandlersSize() {
+    return ourHandlers.get().size();
+  }
 
-    public void fire(Throwable throwable) {
-      for (Handler<? super Throwable> handler : myHandlers) {
+  private static class MyEventSource {
+    private final List<Handler<? super Throwable>> myHandlers = new ArrayList<>();
+
+    void fire(Throwable throwable) {
+      for (Handler<? super Throwable> handler : new ArrayList<>(myHandlers)) {
         handler.handle(throwable);
       }
     }
 
-    public Registration addHandler(final Handler<? super Throwable> handler) {
+    Registration addHandler(final Handler<? super Throwable> handler) {
       myHandlers.add(handler);
       return new Registration() {
         @Override
@@ -97,6 +101,10 @@ public class ThrowableHandlers {
           myHandlers.remove(handler);
         }
       };
+    }
+
+    int size() {
+      return myHandlers.size();
     }
   }
 }
