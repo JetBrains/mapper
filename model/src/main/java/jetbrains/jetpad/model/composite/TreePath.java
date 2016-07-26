@@ -101,6 +101,10 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     return true;
   }
 
+  public boolean isEmpty() {
+    return myPath.isEmpty();
+  }
+
   public int getLastIndex() {
     if (myPath.isEmpty()) {
       throw new IllegalStateException();
