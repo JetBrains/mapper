@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.*;
+import jetbrains.jetpad.base.ExclusiveExecutor;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -460,13 +461,13 @@ public class Transformers {
           private final Registration myListsReg;
           private final List<Registration> myPropertiesRegs = new ArrayList<>();
           private final PropertyValueChangePropagator propertyValueChangePropagator = new PropertyValueChangePropagator();
-          private boolean mySyncing = false;
+          private final ExclusiveExecutor myExclusion = new ExclusiveExecutor();
 
           {
             CollectionListener<ItemT> forwardListener = new CollectionListener<ItemT>() {
               @Override
               public void onItemAdded(final CollectionItemEvent<? extends ItemT> event) {
-                syncCollections(new Runnable() {
+                myExclusion.execute(new Runnable() {
                   @Override
                   public void run() {
                     Property<ItemT> newProperty = new ValueProperty<ItemT>(event.getNewItem());
@@ -479,7 +480,7 @@ public class Transformers {
 
               @Override
               public void onItemSet(final CollectionItemEvent<? extends ItemT> event) {
-                syncCollections(new Runnable() {
+                myExclusion.execute(new Runnable() {
                   @Override
                   public void run() {
                     to.get(event.getIndex()).set(event.getNewItem());
@@ -489,7 +490,7 @@ public class Transformers {
 
               @Override
               public void onItemRemoved(final CollectionItemEvent<? extends ItemT> event) {
-                syncCollections(new Runnable() {
+                myExclusion.execute(new Runnable() {
                   @Override
                   public void run() {
                     to.remove(event.getIndex());
@@ -502,7 +503,7 @@ public class Transformers {
             CollectionListener<Property<ItemT>> backwardListener = new CollectionListener<Property<ItemT>>() {
               @Override
               public void onItemAdded(final CollectionItemEvent<? extends Property<ItemT>> addEvent) {
-                syncCollections(new Runnable() {
+                myExclusion.execute(new Runnable() {
                   @Override
                   public void run() {
                     Property<ItemT> newProperty = addEvent.getNewItem();
@@ -515,7 +516,7 @@ public class Transformers {
 
               @Override
               public void onItemSet(final CollectionItemEvent<? extends Property<ItemT>> setEvent) {
-                syncCollections(new Runnable() {
+                myExclusion.execute(new Runnable() {
                   @Override
                   public void run() {
                     Property<ItemT> newProperty = setEvent.getNewItem();
@@ -529,7 +530,7 @@ public class Transformers {
 
               @Override
               public void onItemRemoved(final CollectionItemEvent<? extends Property<ItemT>> event) {
-                syncCollections(new Runnable() {
+                myExclusion.execute(new Runnable() {
                   @Override
                   public void run() {
                     from.remove(event.getIndex());
@@ -568,21 +569,10 @@ public class Transformers {
             myListsReg.remove();
           }
 
-          private void syncCollections(Runnable r) {
-            if (!mySyncing) {
-              mySyncing = true;
-              try {
-                r.run();
-              } finally {
-                mySyncing = false;
-              }
-            }
-          }
-
           class PropertyValueChangePropagator implements EventHandler<PropertyChangeEvent<ItemT>> {
             @Override
             public void onEvent(final PropertyChangeEvent<ItemT> event) {
-              syncCollections(new Runnable() {
+              myExclusion.execute(new Runnable() {
                 @Override
                 public void run() {
                   int index = from.indexOf(event.getOldValue());
