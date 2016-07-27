@@ -17,6 +17,15 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
+/**
+ * Utility class for implementing various two and multi- way synchronisations.
+ *
+ * Main intent is preventing infinite recursion when two event sources
+ * has handlers that need to update each other.
+ *
+ * Users should subscribe for event sources passed through the {@link #exclusive(EventSource)}
+ * method. When one handler on an exclusive EventSource is running no other handler will be called.
+ */
 public class ExclusiveFilter {
   private boolean mySuspended = false;
 
@@ -39,6 +48,10 @@ public class ExclusiveFilter {
     };
   }
 
+  /**
+   * This is an auxiliary method that allows to execute proper update
+   * on exclusive EventSources when trigger comes from outside.
+   */
   public void runExclusively(Runnable action) {
     if (!mySuspended) {
       mySuspended = true;
