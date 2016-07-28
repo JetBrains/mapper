@@ -486,39 +486,24 @@ public class Transformers {
               }
             };
 
-            CollectionListener<ItemT> forwardListener = new CollectionListener<ItemT>() {
+            final EventHandler<CollectionItemEvent<? extends ItemT>> forwardListener = new EventHandler<CollectionItemEvent<? extends ItemT>>() {
               @Override
-              public void onItemAdded(final CollectionItemEvent<? extends ItemT> event) {
-                mySyncing.runExclusively(new Runnable() {
-                  @Override
-                  public void run() {
+              public void onEvent(CollectionItemEvent<? extends ItemT> event) {
+                switch (event.getType()) {
+                  case ADD:
                     Property<ItemT> newProperty = new ValueProperty<>(event.getNewItem());
                     Registration newPropertyReg = mySyncing.exclusive(newProperty).addHandler(propertyChangePropagator);
                     myPropertiesRegs.add(event.getIndex(), newPropertyReg);
                     to.add(event.getIndex(), newProperty);
-                  }
-                });
-              }
-
-              @Override
-              public void onItemSet(final CollectionItemEvent<? extends ItemT> event) {
-                mySyncing.runExclusively(new Runnable() {
-                  @Override
-                  public void run() {
-                    to.get(event.getIndex()).set(event.getNewItem());
-                  }
-                });
-              }
-
-              @Override
-              public void onItemRemoved(final CollectionItemEvent<? extends ItemT> event) {
-                mySyncing.runExclusively(new Runnable() {
-                  @Override
-                  public void run() {
+                    break;
+                  case REMOVE:
                     to.remove(event.getIndex());
                     myPropertiesRegs.remove(event.getIndex()).remove();
-                  }
-                });
+                    break;
+                  case SET:
+                    to.get(event.getIndex()).set(event.getNewItem());
+                    break;
+                }
               }
             };
 
@@ -548,12 +533,17 @@ public class Transformers {
             };
 
             myListsReg = new CompositeRegistration(
-                from.addListener(forwardListener),
-                mySyncing.exclusive(to).addHandler(backwardListener));
+              mySyncing.exclusive(from).addHandler(forwardListener),
+              mySyncing.exclusive(to).addHandler(backwardListener));
 
-            for (ListIterator<ItemT> i = from.listIterator(); i.hasNext(); ) {
-              int index = i.nextIndex();
-              forwardListener.onItemAdded(new CollectionItemEvent<>(null, i.next(), index, CollectionItemEvent.EventType.ADD));
+            for (final ListIterator<ItemT> i = from.listIterator(); i.hasNext(); ) {
+              final int index = i.nextIndex();
+              mySyncing.runExclusively(new Runnable() {
+                @Override
+                public void run() {
+                  forwardListener.onEvent(new CollectionItemEvent<>(null, i.next(), index, CollectionItemEvent.EventType.ADD));
+                }
+              });
             }
           }
 
