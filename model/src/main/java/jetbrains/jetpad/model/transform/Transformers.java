@@ -491,7 +491,7 @@ public class Transformers {
               public void onEvent(CollectionItemEvent<? extends ItemT> event) {
                 switch (event.getType()) {
                   case ADD:
-                    Property<ItemT> newProperty = new ValueProperty<>(event.getNewItem());
+                    Property<ItemT> newProperty = new ValueProperty<ItemT>(event.getNewItem());
                     Registration newPropertyReg = mySyncing.exclusive(newProperty).addHandler(propertyChangePropagator);
                     myPropertiesRegs.add(event.getIndex(), newPropertyReg);
                     to.add(event.getIndex(), newProperty);
