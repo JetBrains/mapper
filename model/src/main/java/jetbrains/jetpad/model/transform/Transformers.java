@@ -15,7 +15,10 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.*;
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -27,12 +30,21 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
+import jetbrains.jetpad.model.event.ExclusiveFilter;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.ValueProperty;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
@@ -459,93 +471,79 @@ public class Transformers {
         return new Transformation<ObservableList<ItemT>, ObservableList<Property<ItemT>>>() {
           private final Registration myListsReg;
           private final List<Registration> myPropertiesRegs = new ArrayList<>();
-          private final PropertyValueChangePropagator propertyValueChangePropagator = new PropertyValueChangePropagator();
-          private boolean mySyncing = false;
+          private final ExclusiveFilter mySyncing = new ExclusiveFilter();
 
           {
-            CollectionListener<ItemT> forwardListener = new CollectionListener<ItemT>() {
+            final EventHandler<PropertyChangeEvent<ItemT>> propertyChangePropagator = new EventHandler<PropertyChangeEvent<ItemT>>() {
               @Override
-              public void onItemAdded(final CollectionItemEvent<? extends ItemT> event) {
-                syncCollections(new Runnable() {
-                  @Override
-                  public void run() {
-                    Property<ItemT> newProperty = new ValueProperty<ItemT>(event.getNewItem());
-                    Registration newPropertyReg = newProperty.addHandler(propertyValueChangePropagator);
-                    myPropertiesRegs.add(event.getIndex(), newPropertyReg);
-                    to.add(event.getIndex(), newProperty);
-                  }
-                });
-              }
-
-              @Override
-              public void onItemSet(final CollectionItemEvent<? extends ItemT> event) {
-                syncCollections(new Runnable() {
-                  @Override
-                  public void run() {
-                    to.get(event.getIndex()).set(event.getNewItem());
-                  }
-                });
-              }
-
-              @Override
-              public void onItemRemoved(final CollectionItemEvent<? extends ItemT> event) {
-                syncCollections(new Runnable() {
-                  @Override
-                  public void run() {
-                    to.remove(event.getIndex());
-                    myPropertiesRegs.remove(event.getIndex()).remove();
-                  }
-                });
+              public void onEvent(PropertyChangeEvent<ItemT> event) {
+                int index = from.indexOf(event.getOldValue());
+                if (!to.get(index).get().equals(event.getNewValue())) {
+                  throw new IllegalStateException("Duplicate detected, first entry index=" + index
+                      + ", value=" + to.get(index).get());
+                }
+                from.set(index, event.getNewValue());
               }
             };
 
-            CollectionListener<Property<ItemT>> backwardListener = new CollectionListener<Property<ItemT>>() {
+            final EventHandler<CollectionItemEvent<? extends ItemT>> forwardListener = new EventHandler<CollectionItemEvent<? extends ItemT>>() {
               @Override
-              public void onItemAdded(final CollectionItemEvent<? extends Property<ItemT>> addEvent) {
-                syncCollections(new Runnable() {
-                  @Override
-                  public void run() {
-                    Property<ItemT> newProperty = addEvent.getNewItem();
-                    Registration newPropertyReg = newProperty.addHandler(propertyValueChangePropagator);
-                    myPropertiesRegs.add(addEvent.getIndex(), newPropertyReg);
-                    from.add(addEvent.getIndex(), newProperty.get());
-                  }
-                });
+              public void onEvent(CollectionItemEvent<? extends ItemT> event) {
+                switch (event.getType()) {
+                  case ADD:
+                    Property<ItemT> newProperty = new ValueProperty<>(event.getNewItem());
+                    Registration newPropertyReg = mySyncing.exclusive(newProperty).addHandler(propertyChangePropagator);
+                    myPropertiesRegs.add(event.getIndex(), newPropertyReg);
+                    to.add(event.getIndex(), newProperty);
+                    break;
+                  case REMOVE:
+                    to.remove(event.getIndex());
+                    myPropertiesRegs.remove(event.getIndex()).remove();
+                    break;
+                  case SET:
+                    to.get(event.getIndex()).set(event.getNewItem());
+                    break;
+                }
               }
+            };
 
+            EventHandler<CollectionItemEvent<? extends Property<ItemT>>> backwardListener = new EventHandler<CollectionItemEvent<? extends Property<ItemT>>>() {
               @Override
-              public void onItemSet(final CollectionItemEvent<? extends Property<ItemT>> setEvent) {
-                syncCollections(new Runnable() {
-                  @Override
-                  public void run() {
-                    Property<ItemT> newProperty = setEvent.getNewItem();
-                    Registration newPropertyReg = newProperty.addHandler(propertyValueChangePropagator);
-                    Registration oldPropertyReg = myPropertiesRegs.set(setEvent.getIndex(), newPropertyReg);
+              public void onEvent(CollectionItemEvent<? extends Property<ItemT>> event) {
+                switch (event.getType()) {
+                  case ADD:
+                    Property<ItemT> newProperty = event.getNewItem();
+                    Registration newPropertyReg = mySyncing.exclusive(newProperty).addHandler(propertyChangePropagator);
+                    myPropertiesRegs.add(event.getIndex(), newPropertyReg);
+                    from.add(event.getIndex(), newProperty.get());
+                    break;
+                  case SET:
+                    Property<ItemT> setProperty = event.getNewItem();
+                    Registration setPropertyReg = mySyncing.exclusive(setProperty).addHandler(propertyChangePropagator);
+                    Registration oldPropertyReg = myPropertiesRegs.set(event.getIndex(), setPropertyReg);
                     oldPropertyReg.remove();
-                    from.set(setEvent.getIndex(), newProperty.get());
-                  }
-                });
-              }
-
-              @Override
-              public void onItemRemoved(final CollectionItemEvent<? extends Property<ItemT>> event) {
-                syncCollections(new Runnable() {
-                  @Override
-                  public void run() {
+                    from.set(event.getIndex(), setProperty.get());
+                    break;
+                  case REMOVE:
                     from.remove(event.getIndex());
                     myPropertiesRegs.remove(event.getIndex()).remove();
-                  }
-                });
+                    break;
+                }
               }
             };
 
             myListsReg = new CompositeRegistration(
-                from.addListener(forwardListener),
-                to.addListener(backwardListener));
+              mySyncing.exclusive(from).addHandler(forwardListener),
+              mySyncing.exclusive(to).addHandler(backwardListener));
 
-            for (ListIterator<ItemT> i = from.listIterator(); i.hasNext(); ) {
-              int index = i.nextIndex();
-              forwardListener.onItemAdded(new CollectionItemEvent<>(null, i.next(), index, CollectionItemEvent.EventType.ADD));
+            for (final ListIterator<ItemT> i = from.listIterator(); i.hasNext(); ) {
+              final int index = i.nextIndex();
+              mySyncing.runExclusively(new Runnable() {
+                @Override
+                public void run() {
+                  forwardListener.onEvent(new CollectionItemEvent<>(null, i.next(), index, CollectionItemEvent.EventType.ADD));
+                }
+              });
             }
           }
 
@@ -566,34 +564,6 @@ public class Transformers {
             }
             myPropertiesRegs.clear();
             myListsReg.remove();
-          }
-
-          private void syncCollections(Runnable r) {
-            if (!mySyncing) {
-              mySyncing = true;
-              try {
-                r.run();
-              } finally {
-                mySyncing = false;
-              }
-            }
-          }
-
-          class PropertyValueChangePropagator implements EventHandler<PropertyChangeEvent<ItemT>> {
-            @Override
-            public void onEvent(final PropertyChangeEvent<ItemT> event) {
-              syncCollections(new Runnable() {
-                @Override
-                public void run() {
-                  int index = from.indexOf(event.getOldValue());
-                  if (!to.get(index).get().equals(event.getNewValue())) {
-                    throw new IllegalStateException("Duplicate detected, first entry index=" + index
-                        + ", value=" + to.get(index).get());
-                  }
-                  from.set(index, event.getNewValue());
-                }
-              });
-            }
           }
         };
       }
