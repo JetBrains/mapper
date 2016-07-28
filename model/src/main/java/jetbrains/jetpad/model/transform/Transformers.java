@@ -184,12 +184,12 @@ public class Transformers {
   }
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec) {
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec) {
     return sortBy(propSpec, Order.ASCENDING);
   }
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Order order) {
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec, final Order order) {
     return sortBy(propSpec, new Comparator<ValueT>() {
       @Override
       public int compare(ValueT o1, ValueT o2) {
@@ -202,7 +202,7 @@ public class Transformers {
   }
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ReadableProperty<ValueT>> propSpec, final Comparator<ValueT> cmp) {
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec, final Comparator<ValueT> cmp) {
     final Comparator<ItemT> comparator = new Comparator<ItemT>() {
       @Override
       public int compare(ItemT i1, ItemT i2) {
