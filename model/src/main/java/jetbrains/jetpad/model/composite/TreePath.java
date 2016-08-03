@@ -19,7 +19,7 @@ import java.util.*;
 
 public class TreePath<CompositeT extends Composite<CompositeT>> implements Comparable<TreePath<CompositeT>> {
 
-  public static <CompositeT extends Composite<CompositeT>> void sort(List<CompositeT> composites) {
+  public static <CompositeT extends Composite<CompositeT>> void sort(List<? extends CompositeT> composites) {
     final Map<CompositeT, TreePath<CompositeT>> paths = new HashMap<>();
     for (CompositeT composite : composites) {
       paths.put(composite, new TreePath<>(composite));
