@@ -412,6 +412,12 @@ public class CompositesTest {
     assertSame(leaf22, Composites.lowerFocusable(leaf12, 10));
   }
 
+  @Test
+  public void iterateBranch() {
+    assertEquals(Arrays.asList(root, child1, leaf11, leaf12, child2, leaf21, leaf22),
+      Composites.itearteBranch(root));
+  }
+
   private List<TestComposite> asList(Iterable<TestComposite> it) {
     List<TestComposite> result = new ArrayList<>();
     for (TestComposite v : it) {

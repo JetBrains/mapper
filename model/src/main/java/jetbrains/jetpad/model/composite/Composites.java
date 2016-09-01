@@ -566,4 +566,18 @@ public class Composites {
   CompositeT lowerFocusable(CompositeT v, int xOffset) {
     return ourWithBounds.lowerFocusable(v, xOffset);
   }
+
+  public static <CompositeT extends Composite<CompositeT>>
+  Iterable<CompositeT> itearteBranch(CompositeT branch) {
+    List<CompositeT> list = new ArrayList<>();
+    addBranch(branch, list);
+    return list;
+  }
+
+  private static <CompositeT extends Composite<CompositeT>> void addBranch(CompositeT branch, List<CompositeT> accum) {
+    accum.add(branch);
+    for (CompositeT c : branch.children()) {
+      addBranch(c, accum);
+    }
+  }
 }
