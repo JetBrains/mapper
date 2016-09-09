@@ -28,4 +28,10 @@ public class BufferingEdtManager extends RunningEdtManager {
   protected void doSchedule(Runnable r) {
     addTaskToQueue(r);
   }
+
+  @Override
+  public String toString() {
+    return "BufferingEdtManager@" + Integer.toHexString(hashCode()) +
+        ("".equals(getName()) ? "" : " (" + getName()+ ")");
+  }
 }
