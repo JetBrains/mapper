@@ -20,7 +20,6 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +36,17 @@ public class Asyncs {
       }
     }).remove();
     return succeeded.get();
+  }
+
+  public static boolean isFailed(Async<?> async) {
+    final Value<Boolean> failed = new Value<>(false);
+    async.onFailure(new Handler<Throwable>() {
+      @Override
+      public void handle(Throwable t) {
+        failed.set(true);
+      }
+    }).remove();
+    return failed.get();
   }
 
   public static boolean isFinished(Async<?> async) {
