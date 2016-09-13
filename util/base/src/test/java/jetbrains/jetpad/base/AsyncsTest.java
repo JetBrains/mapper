@@ -223,6 +223,16 @@ public class AsyncsTest {
     assertFalse(Asyncs.isSucceeded(async));
   }
 
+  @Test
+  public void failedTrue() {
+    assertTrue(Asyncs.isFailed(Asyncs.failure(new RuntimeException())));
+  }
+
+  @Test
+  public void failedFalse() {
+    assertFalse(Asyncs.isFailed(Asyncs.constant(null)));
+  }
+
   private void assertFailure(Async<?> async) {
     final Value<Boolean> called = new Value<>(false);
     async.onFailure(new Handler<Throwable>() {
