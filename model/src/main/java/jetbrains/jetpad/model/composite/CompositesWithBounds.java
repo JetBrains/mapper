@@ -19,7 +19,7 @@ import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
 
 public class CompositesWithBounds {
-  private int myThreshold;
+  private final int myThreshold;
 
   public CompositesWithBounds(int threshold) {
     myThreshold = threshold;
