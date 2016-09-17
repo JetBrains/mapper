@@ -415,7 +415,7 @@ public class CompositesTest {
   @Test
   public void iterateBranch() {
     assertEquals(Arrays.asList(root, child1, leaf11, leaf12, child2, leaf21, leaf22),
-      Composites.itearteBranch(root));
+      Composites.iterateBranch(root));
   }
 
   private List<TestComposite> asList(Iterable<TestComposite> it) {
