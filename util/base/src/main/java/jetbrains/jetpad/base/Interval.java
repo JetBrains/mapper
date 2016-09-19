@@ -21,7 +21,8 @@ public final class Interval {
 
   public Interval(int lowerBound, int upperBound) {
     if (lowerBound > upperBound) {
-      throw new IllegalArgumentException("Lower bound is greater than upper: lower bound=" + lowerBound + ", upper bound=" + upperBound);
+      throw new IllegalArgumentException("Lower bound is greater than upper: lower bound=" + lowerBound
+          + ", upper bound=" + upperBound);
     }
     myLowerBound = lowerBound;
     myUpperBound = upperBound;
@@ -37,6 +38,14 @@ public final class Interval {
 
   public int getLength() {
     return myUpperBound - myLowerBound;
+  }
+
+  public boolean contains(int point) {
+    return myLowerBound <= point && point <= myUpperBound;
+  }
+
+  public boolean contains(Interval other) {
+    return contains(other.getLowerBound()) && contains(other.getUpperBound());
   }
 
   @Override
