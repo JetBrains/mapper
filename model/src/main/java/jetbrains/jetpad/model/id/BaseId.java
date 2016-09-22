@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.id;
 
 import jetbrains.jetpad.base.Objects;
-import jetbrains.jetpad.base.base64.Base64URLSafeCoder;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ import java.util.Random;
  * - maintaining debug map, so that we can have readable names and efficient representation at the same time
  */
 public abstract class BaseId implements Serializable {
-  private static final char SEPARATOR = '.';
 
   private static final Map<String, String> ourNamesMap = new HashMap<>();
 
@@ -40,7 +38,7 @@ public abstract class BaseId implements Serializable {
   private String myId;
 
   protected BaseId() {
-    this(Math.abs(ourRandom.nextLong()), Math.abs(ourRandom.nextLong()), null);
+    this(nextRandomId(), null);
   }
 
   protected BaseId(String id) {
@@ -65,10 +63,6 @@ public abstract class BaseId implements Serializable {
         ourNamesMap.put(id, name);
       }
     }
-  }
-
-  private BaseId(long id1, long id2, String name) {
-    this(getEncodedId(id1, id2), name);
   }
 
   public String getId() {
@@ -107,7 +101,29 @@ public abstract class BaseId implements Serializable {
     }
   }
 
-  public static String getEncodedId(long id1, long id2) {
-    return id2 == 0 ? Base64URLSafeCoder.encode(id1) : Base64URLSafeCoder.encode(id1) + SEPARATOR + Base64URLSafeCoder.encode(id2);
+  // generate 128 bits (62 ^ 22) of random readable ID
+  private static String nextRandomId() {
+    char[] chars = new char[22];
+    int nBits = 0;
+    int bits = 0;
+
+    for (int i = 0; i < chars.length;) {
+      if (nBits < 6) {
+        nBits = 32;
+        bits = ourRandom.nextInt();
+      }
+
+      int idx = bits & 63;
+      bits >>= 6;
+      nBits -= 6;
+      if (idx < 62) {
+        chars[i++] = valueToChar(idx);
+      }
+    }
+    return new String(chars);
+  }
+
+  private static char valueToChar(int x) {
+    return (char) (x < 26 ? 'A' + x : x < 52 ? 'a' + x - 26 : '0' + x - 52);
   }
 }
