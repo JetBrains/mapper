@@ -33,12 +33,10 @@ public abstract class BaseId implements Serializable {
 
   private static final Map<String, String> ourNamesMap = new HashMap<>();
 
-  private static final Random ourRandom = new Random();
-
   private String myId;
 
   protected BaseId() {
-    this(nextRandomId(), null);
+    this(IdGenerator.nextRandomId(), null);
   }
 
   protected BaseId(String id) {
@@ -101,29 +99,34 @@ public abstract class BaseId implements Serializable {
     }
   }
 
-  // generate 128 bits (62 ^ 22) of random readable ID
-  private static String nextRandomId() {
-    char[] chars = new char[22];
-    int nBits = 0;
-    int bits = 0;
+  private static class IdGenerator {
 
-    for (int i = 0; i < chars.length;) {
-      if (nBits < 6) {
-        nBits = 32;
-        bits = ourRandom.nextInt();
-      }
+    private static final Random ourRandom = new Random();
 
-      int idx = bits & 63;
-      bits >>= 6;
-      nBits -= 6;
-      if (idx < 62) {
-        chars[i++] = valueToChar(idx);
+    // generate 128 bits (62 ^ 22) of random readable ID
+    private static String nextRandomId() {
+      char[] chars = new char[22];
+      int nBits = 0;
+      int bits = 0;
+
+      for (int i = 0; i < chars.length; ) {
+        if (nBits < 6) {
+          nBits = 32;
+          bits = ourRandom.nextInt();
+        }
+
+        int idx = bits & 63;
+        bits >>= 6;
+        nBits -= 6;
+        if (idx < 62) {
+          chars[i++] = valueToChar(idx);
+        }
       }
+      return new String(chars);
     }
-    return new String(chars);
-  }
 
-  private static char valueToChar(int x) {
-    return (char) (x < 26 ? 'A' + x : x < 52 ? 'a' + x - 26 : '0' + x - 52);
+    private static char valueToChar(int x) {
+      return (char) (x < 26 ? 'A' + x : x < 52 ? 'a' + x - 26 : '0' + x - 52);
+    }
   }
 }

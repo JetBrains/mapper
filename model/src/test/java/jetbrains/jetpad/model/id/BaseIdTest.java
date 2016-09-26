@@ -15,13 +15,15 @@
  */
 package jetbrains.jetpad.model.id;
 
+import jetbrains.jetpad.test.BaseTestCase;
+import jetbrains.jetpad.test.Slow;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class BaseIdTest {
+public class BaseIdTest extends BaseTestCase {
 
   @Test
   public void idEquality() {
@@ -47,6 +49,7 @@ public class BaseIdTest {
     assertEquals("newName1 [a.b]", id2.toString());
   }
 
+  @Slow
   @Test
   public void idRandomness() {
     int stats[] = new int[128];
