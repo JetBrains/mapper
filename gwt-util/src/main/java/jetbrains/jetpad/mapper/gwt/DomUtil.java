@@ -262,6 +262,18 @@ public class DomUtil {
     };
   }
 
+  public static WritableProperty<Element> elementOneChild(final Element el) {
+    return new WritableProperty<Element>() {
+      @Override
+      public void set(Element value) {
+        el.removeAllChildren();
+        if (value != null) {
+          el.appendChild(value);
+        }
+      }
+    };
+  }
+
   public static ReadableProperty<Vector> dimension(final Element el) {
     return timerBasedProperty(new Supplier<Vector>() {
       @Override
