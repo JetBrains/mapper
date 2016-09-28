@@ -16,12 +16,10 @@
 package jetbrains.jetpad.model.id;
 
 import jetbrains.jetpad.base.Objects;
-import jetbrains.jetpad.base.base64.Base64URLSafeCoder;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Generic id class for typed ids.
@@ -31,16 +29,14 @@ import java.util.Random;
  * - maintaining debug map, so that we can have readable names and efficient representation at the same time
  */
 public abstract class BaseId implements Serializable {
-  private static final char SEPARATOR = '.';
 
   private static final Map<String, String> ourNamesMap = new HashMap<>();
 
-  private static final Random ourRandom = new Random();
-
   private String myId;
 
+  // generate 62 ^ 22 (~130 bits) of random readable ID
   protected BaseId() {
-    this(Math.abs(ourRandom.nextLong()), Math.abs(ourRandom.nextLong()), null);
+    this(IdGenerator.nextBase62RandomId(22), null);
   }
 
   protected BaseId(String id) {
@@ -65,10 +61,6 @@ public abstract class BaseId implements Serializable {
         }
       }
     }
-  }
-
-  private BaseId(long id1, long id2, String name) {
-    this(getEncodedId(id1, id2), name);
   }
 
   public String getId() {
@@ -102,7 +94,4 @@ public abstract class BaseId implements Serializable {
     return name != null ? name + " [" + getId() + "]" : getId();
   }
 
-  public static String getEncodedId(long id1, long id2) {
-    return id2 == 0 ? Base64URLSafeCoder.encode(id1) : Base64URLSafeCoder.encode(id1) + SEPARATOR + Base64URLSafeCoder.encode(id2);
-  }
 }

@@ -15,12 +15,15 @@
  */
 package jetbrains.jetpad.model.id;
 
+import jetbrains.jetpad.test.BaseTestCase;
+import jetbrains.jetpad.test.Slow;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class BaseIdTest {
+public class BaseIdTest extends BaseTestCase {
 
   @Test
   public void idEquality() {
@@ -44,6 +47,29 @@ public class BaseIdTest {
     MyId id2 = new MyId("a.b");
 
     assertEquals("newName1 [a.b]", id2.toString());
+  }
+
+  @Slow
+  @Test
+  public void idRandomness() {
+    int stats[] = new int[128];
+
+    for (int i = 0; i < 62000; i++) {
+      String id = new BaseId() {}.getId();
+      for (int j = 0; j < id.length(); j++) {
+        stats[id.charAt(j)] ++;
+      }
+    }
+
+    checkUniform(stats, 'A', 'Z', 22000);
+    checkUniform(stats, 'a', 'z', 22000);
+    checkUniform(stats, '0', '9', 22000);
+  }
+
+  private void checkUniform(int[] stats, char a, char z, int expected) {
+    for (int i = a; i <= z; i++) {
+      assertTrue(Math.abs(stats[i] - expected) < expected / 10);
+    }
   }
 
   @Test(expected = IllegalArgumentException.class)
