@@ -48,6 +48,10 @@ public final class Interval {
     return contains(other.getLowerBound()) && contains(other.getUpperBound());
   }
 
+  public boolean intersects(Interval other) {
+    return contains(other.getLowerBound()) ||  other.contains(getLowerBound());
+  }
+
   @Override
   public String toString() {
     return "[" + myLowerBound + ", " + myUpperBound + "]";
