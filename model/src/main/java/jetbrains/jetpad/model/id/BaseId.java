@@ -54,15 +54,15 @@ public abstract class BaseId implements Serializable {
       throw new IllegalArgumentException("id='" + id + "'");
     }
 
-    synchronized (ourNamesMap) {
-      String oldName = ourNamesMap.get(id);
-
-      if (oldName != null && name != null && !oldName.equals(name)) {
-        throw new IllegalStateException("Duplicate id : [id = " + id + ", oldName = " + oldName + ", name = " + name + "]");
-      }
-
-      if (name != null) {
-        ourNamesMap.put(id, name);
+    if (name != null) {
+      synchronized (ourNamesMap) {
+        String oldName = ourNamesMap.get(id);
+        if (oldName == null) {
+          ourNamesMap.put(id, name);
+        } else if (!oldName.equals(name)) {
+          throw new IllegalStateException(
+              "Different name for known id " + id + ", first name = " + oldName + ", name = " + name + "]");
+        }
       }
     }
   }
@@ -98,13 +98,8 @@ public abstract class BaseId implements Serializable {
 
   @Override
   public String toString() {
-    synchronized (ourNamesMap) {
-      String name = ourNamesMap.get(getId());
-      if (name != null) {
-        return name + " [" + getId() + "]";
-      }
-      return getId();
-    }
+    String name = getName();
+    return name != null ? name + " [" + getId() + "]" : getId();
   }
 
   public static String getEncodedId(long id1, long id2) {

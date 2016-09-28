@@ -57,9 +57,6 @@ public class BaseIdTest {
   }
 
   private static class MyId extends BaseId {
-    private MyId() {
-    }
-
     private MyId(String id) {
       super(id);
     }
