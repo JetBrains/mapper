@@ -185,8 +185,10 @@ public class DomUtil {
           @Override
           protected void doRemove() {
             reg.remove();
-            myTimerRegistration.remove();
-            myTimerRegistration = null;
+            if (myListeners.isEmpty()) {
+              myTimerRegistration.remove();
+              myTimerRegistration = null;
+            }
           }
         };
       }
