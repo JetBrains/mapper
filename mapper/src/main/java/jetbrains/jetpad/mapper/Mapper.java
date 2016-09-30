@@ -31,35 +31,35 @@ import java.util.NoSuchElementException;
 
 /**
  * Mapper is an object encapsulating a mapping (usually UI related) from source to target.
- * <p>
+ *
  * Responsibilities of a Mapper:
- * - create and configure view
- * - create and configure {@link jetbrains.jetpad.mapper.Synchronizer}s
- * - configure listeners and handlers on the view
- * <p>
+ *  - create and configure view
+ *  - create and configure {@link jetbrains.jetpad.mapper.Synchronizer}s
+ *  - configure listeners and handlers on the view
+ *
  * Mapper can be in one of three states:
- * - not attached
- * - attaching synchronizers
- * - attaching children
- * - attached
- * - detached
- * <p>
+ *  - not attached
+ *  - attaching synchronizers
+ *  - attaching children
+ *  - attached
+ *  - detached
+ *
  * not attached -> attaching synchronizers
- * - Mapper is not attached
- * - onBeforeAttach()
- * <p>
+ *  - Mapper is not attached
+ *  - onBeforeAttach()
+ *
  * attaching synchronizers -> attaching children
- * - registerSynchronizers()
- * <p>
- * attaching children -> attached
- * - attaching children
- * - Mapper is attached
- * - onAttach()
- * <p>
+ *  - registerSynchronizers()
+ *
+ *  attaching children -> attached
+ *  - attaching children
+ *  - Mapper is attached
+ *  - onAttach()
+ *
  * attached -> detached
- * - attached
- * - onDetach()
- * - detached
+ *  - attached
+ *  - onDetach()
+ *  - detached
  *
  * @param <SourceT> - source object
  * @param <TargetT> - target object. Usually it's some kind of view
@@ -93,10 +93,6 @@ public abstract class Mapper<SourceT, TargetT> {
    */
   protected boolean isFindable() {
     return true;
-  }
-
-  protected boolean isStaticSubtree() {
-    return false;
   }
 
   /**
@@ -300,7 +296,7 @@ public abstract class Mapper<SourceT, TargetT> {
     return new Iterable<Mapper<?, ?>>() {
       @Override
       public Iterator<Mapper<?, ?>> iterator() {
-        return new PartsIterator<Mapper<?, ?>>() {
+        return new PartsIterator<Mapper<?,?>>() {
           private Iterator<? extends Mapper<?, ?>> myChildContainerIterator;
 
           @Override
