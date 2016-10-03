@@ -15,10 +15,8 @@
  */
 package jetbrains.jetpad.mapper;
 
-import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.property.Property;
-import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ValueProperty;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
@@ -27,19 +25,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SynchonizersTest extends BaseTestCase {
   @Test
   public void forEventSourceOnAttach() {
     final Value<Integer> runNum = new Value<>(0);
     Property<Boolean> prop = new ValueProperty<>();
-    final Synchronizer synchronizer = Synchronizers.forEventSource(prop, new Runnable() {
-      @Override
-      public void run() {
-        runNum.set(runNum.get() + 1);
-      }
-    });
+    final Synchronizer synchronizer = Synchronizers.forEventSource(prop,
+      () -> runNum.set(runNum.get() + 1));
 
     Mapper<Void, Void> mapper = new Mapper<Void, Void>(null, null) {
       @Override
@@ -64,12 +59,7 @@ public class SynchonizersTest extends BaseTestCase {
         super.registerSynchronizers(conf);
         conf.add(Synchronizers.forEventSource(
           prop,
-          new Handler<PropertyChangeEvent<Integer>>() {
-            @Override
-            public void handle(PropertyChangeEvent<Integer> item) {
-              handled.add(item.getNewValue());
-            }
-          }));
+          item -> handled.add(item.getNewValue())));
       }
     };
 

@@ -23,6 +23,7 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.*;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class ObservableCollections {
   private static final ObservableList EMPTY_LIST = new AbstractObservableList() {
@@ -128,13 +129,13 @@ public class ObservableCollections {
   }
 
   public static <ValueT, ItemT> ObservableCollection<ItemT> selectCollection(
-      ReadableProperty<ValueT> p, Selector<ValueT, ObservableCollection<ItemT>> s) {
+      ReadableProperty<ValueT> p, Function<ValueT, ObservableCollection<ItemT>> s) {
     return new UnmodifiableObservableCollection<>(new SelectorDerivedCollection<>(p, s));
   }
 
   private static class SelectorDerivedCollection<ValueT, ItemT>
       extends SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>> {
-    public SelectorDerivedCollection(ReadableProperty<ValueT> source, Selector<ValueT, ObservableCollection<ItemT>> fun) {
+    public SelectorDerivedCollection(ReadableProperty<ValueT> source, Function<ValueT, ObservableCollection<ItemT>> fun) {
       super(source, fun);
     }
 
@@ -188,7 +189,7 @@ public class ObservableCollections {
 
   private static class SelectorDerivedList<ValueT, ItemT>
       extends SelectedCollection<ValueT, ItemT, ObservableList<ItemT>> {
-    public SelectorDerivedList(ReadableProperty<ValueT> source, Selector<ValueT, ObservableList<ItemT>> fun) {
+    public SelectorDerivedList(ReadableProperty<ValueT> source, Function<ValueT, ObservableList<ItemT>> fun) {
       super(source, fun);
     }
 

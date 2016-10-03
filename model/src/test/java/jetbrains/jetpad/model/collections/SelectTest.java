@@ -241,33 +241,13 @@ public class SelectTest {
   private ObservableList<String> testList(ReadableProperty<Boolean> src, final ObservableList<String> selected) {
     return ObservableCollections.selectList(
       src,
-      new Selector<Boolean, ObservableList<String>>() {
-        @Override
-        public ObservableList<String> select(Boolean source) {
-          if (source) {
-            return selected;
-          } else {
-            return null;
-          }
-        }
-      }
-    );
+      source -> source ? selected : null);
   }
 
   private ObservableCollection<String> testCollection(ReadableProperty<Boolean> src, final ObservableCollection<String> selected) {
     return ObservableCollections.selectCollection(
       src,
-      new Selector<Boolean, ObservableCollection<String>>() {
-        @Override
-        public ObservableCollection<String> select(Boolean source) {
-          if (source) {
-            return selected;
-          } else {
-            return null;
-          }
-        }
-      }
-    );
+      source -> source ? selected : null);
   }
 
   private ObservableList<String> listenersCountingList(final AtomicInteger counter) {

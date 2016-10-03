@@ -18,6 +18,7 @@ package jetbrains.jetpad.base;
 import org.junit.Test;
 
 import java.util.ConcurrentModificationException;
+import java.util.function.Consumer;
 
 public class SimpleAsyncRegistrationsTest {
   private SimpleAsync<Void> async = new SimpleAsync<>();
@@ -53,12 +54,7 @@ public class SimpleAsyncRegistrationsTest {
   @Test(expected = ConcurrentModificationException.class)
   public void removeRegistrationInSuccessHandler() {
     final Value<Registration> regValue = new Value<>();
-    Registration reg = async.onSuccess(new Handler<Void>() {
-      @Override
-      public void handle(Void item) {
-        regValue.get().remove();
-      }
-    });
+    Registration reg = async.onSuccess(item -> regValue.get().remove());
     regValue.set(reg);
     async.success(null);
   }
@@ -66,12 +62,7 @@ public class SimpleAsyncRegistrationsTest {
   @Test(expected = ConcurrentModificationException.class)
   public void removeRegistrationInFailureHandler() {
     final Value<Registration> regValue = new Value<>();
-    Registration reg = async.onFailure(new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        regValue.get().remove();
-      }
-    });
+    Registration reg = async.onFailure(item -> regValue.get().remove());
     regValue.set(reg);
     async.failure(null);
   }
@@ -79,79 +70,52 @@ public class SimpleAsyncRegistrationsTest {
   @Test
   public void addSuccessHandlerAfterFailure() {
     async.failure(new Throwable());
-    Registration reg = async.onSuccess(new Handler<Void>() {
-      @Override
-      public void handle(Void item) {
-      }
-    });
+    Registration reg = async.onSuccess(item -> { });
     reg.remove();
   }
 
   @Test
   public void addFailureHandlerAfterSuccess() {
     async.success(null);
-    Registration reg = async.onFailure(new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-      }
-    });
+    Registration reg = async.onFailure(item -> { });
     reg.remove();
   }
 
   @Test
   public void removeSuccessRegistrationAfterSuccess() {
-    Registration reg = async.onSuccess(new Handler<Void>() {
-      @Override
-      public void handle(Void item) {
-      }
-    });
+    Registration reg = async.onSuccess((Handler<Void>) item -> { });
     async.success(null);
     reg.remove();
   }
 
   @Test
   public void removeSuccessRegistrationAfterFailure() {
-    Registration reg = async.onSuccess(new Handler<Void>() {
-      @Override
-      public void handle(Void item) {
-      }
-    });
+    Registration reg = async.onSuccess(item -> { });
     async.failure(null);
     reg.remove();
   }
 
   @Test
   public void removeFailureRegistrationAfterSuccess() {
-    Registration reg = async.onFailure(new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-      }
-    });
+    Registration reg = async.onFailure(item -> { });
     async.success(null);
     reg.remove();
   }
 
   @Test
   public void removeFailureRegistrationAfterFailure() {
-    Registration reg = async.onFailure(new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-      }
-    });
+    Registration reg = async.onFailure(item -> { });
     async.failure(null);
     reg.remove();
   }
 
-  private Handler<Throwable> throwingFailureHandler() {
+  private Consumer<Throwable> throwingFailureHandler() {
     return throwingHandler();
   }
 
-  private <ItemT> Handler<ItemT> throwingHandler() {
-    return new Handler<ItemT>() {
-      @Override
-      public void handle(ItemT item) {
-        throw new RuntimeException();
-      }
+  private <ItemT> Consumer<ItemT> throwingHandler() {
+    return item -> {
+      throw new RuntimeException();
     };
   }
 }

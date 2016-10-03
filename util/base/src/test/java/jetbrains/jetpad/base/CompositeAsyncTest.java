@@ -32,7 +32,7 @@ public class CompositeAsyncTest {
   public void successOneByOne() {
     List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
     for (int i = 0; i < SIZE; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
+      asyncs.add(new SimpleAsync<>());
     }
     Async<List<Integer>> async = Asyncs.composite(asyncs);
 
@@ -62,18 +62,14 @@ public class CompositeAsyncTest {
   public void emptyRequest() {
     Async<List<Integer>> async = Asyncs.composite(new ArrayList<Async<Integer>>(0));
     final Value<Boolean> succeeded = new Value<>(false);
-    async.onResult(new Handler<List<Integer>>() {
-      @Override
-      public void handle(List<Integer> item) {
+    async.onResult(
+      item -> {
         succeeded.set(true);
         assertTrue(item.isEmpty());
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        throw new RuntimeException(item);
-      }
-    });
+      },
+      failure -> {
+        throw new RuntimeException(failure);
+      });
     assertTrue(succeeded.get());
   }
 
@@ -81,24 +77,20 @@ public class CompositeAsyncTest {
   public void partialFailureSingleException() {
     List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
     for (int i = 0; i < SIZE; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
+      asyncs.add(new SimpleAsync<>());
     }
     Async<List<Integer>> async = Asyncs.composite(asyncs);
 
     final Value<Boolean> failed = new Value<>(false);
-    async.onResult(new Handler<List<Integer>>() {
-      @Override
-      public void handle(List<Integer> item) {
+    async.onResult(
+      item -> {
         throw new UnsupportedOperationException();
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
+      },
+      failure -> {
         failed.set(true);
-        assertTrue(item instanceof IllegalStateException);
-        assertEquals("test", item.getMessage());
-      }
-    });
+        assertTrue(failure instanceof IllegalStateException);
+        assertEquals("test", failure.getMessage());
+      });
 
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
@@ -113,27 +105,24 @@ public class CompositeAsyncTest {
   public void partialFailureSeveralExceptions() {
     List<Async<Integer>> asyncs = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
+      asyncs.add(new SimpleAsync<>());
     }
     Async<List<Integer>> async = Asyncs.composite(asyncs);
 
     final Value<Boolean> failed = new Value<>(false);
-    async.onResult(new Handler<List<Integer>>() {
-      @Override
-      public void handle(List<Integer> item) {
+    async.onResult(
+      item -> {
         throw new UnsupportedOperationException();
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
+      },
+      failure -> {
         failed.set(true);
-        List<Throwable> throwables = ((ThrowableCollectionException) item).getThrowables();
+        List<Throwable> throwables = ((ThrowableCollectionException) failure).getThrowables();
         assertEquals(2, throwables.size());
         List<String> expected = Arrays.asList("0", "1");
+        @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
         List<String> actual = Arrays.asList(throwables.get(0).getMessage(), throwables.get(1).getMessage());
         assertEquals(expected, actual);
-      }
-    });
+      });
 
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).failure(new IllegalStateException("" + i));
@@ -145,21 +134,17 @@ public class CompositeAsyncTest {
 
   private Value<Boolean> addSuccessHandler(Async<List<Integer>> async) {
     final Value<Boolean> succeeded = new Value<>(false);
-    async.onResult(new Handler<List<Integer>>() {
-      @Override
-      public void handle(List<Integer> item) {
+    async.onResult(
+      item -> {
         succeeded.set(true);
         assertEquals(SIZE, item.size());
         for (int i = 0; i < SIZE; i++) {
           assertTrue(item.contains(i));
         }
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        throw new RuntimeException(item);
-      }
-    });
+      },
+      failure -> {
+        throw new RuntimeException(failure);
+      });
     return succeeded;
   }
 
@@ -167,19 +152,17 @@ public class CompositeAsyncTest {
   public void resultListOrder() {
     List<Async<Integer>> asyncs = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
+      asyncs.add(new SimpleAsync<>());
     }
 
     final Value<Boolean> ok = new Value<>(false);
-    Asyncs.composite(asyncs).onSuccess(new Handler<List<Integer>>() {
-      @Override
-      public void handle(List<Integer> item) {
+    Asyncs.composite(asyncs).onSuccess(
+      item -> {
         for (int i = 0; i < item.size(); i++) {
           assertEquals(i, (int) item.get(i));
         }
         ok.set(true);
-      }
-    });
+      });
 
     ((SimpleAsync<Integer>)asyncs.get(1)).success(1);
     ((SimpleAsync<Integer>)asyncs.get(2)).success(2);

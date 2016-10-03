@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.base.edt;
 
-import jetbrains.jetpad.base.Handler;
 import jetbrains.jetpad.base.Runnables;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.test.BaseTestCase;
@@ -26,6 +25,7 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -37,62 +37,37 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
   public void testSubmitAfterShutdown() {
     EdtManager manager = new ExecutorEdtManager("MyEdt1");
     EventDispatchThread edt = manager.getEdt();
-    edt.schedule(new Runnable() {
-      @Override
-      public void run() {
-        ThrowableHandlers.addHandler(new Handler<Throwable>() {
-          @Override
-          public void handle(Throwable event) {
-            throw (event instanceof RuntimeException) ? (RuntimeException) event : new RuntimeException(event);
-          }
-        });
-      }
-    });
+    edt.schedule(() ->
+      ThrowableHandlers.addHandler(event -> {
+        throw (event instanceof RuntimeException) ? (RuntimeException) event : new RuntimeException(event);
+      }));
     manager.finish();
     final AtomicBoolean executed = new AtomicBoolean(false);
-    edt.schedule(new Runnable() {
-      @Override
-      public void run() {
-        executed.set(true);
-      }
-    });
+    edt.schedule(() -> executed.set(true));
     assertFalse(executed.get());
   }
 
   @Test
   public void finishFromItself() {
-    shutdownFromItself(new Handler<EdtManager>() {
-      @Override
-      public void handle(EdtManager manager) {
-        manager.finish();
-      }
-    });
+    shutdownFromItself(EdtManager::finish);
   }
 
   @Test
   public void killFromItself() {
-    shutdownFromItself(new Handler<EdtManager>() {
-      @Override
-      public void handle(EdtManager manager) {
-        manager.kill();
-      }
-    });
+    shutdownFromItself(EdtManager::kill);
   }
 
-  private void shutdownFromItself(final Handler<EdtManager> shutdowner) {
+  private void shutdownFromItself(final Consumer<EdtManager> shutdowner) {
     final EdtManager manager = new ExecutorEdtManager("MyEdt2");
     final AtomicBoolean caught = new AtomicBoolean(false);
     final CountDownLatch latch = new CountDownLatch(1);
-    manager.getEdt().schedule(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          shutdowner.handle(manager);
-        } catch (IllegalStateException e) {
-          caught.set(true);
-        } finally {
-          latch.countDown();
-        }
+    manager.getEdt().schedule(() -> {
+      try {
+        shutdowner.accept(manager);
+      } catch (IllegalStateException e) {
+        caught.set(true);
+      } finally {
+        latch.countDown();
       }
     });
 
@@ -118,12 +93,9 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
     manager.getEdt().schedule(Runnables.EMPTY); // force thread creation
 
     final CountDownLatch latch = new CountDownLatch(1);
-    Thread other = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        manager.finish();
-        latch.countDown();
-      }
+    Thread other = new Thread(() -> {
+      manager.finish();
+      latch.countDown();
     }, "MyEdt3");
     other.start();
     await(latch);

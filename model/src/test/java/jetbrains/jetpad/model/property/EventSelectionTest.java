@@ -27,12 +27,7 @@ public class EventSelectionTest {
   SimpleEventSource<Object> es1 = new SimpleEventSource<>();
   SimpleEventSource<Object> es2 = new SimpleEventSource<>();
   Property<Boolean> prop = new ValueProperty<>(false);
-  EventSource<Object> result = Properties.selectEvent(prop, new Selector<Boolean, EventSource<Object>>() {
-    @Override
-    public EventSource<Object> select(Boolean source) {
-      return source ? es1 : es2;
-    }
-  });
+  EventSource<Object> result = Properties.selectEvent(prop, source -> source ? es1 : es2);
   EventHandler<Object> handler = Mockito.mock(EventHandler.class);
   Registration reg;
 

@@ -17,6 +17,8 @@ package jetbrains.jetpad.base;
 
 import com.google.common.base.Function;
 
+import java.util.function.Consumer;
+
 /**
  * Asynchronous computation
  * You must eventually call either succeedHandler or failureHandler.
@@ -24,9 +26,9 @@ import com.google.common.base.Function;
  * you should imply the same conditions on map/flatMap handlers, and vice versa.
  */
 public interface Async<ItemT> {
-  Registration onSuccess(Handler<? super ItemT> successHandler);
-  Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler);
-  Registration onFailure(Handler<Throwable> failureHandler);
+  Registration onSuccess(Consumer<? super ItemT> successHandler);
+  Registration onResult(Consumer<? super ItemT> successHandler, Consumer<Throwable> failureHandler);
+  Registration onFailure(Consumer<Throwable> failureHandler);
 
   /**
    * This method must always create new async every time it's called.

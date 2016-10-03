@@ -17,6 +17,8 @@ package jetbrains.jetpad.base;
 
 import com.google.common.base.Function;
 
+import java.util.function.Consumer;
+
 public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
@@ -25,21 +27,21 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   }
 
   @Override
-  public Registration onSuccess(Handler<? super ItemT> successHandler) {
+  public Registration onSuccess(Consumer<? super ItemT> successHandler) {
     synchronized (myAsync) {
       return safeReg(myAsync.onSuccess(successHandler));
     }
   }
 
   @Override
-  public Registration onResult(Handler<? super ItemT> successHandler, Handler<Throwable> failureHandler) {
+  public Registration onResult(Consumer<? super ItemT> successHandler, Consumer<Throwable> failureHandler) {
     synchronized (myAsync) {
       return safeReg(myAsync.onResult(successHandler, failureHandler));
     }
   }
 
   @Override
-  public Registration onFailure(Handler<Throwable> failureHandler) {
+  public Registration onFailure(Consumer<Throwable> failureHandler) {
     synchronized (myAsync) {
       return safeReg(myAsync.onFailure(failureHandler)) ;
     }
@@ -49,9 +51,8 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
     synchronized (myAsync) {
       final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
-      myAsync.onResult(new Handler<ItemT>() {
-        @Override
-        public void handle(ItemT item) {
+      myAsync.onResult(
+        item -> {
           ResultT apply;
           try {
             apply = success.apply(item);
@@ -60,13 +61,8 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
             return;
           }
           result.success(apply);
-        }
-      }, new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          result.failure(item);
-        }
-      });
+        },
+        result::failure);
       return result;
     }
   }
@@ -75,9 +71,8 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
     synchronized (myAsync) {
       final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
-      myAsync.onResult(new Handler<ItemT>() {
-        @Override
-        public void handle(ItemT item) {
+      myAsync.onResult(
+        item -> {
           Async<ResultT> async;
           try {
             async = success.apply(item);
@@ -88,25 +83,11 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
           if (async == null) {
             result.success(null);
           } else {
-            async.onResult(new Handler<ResultT>() {
-              @Override
-              public void handle(ResultT item) {
-                result.success(item);
-              }
-            }, new Handler<Throwable>() {
-              @Override
-              public void handle(Throwable item) {
-                result.failure(item);
-              }
-            });
+            async.onResult(
+              result::success,result::failure);
           }
-        }
-      }, new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          result.failure(item);
-        }
-      });
+        },
+        result::failure);
       return result;
     }
   }

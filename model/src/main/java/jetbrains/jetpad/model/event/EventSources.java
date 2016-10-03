@@ -21,7 +21,6 @@ import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.property.Selector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,20 +68,20 @@ public class EventSources {
     return new MappingEventSource<>(src, f);
   }
 
-  public static <EventT, ItemT> EventSource<EventT> selectList(final ObservableList<ItemT> list, final Selector<ItemT, EventSource<? extends EventT>> selector) {
+  public static <EventT, ItemT> EventSource<EventT> selectList(final ObservableList<ItemT> list, final java.util.function.Function<ItemT, EventSource<? extends EventT>> selector) {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
         final List<Registration> itemRegs = new ArrayList<>();
         for (ItemT item : list) {
-          itemRegs.add(selector.select(item).addHandler(handler));
+          itemRegs.add(selector.apply(item).addHandler(handler));
         }
 
 
         final Registration listReg = list.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
-            itemRegs.add(event.getIndex(), selector.select(event.getNewItem()).addHandler(handler));
+            itemRegs.add(event.getIndex(), selector.apply(event.getNewItem()).addHandler(handler));
           }
 
           @Override
