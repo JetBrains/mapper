@@ -24,62 +24,45 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 @GwtCompatible
 public class Asyncs {
   public static boolean isSucceeded(Async<?> async) {
     final Value<Boolean> succeeded = new Value<>(false);
-    async.onSuccess(new Handler<Object>() {
-      @Override
-      public void handle(Object item) {
-        succeeded.set(true);
-      }
-    }).remove();
+    async.onSuccess(item -> succeeded.set(true)).remove();
     return succeeded.get();
   }
 
   public static boolean isFailed(Async<?> async) {
     final Value<Boolean> failed = new Value<>(false);
-    async.onFailure(new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable t) {
-        failed.set(true);
-      }
-    }).remove();
+    async.onFailure(t -> failed.set(true)).remove();
     return failed.get();
   }
 
   public static boolean isFinished(Async<?> async) {
     final Value<Boolean> finished = new Value<>(false);
-    async.onResult(new Handler<Object>() {
-      @Override
-      public void handle(Object item) {
-        finished.set(true);
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        finished.set(true);
-      }
-    }).remove();
+    async.onResult(
+      item -> finished.set(true),
+      failure -> finished.set(true)).remove();
     return finished.get();
   }
 
   public static <ValueT> Async<ValueT> constant(final ValueT val) {
     return new Async<ValueT>() {
       @Override
-      public Registration onSuccess(Handler<? super ValueT> successHandler) {
-        successHandler.handle(val);
+      public Registration onSuccess(Consumer<? super ValueT> successHandler) {
+        successHandler.accept(val);
         return Registration.EMPTY;
       }
 
       @Override
-      public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+      public Registration onResult(Consumer<? super ValueT> successHandler, Consumer<Throwable> failureHandler) {
         return onSuccess(successHandler);
       }
 
       @Override
-      public Registration onFailure(Handler<Throwable> failureHandler) {
+      public Registration onFailure(Consumer<Throwable> failureHandler) {
         return Registration.EMPTY;
       }
 
@@ -98,18 +81,18 @@ public class Asyncs {
   public static <ValueT> Async<ValueT> failure(final Throwable t) {
     return new Async<ValueT>() {
       @Override
-      public Registration onSuccess(Handler<? super ValueT> successHandler) {
+      public Registration onSuccess(Consumer<? super ValueT> successHandler) {
         return Registration.EMPTY;
       }
 
       @Override
-      public Registration onResult(Handler<? super ValueT> successHandler, Handler<Throwable> failureHandler) {
+      public Registration onResult(Consumer<? super ValueT> successHandler, Consumer<Throwable> failureHandler) {
         return onFailure(failureHandler);
       }
 
       @Override
-      public Registration onFailure(Handler<Throwable> failureHandler) {
-        failureHandler.handle(t);
+      public Registration onFailure(Consumer<Throwable> failureHandler) {
+        failureHandler.accept(t);
         return Registration.EMPTY;
       }
 
@@ -137,9 +120,8 @@ public class Asyncs {
   @Deprecated
   public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, ? extends TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async.onResult(new Handler<SourceT>() {
-      @Override
-      public void handle(SourceT item) {
+    async.onResult(
+      item -> {
         TargetT apply;
         try {
           apply = f.apply(item);
@@ -148,51 +130,35 @@ public class Asyncs {
           return;
         }
         result.success(apply);
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        result.failure(item);
-      }
-    });
+      },
+      result::failure);
     return result;
   }
 
   @Deprecated
   public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<? super SourceT, Async<TargetT>> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async.onResult(new Handler<SourceT>() {
-      @Override
-      public void handle(SourceT item) {
-        Async<TargetT> async;
+    async.onResult(
+      item -> {
+        Async<TargetT> async1;
         try {
-          async = f.apply(item);
+          async1 = f.apply(item);
         } catch (Exception e) {
           result.failure(e);
           return;
         }
-        if (async == null) {
+        if (async1 == null) {
           result.success(null);
         } else {
-          delegate(async, result);
+          delegate(async1, result);
         }
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        result.failure(item);
-      }
-    });
+      },
+      result::failure);
     return result;
   }
 
   public static <FirstT, SecondT> Async<SecondT> seq(Async<FirstT> first, final Async<SecondT> second) {
-    return select(first, new Function<FirstT, Async<SecondT>>() {
-      @Override
-      public Async<SecondT> apply(FirstT input) {
-        return second;
-      }
-    });
+    return select(first, input -> second);
   }
 
   public static Async<Void> parallel(final Async<?>... asyncs) {
@@ -222,20 +188,16 @@ public class Asyncs {
     };
 
     for (Async<?> a : asyncs) {
-      a.onResult(new Handler<Object>() {
-        @Override
-        public void handle(Object item) {
+      a.onResult(
+        item -> {
           inProgress.set(inProgress.get() - 1);
           checkTermination.run();
-        }
-      }, new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          exceptions.add(item);
+        },
+        failure -> {
+          exceptions.add(failure);
           inProgress.set(inProgress.get() - 1);
           checkTermination.run();
-        }
-      });
+        });
     }
 
     if (asyncs.isEmpty()) {
@@ -271,21 +233,17 @@ public class Asyncs {
     int i = 0;
     for (Async<ItemT> async : asyncs) {
       final int counter = i++;
-      async.onResult(new Handler<ItemT>() {
-        @Override
-        public void handle(ItemT item) {
+      async.onResult(
+        item -> {
           succeeded.put(counter, item);
           inProgress.set(inProgress.get() - 1);
           checkTermination.run();
-        }
-      }, new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
-          exceptions.add(item);
+        },
+        failure -> {
+          exceptions.add(failure);
           inProgress.set(inProgress.get() - 1);
           checkTermination.run();
-        }
-      });
+        });
     }
 
     if (asyncs.isEmpty()) {
@@ -301,46 +259,18 @@ public class Asyncs {
     try {
       async = s.get();
     } catch (Exception e) {
-      untilSuccess(s).onSuccess(new Handler<ResultT>() {
-        @Override
-        public void handle(ResultT item) {
-          result.success(item);
-        }
-      });
+      untilSuccess(s).onSuccess(result::success);
       return result;
     }
 
-    async.onResult(new Handler<ResultT>() {
-      @Override
-      public void handle(ResultT item) {
-        result.success(item);
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        untilSuccess(s).onSuccess(new Handler<ResultT>() {
-          @Override
-          public void handle(ResultT item) {
-            result.success(item);
-          }
-        });
-      }
-    });
+    async.onResult(
+      result::success,
+      failure -> untilSuccess(s).onSuccess(result::success));
     return result;
   }
 
   public static <ValueT> Registration delegate(Async<? extends ValueT> from, final SimpleAsync<? super ValueT> to) {
-    return from.onResult(new Handler<ValueT>() {
-      @Override
-      public void handle(ValueT item) {
-        to.success(item);
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        to.failure(item);
-      }
-    });
+    return from.onResult(to::success, to::failure);
   }
 
   public static <FirstT, SecondT> Async<Pair<FirstT, SecondT>> pair(final Async<FirstT> first, Async<SecondT> second) {
@@ -348,21 +278,15 @@ public class Asyncs {
     SimpleAsync<Void> proxy = new SimpleAsync<>();
     final PairedAsync<FirstT> firstPaired = new PairedAsync<>(first);
     final PairedAsync<SecondT> secondPaired = new PairedAsync<>(second);
-    proxy.onResult(new Handler<Void>() {
-      @Override
-      public void handle(Void item) {
+    proxy.onResult(
+      item -> {
         if (firstPaired.mySucceeded && secondPaired.mySucceeded) {
           res.success(new Pair<>(firstPaired.myItem, secondPaired.myItem));
         } else {
           res.failure(new Throwable("internal error in pair async"));
         }
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        res.failure(item);
-      }
-    });
+      },
+      res::failure);
     firstPaired.pair(secondPaired, proxy);
     secondPaired.pair(firstPaired, proxy);
     return res;
@@ -395,19 +319,15 @@ public class Asyncs {
     final CountDownLatch latch = new CountDownLatch(1);
     final AtomicReference<ResultT> result = new AtomicReference<>(null);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
-    async.onResult(new Handler<ResultT>() {
-      @Override
-      public void handle(ResultT item) {
+    async.onResult(
+      item -> {
         result.set(item);
         latch.countDown();
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        error.set(item);
+      },
+      failure -> {
+        error.set(failure);
         latch.countDown();
-      }
-    });
+      });
     try {
       awaiter.await(latch);
     } catch (InterruptedException e) {
@@ -442,25 +362,21 @@ public class Asyncs {
       if (async.hasSucceeded() || async.hasFailed()) {
         return;
       }
-      myReg = myAsync.onResult(new Handler<ItemT>() {
-        @Override
-        public void handle(ItemT item) {
+      myReg = myAsync.onResult(
+        item -> {
           myItem = item;
           mySucceeded = true;
           if (anotherInfo.mySucceeded) {
             async.success(null);
           }
-        }
-      }, new Handler<Throwable>() {
-        @Override
-        public void handle(Throwable item) {
+        },
+        failure -> {
           //reg == null can happen in case if myAsync fails instantly
           if (anotherInfo.myReg != null) {
             anotherInfo.myReg.remove();
           }
-          async.failure(item);
-        }
-      });
+          async.failure(failure);
+        });
     }
   }
 }

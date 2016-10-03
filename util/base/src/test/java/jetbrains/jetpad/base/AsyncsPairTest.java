@@ -22,17 +22,9 @@ public class AsyncsPairTest extends BaseTestCase {
 
   private void initPair(Async<Integer> first, Async<String> second) {
     pair = Asyncs.pair(first, second);
-    initReg = pair.onResult(new Handler<Pair<Integer, String>>() {
-      @Override
-      public void handle(Pair<Integer, String> item) {
-        result = item;
-      }
-    }, new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable item) {
-        error = item;
-      }
-    });
+    initReg = pair.onResult(
+      item -> result = item,
+      item -> error = item);
   }
 
   @Test

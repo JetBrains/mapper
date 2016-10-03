@@ -18,6 +18,7 @@ package jetbrains.jetpad.base;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +42,7 @@ public class ThrowableHandlers {
     }
   };
 
-  public static Registration addHandler(Handler<? super Throwable> handler) {
+  public static Registration addHandler(Consumer<? super Throwable> handler) {
     return ourHandlers.get().addHandler(handler);
   }
 
@@ -85,15 +86,15 @@ public class ThrowableHandlers {
   }
 
   private static class MyEventSource {
-    private final List<Handler<? super Throwable>> myHandlers = new ArrayList<>();
+    private final List<Consumer<? super Throwable>> myHandlers = new ArrayList<>();
 
     void fire(Throwable throwable) {
-      for (Handler<? super Throwable> handler : new ArrayList<>(myHandlers)) {
-        handler.handle(throwable);
+      for (Consumer<? super Throwable> handler : new ArrayList<>(myHandlers)) {
+        handler.accept(throwable);
       }
     }
 
-    Registration addHandler(final Handler<? super Throwable> handler) {
+    Registration addHandler(final Consumer<? super Throwable> handler) {
       myHandlers.add(handler);
       return new Registration() {
         @Override

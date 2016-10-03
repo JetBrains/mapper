@@ -19,6 +19,7 @@ import com.google.common.base.Function;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class SimpleAsync<ItemT> implements Async<ItemT> {
   private ItemT mySuccessItem = null;
@@ -27,14 +28,14 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
   private Throwable myFailureThrowable = null;
   private boolean myFailed = false;
 
-  private List<Handler<? super ItemT>> mySuccessHandlers = new ArrayList<>();
-  private List<Handler<Throwable>> myFailureHandlers = new ArrayList<>();
+  private List<Consumer<? super ItemT>> mySuccessHandlers = new ArrayList<>();
+  private List<Consumer<Throwable>> myFailureHandlers = new ArrayList<>();
 
   @Override
-  public Registration onSuccess(final Handler<? super ItemT> successHandler) {
+  public Registration onSuccess(final Consumer<? super ItemT> successHandler) {
     if (alreadyHandled()) {
       if (mySucceeded) {
-        successHandler.handle(mySuccessItem);
+        successHandler.accept(mySuccessItem);
       }
       return Registration.EMPTY;
     }
@@ -50,7 +51,7 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   @Override
-  public Registration onResult(Handler<? super ItemT> successHandler, final Handler<Throwable> failureHandler) {
+  public Registration onResult(Consumer<? super ItemT> successHandler, final Consumer<Throwable> failureHandler) {
     final Registration successRegistration = onSuccess(successHandler);
     final Registration failureRegistration = onFailure(failureHandler);
     return new Registration() {
@@ -63,19 +64,19 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
   }
 
   @Override
-  public Registration onFailure(final Handler<Throwable> failureHandler) {
+  public Registration onFailure(final Consumer<Throwable> handler) {
     if (alreadyHandled()) {
       if (myFailed) {
-        failureHandler.handle(myFailureThrowable);
+        handler.accept(myFailureThrowable);
       }
       return Registration.EMPTY;
     }
-    myFailureHandlers.add(failureHandler);
+    myFailureHandlers.add(handler);
     return new Registration() {
       @Override
       protected void doRemove() {
         if (myFailureHandlers != null) {
-          myFailureHandlers.remove(failureHandler);
+          myFailureHandlers.remove(handler);
         }
       }
     };
@@ -100,9 +101,9 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
     mySuccessItem = item;
     mySucceeded = true;
 
-    for (Handler<? super ItemT> handler : mySuccessHandlers) {
+    for (Consumer<? super ItemT> handler : mySuccessHandlers) {
       try {
-        handler.handle(item);
+        handler.accept(item);
       } catch (Exception e) {
         ThrowableHandlers.handle(e);
       }
@@ -117,9 +118,9 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
     myFailureThrowable = throwable;
     myFailed = true;
 
-    for (Handler<Throwable> handler : myFailureHandlers) {
+    for (Consumer<Throwable> handler : myFailureHandlers) {
       try {
-        handler.handle(throwable);
+        handler.accept(throwable);
       } catch (Exception e) {
         ThrowableHandlers.handle(e);
       }

@@ -15,7 +15,13 @@
  */
 package jetbrains.jetpad.base;
 
-public interface Handler<ItemT> {
+import java.util.function.Consumer;
+
+/**
+ * * @deprecated This interface duplicates {@link Consumer} and will be removed shortly.
+ */
+@Deprecated
+public interface Handler<ItemT> extends Consumer<ItemT> {
   Handler<Object> EMPTY = new Handler<Object>() {
     @Override
     public void handle(Object item) {
@@ -23,4 +29,9 @@ public interface Handler<ItemT> {
   };
 
   void handle(ItemT item);
+
+  @Override
+  default void accept(ItemT item) {
+    handle(item);
+  }
 }

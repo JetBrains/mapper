@@ -20,19 +20,20 @@ import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
-import jetbrains.jetpad.model.property.Selector;
+
+import java.util.function.Function;
 
 abstract class SelectedCollection<ValueT, ItemT, CollectionT extends ObservableCollection<?>>
   extends ObservableArrayList<ItemT> implements EventHandler<PropertyChangeEvent<ValueT>> {
   private final ReadableProperty<ValueT> mySource;
-  private final Selector<ValueT, CollectionT> mySelector;
+  private final Function<ValueT, CollectionT> mySelector;
 
   private Registration mySourcePropertyRegistration = Registration.EMPTY;
   private Registration mySourceListRegistration = Registration.EMPTY;
 
   private boolean myFollowing = false;
 
-  protected SelectedCollection(ReadableProperty<ValueT> source, Selector<ValueT, CollectionT> selector) {
+  protected SelectedCollection(ReadableProperty<ValueT> source, Function<ValueT, CollectionT> selector) {
     mySource = source;
     mySelector = selector;
   }
@@ -48,7 +49,7 @@ abstract class SelectedCollection<ValueT, ItemT, CollectionT extends ObservableC
   protected CollectionT select() {
     ValueT sourceVal = mySource.get();
     if (sourceVal != null) {
-      CollectionT res = mySelector.select(sourceVal);
+      CollectionT res = mySelector.apply(sourceVal);
       if (res != null) return res;
     }
 

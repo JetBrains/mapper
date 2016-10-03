@@ -15,9 +15,19 @@
  */
 package jetbrains.jetpad.model.property;
 
+import java.util.function.Function;
+
 /**
  * One method interface which is used in flatMap/bind like operations
+ *
+ * @deprecated This interface duplicates {@link Function} and will be removed shortly.
  */
-public interface Selector<SourceT, TargetT> {
+@Deprecated
+public interface Selector<SourceT, TargetT> extends Function<SourceT, TargetT> {
   TargetT select(SourceT source);
+
+  @Override
+  default TargetT apply(SourceT source) {
+    return select(source);
+  }
 }

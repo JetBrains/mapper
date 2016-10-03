@@ -168,17 +168,17 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<? super SourceT, ReadableProperty<TargetT>> fun) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final java.util.function.Function<? super SourceT, ReadableProperty<TargetT>> fun) {
     return select(source, fun, null);
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Selector<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final java.util.function.Function<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
     final Supplier<TargetT> calc = new Supplier<TargetT>() {
       @Override
       public TargetT get() {
         SourceT value = source.get();
         if (value == null) return nullValue;
-        ReadableProperty<TargetT> prop = fun.select(value);
+        ReadableProperty<TargetT> prop = fun.apply(value);
         if (prop == null) return null;
         return prop.get();
       }
@@ -192,7 +192,7 @@ public class Properties {
 
       @Override
       protected void doAddListeners() {
-        myTargetProperty = source.get() == null ? null : fun.select(source.get());
+        myTargetProperty = source.get() == null ? null : fun.apply(source.get());
 
         final EventHandler<PropertyChangeEvent<TargetT>> targetHandler = new EventHandler<PropertyChangeEvent<TargetT>>() {
           @Override
@@ -208,7 +208,7 @@ public class Properties {
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
-              myTargetProperty = fun.select(sourceValue);
+              myTargetProperty = fun.apply(sourceValue);
             } else {
               myTargetProperty = null;
             }
@@ -244,13 +244,13 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> Property<TargetT> selectRw(final ReadableProperty<SourceT> source, final Selector<SourceT, Property<TargetT>> fun) {
+  public static <SourceT, TargetT> Property<TargetT> selectRw(final ReadableProperty<SourceT> source, final java.util.function.Function<SourceT, Property<TargetT>> fun) {
     final Supplier<TargetT> calc = new Supplier<TargetT>() {
       @Override
       public TargetT get() {
         SourceT value = source.get();
         if (value == null) return null;
-        ReadableProperty<TargetT> prop = fun.select(value);
+        ReadableProperty<TargetT> prop = fun.apply(value);
         if (prop == null) return null;
         return prop.get();
       }
@@ -268,7 +268,7 @@ public class Properties {
 
       @Override
       protected void doAddListeners() {
-        myTargetProperty = source.get() == null ? null : fun.select(source.get());
+        myTargetProperty = source.get() == null ? null : fun.apply(source.get());
 
         final EventHandler<PropertyChangeEvent<TargetT>> targetHandler = new EventHandler<PropertyChangeEvent<TargetT>>() {
           @Override
@@ -284,7 +284,7 @@ public class Properties {
             }
             SourceT sourceValue = source.get();
             if (sourceValue != null) {
-              myTargetProperty = fun.select(sourceValue);
+              myTargetProperty = fun.apply(sourceValue);
             } else {
               myTargetProperty = null;
             }
@@ -328,7 +328,7 @@ public class Properties {
     return new MyProperty();
   }
 
-  public static <EventT, ValueT> EventSource<EventT> selectEvent(final ReadableProperty<ValueT> prop, final Selector<ValueT, EventSource<EventT>> selector) {
+  public static <EventT, ValueT> EventSource<EventT> selectEvent(final ReadableProperty<ValueT> prop, final java.util.function.Function<ValueT, EventSource<EventT>> selector) {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
@@ -339,7 +339,7 @@ public class Properties {
           public void run() {
             esReg.get().remove();
             if (prop.get() != null) {
-              esReg.set(selector.select(prop.get()).addHandler(handler));
+              esReg.set(selector.apply(prop.get()).addHandler(handler));
             } else {
               esReg.set(Registration.EMPTY);
             }

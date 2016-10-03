@@ -24,19 +24,11 @@ public class ThrowableHandlersTest extends BaseTestCase {
 
   @Test(expected = IllegalStateException.class)
   public void addThrowingThrowableHandler() {
-    Registration reg = ThrowableHandlers.addHandler(new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable event) {
-        throw new IllegalStateException();
-      }
+    Registration reg = ThrowableHandlers.addHandler(event -> {
+      throw new IllegalStateException();
     });
     try {
-      ThrowableHandlers.asInProduction(new Runnable() {
-        @Override
-        public void run() {
-          ThrowableHandlers.handle(new IllegalArgumentException());
-        }
-      });
+      ThrowableHandlers.asInProduction(() -> ThrowableHandlers.handle(new IllegalArgumentException()));
     } finally {
       reg.remove();
     }
@@ -45,20 +37,9 @@ public class ThrowableHandlersTest extends BaseTestCase {
   @Test
   public void removeHandlerWhileFire() {
     final Value<Registration> reg = new Value<>(Registration.EMPTY);
-    Handler<Throwable> handler = new Handler<Throwable>() {
-      @Override
-      public void handle(Throwable event) {
-        reg.get().remove();
-      }
-    };
-    reg.set(ThrowableHandlers.addHandler(handler));
+    reg.set(ThrowableHandlers.addHandler(event -> reg.get().remove()));
     int handlersSize = ThrowableHandlers.getHandlersSize();
-    ThrowableHandlers.asInProduction(new Runnable() {
-      @Override
-      public void run() {
-        ThrowableHandlers.handle(new RuntimeException());
-      }
-    });
+    ThrowableHandlers.asInProduction(() -> ThrowableHandlers.handle(new RuntimeException()));
     assertEquals(handlersSize - 1, ThrowableHandlers.getHandlersSize());
   }
 }
