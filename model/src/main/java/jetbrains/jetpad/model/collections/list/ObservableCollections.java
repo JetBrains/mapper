@@ -183,7 +183,7 @@ public class ObservableCollections {
   }
 
   public static <ValueT, ItemT> ObservableList<ItemT> selectList(
-      ReadableProperty<ValueT> p, Selector<ValueT, ObservableList<ItemT>> s) {
+      ReadableProperty<ValueT> p, Function<ValueT, ObservableList<ItemT>> s) {
     return new UnmodifiableObservableList<>(new SelectorDerivedList<>(p, s));
   }
 
