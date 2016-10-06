@@ -17,8 +17,6 @@ package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -45,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
@@ -1114,12 +1113,12 @@ public class Transformers {
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(Suppliers.ofInstance(item), condition);
+    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(jetbrains.jetpad.base.Functions.constant(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
-    final Supplier<ItemT> memoizedItem = Suppliers.memoize(item);
+    final Supplier<ItemT> memoizedItem = jetbrains.jetpad.base.Functions.memorize(item);
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {
@@ -1182,12 +1181,12 @@ public class Transformers {
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(Suppliers.ofInstance(item), condition);
+    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(jetbrains.jetpad.base.Functions.constant(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
-    final Supplier<ItemT> memoizedItem = Suppliers.memoize(item);
+    final Supplier<ItemT> memoizedItem = jetbrains.jetpad.base.Functions.memorize(item);
     return new BaseTransformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
       @Override
       public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(ObservableCollection<SourceT> from) {

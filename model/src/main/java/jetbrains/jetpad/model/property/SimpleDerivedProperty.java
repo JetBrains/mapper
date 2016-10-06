@@ -15,9 +15,10 @@
  */
 package jetbrains.jetpad.model.property;
 
-import com.google.common.base.Supplier;
-import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.EventHandler;
+
+import java.util.function.Supplier;
 
 /**
  * Derived property based on a Supplier<Value> and a set of dependencies

@@ -15,12 +15,12 @@
  */
 package jetbrains.jetpad.base.edt;
 
-import com.google.common.base.Supplier;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class RunningEdtManager implements EdtManager, EventDispatchThread {
   private String myName;

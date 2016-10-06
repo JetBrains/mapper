@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.mapper;
 
-import com.google.common.base.Supplier;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -32,6 +31,7 @@ import jetbrains.jetpad.model.transform.Transformer;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Utility class for synchronizer creation

@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.mapper.gwt;
 
-import com.google.common.base.Supplier;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
@@ -26,11 +25,16 @@ import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
-import jetbrains.jetpad.model.property.*;
+import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
+import jetbrains.jetpad.model.property.ReadableProperty;
+import jetbrains.jetpad.model.property.UpdatableProperty;
+import jetbrains.jetpad.model.property.WritableProperty;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static com.google.gwt.query.client.GQuery.$;
 
