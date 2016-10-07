@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.property;
 
-import com.google.common.base.Predicate;
 import org.junit.Test;
 
 import java.util.function.Supplier;
@@ -30,13 +29,11 @@ public class PropertyValidationTest {
   public void validatedProperty() {
     Property<String> source = new ValueProperty<>("abc");
 
-    Property<String> validated = Properties.validatedProperty(source, new Predicate<String>() {
-      @Override
-      public boolean apply(String input) {
+    Property<String> validated = Properties.validatedProperty(source,
+      input -> {
         if (input == null) return false;
         return input.length() > 3;
-      }
-    });
+      });
 
     assertNull(validated.get());
 
@@ -47,13 +44,11 @@ public class PropertyValidationTest {
   @Test
   public void isValidProperty() {
     Property<String> source = new ValueProperty<>("abc");
-    Supplier<Boolean> isValid = Properties.isPropertyValid(source, new Predicate<String>() {
-      @Override
-      public boolean apply(String input) {
+    Supplier<Boolean> isValid = Properties.isPropertyValid(source,
+      input -> {
         if (input == null) return false;
         return input.length() > 1;
-      }
-    });
+      });
     assertTrue(isValid.get());
 
     source.set("z");

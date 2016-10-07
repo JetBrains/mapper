@@ -23,16 +23,16 @@ import static org.junit.Assert.assertTrue;
 public class ValidatorsTest {
   @Test
   public void signedInteger() {
-    assertTrue(Validators.integer().apply("239"));
-    assertTrue(Validators.integer().apply("-239"));
-    assertFalse(Validators.integer().apply(null));
+    assertTrue(Validators.integer().test("239"));
+    assertTrue(Validators.integer().test("-239"));
+    assertFalse(Validators.integer().test(null));
   }
 
   @Test
   public void unsignedInteger() {
-    assertTrue(Validators.unsignedInteger().apply("239"));
-    assertFalse(Validators.unsignedInteger().apply("-239"));
-    assertFalse(Validators.unsignedInteger().apply("+239"));
-    assertFalse(Validators.unsignedInteger().apply(null));
+    assertTrue(Validators.unsignedInteger().test("239"));
+    assertFalse(Validators.unsignedInteger().test("-239"));
+    assertFalse(Validators.unsignedInteger().test("+239"));
+    assertFalse(Validators.unsignedInteger().test(null));
   }
 }

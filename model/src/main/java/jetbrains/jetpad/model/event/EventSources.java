@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -24,6 +23,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class EventSources {
   /**
@@ -59,7 +59,7 @@ public class EventSources {
         return source.addHandler(new EventHandler<EventT>() {
           @Override
           public void onEvent(EventT event) {
-            if (pred.apply(event)) {
+            if (pred.test(event)) {
               handler.onEvent(event);
             }
           }

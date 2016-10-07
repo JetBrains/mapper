@@ -15,60 +15,48 @@
  */
 package jetbrains.jetpad.base;
 
-import jetbrains.jetpad.base.Objects;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
+import java.util.function.Predicate;
+
 public class Validators {
-  private static final Predicate<String> IDENTIFIER = new Predicate<String>() {
-    @Override
-    public boolean apply(String input) {
-      if (input == null) return false;
-      if (input.isEmpty()) return false;
+  private static final Predicate<String> IDENTIFIER = input -> {
+    if (input == null) return false;
+    if (input.isEmpty()) return false;
 
-      for (int i = 0; i < input.length(); i++) {
-        char ch = input.charAt(i);
-        if (i == 0 && Character.isDigit(ch)) return false;
-        if (!Character.isLetter(ch) && !Character.isDigit(ch) && ch != '_') return false;
-      }
+    for (int i = 0; i < input.length(); i++) {
+      char ch = input.charAt(i);
+      if (i == 0 && Character.isDigit(ch)) return false;
+      if (!Character.isLetter(ch) && !Character.isDigit(ch) && ch != '_') return false;
+    }
 
+    return true;
+  };
+
+  private static final Predicate<String> UNSINGED_INTEGER = input -> {
+    if (Strings.isNullOrEmpty(input)) return false;
+    for (int i = 0; i < input.length(); i++) {
+      if (!Character.isDigit(input.charAt(i))) return false;
+    }
+    try {
+      Integer.parseInt(input);
       return true;
-    }
-  };
-  private static final Predicate<String> UNSINGED_INTEGER = new Predicate<String>() {
-    @Override
-    public boolean apply(String input) {
-      if (Strings.isNullOrEmpty(input)) return false;
-      for (int i = 0; i < input.length(); i++) {
-        if (!Character.isDigit(input.charAt(i))) return false;
-      }
-      try {
-        Integer.parseInt(input);
-        return true;
-      } catch (NumberFormatException e) {
-        return false;
-      }
-    }
-  };
-  private static final Predicate<String> INTEGER = new Predicate<String>() {
-    @Override
-    public boolean apply(String input) {
-      if (Strings.isNullOrEmpty(input)) return false;
-      try {
-        Integer.parseInt(input);
-        return true;
-      } catch (NumberFormatException e) {
-        return false;
-      }
+    } catch (NumberFormatException e) {
+      return false;
     }
   };
 
-  private static final Predicate<String> BOOL = new Predicate<String>() {
-    @Override
-    public boolean apply(String input) {
-      return "true".equals(input) || "false".equals(input);
+  private static final Predicate<String> INTEGER = input -> {
+    if (Strings.isNullOrEmpty(input)) return false;
+    try {
+      Integer.parseInt(input);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
     }
   };
+
+  private static final Predicate<String> BOOL = input -> "true".equals(input) || "false".equals(input);
 
   public static Predicate<String> identifier() {
     return IDENTIFIER;
@@ -87,11 +75,6 @@ public class Validators {
   }
 
   public static <T> Predicate<T> equalsTo(final T value) {
-    return new Predicate<T>() {
-      @Override
-      public boolean apply(T input) {
-        return Objects.equal(input, value);
-      }
-    };
+    return input -> Objects.equal(input, value);
   }
 }

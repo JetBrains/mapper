@@ -16,12 +16,12 @@
 package jetbrains.jetpad.model.event.stream;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.EventSources;
-import jetbrains.jetpad.model.event.Listeners;
+
+import java.util.function.Predicate;
 
 /**
  * This class is inspired by different implementations of observable/event streams, including: Rx, RxJava, bacon.js,
@@ -38,9 +38,8 @@ public final class EventStream<EventT> {
   }
 
   public<TargetEventT> EventStream<TargetEventT> map(final Function<? super EventT, ? extends TargetEventT> f) {
-    return new EventStream<>(EventSources.map(myEventSource, new Function<EventStreamItem<EventT>, EventStreamItem<TargetEventT>>() {
-      @Override
-      public EventStreamItem<TargetEventT> apply(EventStreamItem<EventT> input) {
+    return new EventStream<>(EventSources.map(myEventSource,
+      input -> {
         if (input.isEvent()) {
           return EventStreamItem.<TargetEventT>event(f.apply(input.getEvent()));
         } else if (input.isError()) {
@@ -48,21 +47,18 @@ public final class EventStream<EventT> {
         } else {
           return EventStreamItem.finalItem();
         }
-      }
-    }));
+      }));
   }
 
   public EventStream<EventT> filter(final Predicate<? super EventT> pred) {
-    return new EventStream<>(EventSources.filter(myEventSource, new Predicate<EventStreamItem<EventT>>() {
-      @Override
-      public boolean apply(EventStreamItem<EventT> input) {
+    return new EventStream<>(EventSources.filter(myEventSource,
+      input -> {
         if (input.isEvent()) {
-          return pred.apply(input.getEvent());
+          return pred.test(input.getEvent());
         } else {
           return true;
         }
-      }
-    }));
+      }));
   }
 
   public Registration addListener(final EventStreamListener<EventT> l) {
