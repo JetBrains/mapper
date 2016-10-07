@@ -16,9 +16,7 @@
 package jetbrains.jetpad.model.transform;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import jetbrains.jetpad.model.collections.ObservableCollection;
-import jetbrains.jetpad.model.collections.SingleItemList;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.list.ObservableSingleItemList;
@@ -29,6 +27,8 @@ import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
+
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

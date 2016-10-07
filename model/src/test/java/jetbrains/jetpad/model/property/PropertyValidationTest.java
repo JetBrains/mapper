@@ -16,10 +16,14 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.function.Supplier;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class PropertyValidationTest {
   @Test

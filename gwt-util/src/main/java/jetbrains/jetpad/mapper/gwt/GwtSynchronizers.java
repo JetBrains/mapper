@@ -15,10 +15,11 @@
  */
 package jetbrains.jetpad.mapper.gwt;
 
-import com.google.common.base.Supplier;
 import com.google.gwt.event.shared.HandlerRegistration;
 import jetbrains.jetpad.mapper.Synchronizer;
 import jetbrains.jetpad.mapper.SynchronizerContext;
+
+import java.util.function.Supplier;
 
 public class GwtSynchronizers {
   public static Synchronizer forRegistration(final Supplier<HandlerRegistration> reg) {

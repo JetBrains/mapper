@@ -16,9 +16,8 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Function;
-import jetbrains.jetpad.base.Objects;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
+import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -27,6 +26,8 @@ import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
+
+import java.util.function.Supplier;
 
 public class Properties {
   public static final ReadableProperty<Boolean> TRUE = Properties.constant(Boolean.TRUE);
