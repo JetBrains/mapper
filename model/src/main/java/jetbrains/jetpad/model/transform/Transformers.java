@@ -1113,7 +1113,7 @@ public class Transformers {
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(jetbrains.jetpad.base.Functions.constant(item), condition);
+    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(jetbrains.jetpad.base.Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
@@ -1181,7 +1181,7 @@ public class Transformers {
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(jetbrains.jetpad.base.Functions.constant(item), condition);
+    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(jetbrains.jetpad.base.Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>

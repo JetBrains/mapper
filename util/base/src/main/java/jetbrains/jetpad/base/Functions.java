@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 public final class Functions {
   private Functions() { }
 
-  public static <T> Supplier<T> constant(T value) {
+  public static <T> Supplier<T> constantSupplier(T value) {
     return () -> value;
   }
 
