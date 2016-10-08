@@ -160,7 +160,7 @@ abstract class JsonLexer {
     while (getCurrent() != '"' && getCurrent() != -1) {
       if (getCurrent() == '\\') {
         advance();
-        if (JsonUtil.UNESCAPED_SPECIAL_CHARS.contains((char)getCurrent())) {
+        if (JsonUtil.isUnescapedSpecialChar((char) getCurrent())) {
           advance();
         } else if (getCurrent() == 'u') {
           advance();

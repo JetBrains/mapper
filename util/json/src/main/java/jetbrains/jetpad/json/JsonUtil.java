@@ -15,23 +15,41 @@
  */
 package jetbrains.jetpad.json;
 
+import com.google.common.primitives.Chars;
+import com.sun.prism.es2.ES2Pipeline;
+
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
 class JsonUtil {
-  static final List<Character> SPECIAL_CHARS = Arrays.asList('\"', '\\', '/', '\b', '\f', '\n', '\r', '\t');
-  static final List<String> ESCAPED_SPECIAL_CHARS = Arrays.asList("\\\"", "\\\\", "\\/", "\\b", "\\f", "\\n", "\\r", "\\t");
-  static final List<Character> UNESCAPED_SPECIAL_CHARS = Arrays.asList('"', '\\', '/', 'b', 'f', 'n', 'r', 't');
+  private static final char[] SPECIAL_CHARS = {'\"', '\\', '/', '\b', '\f', '\n', '\r', '\t'};
+  private static final String[] ESCAPED_SPECIAL_CHARS = {"\\\"", "\\\\", "\\/", "\\b", "\\f", "\\n", "\\r", "\\t"};
+  private static final char[] UNESCAPED_SPECIAL_CHARS = {'"', '\\', '/', 'b', 'f', 'n', 'r', 't'};
 
   private JsonUtil() {
+  }
+
+  static List<Character> getSpecialChars() {
+    return Chars.asList(SPECIAL_CHARS);
+  }
+
+  static List<String> getEscapedSpecialChars() {
+    return Arrays.asList(ESCAPED_SPECIAL_CHARS);
+  }
+
+  static boolean isUnescapedSpecialChar(char ch) {
+    return Chars.indexOf(UNESCAPED_SPECIAL_CHARS, ch) != -1;
   }
 
   static String escape(String s) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if (SPECIAL_CHARS.contains(c)) {
-        builder.append(ESCAPED_SPECIAL_CHARS.get(SPECIAL_CHARS.indexOf(c)));
+
+      int index = Chars.indexOf(SPECIAL_CHARS, c);
+      if (index != -1) {
+        builder.append(ESCAPED_SPECIAL_CHARS[index]);
       } else {
         builder.append(c);
       }
@@ -51,8 +69,9 @@ class JsonUtil {
 
         i++;
         ch = s.charAt(i);
-        if (UNESCAPED_SPECIAL_CHARS.contains(ch)) {
-          result.append(SPECIAL_CHARS.get(UNESCAPED_SPECIAL_CHARS.indexOf(ch)));
+        int index = Chars.indexOf(UNESCAPED_SPECIAL_CHARS, ch);
+        if (index != -1) {
+          result.append(SPECIAL_CHARS[index]);
         } else if (ch == 'u') {
           if (i >= s.length() - 4) {
             throw new RuntimeException();

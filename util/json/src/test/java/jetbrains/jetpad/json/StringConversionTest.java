@@ -17,6 +17,8 @@ package jetbrains.jetpad.json;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,8 +40,10 @@ public class StringConversionTest {
 
   @Test
   public void escape() {
-    for (int i = 0; i < JsonUtil.SPECIAL_CHARS.size(); i++) {
-      convertForthAndBack("" + JsonUtil.SPECIAL_CHARS.get(i), "\"" + JsonUtil.ESCAPED_SPECIAL_CHARS.get(i) + "\"");
+    List<Character> specialChars = JsonUtil.getSpecialChars();
+    for (int i = 0; i < specialChars.size(); i++) {
+      List<String> escapedChars = JsonUtil.getEscapedSpecialChars();
+      convertForthAndBack("" + specialChars.get(i), "\"" + escapedChars.get(i) + "\"");
     }
   }
 
