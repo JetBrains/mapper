@@ -43,6 +43,10 @@ public class EventSources {
     };
   }
 
+  public static <EventT> EventSource<EventT> empty() {
+    return composite();
+  }
+
   @SafeVarargs
   public static <EventT> EventSource<EventT> composite(EventSource<? extends EventT>... sources) {
     return new CompositeEventSource<>(sources);
