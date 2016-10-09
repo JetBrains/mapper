@@ -382,6 +382,66 @@ public class Transformers {
     };
   }
 
+  public static <ItemT, CollectionT extends ObservableCollection<ItemT>>
+  Transformer<CollectionT, ObservableCollection<ItemT>> filterByConstant(final Function<ItemT, Boolean> filterBy) {
+
+    return new BaseTransformer<CollectionT, ObservableCollection<ItemT>>() {
+      @Override
+      public Transformation<CollectionT, ObservableCollection<ItemT>> transform(CollectionT from) {
+        return transform(from, new ObservableArrayList<>());
+      }
+
+      @Override
+      public Transformation<CollectionT, ObservableCollection<ItemT>> transform(CollectionT from, ObservableCollection<ItemT> to) {
+        return new Transformation<CollectionT, ObservableCollection<ItemT>>() {
+          private Registration myReg;
+
+          {
+            for (ItemT item : from) {
+              if (filterBy.apply(item)) {
+                to.add(item);
+              }
+            }
+
+            myReg = from.addListener(new CollectionAdapter<ItemT>() {
+              @Override
+              public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+                if (filterBy.apply(event.getNewItem())) {
+                  to.add(event.getNewItem());
+                }
+              }
+
+              @Override
+              public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+                if (filterBy.apply(event.getOldItem())) {
+                  to.remove(event.getOldItem());
+                }
+              }
+            });
+          }
+
+          @Override
+          protected void doDispose() {
+            myReg.remove();
+            getTarget().clear();
+            super.doDispose();
+          }
+
+          @Override
+          public CollectionT getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableCollection<ItemT> getTarget() {
+            return to;
+          }
+        };
+      }
+    };
+  }
+
+
   public static <SourceT, TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> oneToOne(final Function<SourceT, TargetT> converter, final Function<TargetT, SourceT> checker) {
     return new BaseTransformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
