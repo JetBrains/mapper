@@ -216,12 +216,7 @@ public class Transformers {
         ValueT v2 = p2.get();
 
         if (v1 == null || v2 == null) {
-          if (v1 == v2) return 0;
-          if (v1 == null) {
-            return -1;
-          } else {
-            return 1;
-          }
+          return compareNulls(v1, v2);
         }
 
         return cmp.compare(v1, v2);
@@ -329,6 +324,95 @@ public class Transformers {
         };
       }
     };
+  }
+
+  public static <SpecItemT, ItemT extends SpecItemT, ValueT, CollectionT extends ObservableCollection<ItemT>>
+  Transformer<CollectionT, ObservableList<ItemT>> sortByConstant(final Function<SpecItemT, ? extends ValueT> propSpec, final Comparator<ValueT> cmp) {
+    final Comparator<ItemT> comparator = new Comparator<ItemT>() {
+      @Override
+      public int compare(ItemT i1, ItemT i2) {
+        ValueT v1 = propSpec.apply(i1);
+        ValueT v2 = propSpec.apply(i2);
+
+        if (v1 == null || v2 == null) {
+          return compareNulls(v1, v2);
+        }
+
+        return cmp.compare(v1, v2);
+      }
+    };
+
+    return new BaseTransformer<CollectionT, ObservableList<ItemT>>() {
+      @Override
+      public Transformation<CollectionT, ObservableList<ItemT>> transform(CollectionT from) {
+        return transform(from, new ObservableArrayList<ItemT>());
+      }
+
+      @Override
+      public Transformation<CollectionT, ObservableList<ItemT>> transform(final CollectionT from, final ObservableList<ItemT> to) {
+        return new Transformation<CollectionT, ObservableList<ItemT>>() {
+          Registration myCollectionReg;
+          CollectionListener<ItemT> myCollectionListener;
+
+          {
+            myCollectionReg = from.addListener(myCollectionListener = new CollectionAdapter<ItemT>() {
+              @Override
+              public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+                ItemT item = event.getNewItem();
+
+                int pos = Collections.binarySearch(to, item, comparator);
+                int insertIndex = pos >= 0 ? pos + 1 : -(pos + 1);
+                to.add(insertIndex, item);
+              }
+
+              @Override
+              public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+                ItemT item = event.getOldItem();
+
+                int sortedIndex = to.indexOf(item);
+                if (sortedIndex == -1) {
+                  throw new IllegalStateException();
+                }
+
+                to.remove(sortedIndex);
+              }
+            });
+
+
+            for (ItemT item : from) {
+              to.add(item);
+            }
+            Collections.sort(to, comparator);
+          }
+
+
+          @Override
+          public CollectionT getSource() {
+            return from;
+          }
+
+          @Override
+          public ObservableList<ItemT> getTarget() {
+            return to;
+          }
+
+          @Override
+          protected void doDispose() {
+            myCollectionReg.remove();
+            getTarget().clear();
+          }
+        };
+      }
+    };
+  }
+
+  private static int compareNulls(Object o1, Object o2) {
+    if (o1 == o2) return 0;
+    if (o1 == null) {
+      return -1;
+    } else {
+      return 1;
+    }
   }
 
 
