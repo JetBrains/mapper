@@ -17,6 +17,7 @@ package jetbrains.jetpad.base;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -54,5 +55,31 @@ public class IntervalTest {
 
     assertFalse(i(1, 4).intersects(i(-1, 0)));
     assertFalse(i(1, 4).intersects(i(5, 6)));
+  }
+
+  @Test
+  public void union() {
+    assertEquals(i(1, 4), i(1, 2).union(i(3, 4)));
+    assertEquals(i(1, 4), i(1, 3).union(i(2, 4)));
+
+    assertEquals(i(1, 4), i(3, 4).union(i(1, 2)));
+    assertEquals(i(1, 4), i(2, 4).union(i(1, 3)));
+
+    assertEquals(i(1, 4), i(1, 4).union(i(2, 3)));
+    assertEquals(i(1, 4), i(2, 3).union(i(1, 4)));
+  }
+
+  @Test
+  public void add() {
+    assertEquals(i(1, 4), i(0, 3).add(1));
+    assertEquals(i(1, 4), i(1, 4).add(0));
+    assertEquals(i(1, 4), i(2, 5).add(-1));
+  }
+
+  @Test
+  public void sub() {
+    assertEquals(i(1, 4), i(0, 3).sub(-1));
+    assertEquals(i(1, 4), i(1, 4).sub(0));
+    assertEquals(i(1, 4), i(2, 5).sub(1));
   }
 }

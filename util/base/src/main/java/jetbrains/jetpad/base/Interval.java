@@ -52,6 +52,21 @@ public final class Interval {
     return contains(other.getLowerBound()) ||  other.contains(getLowerBound());
   }
 
+  /**
+   * Returns minimal interval that contains both this and other intervals.
+   */
+  public Interval union(Interval other) {
+    return new Interval(Math.min(myLowerBound, other.myLowerBound), Math.max(myUpperBound, other.myUpperBound));
+  }
+
+  public Interval add(int delta) {
+    return new Interval(myLowerBound + delta, myUpperBound + delta);
+  }
+
+  public Interval sub(int delta) {
+    return new Interval(myLowerBound - delta, myUpperBound - delta);
+  }
+
   @Override
   public String toString() {
     return "[" + myLowerBound + ", " + myUpperBound + "]";
