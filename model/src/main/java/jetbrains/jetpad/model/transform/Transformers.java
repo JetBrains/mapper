@@ -25,6 +25,7 @@ import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
+import jetbrains.jetpad.model.collections.list.ObservableTreeList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -345,7 +346,8 @@ public class Transformers {
     return new BaseTransformer<CollectionT, ObservableList<ItemT>>() {
       @Override
       public Transformation<CollectionT, ObservableList<ItemT>> transform(CollectionT from) {
-        return transform(from, new ObservableArrayList<ItemT>());
+        //tree list has much better asymptotics of insert
+        return transform(from, new ObservableTreeList<ItemT>());
       }
 
       @Override
