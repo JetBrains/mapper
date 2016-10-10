@@ -15,10 +15,10 @@
  */
 package jetbrains.jetpad.base;
 
-import com.google.common.base.Function;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -42,24 +42,14 @@ public class AsyncsTest {
   @Test
   public void map() {
     Async<Integer> c = Asyncs.constant(239);
-    Async<Integer> mapped = Asyncs.map(c, new Function<Integer, Integer>() {
-      @Override
-      public Integer apply(Integer input) {
-        return input + 1;
-      }
-    });
+    Async<Integer> mapped = Asyncs.map(c, input -> input + 1);
     assertSuccess(mapped, 240);
   }
 
   @Test
   public void mapFailure() {
     Async<Integer> failure = Asyncs.failure(new Throwable());
-    assertFailure(Asyncs.map(failure, new Function<Integer, Object>() {
-      @Override
-      public Object apply(Integer input) {
-        return input + 1;
-      }
-    }));
+    assertFailure(Asyncs.map(failure, input -> input + 1));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -76,11 +66,8 @@ public class AsyncsTest {
   @Test
   public void mapException() {
     Async<Integer> a = Asyncs.constant(1);
-    assertFailure(Asyncs.map(a, new Function<Integer, Integer>() {
-      @Override
-      public Integer apply(Integer input) {
-        throw new RuntimeException("test");
-      }
+    assertFailure(Asyncs.map(a, i -> {
+      throw new RuntimeException("test");
     }));
   }
 
@@ -145,12 +132,7 @@ public class AsyncsTest {
 
   @Test
   public void untilSuccess() {
-    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
-      @Override
-      public Async<Integer> get() {
-        return Asyncs.constant(1);
-      }
-    }), 1);
+    assertSuccess(Asyncs.untilSuccess(() -> Asyncs.constant(1)), 1);
   }
 
   @Test

@@ -15,12 +15,12 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 

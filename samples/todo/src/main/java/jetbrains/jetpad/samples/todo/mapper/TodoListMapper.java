@@ -18,18 +18,14 @@ package jetbrains.jetpad.samples.todo.mapper;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.user.client.Event;
-import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 import jetbrains.jetpad.mapper.Mapper;
 import jetbrains.jetpad.mapper.MapperFactory;
-import jetbrains.jetpad.mapper.Synchronizer;
 import jetbrains.jetpad.mapper.Synchronizers;
 import jetbrains.jetpad.mapper.gwt.WithElement;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.model.property.Property;
-import jetbrains.jetpad.model.property.ReadableProperty;
-import jetbrains.jetpad.model.transform.Transformation;
 import jetbrains.jetpad.model.transform.Transformer;
 import jetbrains.jetpad.model.transform.Transformers;
 import jetbrains.jetpad.samples.todo.model.TodoList;
@@ -40,8 +36,15 @@ import java.util.List;
 
 import static com.google.gwt.query.client.GQuery.$;
 import static jetbrains.jetpad.mapper.Synchronizers.forObservableRole;
-import static jetbrains.jetpad.mapper.gwt.DomUtil.*;
-import static jetbrains.jetpad.model.property.Properties.*;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.checkbox;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.innerTextOf;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.visibilityOf;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.withElementChildren;
+import static jetbrains.jetpad.model.property.Properties.ifProp;
+import static jetbrains.jetpad.model.property.Properties.not;
+import static jetbrains.jetpad.model.property.Properties.notEquals;
+import static jetbrains.jetpad.model.property.Properties.size;
+import static jetbrains.jetpad.model.property.Properties.toStringOf;
 
 public class TodoListMapper extends Mapper<TodoList, TodoListView> {
   private final Property<Boolean> toggleAll;
@@ -144,19 +147,8 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
     final Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnActive;
     final Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnComplete;
 
-    xfnComplete = Transformers.listFilter(new com.google.common.base.Function<TodoListItem, ReadableProperty<Boolean>>() {
-      @Override
-      public ReadableProperty<Boolean> apply(TodoListItem F) {
-        return F.completed;
-      }
-    });
-    xfnActive = Transformers.listFilter(new com.google.common.base.Function<TodoListItem, ReadableProperty<Boolean>>() {
-      @Override
-      public ReadableProperty<Boolean> apply(TodoListItem F) {
-        return not(F.completed);
-      }
-    });
-
+    xfnComplete = Transformers.listFilter(f -> f.completed);
+    xfnActive = Transformers.listFilter(f -> not(f.completed));
 
     // we don't want to create a new synchronizer every time a different filter is applied,
     // so create all of them at once, and dynamically select which one to display

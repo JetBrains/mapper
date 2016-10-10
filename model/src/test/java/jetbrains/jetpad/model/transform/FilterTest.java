@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.ObservableCollection;
@@ -27,6 +26,8 @@ import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import org.junit.Test;
 
+import java.util.function.Function;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -34,17 +35,14 @@ import static org.junit.Assert.assertTrue;
 public class FilterTest {
   private ObservableCollection<String> from = new ObservableHashSet<>();
   private ObservableCollection<String> to = new ObservableHashSet<>();
-  Transformer<ObservableCollection<String>, ObservableCollection<String>> filter = Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
-    @Override
-    public ReadableProperty<Boolean> apply(String s) {
-      Boolean value;
-      if ("null".equals(s)) {
-        value = null;
-      } else {
-        value = s.length() % 2 == 0;
-      }
-      return Properties.constant(value);
+  Transformer<ObservableCollection<String>, ObservableCollection<String>> filter = Transformers.filter(s -> {
+    Boolean value;
+    if ("null".equals(s)) {
+      value = null;
+    } else {
+      value = s.length() % 2 == 0;
     }
+    return Properties.constant(value);
   });
 
   @Test
@@ -84,12 +82,9 @@ public class FilterTest {
       }
     };
 
-    Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
-      @Override
-      public ReadableProperty<Boolean> apply(String s) {
-        filterFunctionApplyCounter.set(filterFunctionApplyCounter.get() + 1);
-        return p;
-      }
+    Transformers.filter((Function<String, ReadableProperty<Boolean>>) s -> {
+      filterFunctionApplyCounter.set(filterFunctionApplyCounter.get() + 1);
+      return p;
     }).transform(from, to);
 
     String s = "abc";

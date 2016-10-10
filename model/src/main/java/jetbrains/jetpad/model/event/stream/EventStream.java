@@ -15,12 +15,12 @@
  */
 package jetbrains.jetpad.model.event.stream;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.EventSources;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**

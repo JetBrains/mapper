@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.model.composite;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import java.util.*;
@@ -139,12 +139,7 @@ public class Composites {
    */
   public static <CompositeT extends Composite<CompositeT>>
   Iterable<CompositeT> ancestorsFrom(final CompositeT current) {
-    return iterateFrom(current, new Function<CompositeT, CompositeT>() {
-      @Override
-      public CompositeT apply(CompositeT input) {
-        return input.getParent();
-      }
-    });
+    return iterateFrom(current, HasParent::getParent);
   }
 
   /**
@@ -152,52 +147,27 @@ public class Composites {
    */
   public static <CompositeT extends Composite<CompositeT>>
   Iterable<CompositeT> ancestors(final CompositeT current) {
-    return iterate(current, new Function<CompositeT, CompositeT>() {
-      @Override
-      public CompositeT apply(CompositeT input) {
-        return input.getParent();
-      }
-    });
+    return iterate(current, HasParent::getParent);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> nextLeaves(final CompositeT current) {
-    return iterate(current, new Function<CompositeT, CompositeT>() {
-      @Override
-      public CompositeT apply(CompositeT input) {
-        return nextLeaf(input);
-      }
-    });
+    return iterate(current, Composites::nextLeaf);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> prevLeaves(final CompositeT current) {
-    return iterate(current, new Function<CompositeT, CompositeT>() {
-      @Override
-      public CompositeT apply(CompositeT input) {
-        return prevLeaf(input);
-      }
-    });
+    return iterate(current, Composites::prevLeaf);
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> nextNavOrder(final CompositeT current) {
-    return iterate(current, new Function<CompositeT, CompositeT>() {
-      @Override
-      public CompositeT apply(CompositeT input) {
-        return nextNavOrder(current, input);
-      }
-    });
+    return iterate(current, input -> nextNavOrder(current, input));
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
   Iterable<CompositeT> prevNavOrder(final CompositeT current) {
-    return iterate(current, new Function<CompositeT, CompositeT>() {
-      @Override
-      public CompositeT apply(CompositeT input) {
-        return prevNavOrder(current, input);
-      }
-    });
+    return iterate(current, input -> prevNavOrder(current, input));
   }
 
 

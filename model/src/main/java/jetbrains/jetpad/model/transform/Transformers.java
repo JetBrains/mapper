@@ -15,8 +15,6 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -25,7 +23,6 @@ import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.collections.list.ObservableTreeList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -44,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Transformers {
@@ -784,7 +782,7 @@ public class Transformers {
 
   public static <ItemT>
   Transformer<ObservableList<ObservableList<? extends ItemT>>, ObservableList<ItemT>> flattenList() {
-    return flattenList(Functions.<ObservableList<? extends ItemT>>identity());
+    return flattenList(Function.<ObservableList<? extends ItemT>>identity());
   }
 
   public static <SourceT, TargetT>

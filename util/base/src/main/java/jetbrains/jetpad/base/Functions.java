@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -41,6 +42,10 @@ public final class Functions {
   @SuppressWarnings("unchecked")
   public static <T> Predicate<T> alwaysFalse() {
     return (Predicate<T>) FALSE_PREDICATE;
+  }
+
+  public static <A, T> Function<A, T> constant(T result) {
+    return a -> result;
   }
 
   private static class Memo<T> implements Supplier<T> {

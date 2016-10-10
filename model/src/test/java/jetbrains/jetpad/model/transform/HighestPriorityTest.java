@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import org.junit.Before;
@@ -27,13 +26,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HighestPriorityTest {
-  private static final Function<String, Integer> PRIORITY_BY_LENGTH = new Function<String, Integer>() {
-    @Override
-    public Integer apply(String s) {
-      return s.length();
-    }
-  };
-
   private ObservableCollection<String> from;
   private Transformation<ObservableCollection<String>, ObservableCollection<String>> trans;
   private ObservableCollection<String> to;
@@ -42,7 +34,7 @@ public class HighestPriorityTest {
   public void init() {
     from = new ObservableArrayList<>();
     from.addAll(Arrays.asList("a", "b", "cc"));
-    trans = Transformers.highestPriority(PRIORITY_BY_LENGTH).transform(from);
+    trans = Transformers.highestPriority(String::length).transform(from);
     to = trans.getTarget();
   }
 
