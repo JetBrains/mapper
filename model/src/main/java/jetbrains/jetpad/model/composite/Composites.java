@@ -16,7 +16,7 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 
 import java.util.*;
 
@@ -428,14 +428,14 @@ public class Composites {
 
   public static <CompositeT extends NavComposite<CompositeT>> CompositeT next(CompositeT c, Predicate<CompositeT> p) {
     for (CompositeT next : nextNavOrder(c)) {
-      if (p.apply(next)) return next;
+      if (p.test(next)) return next;
     }
     return null;
   }
 
   public static <CompositeT extends NavComposite<CompositeT>> CompositeT prev(CompositeT v, Predicate<CompositeT> p) {
     for (CompositeT prev : prevNavOrder(v)) {
-      if (p.apply(prev)) return prev;
+      if (p.test(prev)) return prev;
     }
     return null;
   }

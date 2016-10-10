@@ -15,9 +15,14 @@
  */
 package jetbrains.jetpad.base;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class Functions {
+
+  private static final Predicate<?> FALSE_PREDICATE = t -> false;
+  private static final Predicate<?> TRUE_PREDICATE = t -> true;
+
   private Functions() { }
 
   public static <T> Supplier<T> constantSupplier(T value) {
@@ -26,6 +31,16 @@ public final class Functions {
 
   public static <T> Supplier<T> memorize(Supplier<T> supplier) {
     return new Memo<>(supplier);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Predicate<T> alwaysTrue() {
+    return (Predicate<T>) TRUE_PREDICATE;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Predicate<T> alwaysFalse() {
+    return (Predicate<T>) FALSE_PREDICATE;
   }
 
   private static class Memo<T> implements Supplier<T> {

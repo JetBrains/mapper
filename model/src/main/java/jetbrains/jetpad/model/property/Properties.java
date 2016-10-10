@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.property;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
@@ -27,6 +26,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class Properties {
@@ -34,33 +34,21 @@ public class Properties {
   public static final ReadableProperty<Boolean> FALSE = Properties.constant(Boolean.FALSE);
 
   public static ReadableProperty<Boolean> not(ReadableProperty<Boolean> prop) {
-    return map(prop, new Function<Boolean, Boolean>() {
-      @Override
-      public Boolean apply(Boolean s) {
+    return map(prop,
+      s -> {
         if (s == null) {
           return null;
         }
         return !s;
-      }
-    });
+      });
   }
 
   public static <ValueT> ReadableProperty<Boolean> notNull(ReadableProperty<ValueT> prop) {
-    return map(prop, new Function<ValueT, Boolean>() {
-      @Override
-      public Boolean apply(ValueT v) {
-        return v != null;
-      }
-    });
+    return map(prop, v -> v != null);
   }
 
   public static <ValueT> ReadableProperty<Boolean> isNull(ReadableProperty<ValueT> prop) {
-    return map(prop, new Function<ValueT, Boolean>() {
-      @Override
-      public Boolean apply(ValueT v) {
-        return v == null;
-      }
-    });
+    return map(prop, v -> v == null);
   }
 
   public static ReadableProperty<Boolean> startsWith(final ReadableProperty<String> string, final ReadableProperty<String> prefix) {
@@ -174,15 +162,12 @@ public class Properties {
   }
 
   public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final java.util.function.Function<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
-    final Supplier<TargetT> calc = new Supplier<TargetT>() {
-      @Override
-      public TargetT get() {
-        SourceT value = source.get();
-        if (value == null) return nullValue;
-        ReadableProperty<TargetT> prop = fun.apply(value);
-        if (prop == null) return null;
-        return prop.get();
-      }
+    final Supplier<TargetT> calc = () -> {
+      SourceT value = source.get();
+      if (value == null) return nullValue;
+      ReadableProperty<TargetT> prop = fun.apply(value);
+      if (prop == null) return null;
+      return prop.get();
     };
 
     return new BaseDerivedProperty<TargetT>(null) {
@@ -246,15 +231,12 @@ public class Properties {
   }
 
   public static <SourceT, TargetT> Property<TargetT> selectRw(final ReadableProperty<SourceT> source, final java.util.function.Function<SourceT, Property<TargetT>> fun) {
-    final Supplier<TargetT> calc = new Supplier<TargetT>() {
-      @Override
-      public TargetT get() {
-        SourceT value = source.get();
-        if (value == null) return null;
-        ReadableProperty<TargetT> prop = fun.apply(value);
-        if (prop == null) return null;
-        return prop.get();
-      }
+    final Supplier<TargetT> calc = () -> {
+      SourceT value = source.get();
+      if (value == null) return null;
+      ReadableProperty<TargetT> prop = fun.apply(value);
+      if (prop == null) return null;
+      return prop.get();
     };
 
     class MyProperty extends BaseDerivedProperty<TargetT> implements Property<TargetT> {
@@ -368,21 +350,11 @@ public class Properties {
   }
 
   public static <ValueT> ReadableProperty<Boolean> same(final ReadableProperty<ValueT> prop, final ValueT value) {
-    return map(prop, new Function<ValueT, Boolean>() {
-      @Override
-      public Boolean apply(ValueT s) {
-        return s == value;
-      }
-    });
+    return map(prop, s -> s == value);
   }
 
   public static <ValueT> ReadableProperty<Boolean> equals(final ReadableProperty<ValueT> prop, final ValueT value) {
-    return map(prop, new Function<ValueT, Boolean>() {
-      @Override
-      public Boolean apply(ValueT s) {
-        return Objects.equal(value, s);
-      }
-    });
+    return map(prop, s -> Objects.equal(value, s));
   }
 
   public static <ValueT> ReadableProperty<Boolean> equals(final ReadableProperty<? extends ValueT> p1, final ReadableProperty<? extends ValueT> p2) {
@@ -507,23 +479,13 @@ public class Properties {
   public static <ItemT> ReadableProperty<Integer> indexOf(
       final ObservableList<ItemT> collection,
       final ReadableProperty<ItemT> item) {
-    return simplePropertyWithCollection(collection, item, new Supplier<Integer>() {
-      @Override
-      public Integer get() {
-        return collection.indexOf(item.get());
-      }
-    });
+    return simplePropertyWithCollection(collection, item, () -> collection.indexOf(item.get()));
   }
 
   public static <ItemT> ReadableProperty<Boolean> contains(
       final ObservableCollection<ItemT> collection,
       final ReadableProperty<ItemT> item) {
-    return simplePropertyWithCollection(collection, item, new Supplier<Boolean>() {
-      @Override
-      public Boolean get() {
-        return collection.contains(item.get());
-      }
-    });
+    return simplePropertyWithCollection(collection, item, () -> collection.contains(item.get()));
   }
 
   public static <ItemT, T> ReadableProperty<T> simplePropertyWithCollection(
@@ -699,7 +661,7 @@ public class Properties {
     return new DerivedProperty<Boolean>(source) {
       @Override
       public Boolean doGet() {
-        return validator.apply(source.get());
+        return validator.test(source.get());
       }
 
       @Override
@@ -720,7 +682,7 @@ public class Properties {
       @Override
       public ValueT doGet() {
         ValueT sourceValue = source.get();
-        if (validator.apply(sourceValue)) {
+        if (validator.test(sourceValue)) {
           myLastValid = sourceValue;
         }
         return myLastValid;
@@ -728,7 +690,7 @@ public class Properties {
 
       @Override
       public void set(ValueT value) {
-        if (!validator.apply(value)) {
+        if (!validator.test(value)) {
           return;
         }
         source.set(value);
@@ -834,7 +796,7 @@ public class Properties {
             if (event.getIndex() != 0) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), event.getNewItem()));
+            handler.onEvent(new PropertyChangeEvent<>(event.getOldItem(), event.getNewItem()));
           }
 
           @Override
