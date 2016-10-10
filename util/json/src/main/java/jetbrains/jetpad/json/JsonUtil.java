@@ -16,9 +16,7 @@
 package jetbrains.jetpad.json;
 
 import com.google.common.primitives.Chars;
-import com.sun.prism.es2.ES2Pipeline;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
