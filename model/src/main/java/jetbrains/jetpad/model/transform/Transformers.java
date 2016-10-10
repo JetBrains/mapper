@@ -347,7 +347,7 @@ public class Transformers {
       @Override
       public Transformation<CollectionT, ObservableList<ItemT>> transform(CollectionT from) {
         //tree list has much better asymptotics of insert
-        return transform(from, new ObservableTreeList<ItemT>());
+        return transform(from, new ObservableArrayList<ItemT>());
       }
 
       @Override
