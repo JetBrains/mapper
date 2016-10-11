@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.collections.list;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class TreeList<T> extends AbstractList<T> {
