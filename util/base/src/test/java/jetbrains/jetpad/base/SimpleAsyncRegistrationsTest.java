@@ -83,7 +83,7 @@ public class SimpleAsyncRegistrationsTest {
 
   @Test
   public void removeSuccessRegistrationAfterSuccess() {
-    Registration reg = async.onSuccess((Handler<Void>) item -> { });
+    Registration reg = async.onSuccess(item -> { });
     async.success(null);
     reg.remove();
   }
