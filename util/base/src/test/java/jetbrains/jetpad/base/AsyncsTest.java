@@ -56,10 +56,10 @@ public class AsyncsTest {
   public void ignoreHandlerException() {
     SimpleAsync<Integer> async = new SimpleAsync<>();
     Async<Integer> res = async.map(input -> input + 1);
-    res.onSuccess((Handler<Integer>) item -> {
+    res.onSuccess(item -> {
       throw new IllegalArgumentException();
     });
-    res.onFailure((Handler<Throwable>) item -> fail());
+    res.onFailure(item -> fail());
     async.success(1);
   }
 
