@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.mapper;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Properties;
@@ -27,6 +26,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Function;
 
 public class TransformingSynchronizerTest extends BaseTestCase {
   private ObservableList<String> source;

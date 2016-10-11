@@ -15,45 +15,50 @@
  */
 package jetbrains.jetpad.base;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class Functions {
 
-  private static final Predicate<?> FALSE_PREDICATE = t -> false;
   private static final Predicate<?> TRUE_PREDICATE = t -> true;
+  private static final Predicate<?> FALSE_PREDICATE = t -> false;
 
   private Functions() { }
 
-  public static <T> Supplier<T> constantSupplier(T value) {
+  public static <ItemT> Supplier<ItemT> constantSupplier(ItemT value) {
     return () -> value;
   }
 
-  public static <T> Supplier<T> memorize(Supplier<T> supplier) {
+  public static <ItemT> Supplier<ItemT> memorize(Supplier<ItemT> supplier) {
     return new Memo<>(supplier);
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> Predicate<T> alwaysTrue() {
-    return (Predicate<T>) TRUE_PREDICATE;
+  public static <ArgT> Predicate<ArgT> alwaysTrue() {
+    return (Predicate<ArgT>) TRUE_PREDICATE;
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> Predicate<T> alwaysFalse() {
-    return (Predicate<T>) FALSE_PREDICATE;
+  public static <ArgT> Predicate<ArgT> alwaysFalse() {
+    return (Predicate<ArgT>) FALSE_PREDICATE;
   }
 
-  private static class Memo<T> implements Supplier<T> {
-    private final Supplier<T> mySupplier;
-    private T myCachedValue = null;
+  public static <ArgT, ResultT> Function<ArgT, ResultT> constant(ResultT result) {
+    return a -> result;
+  }
+
+  private static class Memo<ItemT> implements Supplier<ItemT> {
+    private final Supplier<ItemT> mySupplier;
+    private ItemT myCachedValue = null;
     private boolean myCached = false;
 
-    public Memo(Supplier<T> supplier) {
+    public Memo(Supplier<ItemT> supplier) {
       mySupplier = supplier;
     }
 
     @Override
-    public T get() {
+    public ItemT get() {
       if (!myCached) {
         myCachedValue = mySupplier.get();
         myCached = true;

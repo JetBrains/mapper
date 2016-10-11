@@ -15,9 +15,8 @@
  */
 package jetbrains.jetpad.base;
 
-import com.google.common.base.Function;
-
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   private final SimpleAsync<ItemT> myAsync;

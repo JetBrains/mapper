@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.property;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
@@ -26,6 +25,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -157,11 +157,11 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final java.util.function.Function<? super SourceT, ReadableProperty<TargetT>> fun) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Function<? super SourceT, ReadableProperty<TargetT>> fun) {
     return select(source, fun, null);
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final java.util.function.Function<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Function<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
     final Supplier<TargetT> calc = () -> {
       SourceT value = source.get();
       if (value == null) return nullValue;
@@ -230,7 +230,7 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> Property<TargetT> selectRw(final ReadableProperty<SourceT> source, final java.util.function.Function<SourceT, Property<TargetT>> fun) {
+  public static <SourceT, TargetT> Property<TargetT> selectRw(final ReadableProperty<SourceT> source, final Function<SourceT, Property<TargetT>> fun) {
     final Supplier<TargetT> calc = () -> {
       SourceT value = source.get();
       if (value == null) return null;
@@ -311,7 +311,7 @@ public class Properties {
     return new MyProperty();
   }
 
-  public static <EventT, ValueT> EventSource<EventT> selectEvent(final ReadableProperty<ValueT> prop, final java.util.function.Function<ValueT, EventSource<EventT>> selector) {
+  public static <EventT, ValueT> EventSource<EventT> selectEvent(final ReadableProperty<ValueT> prop, final Function<ValueT, EventSource<EventT>> selector) {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {

@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.transform;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import org.junit.Before;
@@ -32,12 +31,7 @@ public class SelectTest {
   public void setup() {
     from = new ObservableHashSet<>();
     to = new ObservableHashSet<>();
-    select = Transformers.select(new Function<Integer, String>() {
-      @Override
-      public String apply(Integer input) {
-        return Integer.toString(input);
-      }
-    });
+    select = Transformers.select(input -> Integer.toString(input));
   }
 
   @Test

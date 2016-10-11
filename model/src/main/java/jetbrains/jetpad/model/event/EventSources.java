@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.event;
 
-import com.google.common.base.Function;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
@@ -23,6 +22,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class EventSources {
