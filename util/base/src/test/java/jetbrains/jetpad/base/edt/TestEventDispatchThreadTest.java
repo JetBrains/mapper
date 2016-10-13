@@ -61,4 +61,16 @@ public class TestEventDispatchThreadTest {
     edt.executeUpdates(2);
     Mockito.verify(r, times(2)).run();
   }
+
+  @Test(expected = IllegalStateException.class)
+  public void killFromTask() {
+    edt.schedule(() -> edt.kill());
+    edt.executeUpdates();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void finishFromTask() {
+    edt.schedule(() -> edt.finish());
+    edt.executeUpdates();
+  }
 }

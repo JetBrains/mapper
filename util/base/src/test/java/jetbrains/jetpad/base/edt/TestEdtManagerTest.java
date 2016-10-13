@@ -69,4 +69,16 @@ public class TestEdtManagerTest {
     manager.finish();
     manager.getEdt().schedule(r);
   }
+
+  @Test(expected = IllegalStateException.class)
+  public void killFromTask() {
+    manager.getEdt().schedule(() -> manager.kill());
+    manager.getEdt().executeUpdates();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void finishFromTask() {
+    manager.getEdt().schedule(() -> manager.finish());
+    manager.getEdt().executeUpdates();
+  }
 }

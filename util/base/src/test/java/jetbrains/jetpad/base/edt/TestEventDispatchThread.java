@@ -28,6 +28,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   private int myModificationCount;
   private List<RunnableRecord> myRecords = new ArrayList<>();
   private boolean myFinished = false;
+  private boolean myRunning = false;
 
   public TestEventDispatchThread() {
     this("");
@@ -86,9 +87,11 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   private void run(List<RunnableRecord> current) {
+    myRunning = true;
     for (RunnableRecord r : current) {
       r.myRunnable.run();
     }
+    myRunning = false;
   }
 
   private List<RunnableRecord> getCurrentRecords() {
@@ -162,14 +165,22 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     }
   }
 
+  private void checkInsideTask() {
+    if (myRunning) {
+      throw new IllegalStateException(this + " is running a task");
+    }
+  }
+
   void finish() {
     checkCanStop();
+    checkInsideTask();
     run(getCurrentRecords());
     shutdown();
   }
 
   void kill() {
     checkCanStop();
+    checkInsideTask();
     shutdown();
   }
 
