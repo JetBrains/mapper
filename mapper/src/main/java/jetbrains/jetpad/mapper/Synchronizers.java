@@ -24,7 +24,6 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyBinding;
-import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.WritableProperty;
 import jetbrains.jetpad.model.transform.Transformer;
@@ -111,12 +110,7 @@ public class Synchronizers {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
         target.set(source.get());
-        return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
-          @Override
-          public void onEvent(PropertyChangeEvent<ValueT> event) {
-            target.set(event.getNewValue());
-          }
-        });
+        return source.addHandler(event -> target.set(event.getNewValue()));
       }
     };
   }
@@ -228,12 +222,7 @@ public class Synchronizers {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
         r.run();
-        return src.addHandler(new EventHandler<Object>() {
-          @Override
-          public void onEvent(Object event) {
-            r.run();
-          }
-        });
+        return src.addHandler((EventHandler<Object>) event -> r.run());
       }
     };
   }
@@ -248,12 +237,7 @@ public class Synchronizers {
     return new RegistrationSynchronizer() {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
-        return src.addHandler(new EventHandler<EventT>() {
-          @Override
-          public void onEvent(EventT event) {
-            h.accept(event);
-          }
-        });
+        return src.addHandler(h::accept);
       }
     };
   }
