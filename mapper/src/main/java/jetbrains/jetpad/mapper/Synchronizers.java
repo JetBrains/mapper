@@ -32,11 +32,14 @@ import jetbrains.jetpad.model.transform.Transformer;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 /**
  * Utility class for synchronizer creation
  */
 public class Synchronizers {
+  private static final Logger LOG = Logger.getLogger(Synchronizers.class.getName());
+
   public static <SourceT, TargetT>
   SimpleRoleSynchronizer<SourceT, TargetT> forSimpleRole(
       Mapper<?, ?> mapper,
@@ -251,6 +254,28 @@ public class Synchronizers {
             h.accept(event);
           }
         });
+      }
+    };
+  }
+
+  public static Synchronizer measuringSynchronizer(String name, Synchronizer sync) {
+    return new Synchronizer() {
+      @Override
+      public void attach(SynchronizerContext ctx) {
+        long start = System.currentTimeMillis();
+        sync.attach(ctx);
+        log("attach", start);
+      }
+
+      @Override
+      public void detach() {
+        long start = System.currentTimeMillis();
+        sync.detach();
+        log("detach", start);
+      }
+
+      private void log(String event, long start) {
+        LOG.info(name + ": " + event + " in " + (System.currentTimeMillis() - start) + " ms");
       }
     };
   }
