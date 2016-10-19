@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
+import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +39,18 @@ public class AsyncsPairTest extends BaseTestCase {
   private void initPair(Async<Integer> first, Async<String> second) {
     pair = Asyncs.pair(first, second);
     initReg = pair.onResult(
-      item -> result = item,
-      item -> error = item);
+        new Consumer<Pair<Integer, String>>() {
+          @Override
+          public void accept(Pair<Integer, String> item) {
+            result = item;
+          }
+        },
+        new Consumer<Throwable>() {
+          @Override
+          public void accept(Throwable item) {
+            error = item;
+          }
+        });
   }
 
   @Test

@@ -17,8 +17,8 @@ package jetbrains.jetpad.base;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Consumer;
+import jetbrains.jetpad.base.function.Function;
 
 public final class SimpleAsync<ItemT> implements Async<ItemT> {
   private ItemT mySuccessItem = null;

@@ -16,7 +16,7 @@
 package jetbrains.jetpad.base;
 
 import java.util.List;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 public class Persisters {
   private static final Persister<String> STRING_PERSISTER = new Persister<String>() {

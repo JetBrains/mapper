@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
@@ -33,8 +34,13 @@ public class FilterByConstantTest {
 
   @Before
   public void setup() {
-    Transformer<ObservableSet<String>, ObservableCollection<String>> trans = Transformers.filterByConstant(input -> input.startsWith("a"));
-    Transformation<ObservableSet<String>, ObservableCollection<String>> transformation = trans.transform(items, target);
+    Transformer<ObservableSet<String>, ObservableCollection<String>> trans = Transformers.filterByConstant(new Function<String, Boolean>() {
+      @Override
+      public Boolean apply(String input) {
+        return input.startsWith("a");
+      }
+    });
+    final Transformation<ObservableSet<String>, ObservableCollection<String>> transformation = trans.transform(items, target);
     myReg = new Registration() {
       @Override
       protected void doRemove() {

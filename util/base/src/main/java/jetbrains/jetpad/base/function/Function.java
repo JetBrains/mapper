@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.property;
+package jetbrains.jetpad.base.function;
 
-import jetbrains.jetpad.model.event.EventSource;
-
-import jetbrains.jetpad.base.function.Supplier;
-
-/**
- * An object which gives access to a value stored somewhere as well as ability to listen to changes to it.
- */
-public interface ReadableProperty<ValueT> extends EventSource<PropertyChangeEvent<ValueT>>, Supplier<ValueT> {
-  String getPropExpr();
+public interface Function<ValueT, ResultT> {
+    ResultT apply(ValueT value);
 }

@@ -27,14 +27,19 @@ import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CollectionTransformationTest {
-  private static final Function<MyObject, ReadableProperty<Boolean>> IS_A = input -> Properties.equals(input.name, "a");
+  private static final Function<MyObject, ReadableProperty<Boolean>> IS_A = new Function<MyObject, ReadableProperty<Boolean>>() {
+    @Override
+    public ReadableProperty<Boolean> apply(MyObject input) {
+      return Properties.equals(input.name, "a");
+    }
+  };
 
   private ObservableSet<MyObject> from = new ObservableHashSet<>();
   private ObservableSet<MyObject> to = new ObservableHashSet<>();
@@ -180,16 +185,29 @@ public class CollectionTransformationTest {
 
   @Test
   public void flattenWithTransformer() {
-    Function<MyObject, ObservableCollection<String>> f = input -> {
-      ObservableHashSet<String> s = new ObservableHashSet<>();
-      s.add(input.name.get() + "1");
-      s.add(input.name.get() + "2");
-      return s;
+    Function<MyObject, ObservableCollection<String>> f = new Function<MyObject, ObservableCollection<String>>() {
+      @Override
+      public ObservableCollection<String> apply(MyObject input) {
+        ObservableHashSet<String> s = new ObservableHashSet<>();
+        s.add(input.name.get() + "1");
+        s.add(input.name.get() + "2");
+        return s;
+      }
     };
 
     Transformer<ObservableCollection<String>, ObservableCollection<MyObject>> t = Transformers.oneToOne(
-      input -> new MyObject(input),
-      input -> input.name.get()
+        new Function<String, MyObject>() {
+          @Override
+          public MyObject apply(String input) {
+            return new MyObject(input);
+          }
+        },
+        new Function<MyObject, String>() {
+          @Override
+          public String apply(MyObject input) {
+            return input.name.get();
+          }
+        }
     );
 
     Transformer<ObservableCollection<MyObject>, ObservableCollection<MyObject>> flatten = Transformers.flatten(f, t);
@@ -309,7 +327,12 @@ public class CollectionTransformationTest {
   private Transformation<ObservableCollection<MyObject>, ObservableCollection<MyObject>> initForFlattenTest() {
     to.add(new MyObject("b"));
     to.add(new MyObject("c"));
-    Function<MyObject, ObservableCollection<MyObject>> selector = source -> to;
+    Function<MyObject, ObservableCollection<MyObject>> selector = new Function<MyObject, ObservableCollection<MyObject>>() {
+      @Override
+      public ObservableCollection<MyObject> apply(MyObject source) {
+        return to;
+      }
+    };
     return Transformers.flatten(selector).transform(from, to);
   }
 

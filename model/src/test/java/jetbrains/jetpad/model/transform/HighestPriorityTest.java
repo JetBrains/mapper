@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.transform;
 
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import org.junit.Before;
@@ -34,7 +35,12 @@ public class HighestPriorityTest {
   public void init() {
     from = new ObservableArrayList<>();
     from.addAll(Arrays.asList("a", "b", "cc"));
-    trans = Transformers.highestPriority(String::length).transform(from);
+    trans = Transformers.highestPriority(new Function<String, Integer>() {
+      @Override
+      public Integer apply(String value) {
+        return value.length();
+      }
+    }).transform(from);
     to = trans.getTarget();
   }
 

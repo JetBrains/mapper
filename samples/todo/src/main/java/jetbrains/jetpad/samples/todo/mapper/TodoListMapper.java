@@ -26,6 +26,7 @@ import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.transform.Transformer;
 import jetbrains.jetpad.model.transform.Transformers;
 import jetbrains.jetpad.samples.todo.model.TodoList;
@@ -147,8 +148,18 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
     final Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnActive;
     final Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnComplete;
 
-    xfnComplete = Transformers.listFilter(f -> f.completed);
-    xfnActive = Transformers.listFilter(f -> not(f.completed));
+    xfnComplete = Transformers.listFilter(new jetbrains.jetpad.base.function.Function<TodoListItem, ReadableProperty<Boolean>>() {
+      @Override
+      public ReadableProperty<Boolean> apply(TodoListItem f) {
+        return f.completed;
+      }
+    });
+    xfnActive = Transformers.listFilter(new jetbrains.jetpad.base.function.Function<TodoListItem, ReadableProperty<Boolean>>() {
+      @Override
+      public ReadableProperty<Boolean> apply(TodoListItem f) {
+        return not(f.completed);
+      }
+    });
 
     // we don't want to create a new synchronizer every time a different filter is applied,
     // so create all of them at once, and dynamically select which one to display

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 public class TransformingSynchronizerTest extends BaseTestCase {
   private ObservableList<String> source;

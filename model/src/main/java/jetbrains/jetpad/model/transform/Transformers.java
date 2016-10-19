@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.transform;
 
+import jetbrains.jetpad.base.Functions;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -41,8 +42,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Supplier;
 
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
@@ -472,11 +473,11 @@ public class Transformers {
     return new BaseTransformer<CollectionT, ObservableCollection<ItemT>>() {
       @Override
       public Transformation<CollectionT, ObservableCollection<ItemT>> transform(CollectionT from) {
-        return transform(from, new ObservableArrayList<>());
+        return transform(from, new ObservableArrayList<ItemT>());
       }
 
       @Override
-      public Transformation<CollectionT, ObservableCollection<ItemT>> transform(CollectionT from, ObservableCollection<ItemT> to) {
+      public Transformation<CollectionT, ObservableCollection<ItemT>> transform(final CollectionT from, final ObservableCollection<ItemT> to) {
         return new Transformation<CollectionT, ObservableCollection<ItemT>>() {
           private Registration myReg;
 
@@ -782,7 +783,7 @@ public class Transformers {
 
   public static <ItemT>
   Transformer<ObservableList<ObservableList<? extends ItemT>>, ObservableList<ItemT>> flattenList() {
-    return flattenList(Function.<ObservableList<? extends ItemT>>identity());
+    return flattenList(Functions.<ObservableList<? extends ItemT>>identity());
   }
 
   public static <SourceT, TargetT>

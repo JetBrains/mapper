@@ -27,29 +27,48 @@ import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Consumer;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Supplier;
 
 @GwtCompatible
 public class Asyncs {
   public static boolean isSucceeded(Async<?> async) {
     final Value<Boolean> succeeded = new Value<>(false);
-    async.onSuccess(item -> succeeded.set(true)).remove();
+    async.onSuccess(new Consumer<Object>() {
+      @Override
+      public void accept(Object value) {
+        succeeded.set(true);
+      }
+    }).remove();
     return succeeded.get();
   }
 
   public static boolean isFailed(Async<?> async) {
     final Value<Boolean> failed = new Value<>(false);
-    async.onFailure(t -> failed.set(true)).remove();
+    async.onFailure(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable t) {
+        failed.set(true);
+      }
+    }).remove();
     return failed.get();
   }
 
   public static boolean isFinished(Async<?> async) {
     final Value<Boolean> finished = new Value<>(false);
-    async.onResult(
-      item -> finished.set(true),
-      failure -> finished.set(true)).remove();
+    async.onResult(new Consumer<Object>() {
+        @Override
+        public void accept(Object item) {
+          finished.set(true);
+        }
+      },
+      new Consumer<Throwable>() {
+        @Override
+        public void accept(Throwable failure) {
+          finished.set(true);
+        }
+      }).remove();
     return finished.get();
   }
 
@@ -125,45 +144,64 @@ public class Asyncs {
   @Deprecated
   public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, ? extends TargetT> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async.onResult(
-      item -> {
-        TargetT apply;
-        try {
-          apply = f.apply(item);
-        } catch (Exception e) {
-          result.failure(e);
-          return;
+    async.onResult(new Consumer<AsyncResultT>() {
+        @Override
+        public void accept(AsyncResultT item) {
+          TargetT apply;
+          try {
+            apply = f.apply(item);
+          } catch (Exception e) {
+            result.failure(e);
+            return;
+          }
+          result.success(apply);
         }
-        result.success(apply);
       },
-      result::failure);
+      new Consumer<Throwable>() {
+        @Override
+        public void accept(Throwable throwable) {
+          result.failure(throwable);
+        }
+      });
     return result;
   }
 
   @Deprecated
   public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<? super SourceT, Async<TargetT>> f) {
     final SimpleAsync<TargetT> result = new SimpleAsync<>();
-    async.onResult(
-      item -> {
-        Async<TargetT> async1;
-        try {
-          async1 = f.apply(item);
-        } catch (Exception e) {
-          result.failure(e);
-          return;
-        }
-        if (async1 == null) {
-          result.success(null);
-        } else {
-          delegate(async1, result);
+    async.onResult(new Consumer<SourceT>() {
+        @Override
+        public void accept(SourceT item) {
+          Async<TargetT> async1;
+          try {
+            async1 = f.apply(item);
+          } catch (Exception e) {
+            result.failure(e);
+            return;
+          }
+          if (async1 == null) {
+            result.success(null);
+          } else {
+            delegate(async1, result);
+          }
         }
       },
-      result::failure);
+      new Consumer<Throwable>() {
+        @Override
+        public void accept(Throwable throwable) {
+          result.failure(throwable);
+        }
+      });
     return result;
   }
 
   public static <FirstT, SecondT> Async<SecondT> seq(Async<FirstT> first, final Async<SecondT> second) {
-    return select(first, input -> second);
+    return select(first, new Function<FirstT, Async<SecondT>>() {
+      @Override
+      public Async<SecondT> apply(FirstT input) {
+        return second;
+      }
+    });
   }
 
   public static Async<Void> parallel(final Async<?>... asyncs) {
@@ -193,15 +231,20 @@ public class Asyncs {
     };
 
     for (Async<?> a : asyncs) {
-      a.onResult(
-        item -> {
-          inProgress.set(inProgress.get() - 1);
-          checkTermination.run();
+      a.onResult(new Consumer<Object>() {
+          @Override
+          public void accept(Object item) {
+            inProgress.set(inProgress.get() - 1);
+            checkTermination.run();
+          }
         },
-        failure -> {
-          exceptions.add(failure);
-          inProgress.set(inProgress.get() - 1);
-          checkTermination.run();
+        new Consumer<Throwable>() {
+          @Override
+          public void accept(Throwable failure) {
+            exceptions.add(failure);
+            inProgress.set(inProgress.get() - 1);
+            checkTermination.run();
+          }
         });
     }
 
@@ -239,15 +282,21 @@ public class Asyncs {
     for (Async<ItemT> async : asyncs) {
       final int counter = i++;
       async.onResult(
-        item -> {
-          succeeded.put(counter, item);
-          inProgress.set(inProgress.get() - 1);
-          checkTermination.run();
+        new Consumer<ItemT>() {
+          @Override
+          public void accept(ItemT item) {
+            succeeded.put(counter, item);
+            inProgress.set(inProgress.get() - 1);
+            checkTermination.run();
+          }
         },
-        failure -> {
-          exceptions.add(failure);
-          inProgress.set(inProgress.get() - 1);
-          checkTermination.run();
+        new Consumer<Throwable>() {
+          @Override
+          public void accept(Throwable failure) {
+            exceptions.add(failure);
+            inProgress.set(inProgress.get() - 1);
+            checkTermination.run();
+          }
         });
     }
 
@@ -261,21 +310,41 @@ public class Asyncs {
   public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
     final SimpleAsync<ResultT> result = new SimpleAsync<>();
     Async<ResultT> async;
+    final Consumer<ResultT> successConsumer = new Consumer<ResultT>() {
+      @Override
+      public void accept(ResultT item) {
+        result.success(item);
+      }
+    };
     try {
       async = s.get();
     } catch (Exception e) {
-      untilSuccess(s).onSuccess(result::success);
+      untilSuccess(s).onSuccess(successConsumer);
       return result;
     }
 
-    async.onResult(
-      result::success,
-      failure -> untilSuccess(s).onSuccess(result::success));
+    async.onResult(successConsumer,
+      new Consumer<Throwable>() {
+        @Override
+        public void accept(Throwable failure) {
+          untilSuccess(s).onSuccess(successConsumer);
+        }
+      });
     return result;
   }
 
   public static <ValueT> Registration delegate(Async<? extends ValueT> from, final SimpleAsync<? super ValueT> to) {
-    return from.onResult(to::success, to::failure);
+    return from.onResult(new Consumer<ValueT>() {
+        @Override
+        public void accept(ValueT item) {
+          to.success(item);
+        }
+      }, new Consumer<Throwable>() {
+        @Override
+        public void accept(Throwable throwable) {
+          to.failure(throwable);
+        }
+      });
   }
 
   public static <FirstT, SecondT> Async<Pair<FirstT, SecondT>> pair(final Async<FirstT> first, Async<SecondT> second) {
@@ -284,14 +353,22 @@ public class Asyncs {
     final PairedAsync<FirstT> firstPaired = new PairedAsync<>(first);
     final PairedAsync<SecondT> secondPaired = new PairedAsync<>(second);
     proxy.onResult(
-      item -> {
-        if (firstPaired.mySucceeded && secondPaired.mySucceeded) {
-          res.success(new Pair<>(firstPaired.myItem, secondPaired.myItem));
-        } else {
-          res.failure(new Throwable("internal error in pair async"));
-        }
-      },
-      res::failure);
+        new Consumer<Void>() {
+          @Override
+          public void accept(Void item) {
+            if (firstPaired.mySucceeded && secondPaired.mySucceeded) {
+              res.success(new Pair<>(firstPaired.myItem, secondPaired.myItem));
+            } else {
+              res.failure(new Throwable("internal error in pair async"));
+            }
+          }
+        },
+        new Consumer<Throwable>() {
+          @Override
+          public void accept(Throwable throwable) {
+            res.failure(throwable);
+          }
+        });
     firstPaired.pair(secondPaired, proxy);
     secondPaired.pair(firstPaired, proxy);
     return res;
@@ -325,14 +402,20 @@ public class Asyncs {
     final AtomicReference<ResultT> result = new AtomicReference<>(null);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
     async.onResult(
-      item -> {
-        result.set(item);
-        latch.countDown();
-      },
-      failure -> {
-        error.set(failure);
-        latch.countDown();
-      });
+        new Consumer<ResultT>() {
+          @Override
+          public void accept(ResultT item) {
+            result.set(item);
+            latch.countDown();
+          }
+        },
+        new Consumer<Throwable>() {
+          @Override
+          public void accept(Throwable failure) {
+            error.set(failure);
+            latch.countDown();
+          }
+        });
     try {
       awaiter.await(latch);
     } catch (InterruptedException e) {
@@ -368,20 +451,26 @@ public class Asyncs {
         return;
       }
       myReg = myAsync.onResult(
-        item -> {
-          myItem = item;
-          mySucceeded = true;
-          if (anotherInfo.mySucceeded) {
-            async.success(null);
-          }
-        },
-        failure -> {
-          //reg == null can happen in case if myAsync fails instantly
-          if (anotherInfo.myReg != null) {
-            anotherInfo.myReg.remove();
-          }
-          async.failure(failure);
-        });
+          new Consumer<ItemT>() {
+            @Override
+            public void accept(ItemT item) {
+              myItem = item;
+              mySucceeded = true;
+              if (anotherInfo.mySucceeded) {
+                async.success(null);
+              }
+            }
+          },
+          new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable failure) {
+              //reg == null can happen in case if myAsync fails instantly
+              if (anotherInfo.myReg != null) {
+                anotherInfo.myReg.remove();
+              }
+              async.failure(failure);
+            }
+          });
     }
   }
 }

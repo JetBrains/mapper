@@ -16,7 +16,9 @@
 package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ValueProperty;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
@@ -34,7 +36,12 @@ public class SynchonizersTest extends BaseTestCase {
     final Value<Integer> runNum = new Value<>(0);
     Property<Boolean> prop = new ValueProperty<>();
     final Synchronizer synchronizer = Synchronizers.forEventSource(prop,
-      () -> runNum.set(runNum.get() + 1));
+        new Runnable() {
+          @Override
+          public void run() {
+            runNum.set(runNum.get() + 1);
+          }
+        });
 
     Mapper<Void, Void> mapper = new Mapper<Void, Void>(null, null) {
       @Override
@@ -59,7 +66,12 @@ public class SynchonizersTest extends BaseTestCase {
         super.registerSynchronizers(conf);
         conf.add(Synchronizers.forEventSource(
           prop,
-          item -> handled.add(item.getNewValue())));
+            new Consumer<PropertyChangeEvent<Integer>>() {
+              @Override
+              public void accept(PropertyChangeEvent<Integer> item) {
+                handled.add(item.getNewValue());
+              }
+            }));
       }
     };
 

@@ -25,7 +25,7 @@ import jetbrains.jetpad.model.property.ReadableProperty;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableCollection<ItemT>, CollectionT extends ObservableCollection<ItemT>> extends BaseTransformer<CollectionS, CollectionT> {
   private final Function<ItemT, ReadableProperty<Boolean>> myFilterBy;

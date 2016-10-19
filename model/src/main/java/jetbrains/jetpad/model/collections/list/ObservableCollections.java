@@ -23,7 +23,7 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.*;
 
 import java.util.*;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 public class ObservableCollections {
   private static final ObservableList EMPTY_LIST = new AbstractObservableList() {

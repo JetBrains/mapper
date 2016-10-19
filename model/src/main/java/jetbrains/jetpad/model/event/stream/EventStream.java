@@ -20,8 +20,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.EventSources;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Predicate;
 
 /**
  * This class is inspired by different implementations of observable/event streams, including: Rx, RxJava, bacon.js,
@@ -39,26 +39,32 @@ public final class EventStream<EventT> {
 
   public<TargetEventT> EventStream<TargetEventT> map(final Function<? super EventT, ? extends TargetEventT> f) {
     return new EventStream<>(EventSources.map(myEventSource,
-      input -> {
-        if (input.isEvent()) {
-          return EventStreamItem.<TargetEventT>event(f.apply(input.getEvent()));
-        } else if (input.isError()) {
-          return EventStreamItem.error(input.getError());
-        } else {
-          return EventStreamItem.finalItem();
-        }
-      }));
+        new Function<EventStreamItem<EventT>, EventStreamItem<TargetEventT>>() {
+          @Override
+          public EventStreamItem<TargetEventT> apply(EventStreamItem<EventT> input) {
+            if (input.isEvent()) {
+              return EventStreamItem.event(f.apply(input.getEvent()));
+            } else if (input.isError()) {
+              return EventStreamItem.error(input.getError());
+            } else {
+              return EventStreamItem.finalItem();
+            }
+          }
+        }));
   }
 
   public EventStream<EventT> filter(final Predicate<? super EventT> pred) {
     return new EventStream<>(EventSources.filter(myEventSource,
-      input -> {
-        if (input.isEvent()) {
-          return pred.test(input.getEvent());
-        } else {
-          return true;
-        }
-      }));
+        new Predicate<EventStreamItem<EventT>>() {
+          @Override
+          public boolean test(EventStreamItem<EventT> input) {
+            if (input.isEvent()) {
+              return pred.test(input.getEvent());
+            } else {
+              return true;
+            }
+          }
+        }));
   }
 
   public Registration addListener(final EventStreamListener<EventT> l) {

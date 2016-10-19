@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 public class HighestPriorityErrorCasesTest {
   private static final Function<Object, Integer> INCONSISTENT_PRIORITY = new Function<Object, Integer>() {
@@ -34,7 +34,12 @@ public class HighestPriorityErrorCasesTest {
     }
   };
 
-  private static final Function<Object, Integer> NULL_PRIORITY = s -> null;
+  private static final Function<Object, Integer> NULL_PRIORITY = new Function<Object, Integer>() {
+    @Override
+    public Integer apply(Object s) {
+      return null;
+    }
+  };
 
   private ObservableCollection<Object> from;
 
@@ -72,7 +77,12 @@ public class HighestPriorityErrorCasesTest {
   @Test(expected = IllegalStateException.class)
   public void priorityGotNull() {
     final Value<Integer> priorityValue = new Value<>(0);
-    Transformers.highestPriority(o -> priorityValue.get()).transform(from);
+    Transformers.highestPriority(new Function<Object, Integer>() {
+      @Override
+      public Integer apply(Object o) {
+        return priorityValue.get();
+      }
+    }).transform(from);
     Object sample;
     from.addAll(Arrays.asList(sample = new Object(), new Object()));
     priorityValue.set(null);

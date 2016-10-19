@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import org.junit.Test;
 
 import java.util.ConcurrentModificationException;
-import java.util.function.Consumer;
+import jetbrains.jetpad.base.function.Consumer;
 
 public class SimpleAsyncRegistrationsTest {
   private SimpleAsync<Void> async = new SimpleAsync<>();
@@ -54,7 +54,12 @@ public class SimpleAsyncRegistrationsTest {
   @Test(expected = ConcurrentModificationException.class)
   public void removeRegistrationInSuccessHandler() {
     final Value<Registration> regValue = new Value<>();
-    Registration reg = async.onSuccess(item -> regValue.get().remove());
+    Registration reg = async.onSuccess(new Consumer<Void>() {
+      @Override
+      public void accept(Void item) {
+        regValue.get().remove();
+      }
+    });
     regValue.set(reg);
     async.success(null);
   }
@@ -62,7 +67,12 @@ public class SimpleAsyncRegistrationsTest {
   @Test(expected = ConcurrentModificationException.class)
   public void removeRegistrationInFailureHandler() {
     final Value<Registration> regValue = new Value<>();
-    Registration reg = async.onFailure(item -> regValue.get().remove());
+    Registration reg = async.onFailure(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable item) {
+        regValue.get().remove();
+      }
+    });
     regValue.set(reg);
     async.failure(null);
   }
@@ -70,41 +80,65 @@ public class SimpleAsyncRegistrationsTest {
   @Test
   public void addSuccessHandlerAfterFailure() {
     async.failure(new Throwable());
-    Registration reg = async.onSuccess(item -> { });
+    Registration reg = async.onSuccess(new Consumer<Void>() {
+      @Override
+      public void accept(Void item) {
+      }
+    });
     reg.remove();
   }
 
   @Test
   public void addFailureHandlerAfterSuccess() {
     async.success(null);
-    Registration reg = async.onFailure(item -> { });
+    Registration reg = async.onFailure(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable item) {
+      }
+    });
     reg.remove();
   }
 
   @Test
   public void removeSuccessRegistrationAfterSuccess() {
-    Registration reg = async.onSuccess(item -> { });
+    Registration reg = async.onSuccess(new Consumer<Void>() {
+      @Override
+      public void accept(Void item) {
+      }
+    });
     async.success(null);
     reg.remove();
   }
 
   @Test
   public void removeSuccessRegistrationAfterFailure() {
-    Registration reg = async.onSuccess(item -> { });
+    Registration reg = async.onSuccess(new Consumer<Void>() {
+      @Override
+      public void accept(Void item) {
+      }
+    });
     async.failure(null);
     reg.remove();
   }
 
   @Test
   public void removeFailureRegistrationAfterSuccess() {
-    Registration reg = async.onFailure(item -> { });
+    Registration reg = async.onFailure(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable item) {
+      }
+    });
     async.success(null);
     reg.remove();
   }
 
   @Test
   public void removeFailureRegistrationAfterFailure() {
-    Registration reg = async.onFailure(item -> { });
+    Registration reg = async.onFailure(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable item) {
+      }
+    });
     async.failure(null);
     reg.remove();
   }
@@ -114,8 +148,11 @@ public class SimpleAsyncRegistrationsTest {
   }
 
   private <ItemT> Consumer<ItemT> throwingHandler() {
-    return item -> {
-      throw new RuntimeException();
+    return new Consumer<ItemT>() {
+      @Override
+      public void accept(ItemT item) {
+        throw new RuntimeException();
+      }
     };
   }
 }

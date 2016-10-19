@@ -27,7 +27,7 @@ import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
 
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,14 +35,17 @@ import static org.junit.Assert.assertTrue;
 public class FilterListTest {
   private ObservableArrayList<String> from = new ObservableArrayList<>();
   private ObservableArrayList<String> to = new ObservableArrayList<>();
-  Transformer<ObservableCollection<String>,ObservableList<String>> filter = Transformers.listFilter(s -> {
-    Boolean value;
-    if (s.equals("null")) {
-      value = null;
-    } else {
-      value = s.length() % 2 == 0;
+  Transformer<ObservableCollection<String>,ObservableList<String>> filter = Transformers.listFilter(new Function<String, ReadableProperty<Boolean>>() {
+    @Override
+    public ReadableProperty<Boolean> apply(String s) {
+      Boolean value;
+      if (s.equals("null")) {
+        value = null;
+      } else {
+        value = s.length() % 2 == 0;
+      }
+      return Properties.constant(value);
     }
-    return Properties.constant(value);
   });
   
   @Test
@@ -67,7 +70,12 @@ public class FilterListTest {
   @Test
   public void simultaneousAdd() {
     final Property<Boolean> p = new ValueProperty<>(false);
-    Transformer<ObservableCollection<Object>, ObservableList<Object>> filter = Transformers.listFilter(o -> p);
+    Transformer<ObservableCollection<Object>, ObservableList<Object>> filter = Transformers.listFilter(new Function<Object, ReadableProperty<Boolean>>() {
+      @Override
+      public ReadableProperty<Boolean> apply(Object o) {
+        return p;
+      }
+    });
     ObservableList<Object> source = new ObservableArrayList<>();
     ObservableList<Object> target = filter.transform(source).getTarget();
     source.add("d");
@@ -86,10 +94,15 @@ public class FilterListTest {
   @Test
   public void simultaneousAddRemove() {
     final Property<Boolean> p = new ValueProperty<>(false);
-    Transformer<ObservableCollection<Integer>, ObservableList<Integer>> filter = Transformers.listFilter(i -> new DerivedProperty<Boolean>(p) {
+    Transformer<ObservableCollection<Integer>, ObservableList<Integer>> filter = Transformers.listFilter(new Function<Integer, ReadableProperty<Boolean>>() {
       @Override
-      public Boolean doGet() {
-        return p.get() == (i % 2 == 0);
+      public ReadableProperty<Boolean> apply(final Integer i) {
+        return new DerivedProperty<Boolean>(p) {
+          @Override
+          public Boolean doGet() {
+            return p.get() == (i % 2 == 0);
+          }
+        };
       }
     });
     ObservableList<Integer> source = new ObservableArrayList<>();
@@ -151,7 +164,12 @@ public class FilterListTest {
     createTransformation.addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {
       @Override
       public void onEvent(PropertyChangeEvent<Boolean> event) {
-        Transformers.listFilter((Function<String, ReadableProperty<Boolean>>) s -> filter).transform(from, to);
+        Transformers.listFilter(new Function<String, ReadableProperty<Boolean>>() {
+          @Override
+          public ReadableProperty<Boolean> apply(String s) {
+            return filter;
+          }
+        }).transform(from, to);
       }
     });
     filter.addHandler(new EventHandler<PropertyChangeEvent<Boolean>>() {

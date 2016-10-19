@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
-import java.util.function.Consumer;
+import jetbrains.jetpad.base.function.Consumer;
 
 import static org.junit.Assert.assertTrue;
 
@@ -70,16 +70,29 @@ public class SimpleAsyncTest extends BaseTestCase {
   }
 
   private <ResultT> Consumer<ResultT> throwingHandler() {
-    return item -> {
-      throw new RuntimeException();
+    return new Consumer<ResultT>() {
+      @Override
+      public void accept(ResultT item) {
+        throw new RuntimeException();
+      }
     };
   }
 
   private <ResultT> Consumer<ResultT> succeedingHandler(final SimpleAsync<Void> async) {
-    return item -> async.success(null);
+    return new Consumer<ResultT>() {
+      @Override
+      public void accept(ResultT item) {
+        async.success(null);
+      }
+    };
   }
 
   private <ResultT> Consumer<ResultT> failingHandler(final SimpleAsync<Void> async) {
-    return item -> async.failure(new Throwable());
+    return new Consumer<ResultT>() {
+      @Override
+      public void accept(ResultT item) {
+        async.failure(new Throwable());
+      }
+    };
   }
 }

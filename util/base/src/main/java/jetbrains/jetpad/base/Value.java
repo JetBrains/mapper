@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 /**
  * Mutable container for ValueT. Used mainly to change values from inside of anonymous class/function

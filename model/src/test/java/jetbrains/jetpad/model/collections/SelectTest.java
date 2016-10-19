@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.collections;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableCollections;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -241,13 +242,23 @@ public class SelectTest {
   private ObservableList<String> testList(ReadableProperty<Boolean> src, final ObservableList<String> selected) {
     return ObservableCollections.selectList(
       src,
-      source -> source ? selected : null);
+        new Function<Boolean, ObservableList<String>>() {
+          @Override
+          public ObservableList<String> apply(Boolean source) {
+            return source ? selected : null;
+          }
+        });
   }
 
   private ObservableCollection<String> testCollection(ReadableProperty<Boolean> src, final ObservableCollection<String> selected) {
     return ObservableCollections.selectCollection(
       src,
-      source -> source ? selected : null);
+        new Function<Boolean, ObservableCollection<String>>() {
+          @Override
+          public ObservableCollection<String> apply(Boolean source) {
+            return source ? selected : null;
+          }
+        });
   }
 
   private ObservableList<String> listenersCountingList(final AtomicInteger counter) {

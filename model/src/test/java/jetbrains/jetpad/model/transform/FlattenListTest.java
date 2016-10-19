@@ -20,7 +20,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 import static org.junit.Assert.assertEquals;
 

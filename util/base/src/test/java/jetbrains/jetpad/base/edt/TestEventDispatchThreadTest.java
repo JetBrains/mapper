@@ -64,13 +64,23 @@ public class TestEventDispatchThreadTest {
 
   @Test(expected = IllegalStateException.class)
   public void killFromTask() {
-    edt.schedule(() -> edt.kill());
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        edt.kill();
+      }
+    });
     edt.executeUpdates();
   }
 
   @Test(expected = IllegalStateException.class)
   public void finishFromTask() {
-    edt.schedule(() -> edt.finish());
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        edt.finish();
+      }
+    });
     edt.executeUpdates();
   }
 }

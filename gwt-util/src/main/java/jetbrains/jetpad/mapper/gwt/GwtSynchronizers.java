@@ -19,7 +19,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import jetbrains.jetpad.mapper.Synchronizer;
 import jetbrains.jetpad.mapper.SynchronizerContext;
 
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 public class GwtSynchronizers {
   public static Synchronizer forRegistration(final Supplier<HandlerRegistration> reg) {

@@ -34,7 +34,7 @@ import jetbrains.jetpad.model.property.WritableProperty;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 import static com.google.gwt.query.client.GQuery.$;
 

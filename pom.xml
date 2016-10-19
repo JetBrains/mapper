@@ -27,6 +27,7 @@
     <module>util/json</module>
     <module>util/geometry</module>
     <module>util/plugin</module>
+    <module>util/java8adapter</module>
 
     <module>samples/todo</module>
   </modules>

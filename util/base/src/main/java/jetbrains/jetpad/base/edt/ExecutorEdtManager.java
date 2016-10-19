@@ -25,7 +25,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import jetbrains.jetpad.base.function.Consumer;
 import java.util.logging.Logger;
 
 public final class ExecutorEdtManager implements EdtManager, EventDispatchThread {
@@ -165,13 +165,21 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
     private Runnable handleFailure(final Runnable r) {
       if (myErrorHandler == null) {
-        myErrorHandler = t -> ThrowableHandlers.handle(new RuntimeException("Exception in " + ExecutorEdt.this + ": ", t));
+        myErrorHandler = new Consumer<Throwable>() {
+          @Override
+          public void accept(Throwable t) {
+            ThrowableHandlers.handle(new RuntimeException("Exception in " + ExecutorEdt.this + ": ", t));
+          }
+        };
       }
-      return () -> {
-        try {
-          r.run();
-        } catch (Throwable t) {
-          myErrorHandler.accept(t);
+      return new Runnable() {
+        @Override
+        public void run() {
+          try {
+            r.run();
+          } catch (Throwable t) {
+            myErrorHandler.accept(t);
+          }
         }
       };
     }

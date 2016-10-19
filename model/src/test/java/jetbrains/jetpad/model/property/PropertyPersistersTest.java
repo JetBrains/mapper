@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 import static jetbrains.jetpad.base.Persisters.stringPersister;
 import static org.junit.Assert.assertEquals;

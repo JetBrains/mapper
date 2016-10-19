@@ -20,7 +20,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import org.junit.Test;
 
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

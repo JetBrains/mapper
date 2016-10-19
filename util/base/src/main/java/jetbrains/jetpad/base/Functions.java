@@ -15,19 +15,34 @@
  */
 package jetbrains.jetpad.base;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Predicate;
+import jetbrains.jetpad.base.function.Supplier;
 
 public final class Functions {
 
-  private static final Predicate<?> TRUE_PREDICATE = t -> true;
-  private static final Predicate<?> FALSE_PREDICATE = t -> false;
+  private static final Predicate<?> TRUE_PREDICATE = new Predicate<Object>() {
+    @Override
+    public boolean test(Object t) {
+      return true;
+    }
+  };
+  private static final Predicate<?> FALSE_PREDICATE = new Predicate<Object>() {
+    @Override
+    public boolean test(Object t) {
+      return false;
+    }
+  };
 
   private Functions() { }
 
-  public static <ItemT> Supplier<ItemT> constantSupplier(ItemT value) {
-    return () -> value;
+  public static <ItemT> Supplier<ItemT> constantSupplier(final ItemT value) {
+    return new Supplier<ItemT>() {
+      @Override
+      public ItemT get() {
+        return value;
+      }
+    };
   }
 
   public static <ItemT> Supplier<ItemT> memorize(Supplier<ItemT> supplier) {
@@ -44,8 +59,22 @@ public final class Functions {
     return (Predicate<ArgT>) FALSE_PREDICATE;
   }
 
-  public static <ArgT, ResultT> Function<ArgT, ResultT> constant(ResultT result) {
-    return a -> result;
+  public static <ArgT, ResultT> Function<ArgT, ResultT> constant(final ResultT result) {
+    return new Function<ArgT, ResultT>() {
+      @Override
+      public ResultT apply(ArgT a) {
+        return result;
+      }
+    };
+  }
+
+  public static <ValueT> Function<ValueT, ValueT> identity() {
+    return new Function<ValueT, ValueT>() {
+      @Override
+      public ValueT apply(ValueT value) {
+        return value;
+      }
+    };
   }
 
   private static class Memo<ItemT> implements Supplier<ItemT> {

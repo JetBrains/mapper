@@ -22,8 +22,8 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Predicate;
 
 public class EventSources {
   /**
@@ -72,7 +72,7 @@ public class EventSources {
     return new MappingEventSource<>(src, f);
   }
 
-  public static <EventT, ItemT> EventSource<EventT> selectList(final ObservableList<ItemT> list, final java.util.function.Function<ItemT, EventSource<? extends EventT>> selector) {
+  public static <EventT, ItemT> EventSource<EventT> selectList(final ObservableList<ItemT> list, final jetbrains.jetpad.base.function.Function<ItemT, EventSource<? extends EventT>> selector) {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {

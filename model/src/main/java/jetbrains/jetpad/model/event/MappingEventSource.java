@@ -17,7 +17,7 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 final class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {
   private EventSource<SourceEventT> mySourceEventSource;

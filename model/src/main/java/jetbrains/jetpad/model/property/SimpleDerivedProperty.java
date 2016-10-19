@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.property;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Supplier;
 
 /**
  * Derived property based on a Supplier<Value> and a set of dependencies

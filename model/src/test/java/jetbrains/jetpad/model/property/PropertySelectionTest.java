@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.property;
 
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.event.EventHandler;
 import org.junit.Test;
 
@@ -23,7 +24,12 @@ import static org.junit.Assert.assertTrue;
 
 public class PropertySelectionTest {
   C2 c2 = new C2();
-  ReadableProperty<Integer> selProp = Properties.select(c2.ref, s -> s.value, 30);
+  ReadableProperty<Integer> selProp = Properties.select(c2.ref, new Function<C1, ReadableProperty<Integer>>() {
+    @Override
+    public ReadableProperty<Integer> apply(C1 s) {
+      return s.value;
+    }
+  }, 30);
   boolean changed = false;
 
   private void addListener() {

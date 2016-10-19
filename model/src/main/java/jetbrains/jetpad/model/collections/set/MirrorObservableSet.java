@@ -26,7 +26,7 @@ import jetbrains.jetpad.model.event.Listeners;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> implements ObservableSet<TargetT> {
   private ObservableCollection<SourceT> myBaseCollection;

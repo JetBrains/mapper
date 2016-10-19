@@ -24,13 +24,14 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyBinding;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.WritableProperty;
 import jetbrains.jetpad.model.transform.Transformer;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import jetbrains.jetpad.base.function.Consumer;
+import jetbrains.jetpad.base.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -110,7 +111,12 @@ public class Synchronizers {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
         target.set(source.get());
-        return source.addHandler(event -> target.set(event.getNewValue()));
+        return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+          @Override
+          public void onEvent(PropertyChangeEvent<ValueT> event) {
+            target.set(event.getNewValue());
+          }
+        });
       }
     };
   }
@@ -222,7 +228,12 @@ public class Synchronizers {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
         r.run();
-        return src.addHandler((EventHandler<Object>) event -> r.run());
+        return src.addHandler(new EventHandler<Object>() {
+          @Override
+          public void onEvent(Object event) {
+            r.run();
+          }
+        });
       }
     };
   }
@@ -237,12 +248,17 @@ public class Synchronizers {
     return new RegistrationSynchronizer() {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
-        return src.addHandler(h::accept);
+        return src.addHandler(new EventHandler<EventT>() {
+          @Override
+          public void onEvent(EventT value) {
+            h.accept(value);
+          }
+        });
       }
     };
   }
 
-  public static Synchronizer measuringSynchronizer(String name, Synchronizer sync) {
+  public static Synchronizer measuringSynchronizer(final String name, final Synchronizer sync) {
     return new Synchronizer() {
       @Override
       public void attach(SynchronizerContext ctx) {

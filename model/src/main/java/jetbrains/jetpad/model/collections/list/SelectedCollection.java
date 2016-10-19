@@ -21,7 +21,7 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 
-import java.util.function.Function;
+import jetbrains.jetpad.base.function.Function;
 
 abstract class SelectedCollection<ValueT, ItemT, CollectionT extends ObservableCollection<?>>
   extends ObservableArrayList<ItemT> implements EventHandler<PropertyChangeEvent<ValueT>> {

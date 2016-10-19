@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.transform;
 
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import org.junit.Before;
@@ -32,7 +33,12 @@ public class SelectListTest {
   public void setup() {
     from = new ObservableArrayList<>();
     to = new ObservableArrayList<>();
-    select = Transformers.selectList(input -> Integer.toString(input));
+    select = Transformers.selectList(new Function<Integer, String>() {
+      @Override
+      public String apply(Integer input) {
+        return Integer.toString(input);
+      }
+    });
   }
 
   @Test

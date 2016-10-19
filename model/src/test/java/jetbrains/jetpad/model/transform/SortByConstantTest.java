@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import org.junit.Assert;
@@ -23,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,8 +37,18 @@ public class SortByConstantTest {
 
   @Before
   public void setup() {
-    Transformer<ObservableList<String>, ObservableList<String>> trans = Transformers.sortByConstant(x -> x, String::compareTo);
-    Transformation<ObservableList<String>, ObservableList<String>> transformation = trans.transform(items, target);
+    Transformer<ObservableList<String>, ObservableList<String>> trans = Transformers.sortByConstant(new Function<String, String>() {
+      @Override
+      public String apply(String x) {
+        return x;
+      }
+    }, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        return s1.compareTo(s2);
+      }
+    });
+    final Transformation<ObservableList<String>, ObservableList<String>> transformation = trans.transform(items, target);
     myReg = new Registration() {
       @Override
       protected void doRemove() {

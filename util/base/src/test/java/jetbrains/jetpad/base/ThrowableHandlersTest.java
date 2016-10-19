@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
+import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
@@ -24,11 +25,19 @@ public class ThrowableHandlersTest extends BaseTestCase {
 
   @Test(expected = IllegalStateException.class)
   public void addThrowingThrowableHandler() {
-    Registration reg = ThrowableHandlers.addHandler(event -> {
-      throw new IllegalStateException();
+    Registration reg = ThrowableHandlers.addHandler(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable event) {
+        throw new IllegalStateException();
+      }
     });
     try {
-      ThrowableHandlers.asInProduction(() -> ThrowableHandlers.handle(new IllegalArgumentException()));
+      ThrowableHandlers.asInProduction(new Runnable() {
+        @Override
+        public void run() {
+          ThrowableHandlers.handle(new IllegalArgumentException());
+        }
+      });
     } finally {
       reg.remove();
     }
@@ -37,9 +46,19 @@ public class ThrowableHandlersTest extends BaseTestCase {
   @Test
   public void removeHandlerWhileFire() {
     final Value<Registration> reg = new Value<>(Registration.EMPTY);
-    reg.set(ThrowableHandlers.addHandler(event -> reg.get().remove()));
+    reg.set(ThrowableHandlers.addHandler(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable event) {
+        reg.get().remove();
+      }
+    }));
     int handlersSize = ThrowableHandlers.getHandlersSize();
-    ThrowableHandlers.asInProduction(() -> ThrowableHandlers.handle(new RuntimeException()));
+    ThrowableHandlers.asInProduction(new Runnable() {
+      @Override
+      public void run() {
+        ThrowableHandlers.handle(new RuntimeException());
+      }
+    });
     assertEquals(handlersSize - 1, ThrowableHandlers.getHandlersSize());
   }
 }
