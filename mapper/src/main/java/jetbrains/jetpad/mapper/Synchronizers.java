@@ -40,6 +40,16 @@ import java.util.logging.Logger;
 public class Synchronizers {
   private static final Logger LOG = Logger.getLogger(Synchronizers.class.getName());
 
+  private static final Synchronizer EMPTY = new Synchronizer() {
+    @Override
+    public void attach(SynchronizerContext ctx) {
+    }
+
+    @Override
+    public void detach() {
+    }
+  };
+
   public static <SourceT, TargetT>
   SimpleRoleSynchronizer<SourceT, TargetT> forSimpleRole(
       Mapper<?, ?> mapper,
@@ -278,5 +288,9 @@ public class Synchronizers {
         LOG.info(name + ": " + event + " in " + (System.currentTimeMillis() - start) + " ms");
       }
     };
+  }
+
+  public static Synchronizer empty() {
+    return EMPTY;
   }
 }
