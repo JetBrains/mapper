@@ -15,34 +15,22 @@
  */
 package jetbrains.jetpad.values;
 
-public class FontFamily {
-  public static final FontFamily MONOSPACED = new MonospacedFontFamily();
-  public static final FontFamily SERIF = new NamedFontFamily("serif");
+public final class FontFamily {
+  public static final FontFamily MONOSPACED = forName("monospace");
+  public static final FontFamily SERIF = forName("serif");
 
   public static FontFamily forName(String name) {
-    return new NamedFontFamily(name);
+    return new FontFamily(name);
   }
 
-  private FontFamily() {
+  private final String myName;
+
+  private FontFamily(String name) {
+    myName = name;
   }
 
-  static class NamedFontFamily extends FontFamily {
-    private String myName;
-
-    NamedFontFamily(String name) {
-      myName = name;
-    }
-
-    @Override
-    public String toString() {
-      return myName;
-    }
-  }
-
-  private static class MonospacedFontFamily extends FontFamily {
-    @Override
-    public String toString() {
-      return "Monospaced";
-    }
+  @Override
+  public String toString() {
+    return myName;
   }
 }
