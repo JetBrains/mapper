@@ -23,6 +23,7 @@ import java.util.List;
 
 public final class TestEventDispatchThread implements EventDispatchThread {
   private final String myName;
+  private final Runnable myThreadSafeChecker;
 
   private int myCurrentTime;
   private int myModificationCount;
@@ -35,6 +36,21 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   public TestEventDispatchThread(String name) {
+    final Thread owner = Thread.currentThread();
+    myThreadSafeChecker = new Runnable() {
+      @Override
+      public void run() {
+        Thread current = Thread.currentThread();
+        if (owner != current) {
+          throw new IllegalStateException("Test EDT is not thread-safe. Owner is " + owner + ". Attempt to access from " + current);
+        }
+      }
+    };
+    myName = name;
+  }
+
+  public TestEventDispatchThread(String name, Runnable threadSafeChecker) {
+    myThreadSafeChecker = threadSafeChecker;
     myName = name;
   }
 
@@ -74,6 +90,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   private int executeCurrentUpdates() {
+    myThreadSafeChecker.run();
     int runCommandsNum = 0;
     int mc;
     do {
@@ -116,6 +133,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, Runnable r) {
+    myThreadSafeChecker.run();
     checkCanSchedule();
     myModificationCount++;
     final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, r);
@@ -130,6 +148,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration scheduleRepeating(final int period, final Runnable r) {
+    myThreadSafeChecker.run();
     checkCanSchedule();
     final Value<Boolean> cancelled = new Value<>(false);
     schedule(period, new Runnable() {
@@ -171,25 +190,28 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     }
   }
 
-  void finish() {
+  public void finish() {
+    myThreadSafeChecker.run();
     checkCanStop();
     checkInsideTask();
     run(getCurrentRecords());
     shutdown();
   }
 
-  void kill() {
+  public void kill() {
+    myThreadSafeChecker.run();
     checkCanStop();
     checkInsideTask();
     shutdown();
   }
 
   private void shutdown() {
+    myThreadSafeChecker.run();
     myRecords.clear();
     myFinished = true;
   }
 
-  boolean isFinished() {
+  public boolean isFinished() {
     return myFinished;
   }
 
