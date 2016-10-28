@@ -109,7 +109,7 @@ public class Properties {
     };
   }
 
-  static Boolean and(Boolean b1, Boolean b2) {
+  private static Boolean and(Boolean b1, Boolean b2) {
     if (b1 == null) {
       return andWithNull(b2);
     }
@@ -130,15 +130,7 @@ public class Properties {
     return new DerivedProperty<Boolean>(op1, op2) {
       @Override
       public Boolean doGet() {
-        Boolean b1 = op1.get();
-        Boolean b2 = op2.get();
-        if (b1 == null) {
-          return orWithNull(b2);
-        }
-        if (b2 == null) {
-          return orWithNull(b1);
-        }
-        return b1 || b2;
+        return or(op1.get(), op2.get());
       }
 
       @Override
@@ -146,6 +138,16 @@ public class Properties {
         return "(" + op1.getPropExpr() + " || " + op2.getPropExpr() + ")";
       }
     };
+  }
+
+  private static Boolean or(Boolean b1, Boolean b2) {
+    if (b1 == null) {
+      return orWithNull(b2);
+    }
+    if (b2 == null) {
+      return orWithNull(b1);
+    }
+    return b1 || b2;
   }
 
   private static Boolean orWithNull(Boolean b) {
@@ -857,6 +859,9 @@ public class Properties {
 
   @SafeVarargs
   public static ReadableProperty<Boolean> and(final ReadableProperty<Boolean>... props) {
+    if (props.length == 0) {
+      throw new IllegalArgumentException("No arguments");
+    }
     return new DerivedProperty<Boolean>(props) {
       @Override
       public Boolean doGet() {
@@ -870,14 +875,36 @@ public class Properties {
       @Override
       public String getPropExpr() {
         StringBuilder propExpr = new StringBuilder("(");
-        boolean first = true;
+        propExpr.append(props[0].getPropExpr());
+        for (int i = 1; i < props.length; i++) {
+          propExpr.append(" && ").append(props[i].getPropExpr());
+        }
+        return propExpr.append(")").toString();
+      }
+    };
+  }
+
+  @SafeVarargs
+  public static ReadableProperty<Boolean> or(final ReadableProperty<Boolean>... props) {
+    if (props.length == 0) {
+      throw new IllegalArgumentException("No arguments");
+    }
+    return new DerivedProperty<Boolean>(props) {
+      @Override
+      public Boolean doGet() {
+        Boolean res = Boolean.FALSE;
         for (ReadableProperty<Boolean> prop : props) {
-          if (!first) {
-            propExpr.append(" && ");
-          } else {
-            first = false;
-          }
-          propExpr.append(prop.getPropExpr());
+          res = or(res, prop.get());
+        }
+        return res;
+      }
+
+      @Override
+      public String getPropExpr() {
+        StringBuilder propExpr = new StringBuilder("(");
+        propExpr.append(props[0].getPropExpr());
+        for (int i = 1; i < props.length; i++) {
+          propExpr.append(" || ").append(props[i].getPropExpr());
         }
         return propExpr.append(")").toString();
       }

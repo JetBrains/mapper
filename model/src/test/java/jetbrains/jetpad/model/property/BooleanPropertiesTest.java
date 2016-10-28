@@ -22,14 +22,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class BooleanPropertiesTest {
-  private static Property<Boolean> TRUE = new ValueProperty<>(true);
-  private static Property<Boolean> FALSE = new ValueProperty<>(false);
-  private static Property<Boolean> NULL = new ValueProperty<Boolean>() {
-    @Override
-    public Boolean get() {
-      return null;
-    }
-  };
+  private static final ReadableProperty<Boolean> TRUE = new ValueProperty<>(true);
+  private static final ReadableProperty<Boolean> FALSE = new ValueProperty<>(false);
+  private static final ReadableProperty<Boolean> NULL = new ValueProperty<>(null);
 
   @Test
   public void not() {
@@ -70,5 +65,13 @@ public class BooleanPropertiesTest {
     assertFalse(Properties.and(TRUE, FALSE, TRUE).get());
     assertFalse(Properties.and(TRUE, NULL, FALSE).get());
     assertNull(Properties.and(TRUE, NULL, TRUE).get());
+  }
+
+  @Test
+  public void multipleOr() {
+    assertFalse(Properties.or(FALSE, FALSE, FALSE).get());
+    assertTrue(Properties.or(FALSE, FALSE, TRUE).get());
+    assertTrue(Properties.or(FALSE, NULL, TRUE).get());
+    assertNull(Properties.or(FALSE, NULL, FALSE).get());
   }
 }
