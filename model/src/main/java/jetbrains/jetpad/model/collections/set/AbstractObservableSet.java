@@ -43,6 +43,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     doBeforeAdd(item);
     boolean success = false;
     try {
+      onItemAdd(item);
       success = doAdd(item);
     } finally {
       doAfterAdd(item, success);
@@ -77,6 +78,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
     doBeforeRemove(item);
     boolean success = false;
     try {
+      onItemRemove(item);
       success = doRemove(item);
     } finally {
       doAfterRemove(item, success);
@@ -157,10 +159,16 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   protected void beforeItemAdded(ItemT item) {
   }
 
+  protected void onItemAdd(ItemT item) {
+  }
+
   protected void afterItemAdded(ItemT item, boolean success) {
   }
 
   protected void beforeItemRemoved(ItemT item) {
+  }
+
+  protected void onItemRemove(ItemT item) {
   }
 
   protected void afterItemRemoved(ItemT item, boolean success) {
