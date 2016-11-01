@@ -33,40 +33,30 @@ public class JsonParser {
   }
 
   private static JsonValue parseValue(JsonLexer lexer) {
-    if (lexer.tokenKind() == JsonTokenKind.STRING) {
-      String value = lexer.tokenText();
-      lexer.next();
-      return new JsonString(getLiteralText(value));
+    switch (lexer.tokenKind()) {
+      case STRING:
+        String sv = lexer.tokenText();
+        lexer.next();
+        return new JsonString(getLiteralText(sv));
+      case LEFT_BRACKET:
+        return parseArray(lexer);
+      case NUMBER:
+        double dv = Double.parseDouble(lexer.tokenText());
+        lexer.next();
+        return new JsonNumber(dv);
+      case LEFT_BRACE:
+        return parseObject(lexer);
+      case NULL:
+        lexer.next();
+        return new JsonNull();
+      case TRUE:
+        lexer.next();
+        return new JsonBoolean(true);
+      case FALSE:
+        lexer.next();
+        return new JsonBoolean(false);
     }
 
-    if (lexer.tokenKind() == JsonTokenKind.LEFT_BRACKET) {
-      return parseArray(lexer);
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.NUMBER) {
-      double value = Double.parseDouble(lexer.tokenText());
-      lexer.next();
-      return new JsonNumber(value);
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.LEFT_BRACE) {
-      return parseObject(lexer);
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.NULL) {
-      lexer.next();
-      return new JsonNull();
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.TRUE) {
-      lexer.next();
-      return new JsonBoolean(true);
-    }
-
-    if (lexer.tokenKind() == JsonTokenKind.FALSE) {
-      lexer.next();
-      return new JsonBoolean(false);
-    }
 
     throw new JsonParsingException();
   }
