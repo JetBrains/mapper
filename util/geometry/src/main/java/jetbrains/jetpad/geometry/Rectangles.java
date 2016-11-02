@@ -31,7 +31,7 @@ public class Rectangles {
 
   private static void assertOuterInner(Rectangle outer, Rectangle inner) {
     if (!outer.contains(inner)) {
-      throw new IllegalArgumentException("Wrong args");
+      throw new IllegalArgumentException("Outer does not contain inner: outer = " + outer + ", inner = " + inner);
     }
   }
 
