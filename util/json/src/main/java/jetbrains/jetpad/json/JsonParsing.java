@@ -15,8 +15,8 @@
  */
 package jetbrains.jetpad.json;
 
-public class JsonParser {
-  public JsonParser() {
+public class JsonParsing {
+  public JsonParsing() {
   }
 
   public static JsonValue parse(String input) {
