@@ -19,7 +19,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-class EnableSlowTestsRule implements TestRule {
+public class EnableSlowTestsRule implements TestRule {
   public static final String ENABLE_SLOW_TESTS = "enable.slow.tests";
   private static boolean ourSlowTestsEnabled = "true".equals(System.getProperty(ENABLE_SLOW_TESTS));
 
