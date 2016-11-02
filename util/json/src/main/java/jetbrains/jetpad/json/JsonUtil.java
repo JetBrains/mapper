@@ -25,6 +25,19 @@ class JsonUtil {
   private static final String[] ESCAPED_SPECIAL_CHARS = {"\\\"", "\\\\", "\\/", "\\b", "\\f", "\\n", "\\r", "\\t"};
   private static final char[] UNESCAPED_SPECIAL_CHARS = {'"', '\\', '/', 'b', 'f', 'n', 'r', 't'};
 
+  private static final int[] UNESCAPED_SPECIAL_CHAR_LOOKUP_TABLE;
+
+  static {
+    int[] table = new int[255];
+    for (int i = 0; i < table.length; i++) {
+      table[i] = -1;
+    }
+    for (int i = 0; i < UNESCAPED_SPECIAL_CHARS.length; i++) {
+      table[UNESCAPED_SPECIAL_CHARS[i]] = SPECIAL_CHARS[i];
+    }
+    UNESCAPED_SPECIAL_CHAR_LOOKUP_TABLE = table;
+  }
+
   private JsonUtil() {
   }
 
@@ -67,9 +80,12 @@ class JsonUtil {
 
         i++;
         ch = s.charAt(i);
-        int index = Chars.indexOf(UNESCAPED_SPECIAL_CHARS, ch);
-        if (index != -1) {
-          result.append(SPECIAL_CHARS[index]);
+        int specialChar = -1;
+        if (ch >= 0 && ch < UNESCAPED_SPECIAL_CHAR_LOOKUP_TABLE.length) {
+          specialChar = UNESCAPED_SPECIAL_CHAR_LOOKUP_TABLE[ch];
+        }
+        if (specialChar != -1) {
+          result.append((char) specialChar);
         } else if (ch == 'u') {
           if (i >= s.length() - 4) {
             throw new RuntimeException();
