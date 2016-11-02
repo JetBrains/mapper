@@ -28,7 +28,7 @@ public class JsonReader {
   public JsonObject readObject() throws IOException {
     JsonObject object;
     try {
-      object = JsonParsing.parseObject(myJsonLexer);
+      object = new DefautJsonParser().parseObject(myJsonLexer);
     } catch (RuntimeIOException e) {
       throw e.getOrigin();
     }
@@ -38,7 +38,7 @@ public class JsonReader {
   public JsonArray readArray() throws IOException {
     JsonArray array;
     try {
-      array = JsonParsing.parseArray(myJsonLexer);
+      array = new DefautJsonParser().parseArray(myJsonLexer);
     } catch (RuntimeIOException e) {
       throw e.getOrigin();
     }
