@@ -55,7 +55,8 @@ class JsonUtil {
 
   static String escape(String s) {
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < s.length(); i++) {
+    int len = s.length();
+    for (int i = 0; i < len; i++) {
       char c = s.charAt(i);
 
       int index = Chars.indexOf(SPECIAL_CHARS, c);
@@ -70,9 +71,10 @@ class JsonUtil {
 
   static String unescape(String s) {
     StringBuilder result = null;
-    for (int i = 0; i < s.length(); i++) {
+    int len = s.length();
+    for (int i = 0; i < len; i++) {
       char ch = s.charAt(i);
-      if (ch == '\\' && i < s.length() - 1) {
+      if (ch == '\\' && i < len - 1) {
         if (result == null) {
           result = new StringBuilder();
           result.append(s.substring(0, i));
@@ -87,7 +89,7 @@ class JsonUtil {
         if (specialChar != -1) {
           result.append((char) specialChar);
         } else if (ch == 'u') {
-          if (i >= s.length() - 4) {
+          if (i >= len - 4) {
             throw new RuntimeException();
           }
           String hexNumber = s.substring(i + 1, i + 5);
