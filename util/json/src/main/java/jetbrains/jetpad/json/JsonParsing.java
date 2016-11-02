@@ -15,8 +15,10 @@
  */
 package jetbrains.jetpad.json;
 
+import com.google.gwt.core.shared.GWT;
+
 public class JsonParsing {
-  private static final JsonParser ourParser = new DefautJsonParser();
+  private static final JsonParser ourParser = GWT.isClient() ? new NativeJsonParser() : new DefautJsonParser();
 
   public static JsonValue parse(String input) {
     return ourParser.parse(input);
