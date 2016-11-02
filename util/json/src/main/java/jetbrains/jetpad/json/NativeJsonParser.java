@@ -8,7 +8,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
-class NativeJsonParser implements JsonParser {
+public class NativeJsonParser implements JsonParser {
   @Override
   public JsonValue parse(String input) {
     JSONValue jsonValue = JSONParser.parseStrict(input);
