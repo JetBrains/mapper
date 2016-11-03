@@ -67,4 +67,19 @@ public class RectanglesTest {
   public void extendRight() {
     assertEquals(new Rectangle(new Vector(10, 20), new Vector(31, 40)), Rectangles.extendRight(INNER, 1));
   }
+
+  @Test
+  public void extendSides() {
+    assertEquals(new Rectangle(new Vector(9, 20), new Vector(32, 40)), Rectangles.extendSides(1, INNER, 1));
+  }
+
+  @Test
+  public void shrinkRight() {
+    assertEquals(new Rectangle(new Vector(10, 20), new Vector(29, 40)), Rectangles.shrinkRight(INNER, 1));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shrinkRightIncorrect() {
+    Rectangles.shrinkRight(INNER, INNER.dimension.x + 1);
+  }
 }

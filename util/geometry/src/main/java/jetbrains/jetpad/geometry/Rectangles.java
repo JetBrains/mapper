@@ -53,6 +53,17 @@ public class Rectangles {
     return r.changeDimension(r.dimension.add(new Vector(distance, 0)));
   }
 
+  public static Rectangle extendSides(int left, Rectangle r, int right) {
+    return extendRight(extendLeft(r, left), right);
+  }
+
+  public static Rectangle shrinkRight(Rectangle r, int distance) {
+    if (r.dimension.x < distance) {
+      throw new IllegalArgumentException("To small rectangle = " + r + ", distance = " + distance);
+    }
+    return r.changeDimension(r.dimension.sub(new Vector(distance, 0)));
+  }
+
   private static Vector topLeft(Rectangle r) {
     return r.origin;
   }
