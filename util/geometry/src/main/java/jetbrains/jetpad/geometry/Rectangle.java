@@ -65,17 +65,14 @@ public class Rectangle {
 
   public Rectangle intersect(Rectangle r) {
     if (!intersects(r)) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("rectangle [" + Rectangle.this + "] doesn't intersect [" + r + "]");
     }
-
-    Vector to = origin;
-    Vector ro = r.origin;
-    Vector io = to.max(ro);
 
     Vector too = origin.add(dimension);
     Vector roo = r.origin.add(r.dimension);
     Vector ioo = too.min(roo);
 
+    Vector io = origin.max(r.origin);
     return new Rectangle(io, ioo.sub(io));
   }
 
