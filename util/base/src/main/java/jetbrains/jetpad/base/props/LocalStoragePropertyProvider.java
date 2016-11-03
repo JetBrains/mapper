@@ -15,7 +15,6 @@ public class LocalStoragePropertyProvider implements PropertyProvider {
     if (storage == null) {
       throw new IllegalStateException();
     }
-    storage.getItem(myPrefix + "." + key);
-    return null;
+    return storage.getItem(myPrefix + "." + key);
   }
 }

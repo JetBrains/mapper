@@ -1,7 +1,7 @@
 package jetbrains.jetpad.base.props;
 
 public class Properties {
-  private static PropertyProvider ourPropertyProvider = new SystemPropertyProvider();
+  private static PropertyProvider ourPropertyProvider = new EmptyPropertyProvider();
 
 
   public static void setProvider(PropertyProvider provider) {
