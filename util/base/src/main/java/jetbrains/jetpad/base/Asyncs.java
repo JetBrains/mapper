@@ -17,6 +17,9 @@ package jetbrains.jetpad.base;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+import jetbrains.jetpad.base.function.Consumer;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,9 +30,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import jetbrains.jetpad.base.function.Consumer;
-import jetbrains.jetpad.base.function.Function;
-import jetbrains.jetpad.base.function.Supplier;
 
 @GwtCompatible
 public class Asyncs {
@@ -425,7 +425,13 @@ public class Asyncs {
       }
     }
     if (error.get() != null) {
-      throw new RuntimeException(error.get());
+      if (error.get() instanceof RuntimeException) {
+        throw (RuntimeException) error.get();
+      } else if (error.get() instanceof Exception) {
+        throw new RuntimeException(error.get());
+      } else {
+        throw (Error) error.get();
+      }
     } else {
       return result.get();
     }

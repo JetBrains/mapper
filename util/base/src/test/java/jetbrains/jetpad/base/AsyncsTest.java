@@ -16,15 +16,17 @@
 package jetbrains.jetpad.base;
 
 import jetbrains.jetpad.base.function.Consumer;
-import org.junit.Test;
-
-import java.util.Arrays;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Supplier;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -236,6 +238,33 @@ public class AsyncsTest {
   @Test
   public void failedFalse() {
     assertFalse(Asyncs.isFailed(Asyncs.constant(null)));
+  }
+
+  @Test
+  public void getFailure() {
+    IllegalStateException testRuntime = new IllegalStateException("test");
+    try {
+      Asyncs.get(Asyncs.failure(testRuntime));
+      fail("get expected to fail");
+    } catch (Throwable t) {
+      assertSame(testRuntime, t);
+    }
+
+    IOException testChecked = new IOException("test");
+    try {
+      Asyncs.get(Asyncs.failure(testChecked));
+      fail("get expected to fail");
+    } catch (Throwable t) {
+      assertSame(testChecked, t.getCause());
+    }
+
+    AssertionError testError = new AssertionError("test");
+    try {
+      Asyncs.get(Asyncs.failure(testError));
+      fail("get expected to fail");
+    } catch (Throwable t) {
+      assertSame(testError, t);
+    }
   }
 
   private void assertFailure(Async<?> async) {
