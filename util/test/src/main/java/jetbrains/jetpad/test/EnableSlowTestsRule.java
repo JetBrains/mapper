@@ -15,22 +15,10 @@
  */
 package jetbrains.jetpad.test;
 
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
-public class EnableSlowTestsRule implements TestRule {
+public class EnableSlowTestsRule extends SystemSwitchRule {
   public static final String ENABLE_SLOW_TESTS = "enable.slow.tests";
-  private static boolean ourSlowTestsEnabled = "true".equals(System.getProperty(ENABLE_SLOW_TESTS));
 
-  public Statement apply(final Statement statement, final Description description) {
-    return new Statement() {
-      public void evaluate() throws Throwable {
-        if (!ourSlowTestsEnabled && description.getAnnotation(Slow.class) != null) {
-          return;
-        }
-        statement.evaluate();
-      }
-    };
+  public EnableSlowTestsRule() {
+    super(Slow.class, ENABLE_SLOW_TESTS);
   }
 }

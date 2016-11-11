@@ -15,22 +15,10 @@
  */
 package jetbrains.jetpad.test;
 
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
-public class EnableRemoteTestsRule implements TestRule {
+public class EnableRemoteTestsRule extends SystemSwitchRule {
   public static final String ENABLE_REMOTE_TESTS = "enable.remote.tests";
-  private static boolean ourRemoteTestsEnabled = "true".equals(System.getProperty(ENABLE_REMOTE_TESTS));
 
-  public Statement apply(final Statement statement, final Description description) {
-    return new Statement() {
-      public void evaluate() throws Throwable {
-        if (!ourRemoteTestsEnabled && description.getAnnotation(Remote.class) != null) {
-          return;
-        }
-        statement.evaluate();
-      }
-    };
+  public EnableRemoteTestsRule() {
+    super(Remote.class, ENABLE_REMOTE_TESTS);
   }
 }
