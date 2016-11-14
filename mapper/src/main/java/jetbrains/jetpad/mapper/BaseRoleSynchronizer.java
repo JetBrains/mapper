@@ -38,7 +38,7 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> implements RoleSynchronize
   }
 
   protected final Mapper<? extends SourceT, ? extends TargetT> createMapper(SourceT source) {
-    Mapper<? extends SourceT, ? extends TargetT> result = null;
+    Mapper<? extends SourceT, ? extends TargetT> result;
     for (MapperFactory<SourceT, TargetT> f : myMapperFactories) {
       result = f.createMapper(source);
       if (result != null) return result;

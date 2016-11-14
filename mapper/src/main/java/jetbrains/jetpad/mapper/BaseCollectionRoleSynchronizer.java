@@ -76,17 +76,26 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
       for (DifferenceBuilder<SourceT>.DifferenceItem item : difference) {
         if (item.isAdd) {
           Mapper<? extends SourceT, ? extends TargetT> mapper = createMapper(item.item);
+          beforeMapperAdded(item.index, mapper);
           mappers.add(item.index, mapper);
           mapperAdded(item.index, mapper);
           processMapper(mapper);
         } else {
+          beforeMapperRemoved(item.index, mappers.get(item.index));
           Mapper<? extends SourceT, ? extends TargetT> mapper = mappers.remove(item.index);
           mapperRemoved(item.index, mapper);
         }
       }
     }
 
+
+    protected void beforeMapperAdded(int index, Mapper<? extends SourceT, ? extends TargetT> mapper) {
+    }
+
     protected void mapperAdded(int index, Mapper<? extends SourceT, ? extends TargetT> mapper) {
+    }
+
+    protected void beforeMapperRemoved(int index, Mapper<? extends SourceT, ? extends TargetT> mapper) {
     }
 
     protected void mapperRemoved(int index, Mapper<? extends SourceT, ? extends TargetT> mapper) {
