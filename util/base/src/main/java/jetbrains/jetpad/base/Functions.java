@@ -33,6 +33,18 @@ public final class Functions {
       return false;
     }
   };
+  public static final Predicate<?> NULL_PREDICATE = new Predicate<Object>() {
+    @Override
+    public boolean test(Object value) {
+      return value == null;
+    }
+  };
+  public static final Predicate<?> NOT_NULL_PREDICATE = new Predicate<Object>() {
+    @Override
+    public boolean test(Object value) {
+      return value != null;
+    }
+  };
 
   private Functions() { }
 
@@ -66,6 +78,16 @@ public final class Functions {
         return result;
       }
     };
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <ArgT> Predicate<ArgT> isNull() {
+    return (Predicate<ArgT>) NULL_PREDICATE;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <ArgT> Predicate<ArgT> isNotNull() {
+    return (Predicate<ArgT>) NOT_NULL_PREDICATE;
   }
 
   public static <ValueT> Function<ValueT, ValueT> identity() {
