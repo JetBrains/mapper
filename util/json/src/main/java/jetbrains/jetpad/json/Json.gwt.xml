@@ -7,4 +7,5 @@
   <source path="" excludes="JsonReader.java,InputStreamJsonLexer.java"/>
 
   <inherits name="com.google.common.primitives.Primitives" />
+  <inherits name="com.google.gwt.json.JSON" />
 </module>
