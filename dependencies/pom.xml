@@ -158,6 +158,7 @@
           <version>${gwtplugin.version}</version>
           <configuration>
             <extraJvmArgs>-Xmx2048m</extraJvmArgs>
+            <failOnError>true</failOnError>
           </configuration>
           <executions>
             <execution>
