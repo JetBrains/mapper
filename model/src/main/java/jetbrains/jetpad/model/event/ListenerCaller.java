@@ -18,6 +18,7 @@ package jetbrains.jetpad.model.event;
 /**
  * Object which calls listeners inside of {@link Listeners}
  */
+@Deprecated
 public interface ListenerCaller<ListenerT> {
   void call(ListenerT l);
 }
