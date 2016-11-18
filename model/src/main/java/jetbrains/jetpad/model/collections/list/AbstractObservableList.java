@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.collections.list;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -55,13 +56,16 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       success = true;
       onItemAdd(index, item);
       if (myListeners != null) {
-        final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(null, item, index, CollectionItemEvent.EventType.ADD);
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-          @Override
-          public void call(CollectionListener<ItemT> l) {
-            l.onItemAdded(event);
+        try (Listeners.Firing<CollectionListener<ItemT>> firing = myListeners.fire()) {
+          final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(null, item, index, CollectionItemEvent.EventType.ADD);
+          for (CollectionListener<ItemT> l : firing) {
+            try {
+              l.onItemAdded(event);
+            } catch (Throwable t) {
+              ThrowableHandlers.handle(t);
+            }
           }
-        });
+        }
       }
     } finally {
       afterItemAdded(index, item, success);
@@ -91,12 +95,15 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       onItemSet(index, old, item);
       if (myListeners != null) {
         final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(old, item, index, CollectionItemEvent.EventType.SET);
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-          @Override
-          public void call(CollectionListener<ItemT> l) {
-            l.onItemSet(event);
+        try (Listeners.Firing<CollectionListener<ItemT>> firing = myListeners.fire()) {
+          for (CollectionListener<ItemT> l : firing) {
+            try {
+              l.onItemSet(event);
+            } catch (Throwable t) {
+              ThrowableHandlers.handle(t);
+            }
           }
-        });
+        }
       }
     } finally {
       afterItemSet(index, old, item, success);
@@ -130,12 +137,15 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       onItemRemove(index, item);
       if (myListeners != null) {
         final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(item, null, index, CollectionItemEvent.EventType.REMOVE);
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
-          @Override
-          public void call(CollectionListener<ItemT> l) {
-            l.onItemRemoved(event);
+        try (Listeners.Firing<CollectionListener<ItemT>> firing = myListeners.fire()) {
+          for (CollectionListener<ItemT> l : firing) {
+            try {
+              l.onItemRemoved(event);
+            } catch (Throwable t) {
+              ThrowableHandlers.handle(t);
+            }
           }
-        });
+        }
       }
     } finally {
       afterItemRemoved(index, item, success);
