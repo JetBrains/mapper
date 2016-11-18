@@ -23,6 +23,7 @@ import com.google.gwt.query.client.Function;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
@@ -128,12 +129,15 @@ public class EditableText implements Property<String> {
     }
 
     final PropertyChangeEvent<String> event = new PropertyChangeEvent<>(oldValue,  value);
-    myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<String>>>() {
-      @Override
-      public void call(EventHandler<? super PropertyChangeEvent<String>> l) {
-        l.onEvent(event);
+    try (Listeners.Firing<EventHandler<? super PropertyChangeEvent<String>>> firing = myListeners.fire()) {
+      for (EventHandler<? super PropertyChangeEvent<String>> l : firing) {
+        try {
+          l.onEvent(event);
+        } catch (Throwable t) {
+          ThrowableHandlers.handle(t);
+        }
       }
-    });
+    }
   }
 
   @Override
