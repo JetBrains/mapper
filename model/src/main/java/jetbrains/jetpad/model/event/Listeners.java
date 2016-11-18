@@ -20,6 +20,7 @@ import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -71,14 +72,10 @@ public class Listeners<ListenerT> {
   public void fire(final ListenerCaller<ListenerT> h) {
     if (isEmpty()) return;
     beforeFire();
-    //exception can be thrown from ThrowableHandlers.handle()
     try {
-      int size = myListenersCount;
-      for (int i = 0; i < size; i++) {
-        ListenerT l = (ListenerT) myListeners.get(i);
-
-        if (isRemoved(l)) continue;
-
+      Iterator<ListenerT> it = listenersIterator();
+      while (it.hasNext()) {
+        ListenerT l = it.next();
         try {
           h.call(l);
         } catch (Throwable t) {
@@ -88,6 +85,38 @@ public class Listeners<ListenerT> {
     } finally {
       afterFire();
     }
+  }
+
+  private Iterator<ListenerT> listenersIterator() {
+    final int size = myListenersCount;
+    return new Iterator<ListenerT>() {
+      private int myIndex = 0;
+
+      private void moveToNext() {
+        while (myIndex < size && isRemoved((ListenerT) myListeners.get(myIndex))) {
+          myIndex++;
+        }
+      }
+
+      @Override
+      public boolean hasNext() {
+        moveToNext();
+        return myIndex < size;
+      }
+
+      @Override
+      public ListenerT next() {
+        if (myIndex >= size) {
+          throw new IllegalStateException();
+        }
+        return (ListenerT) myListeners.get(myIndex++);
+      }
+
+      @Override
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
 
   private boolean isRemoved(ListenerT l) {
