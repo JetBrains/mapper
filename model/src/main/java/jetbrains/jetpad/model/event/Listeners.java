@@ -29,8 +29,9 @@ import java.util.List;
  * - firing events
  */
 public class Listeners<ListenerT> {
-  private List<ListenerT> myListeners = null;
-  private FireData<ListenerT> myFireData = null;
+  private List<Object> myListeners = null;
+  private int myFireDepth;
+  private int myListenersCount;
 
   public boolean isEmpty() {
     return myListeners == null || myListeners.isEmpty();
@@ -41,33 +42,23 @@ public class Listeners<ListenerT> {
       beforeFirstAdded();
     }
 
-    if (myFireData != null) {
-      if (myFireData.toAdd == null) {
-        myFireData.toAdd = new ArrayList<>(1);
-      }
-      myFireData.toAdd.add(l);
-      if (myFireData.toRemove != null) {
-        myFireData.toRemove.remove(l);
-      }
+    if (myFireDepth > 0) {
+      myListeners.add(new ListenerOp<>(l, true));
     } else {
       if (myListeners == null) {
         myListeners = new ArrayList<>(1);
       }
       myListeners.add(l);
+      myListenersCount++;
     }
     return new Registration() {
       @Override
       protected void doRemove() {
-        if (myFireData != null) {
-          if (myFireData.toRemove == null) {
-            myFireData.toRemove = new ArrayList<>(1);
-          }
-          myFireData.toRemove.add(l);
-          if (myFireData.toAdd != null) {
-            myFireData.toAdd.remove(l);
-          }
+        if (myFireDepth > 0) {
+          myListeners.add(new ListenerOp<>(l, false));
         } else {
           myListeners.remove(l);
+          myListenersCount--;
         }
 
         if (isEmpty()) {
@@ -82,8 +73,12 @@ public class Listeners<ListenerT> {
     beforeFire();
     //exception can be thrown from ThrowableHandlers.handle()
     try {
-      for (ListenerT l : myListeners) {
+      int size = myListenersCount;
+      for (int i = 0; i < size; i++) {
+        ListenerT l = (ListenerT) myListeners.get(i);
+
         if (isRemoved(l)) continue;
+
         try {
           h.call(l);
         } catch (Throwable t) {
@@ -95,35 +90,41 @@ public class Listeners<ListenerT> {
     }
   }
 
+  private boolean isRemoved(ListenerT l) {
+    int size = myListeners.size();
+    for (int i = myListenersCount; i < size; i++) {
+      ListenerOp<ListenerT> op = (ListenerOp<ListenerT>) myListeners.get(i);
+      if (!op.add && op.listener == l) return true;
+    }
+    return false;
+  }
+
   protected void beforeFirstAdded() {
   }
 
   protected void afterLastRemoved() {
   }
 
-  private boolean isRemoved(ListenerT l) {
-    return myFireData.toRemove != null && myFireData.toRemove.contains(l);
-  }
-
   private void beforeFire() {
-    if (myFireData == null) {
-      myFireData = new FireData<>();
-    }
-    myFireData.depth++;
+    myFireDepth++;
   }
 
   private void afterFire() {
-    myFireData.depth--;
-    if (myFireData.depth == 0) {
-      if (myFireData.toAdd != null) {
-        myListeners.addAll(myFireData.toAdd);
-        myFireData.toAdd = null;
+    myFireDepth--;
+    if (myFireDepth == 0) {
+      List<Object> opsList = myListeners.subList(myListenersCount, myListeners.size());
+      Object[] ops = opsList.toArray();
+      opsList.clear();
+      for (Object o : ops) {
+        ListenerOp<ListenerT> op = (ListenerOp<ListenerT>) o;
+        if (op.add) {
+          myListeners.add(op.listener);
+          myListenersCount++;
+        } else {
+          myListeners.remove(op.listener);
+          myListenersCount--;
+        }
       }
-      if (myFireData.toRemove != null) {
-        myListeners.removeAll(myFireData.toRemove);
-        myFireData.toRemove = null;
-      }
-      myFireData = null;
     }
   }
 
@@ -131,9 +132,13 @@ public class Listeners<ListenerT> {
     return myListeners == null ? 0 : myListeners.size();
   }
 
-  private static class FireData<ListenerT> {
-    private int depth;
-    private List<ListenerT> toRemove;
-    private List<ListenerT> toAdd;
+  private static class ListenerOp<ListenerT> {
+    final ListenerT listener;
+    final boolean add;
+
+    ListenerOp(ListenerT listener, boolean add) {
+      this.listener = listener;
+      this.add = add;
+    }
   }
 }
