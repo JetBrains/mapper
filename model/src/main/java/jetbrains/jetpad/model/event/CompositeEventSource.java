@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,15 +68,12 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
     myRegistrations.add(src.addHandler(new EventHandler<PartEventT>() {
       @Override
       public void onEvent(final PartEventT event) {
-        try (Listeners.Firing<EventHandler<? super EventT>> firing = myHandlers.fire()) {
-          for (EventHandler<? super EventT> l : firing) {
-            try {
-              l.onEvent(event);
-            } catch (Throwable t) {
-              ThrowableHandlers.handle(t);
-            }
+        myHandlers.fire(new ListenerCaller<EventHandler<? super EventT>>() {
+          @Override
+          public void call(EventHandler<? super EventT> item) {
+            item.onEvent(event);
           }
-        }
+        });
       }
     }));
   }

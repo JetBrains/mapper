@@ -16,7 +16,6 @@
 package jetbrains.jetpad.mapper;
 
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
@@ -56,15 +55,12 @@ public final class MappingContext {
       }
     }
 
-    try (Listeners.Firing<MappingContextListener> firing = myListeners.fire()) {
-      for (jetbrains.jetpad.mapper.MappingContextListener l : firing) {
-        try {
-          l.onMapperRegistered(mapper);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+    myListeners.fire(new ListenerCaller<MappingContextListener>() {
+      @Override
+      public void call(MappingContextListener l) {
+        l.onMapperRegistered(mapper);
       }
-    }
+    });
   }
 
   void unregister(final Mapper<?, ?> mapper) {
@@ -88,15 +84,12 @@ public final class MappingContext {
       }
     }
 
-    try (Listeners.Firing<MappingContextListener> firing = myListeners.fire()) {
-      for (jetbrains.jetpad.mapper.MappingContextListener l : firing) {
-        try {
-          l.onMapperUnregistered(mapper);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+    myListeners.fire(new ListenerCaller<MappingContextListener>() {
+      @Override
+      public void call(MappingContextListener l) {
+        l.onMapperUnregistered(mapper);
       }
-    }
+    });
   }
 
   /**

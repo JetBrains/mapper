@@ -15,18 +15,13 @@
  */
 package jetbrains.jetpad.model.event;
 
-import jetbrains.jetpad.base.ThrowableHandlers;
-
 public final class EventListeners<ListenerT, EventT extends ListenerEvent<ListenerT>> extends Listeners<ListenerT> {
   public void fire(final EventT event) {
-    try (Firing<ListenerT> firing = fire()) {
-      for (ListenerT l : firing) {
-        try {
-          event.dispatch(l);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+    fire(new ListenerCaller<ListenerT>() {
+      @Override
+      public void call(ListenerT item) {
+        event.dispatch(item);
       }
-    }
+    });
   }
 }

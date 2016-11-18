@@ -17,7 +17,6 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.base.Disposable;
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -55,15 +54,12 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
       public void onItemSet(CollectionItemEvent<? extends ValueT> event) {
         if (event.getIndex() == ListItemProperty.this.index.get()) {
           final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<>(event.getOldItem(), event.getNewItem());
-          try (Listeners.Firing<EventHandler<? super PropertyChangeEvent<ValueT>>> firing = myHandlers.fire()) {
-            for (EventHandler<? super PropertyChangeEvent<ValueT>> l : firing) {
-              try {
-                l.onEvent(e);
-              } catch (Throwable t) {
-                ThrowableHandlers.handle(t);
-              }
+          myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+            @Override
+            public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
+              l.onEvent(e);
             }
-          }
+          });
         }
       }
 
@@ -74,15 +70,12 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
         } else if (event.getIndex() == ListItemProperty.this.index.get()) {
           invalidate();
           final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<ValueT>(event.getOldItem(), null);
-          try (Listeners.Firing<EventHandler<? super PropertyChangeEvent<ValueT>>> firing = myHandlers.fire()) {
-            for (EventHandler<? super PropertyChangeEvent<ValueT>> l : firing) {
-              try {
-                l.onEvent(e);
-              } catch (Throwable t) {
-                ThrowableHandlers.handle(t);
-              }
+          myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+            @Override
+            public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
+              l.onEvent(e);
             }
-          }
+          });
         }
       }
     });

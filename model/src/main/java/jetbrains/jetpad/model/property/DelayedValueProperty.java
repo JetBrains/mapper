@@ -17,7 +17,6 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
@@ -54,15 +53,12 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
 
   public void flush() {
     if (myHandlers != null) {
-      try (Listeners.Firing<EventHandler<? super PropertyChangeEvent<ValueT>>> firing = myHandlers.fire()) {
-        for (EventHandler<? super PropertyChangeEvent<ValueT>> l : firing) {
-          try {
-            l.onEvent(myPendingEvent);
-          } catch (Throwable t) {
-            ThrowableHandlers.handle(t);
-          }
+      myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
+        @Override
+        public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {
+          l.onEvent(myPendingEvent);
         }
-      }
+      });
     }
     myPendingEvent = null;
   }

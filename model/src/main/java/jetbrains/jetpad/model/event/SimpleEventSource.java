@@ -16,21 +16,17 @@
 package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.base.ThrowableHandlers;
 
 public final class SimpleEventSource<EventT> implements EventSource<EventT> {
   private Listeners<EventHandler<? super EventT>> myListeners = new Listeners<>();
 
   public void fire(final EventT event) {
-    try (Listeners.Firing<EventHandler<? super EventT>> firing = myListeners.fire()) {
-      for (EventHandler<? super EventT> l : firing) {
-        try {
-          l.onEvent(event);
-        } catch (Throwable t) {
-          ThrowableHandlers.handle(t);
-        }
+    myListeners.fire(new ListenerCaller<EventHandler<? super EventT>>() {
+      @Override
+      public void call(EventHandler<? super EventT> l) {
+        l.onEvent(event);
       }
-    }
+    });
   }
 
   @Override

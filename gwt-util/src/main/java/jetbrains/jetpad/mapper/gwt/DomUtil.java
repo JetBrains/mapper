@@ -20,7 +20,6 @@ import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
-import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -167,15 +166,12 @@ public class DomUtil {
             public void run() {
               final boolean currentValue = element.isChecked();
               if (currentValue != value.get()) {
-                try (Listeners.Firing<EventHandler<? super PropertyChangeEvent<Boolean>>> firing = myListeners.fire()) {
-                  for (EventHandler<? super PropertyChangeEvent<Boolean>> l : firing) {
-                    try {
-                      l.onEvent(new PropertyChangeEvent<>(value.get(), currentValue));
-                    } catch (Throwable t) {
-                      ThrowableHandlers.handle(t);
-                    }
+                myListeners.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<Boolean>>>() {
+                  @Override
+                  public void call(EventHandler<? super PropertyChangeEvent<Boolean>> l) {
+                    l.onEvent(new PropertyChangeEvent<>(value.get(), currentValue));
                   }
-                }
+                });
                 value.set(currentValue);
               }
             }

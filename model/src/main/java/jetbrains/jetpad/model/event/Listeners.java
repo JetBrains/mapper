@@ -83,11 +83,6 @@ public class Listeners<ListenerT> {
     };
   }
 
-
-  /**
-   * Use {@code Listeners.fire()} instead
-   */
-  @Deprecated()
   public void fire(final ListenerCaller<ListenerT> h) {
     try (Firing<ListenerT> firing = fire()) {
       for (ListenerT l : firing) {

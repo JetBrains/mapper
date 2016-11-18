@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.collections.set;
 
-import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
@@ -60,16 +59,12 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   private void doAfterAdd(final ItemT item, boolean success) {
     try {
       if (success && myListeners != null) {
-        try (Listeners.Firing<CollectionListener<ItemT>> firing = myListeners.fire()) {
-          CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(null, item, -1, CollectionItemEvent.EventType.ADD);
-          for (CollectionListener<ItemT> l : firing) {
-            try {
-              l.onItemAdded(event);
-            } catch (Throwable t) {
-              ThrowableHandlers.handle(t);
-            }
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemAdded(new CollectionItemEvent<>(null, item, -1, CollectionItemEvent.EventType.ADD));
           }
-        }
+        });
       }
     } finally {
       afterItemAdded(item, success);
@@ -139,16 +134,12 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   private void doAfterRemove(final ItemT item, boolean success) {
     try {
       if (success && myListeners != null) {
-        try (Listeners.Firing<CollectionListener<ItemT>> firing = myListeners.fire()) {
-          CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(item, null, -1, CollectionItemEvent.EventType.REMOVE);
-          for (CollectionListener<ItemT> l : firing) {
-            try {
-              l.onItemRemoved(event);
-            } catch (Throwable t) {
-              ThrowableHandlers.handle(t);
-            }
+        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+          @Override
+          public void call(CollectionListener<ItemT> l) {
+            l.onItemRemoved(new CollectionItemEvent<>(item, null, -1, CollectionItemEvent.EventType.REMOVE));
           }
-        }
+        });
       }
     } finally {
       afterItemRemoved(item, success);
