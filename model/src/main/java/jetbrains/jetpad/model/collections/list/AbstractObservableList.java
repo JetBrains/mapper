@@ -164,6 +164,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
         @Override
         protected void afterLastRemoved() {
+          myListeners = null;
           onListenersRemoved();
         }
       };
