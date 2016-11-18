@@ -17,6 +17,7 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
@@ -64,12 +65,15 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
     myValue = newValue;
 
     if (myHandlers != null) {
-      myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
-        @Override
-        public void call(EventHandler<? super PropertyChangeEvent<ValueT>> item) {
-          item.onEvent(event);
+      try (Listeners.Firing<EventHandler<? super PropertyChangeEvent<ValueT>>> firing = myHandlers.fire()) {
+        for (EventHandler<? super PropertyChangeEvent<ValueT>> l : firing) {
+          try {
+            l.onEvent(event);
+          } catch (Throwable t) {
+            ThrowableHandlers.handle(t);
+          }
         }
-      });
+      }
     }
   }
 
