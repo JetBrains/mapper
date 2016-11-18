@@ -16,10 +16,13 @@
 package jetbrains.jetpad.model.event;
 
 
+import jetbrains.jetpad.base.Disposable;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
+import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +33,17 @@ import java.util.List;
  * - firing events
  */
 public class Listeners<ListenerT> {
+  private static final Firing EMPTY = new Firing() {
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public Iterator iterator() {
+      return Collections.emptyIterator();
+    }
+  };
+
   private List<Object> myListeners = null;
   private int myFireDepth;
   private int myListenersCount;
@@ -70,21 +84,34 @@ public class Listeners<ListenerT> {
   }
 
   public void fire(final ListenerCaller<ListenerT> h) {
-    if (isEmpty()) return;
-    beforeFire();
-    try {
-      Iterator<ListenerT> it = listenersIterator();
-      while (it.hasNext()) {
-        ListenerT l = it.next();
+    try (Firing<ListenerT> firing = fire()) {
+      for (ListenerT l : firing) {
         try {
           h.call(l);
         } catch (Throwable t) {
           ThrowableHandlers.handle(t);
         }
       }
-    } finally {
-      afterFire();
     }
+  }
+
+  public Firing<ListenerT> fire() {
+    if (isEmpty()) {
+      return (Firing<ListenerT>) EMPTY;
+    }
+
+    beforeFire();
+    return new Firing<ListenerT>() {
+      @Override
+      public Iterator<ListenerT> iterator() {
+        return listenersIterator();
+      }
+
+      @Override
+      public void close() {
+        afterFire();
+      }
+    };
   }
 
   private Iterator<ListenerT> listenersIterator() {
@@ -159,6 +186,10 @@ public class Listeners<ListenerT> {
 
   int size() {
     return myListeners == null ? 0 : myListeners.size();
+  }
+
+  public interface Firing<ListenerT> extends Closeable, Iterable<ListenerT> {
+    void close();
   }
 
   private static class ListenerOp<ListenerT> {
