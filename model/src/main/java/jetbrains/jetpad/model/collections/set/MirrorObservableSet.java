@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.collections.set;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
@@ -41,22 +42,28 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
     myBaseCollection.addListener(new CollectionAdapter<SourceT>() {
       @Override
       public void onItemAdded(final CollectionItemEvent<? extends SourceT> event) {
-        myListeners.fire(new ListenerCaller<CollectionListener<TargetT>>() {
-          @Override
-          public void call(CollectionListener<TargetT> l) {
-            l.onItemAdded(new CollectionItemEvent<>(null, myTargetSupplier.apply(event.getNewItem()), -1, CollectionItemEvent.EventType.ADD));
+        try (Listeners.Firing<CollectionListener<TargetT>> firing = myListeners.fire()) {
+          for (CollectionListener<TargetT> l : firing) {
+            try {
+              l.onItemAdded(new CollectionItemEvent<>(null, myTargetSupplier.apply(event.getNewItem()), -1, CollectionItemEvent.EventType.ADD));
+            } catch (Throwable t) {
+              ThrowableHandlers.handle(t);
+            }
           }
-        });
+        }
       }
 
       @Override
       public void onItemRemoved(final CollectionItemEvent<? extends SourceT> event) {
-        myListeners.fire(new ListenerCaller<CollectionListener<TargetT>>() {
-          @Override
-          public void call(CollectionListener<TargetT> l) {
-            l.onItemRemoved(new CollectionItemEvent<>(myTargetSupplier.apply(event.getOldItem()), null, -1, CollectionItemEvent.EventType.REMOVE));
+        try (Listeners.Firing<CollectionListener<TargetT>> firing = myListeners.fire()) {
+          for (CollectionListener<TargetT> l : firing) {
+            try {
+              l.onItemRemoved(new CollectionItemEvent<>(myTargetSupplier.apply(event.getOldItem()), null, -1, CollectionItemEvent.EventType.REMOVE));
+            } catch (Throwable t) {
+              ThrowableHandlers.handle(t);
+            }
           }
-        });
+        }
       }
     });
   }
