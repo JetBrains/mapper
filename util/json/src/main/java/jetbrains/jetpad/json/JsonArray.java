@@ -97,9 +97,10 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     builder.append("[");
     builder.indent();
     builder.newLine();
-    for (int i = 0; i < size(); i++) {
-      get(i).toString(builder);
-      if (i != size() - 1) {
+    int size = size();
+    for (int i = 0; i < size; i++) {
+      myValues.get(i).toString(builder);
+      if (i != size - 1) {
         builder.append(",");
         builder.newLine();
       }
@@ -111,8 +112,8 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
 
   public Iterator<JsonValue> iterator() {
     if (myValues == null) {
-      return Arrays.asList(new JsonValue[0]).iterator();
+      return Collections.emptyIterator();
     }
-    return Collections.unmodifiableList(myValues).iterator();
+    return myValues.iterator();
   }
 }
