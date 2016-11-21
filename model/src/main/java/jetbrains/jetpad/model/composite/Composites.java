@@ -325,10 +325,18 @@ public class Composites {
 
   private static <CompositeT extends Composite<CompositeT>>
   List<CompositeT> reverseAncestors(CompositeT c) {
-    List<CompositeT> result = toList(ancestors(c));
-    Collections.reverse(result);
-    result.add(c);
+    List<CompositeT> result = new ArrayList<>();
+    collectReverseAncestors(c, result);
     return result;
+  }
+
+  private static <CompositeT extends Composite<CompositeT>>
+  void collectReverseAncestors(CompositeT c, List<CompositeT> result) {
+    CompositeT parent = c.getParent();
+    if (parent != null) {
+      collectReverseAncestors(parent, result);
+    }
+    result.add(c);
   }
 
   static <ItemT> List<ItemT> toList(Iterable<ItemT> it) {
