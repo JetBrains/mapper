@@ -92,9 +92,6 @@ public final class MappingContext {
     });
   }
 
-  /**
-   * Try using this method as little as possible
-   */
   public <S> Mapper<? super S, ?> getMapper(Mapper<?, ?> ancestor, S source) {
     Set<Mapper<? super S, ?>> result = getMappers(ancestor, source);
     if (result.isEmpty()) return null;
@@ -104,9 +101,6 @@ public final class MappingContext {
     return result.iterator().next();
   }
 
-  /**
-   * Try using this method as little as possible. Nice to use method which returns one mapper instead
-   */
   public <S> Set<Mapper<? super S, ?>> getMappers(Mapper<?, ?> ancestor, S source) {
     Set<Mapper<? super S, ?>> mappers = getMappers(source);
     Set<Mapper<? super S, ?>> result = null;
