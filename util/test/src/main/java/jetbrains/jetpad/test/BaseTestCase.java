@@ -31,14 +31,10 @@ public abstract class BaseTestCase {
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
   @Rule
   public EnableRemoteTestsRule enableRemoteTestsRule = new EnableRemoteTestsRule();
-  @Rule
-  public EnableManualTestsRule enableManualTestsRule = new EnableManualTestsRule();
   @ClassRule
   public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
   @ClassRule
   public static EnableRemoteTestsRule enableRemoteSuitesRule = new EnableRemoteTestsRule();
-  @ClassRule
-  public static EnableManualTestsRule enableManualSuitesRule = new EnableManualTestsRule();
 
   @BeforeClass
   public static void turnLoggingOff() {
