@@ -48,6 +48,11 @@ public class ExclusiveFilter {
     };
   }
 
+
+  public boolean isSuspended() {
+    return mySuspended;
+  }
+
   /**
    * This is an auxiliary method that allows to execute proper update
    * on exclusive EventSources when trigger comes from outside.
