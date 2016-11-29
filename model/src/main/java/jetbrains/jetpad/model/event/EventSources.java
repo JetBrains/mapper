@@ -16,14 +16,14 @@
 package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Predicate;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
-import jetbrains.jetpad.base.function.Function;
-import jetbrains.jetpad.base.function.Predicate;
 
 public class EventSources {
   /**
@@ -49,6 +49,11 @@ public class EventSources {
 
   @SafeVarargs
   public static <EventT> EventSource<EventT> composite(EventSource<? extends EventT>... sources) {
+    return new CompositeEventSource<>(sources);
+  }
+
+
+  public static <EventT> EventSource<EventT> composite(Iterable<? extends EventSource<? extends EventT>> sources) {
     return new CompositeEventSource<>(sources);
   }
 

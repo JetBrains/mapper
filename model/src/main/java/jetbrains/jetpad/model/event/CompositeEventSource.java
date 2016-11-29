@@ -32,6 +32,12 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
     }
   }
 
+  CompositeEventSource(Iterable<? extends EventSource<? extends EventT>> sources) {
+    for (EventSource<? extends EventT> s : sources) {
+      add(s);
+    }
+  }
+
   void add(EventSource<? extends EventT> source) {
     myEventSources.add(source);
   }
