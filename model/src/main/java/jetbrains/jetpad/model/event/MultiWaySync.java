@@ -24,6 +24,10 @@ import jetbrains.jetpad.base.Registration;
 public class MultiWaySync {
   private boolean myInSync = false;
 
+  public boolean isInSync() {
+    return myInSync;
+  }
+
   public <EventT> EventSource<EventT> inSync(final EventSource<? extends EventT> source) {
     return new EventSource<EventT>() {
       @Override
@@ -43,14 +47,6 @@ public class MultiWaySync {
     };
   }
 
-  public boolean isInSync() {
-    return myInSync;
-  }
-
-  /**
-   * This is an auxiliary method that allows to execute proper update
-   * on exclusive EventSources when trigger comes from outside.
-   */
   public void sync(Runnable action) {
     if (!myInSync) {
       myInSync = true;
