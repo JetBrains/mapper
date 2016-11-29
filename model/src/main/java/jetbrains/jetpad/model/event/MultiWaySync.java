@@ -18,13 +18,8 @@ package jetbrains.jetpad.model.event;
 import jetbrains.jetpad.base.Registration;
 
 /**
- * Utility class for implementing various two and multi- way synchronisations.
- *
- * Main intent is preventing infinite recursion when two event sources
- * has handlers that need to update each other.
- *
- * Users should subscribe for event sources passed through the {@link #inSync(EventSource)}
- * method. When one handler on an exclusive EventSource is running no other handler will be called.
+ * Utility class for implementing multi-way synchronizations. It prevents infinite recursive updates
+ * by using an internal flag.
  */
 public class MultiWaySync {
   private boolean myInSync = false;
@@ -47,7 +42,6 @@ public class MultiWaySync {
       }
     };
   }
-
 
   public boolean isInSync() {
     return myInSync;
