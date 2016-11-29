@@ -175,6 +175,28 @@
           <artifactId>jetty-maven-plugin</artifactId>
           <version>${jetty.version}</version>
         </plugin>
+
+        <plugin>
+          <groupId>pl.project13.maven</groupId>
+          <artifactId>git-commit-id-plugin</artifactId>
+          <version>2.2.1</version>
+          <executions>
+            <execution>
+              <id>git-commit-id</id>
+              <goals>
+                <goal>revision</goal>
+              </goals>
+              <phase>validate</phase>
+              <configuration>
+                <prefix>git</prefix>
+                <dotGitDirectory>../../.git</dotGitDirectory>
+                <skipPoms>false</skipPoms>
+                <dateFormat>yyyyMMdd_HHmmss</dateFormat>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
