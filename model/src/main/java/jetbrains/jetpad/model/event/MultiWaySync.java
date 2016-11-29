@@ -23,20 +23,20 @@ import jetbrains.jetpad.base.Registration;
  * Main intent is preventing infinite recursion when two event sources
  * has handlers that need to update each other.
  *
- * Users should subscribe for event sources passed through the {@link #exclusive(EventSource)}
+ * Users should subscribe for event sources passed through the {@link #inSync(EventSource)}
  * method. When one handler on an exclusive EventSource is running no other handler will be called.
  */
-public class ExclusiveFilter {
-  private boolean mySuspended = false;
+public class MultiWaySync {
+  private boolean myInSync = false;
 
-  public <EventT> EventSource<EventT> exclusive(final EventSource<? extends EventT> source) {
+  public <EventT> EventSource<EventT> inSync(final EventSource<? extends EventT> source) {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
         return source.addHandler(new EventHandler<EventT>() {
           @Override
           public void onEvent(final EventT event) {
-            runExclusively(new Runnable() {
+            sync(new Runnable() {
               @Override
               public void run() {
                 handler.onEvent(event);
@@ -49,21 +49,21 @@ public class ExclusiveFilter {
   }
 
 
-  public boolean isSuspended() {
-    return mySuspended;
+  public boolean isInSync() {
+    return myInSync;
   }
 
   /**
    * This is an auxiliary method that allows to execute proper update
    * on exclusive EventSources when trigger comes from outside.
    */
-  public void runExclusively(Runnable action) {
-    if (!mySuspended) {
-      mySuspended = true;
+  public void sync(Runnable action) {
+    if (!myInSync) {
+      myInSync = true;
       try {
         action.run();
       } finally {
-        mySuspended = false;
+        myInSync = false;
       }
     }
   }

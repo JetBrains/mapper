@@ -18,6 +18,8 @@ package jetbrains.jetpad.model.transform;
 import jetbrains.jetpad.base.Functions;
 import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
@@ -27,7 +29,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.ExclusiveFilter;
+import jetbrains.jetpad.model.event.MultiWaySync;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
@@ -42,8 +44,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import jetbrains.jetpad.base.function.Function;
-import jetbrains.jetpad.base.function.Supplier;
 
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
@@ -615,7 +615,7 @@ public class Transformers {
         return new Transformation<ObservableList<ItemT>, ObservableList<Property<ItemT>>>() {
           private final Registration myListsReg;
           private final List<Registration> myPropertiesRegs = new ArrayList<>();
-          private final ExclusiveFilter mySyncing = new ExclusiveFilter();
+          private final MultiWaySync mySyncing = new MultiWaySync();
 
           {
             final EventHandler<PropertyChangeEvent<ItemT>> propertyChangePropagator = new EventHandler<PropertyChangeEvent<ItemT>>() {
@@ -636,7 +636,7 @@ public class Transformers {
                 switch (event.getType()) {
                   case ADD:
                     Property<ItemT> newProperty = new ValueProperty<ItemT>(event.getNewItem());
-                    Registration newPropertyReg = mySyncing.exclusive(newProperty).addHandler(propertyChangePropagator);
+                    Registration newPropertyReg = mySyncing.inSync(newProperty).addHandler(propertyChangePropagator);
                     myPropertiesRegs.add(event.getIndex(), newPropertyReg);
                     to.add(event.getIndex(), newProperty);
                     break;
@@ -657,13 +657,13 @@ public class Transformers {
                 switch (event.getType()) {
                   case ADD:
                     Property<ItemT> newProperty = event.getNewItem();
-                    Registration newPropertyReg = mySyncing.exclusive(newProperty).addHandler(propertyChangePropagator);
+                    Registration newPropertyReg = mySyncing.inSync(newProperty).addHandler(propertyChangePropagator);
                     myPropertiesRegs.add(event.getIndex(), newPropertyReg);
                     from.add(event.getIndex(), newProperty.get());
                     break;
                   case SET:
                     Property<ItemT> setProperty = event.getNewItem();
-                    Registration setPropertyReg = mySyncing.exclusive(setProperty).addHandler(propertyChangePropagator);
+                    Registration setPropertyReg = mySyncing.inSync(setProperty).addHandler(propertyChangePropagator);
                     Registration oldPropertyReg = myPropertiesRegs.set(event.getIndex(), setPropertyReg);
                     oldPropertyReg.remove();
                     from.set(event.getIndex(), setProperty.get());
@@ -677,12 +677,12 @@ public class Transformers {
             };
 
             myListsReg = new CompositeRegistration(
-              mySyncing.exclusive(from).addHandler(forwardListener),
-              mySyncing.exclusive(to).addHandler(backwardListener));
+              mySyncing.inSync(from).addHandler(forwardListener),
+              mySyncing.inSync(to).addHandler(backwardListener));
 
             for (final ListIterator<ItemT> i = from.listIterator(); i.hasNext(); ) {
               final int index = i.nextIndex();
-              mySyncing.runExclusively(new Runnable() {
+              mySyncing.sync(new Runnable() {
                 @Override
                 public void run() {
                   forwardListener.onEvent(new CollectionItemEvent<>(null, i.next(), index, CollectionItemEvent.EventType.ADD));
