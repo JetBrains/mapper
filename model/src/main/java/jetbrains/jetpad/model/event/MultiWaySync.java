@@ -17,12 +17,16 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Utility class for implementing multi-way synchronizations. It prevents infinite recursive updates
  * by using an internal flag.
  */
 public class MultiWaySync {
   private boolean myInSync = false;
+  private List<Runnable> myWhenInSync;
 
   public boolean isInSync() {
     return myInSync;
@@ -54,7 +58,25 @@ public class MultiWaySync {
         action.run();
       } finally {
         myInSync = false;
+        if (myWhenInSync != null) {
+          for (Runnable r : myWhenInSync) {
+            r.run();
+          }
+          myWhenInSync = null;
+        }
       }
     }
+  }
+
+  public void whenInSync(Runnable r) {
+    if (!myInSync) {
+      r.run();
+      return;
+    }
+
+    if (myWhenInSync == null) {
+      myWhenInSync = new ArrayList<>();
+    }
+    myWhenInSync.add(r);
   }
 }
