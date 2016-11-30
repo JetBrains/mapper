@@ -51,20 +51,35 @@ public class MultiWaySync {
     };
   }
 
-  public void sync(Runnable action) {
+  public void startSync() {
+    if (myInSync) {
+      throw new IllegalStateException();
+    }
+    myInSync = true;
+  }
+
+  public void finishSync() {
     if (!myInSync) {
-      myInSync = true;
-      try {
-        action.run();
-      } finally {
-        myInSync = false;
-        if (myWhenInSync != null) {
-          for (Runnable r : myWhenInSync) {
-            r.run();
-          }
-          myWhenInSync = null;
-        }
+      throw new IllegalStateException();
+    }
+
+    myInSync = false;
+    if (myWhenInSync != null) {
+      for (Runnable r : myWhenInSync) {
+        r.run();
       }
+      myWhenInSync = null;
+    }
+  }
+
+  public void sync(Runnable action) {
+    if (myInSync) return;
+
+    startSync();
+    try {
+      action.run();
+    } finally {
+      finishSync();
     }
   }
 

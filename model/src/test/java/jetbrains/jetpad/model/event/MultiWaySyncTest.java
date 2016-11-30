@@ -4,6 +4,8 @@ import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MultiWaySyncTest extends BaseTestCase {
   private MultiWaySync sync = new MultiWaySync();
@@ -25,5 +27,16 @@ public class MultiWaySyncTest extends BaseTestCase {
     });
 
     assertEquals("start;whenInSync;", log.toString());
+  }
+
+  @Test
+  public void startAndFinish() {
+    sync.startSync();
+
+    assertTrue(sync.isInSync());
+
+    sync.finishSync();
+
+    assertFalse(sync.isInSync());
   }
 }
