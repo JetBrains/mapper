@@ -16,5 +16,5 @@
 package jetbrains.jetpad.base.function;
 
 public interface Predicate<ValueT> {
-    boolean test(ValueT value);
+  boolean test(ValueT value);
 }

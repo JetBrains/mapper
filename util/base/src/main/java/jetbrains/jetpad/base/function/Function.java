@@ -16,5 +16,5 @@
 package jetbrains.jetpad.base.function;
 
 public interface Function<ValueT, ResultT> {
-    ResultT apply(ValueT value);
+  ResultT apply(ValueT value);
 }

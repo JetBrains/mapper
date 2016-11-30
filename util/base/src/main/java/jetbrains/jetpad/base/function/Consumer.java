@@ -16,5 +16,5 @@
 package jetbrains.jetpad.base.function;
 
 public interface Consumer<ValueT> {
-    void accept(ValueT value);
+  void accept(ValueT value);
 }
