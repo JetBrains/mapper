@@ -16,5 +16,5 @@
 package jetbrains.jetpad.base.function;
 
 public interface Supplier<ValueT> {
-    ValueT get();
+  ValueT get();
 }
