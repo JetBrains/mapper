@@ -7,6 +7,14 @@ public class AppProperties {
     ourPropertyProvider = provider;
   }
 
+  public static String get(String key, String defaultValue) {
+    String value = get(key);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
+  }
+
   public static String get(String key) {
     return ourPropertyProvider.get(key);
   }
