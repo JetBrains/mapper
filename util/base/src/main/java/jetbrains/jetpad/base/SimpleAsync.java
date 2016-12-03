@@ -120,8 +120,8 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
     for (Consumer<Throwable> handler : myFailureHandlers) {
       try {
         handler.accept(throwable);
-      } catch (Exception e) {
-        ThrowableHandlers.handle(e);
+      } catch (Throwable t) {
+        ThrowableHandlers.handle(t);
       }
     }
     clearHandlers();
