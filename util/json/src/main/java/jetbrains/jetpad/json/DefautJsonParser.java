@@ -1,6 +1,9 @@
 package jetbrains.jetpad.json;
 
 public class DefautJsonParser implements JsonParser {
+  public DefautJsonParser() {
+  }
+
   @Override
   public JsonValue parse(String input) {
     try {
