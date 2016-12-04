@@ -1,7 +1,7 @@
 package jetbrains.jetpad.json;
 
-public class DefautJsonParser implements JsonParser {
-  public DefautJsonParser() {
+public class DefautJsonSupport implements JsonSupport {
+  public DefautJsonSupport() {
   }
 
   @Override

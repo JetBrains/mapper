@@ -17,17 +17,17 @@ package jetbrains.jetpad.json;
 
 import java.util.logging.Logger;
 
-public class JsonParsing {
-  private static final Logger LOG = Logger.getLogger(JsonParsing.class.getName());
+public class Json {
+  private static final Logger LOG = Logger.getLogger(Json.class.getName());
 
-  private static JsonParser ourParser = new DefautJsonParser();
+  private static JsonSupport ourJsonSupport = new DefautJsonSupport();
 
   public static JsonValue parse(String input) {
-    return ourParser.parse(input);
+    return ourJsonSupport.parse(input);
   }
 
-  public static void setParser(JsonParser parser) {
-    ourParser = parser;
+  public static void setJsonSupport(JsonSupport parser) {
+    ourJsonSupport = parser;
     LOG.info("Set Json Parser to " + parser);
   }
 }

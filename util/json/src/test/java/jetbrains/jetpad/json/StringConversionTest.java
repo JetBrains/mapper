@@ -54,14 +54,14 @@ public class StringConversionTest {
 
     JsonString value = new JsonString(data);
     assertEquals(3, value.toString().length());
-    JsonValue parsed = JsonParsing.parse(value.toString());
+    JsonValue parsed = Json.parse(value.toString());
     assertTrue(parsed instanceof JsonString);
     assertEquals(data, ((JsonString) parsed).getStringValue());
   }
 
   @Test
   public void unsecapeUnicode() {
-    JsonValue parsed = JsonParsing.parse("\"\\u0125\"");
+    JsonValue parsed = Json.parse("\"\\u0125\"");
     assertTrue(parsed instanceof JsonString);
     assertEquals(3, parsed.toString().length());
   }
@@ -123,7 +123,7 @@ public class StringConversionTest {
   private void convertForthAndBack(String data, String expectedJson) {
     JsonString value = new JsonString(data);
     assertToString(value, expectedJson);
-    JsonValue parsed = JsonParsing.parse(expectedJson);
+    JsonValue parsed = Json.parse(expectedJson);
     assertTrue(parsed instanceof JsonString);
     assertEquals(data, ((JsonString) parsed).getStringValue());
   }

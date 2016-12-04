@@ -1,5 +1,5 @@
 package jetbrains.jetpad.json;
 
-public interface JsonParser {
+public interface JsonSupport {
   JsonValue parse(String input);
 }
