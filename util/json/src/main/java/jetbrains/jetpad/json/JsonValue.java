@@ -29,7 +29,7 @@ public abstract class JsonValue {
 
   @Override
   public String toString() {
-    return Json.toString(this);
+    return toString(0);
   }
 
   public String toPrettyString() {

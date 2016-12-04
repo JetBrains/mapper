@@ -26,10 +26,6 @@ public class Json {
     return ourJsonSupport.parse(input);
   }
 
-  public static String toString(JsonValue value) {
-    return ourJsonSupport.toString(value);
-  }
-
   public static void setJsonSupport(JsonSupport parser) {
     ourJsonSupport = parser;
     LOG.info("Set Json Parser to " + parser);
