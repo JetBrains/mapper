@@ -17,8 +17,8 @@ package jetbrains.jetpad.json;
 
 import java.util.logging.Logger;
 
-public class Json {
-  private static final Logger LOG = Logger.getLogger(Json.class.getName());
+public class JsonParsing {
+  private static final Logger LOG = Logger.getLogger(JsonParsing.class.getName());
 
   private static JsonParser ourParser = new DefautJsonParser();
 

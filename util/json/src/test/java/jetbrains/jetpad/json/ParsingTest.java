@@ -25,112 +25,112 @@ public class ParsingTest {
 
   @Test
   public void emptyObject() {
-    JsonObject object = (JsonObject) Json.parse("{}");
+    JsonObject object = (JsonObject) JsonParsing.parse("{}");
     assertTrue(object.getKeys().isEmpty());
   }
 
   @Test(expected = JsonParsingException.class)
   public void extraSymbols() {
-    Json.parse("{} {");
+    JsonParsing.parse("{} {");
   }
 
   @Test(expected = JsonParsingException.class)
   public void unknownSymbols() {
-    Json.parse("{} @");
+    JsonParsing.parse("{} @");
   }
 
   @Test
   public void emptyArray() {
-    JsonArray array = (JsonArray) Json.parse("[]");
+    JsonArray array = (JsonArray) JsonParsing.parse("[]");
 
     assertTrue(array.size() == 0);
   }
 
   @Test
   public void nullValue() {
-    assertTrue(Json.parse("null") instanceof JsonNull);
+    assertTrue(JsonParsing.parse("null") instanceof JsonNull);
   }
 
   @Test
   public void trueValue() {
-    JsonBoolean trueValue = (JsonBoolean) Json.parse("true");
+    JsonBoolean trueValue = (JsonBoolean) JsonParsing.parse("true");
 
     assertTrue(trueValue.getBooleanValue());
   }
 
   @Test
   public void falseValue() {
-    JsonBoolean falseValue = (JsonBoolean) Json.parse("false");
+    JsonBoolean falseValue = (JsonBoolean) JsonParsing.parse("false");
 
     Assert.assertFalse(falseValue.getBooleanValue());
   }
 
   @Test
   public void multiElementArray() {
-    JsonArray array = (JsonArray) Json.parse("[true, false]");
+    JsonArray array = (JsonArray) JsonParsing.parse("[true, false]");
 
     assertEquals(2, array.size());
   }
 
   @Test
   public void simpleNumber() {
-    JsonNumber n = (JsonNumber) Json.parse("239");
+    JsonNumber n = (JsonNumber) JsonParsing.parse("239");
 
     assertEquals(239.0, n.getDoubleValue(), 0.000001f);
   }
 
   @Test
   public void simpleNegativeNumber() {
-    JsonNumber n = (JsonNumber) Json.parse("-239");
+    JsonNumber n = (JsonNumber) JsonParsing.parse("-239");
 
     assertEquals(-239.0, n.getDoubleValue(), 0.000001f);
   }
 
   @Test
   public void simpleNumberWithDot() {
-    JsonNumber n = (JsonNumber) Json.parse("2.39");
+    JsonNumber n = (JsonNumber) JsonParsing.parse("2.39");
 
     assertEquals(2.39, n.getDoubleValue(), 0.000001f);
   }
 
   @Test
   public void numberWithExponent() {
-    JsonNumber n = (JsonNumber) Json.parse("2e1");
+    JsonNumber n = (JsonNumber) JsonParsing.parse("2e1");
 
     assertEquals(20.0, n.getDoubleValue(), 0.000001f);
   }
 
   @Test
   public void fractionalNumberWithExponent() {
-    JsonNumber n = (JsonNumber) Json.parse("2.39e1");
+    JsonNumber n = (JsonNumber) JsonParsing.parse("2.39e1");
 
     assertEquals(23.9, n.getDoubleValue(), 0.000001f);
   }
 
   @Test
   public void simpleString() {
-    JsonString s = (JsonString) Json.parse("\"abc\"");
+    JsonString s = (JsonString) JsonParsing.parse("\"abc\"");
 
     assertEquals("abc", s.getStringValue());
   }
 
   @Test
   public void simpleEscapedString() {
-    JsonString s = (JsonString) Json.parse("\"a\\nbc\"");
+    JsonString s = (JsonString) JsonParsing.parse("\"a\\nbc\"");
 
     assertEquals("a\nbc", s.getStringValue());
   }
 
   @Test
   public void unicodeEscapeSequence() {
-    JsonString s = (JsonString) Json.parse("\"\\u000aabc\"");
+    JsonString s = (JsonString) JsonParsing.parse("\"\\u000aabc\"");
 
     assertEquals("\nabc", s.getStringValue());
   }
 
   @Test
   public void objectParsing() {
-    JsonObject obj = (JsonObject) Json.parse("{\"a\":239}");
+    JsonObject obj = (JsonObject) JsonParsing.parse("{\"a\":239}");
     JsonNumber number = (JsonNumber) obj.get("a");
 
     assertEquals(239.0, number.getDoubleValue(), 0.000001f);
