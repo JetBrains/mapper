@@ -15,7 +15,13 @@ public class DefautJsonSupport implements JsonSupport {
       return result;
     } catch (RuntimeException e) {
       throw new JsonParsingException("Failed to parse json=" + input, e);
-    }  }
+    }
+  }
+
+  @Override
+  public String toString(JsonValue value) {
+    return value.toString();
+  }
 
   private JsonValue parseValue(JsonLexer lexer) {
     switch (lexer.tokenKind()) {

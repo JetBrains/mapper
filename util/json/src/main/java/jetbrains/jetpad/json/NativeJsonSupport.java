@@ -45,4 +45,9 @@ public class NativeJsonSupport implements JsonSupport {
 
     throw new IllegalArgumentException();
   }
+
+  @Override
+  public String toString(JsonValue value) {
+    return value.toString();
+  }
 }
