@@ -24,8 +24,19 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
   public JsonArray() {
   }
 
-  public void add(JsonValue value) {
-    add(size(), value);
+
+  public Iterator<JsonValue> iterator() {
+    if (myValues == null) {
+      return Collections.emptyIterator();
+    }
+    return myValues.iterator();
+  }
+
+  public int size() {
+    if (myValues == null) {
+      return 0;
+    }
+    return myValues.size();
   }
 
   public void add(int pos, @Nonnull JsonValue value) {
@@ -39,6 +50,14 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     myValues.remove(pos);
   }
 
+  public void add(JsonValue value) {
+    add(size(), value);
+  }
+
+  public JsonValue get(int index) {
+    return myValues.get(index);
+  }
+
   public void add(@Nonnull String s) {
     add(new JsonString(s));
   }
@@ -49,20 +68,6 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
 
   public void add(boolean b) {
     add(new JsonBoolean(b));
-  }
-
-  public int size() {
-    if (myValues == null) {
-      return 0;
-    }
-    return myValues.size();
-  }
-
-  public JsonValue get(int index) {
-    if (myValues == null) {
-      throw new IndexOutOfBoundsException();
-    }
-    return myValues.get(index);
   }
 
   public JsonObject getObject(int index) {
@@ -99,7 +104,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     builder.newLine();
     int size = size();
     for (int i = 0; i < size; i++) {
-      myValues.get(i).toString(builder);
+      get(i).toString(builder);
       if (i != size - 1) {
         builder.append(",");
         builder.newLine();
@@ -108,12 +113,5 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     builder.unindent();
     builder.newLine();
     builder.append("]");
-  }
-
-  public Iterator<JsonValue> iterator() {
-    if (myValues == null) {
-      return Collections.emptyIterator();
-    }
-    return myValues.iterator();
   }
 }
