@@ -1,50 +1,54 @@
 package jetbrains.jetpad.json;
 
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONBoolean;
-import com.google.gwt.json.client.JSONNumber;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
-import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.core.client.JavaScriptObject;
 
 public class NativeJsonSupport implements JsonSupport {
   @Override
   public JsonValue parse(String input) {
-    JSONValue jsonValue = JSONParser.parseStrict(input);
-    return toJsonValue(jsonValue);
+    JavaScriptObject obj = parseJson(input);
+    return toJsonValue(obj);
   }
 
-  private JsonValue toJsonValue(JSONValue value) {
-    if (value.isNull() != null) {
-      return new JsonNull();
-    } else if (value.isBoolean() != null) {
-      JSONBoolean bool = (JSONBoolean) value;
-      return new JsonBoolean(bool.booleanValue());
-    } else if (value.isArray() != null) {
-      JSONArray array = (JSONArray) value;
-      JsonArray result = new JsonArray();
-      for (int i = 0; i < array.size(); i++) {
-        result.add(toJsonValue(array.get(i)));
-      }
-      return result;
-    } else if (value.isNumber() != null) {
-      JSONNumber number = (JSONNumber) value;
-      return new JsonNumber(number.doubleValue());
-    } else if (value.isObject() != null) {
-      JSONObject obj = (JSONObject) value;
-      JsonObject result = new JsonObject();
-      for (String key : obj.keySet()) {
-        result.put(key, toJsonValue(obj.get(key)));
-      }
-      return result;
-    } else if (value.isString() != null) {
-      JSONString str = (JSONString) value;
-      return new JsonString(str.stringValue());
+  private native JavaScriptObject parseJson(String json) /*-{
+    return $wnd.JSON.parse(json);
+  }-*/;
+
+  private static native JsonValue toJsonValue(JavaScriptObject obj) /*-{
+    if (obj == null) {
+      return @jetbrains.jetpad.json.JsonNull::new()();
     }
 
-    throw new IllegalArgumentException();
-  }
+    if (obj instanceof Array || obj instanceof $wnd.Array) {
+      var arr = @jetbrains.jetpad.json.JsonArray::new()();
+      var len = obj.length;
+      for (var i = 0; i < len; i++) {
+        var curVal = @jetbrains.jetpad.json.NativeJsonSupport::toJsonValue(*)(obj[i]);
+        arr.@jetbrains.jetpad.json.JsonArray::add(Ljetbrains/jetpad/json/JsonValue;)(curVal);
+      }
+      return arr;
+    }
+
+    var type = typeof obj;
+    switch (type) {
+      case "number":
+        return @jetbrains.jetpad.json.JsonNumber::new(D)(obj);
+      case "boolean":
+        return @jetbrains.jetpad.json.JsonBoolean::new(Z)(obj);
+      case "string":
+        return @jetbrains.jetpad.json.JsonString::new(Ljava/lang/String;)(obj);
+      case "object":
+        var o = @jetbrains.jetpad.json.JsonObject::new()();
+        for (var k in obj) {
+          if (obj.hasOwnProperty(k)) {
+            var kVal = @jetbrains.jetpad.json.NativeJsonSupport::toJsonValue(*)(obj[k]);
+            o.@jetbrains.jetpad.json.JsonObject::put(Ljava/lang/String;Ljetbrains/jetpad/json/JsonValue;)(k, kVal);
+          }
+        }
+        return o;
+    }
+
+    return null;
+  }-*/;
 
   @Override
   public String toString(JsonValue value) {
