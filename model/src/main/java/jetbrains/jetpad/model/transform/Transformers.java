@@ -29,11 +29,8 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.event.MultiWaySync;
-import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
-import jetbrains.jetpad.model.property.ValueProperty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -592,122 +589,6 @@ public class Transformers {
             if (!exists(item)) {
               to.add(converter.apply(item));
             }
-          }
-        };
-      }
-    };
-  }
-
-  // Non-unique values not supported: for all possible pairs equals() must return false. Null items also not supported.
-  public static <ItemT>
-  Transformer<ObservableList<ItemT>, ObservableList<Property<ItemT>>> toPropsListTwoWay() {
-    return new BaseTransformer<ObservableList<ItemT>, ObservableList<Property<ItemT>>>() {
-      @Override
-      public Transformation<ObservableList<ItemT>, ObservableList<Property<ItemT>>> transform(ObservableList<ItemT> from) {
-        return transform(from, new ObservableArrayList<Property<ItemT>>());
-      }
-
-      @Override
-      public Transformation<ObservableList<ItemT>, ObservableList<Property<ItemT>>> transform(final ObservableList<ItemT> from, final ObservableList<Property<ItemT>> to) {
-        if (!to.isEmpty()) {
-          throw new IllegalArgumentException("'To' list must be empty");
-        }
-        return new Transformation<ObservableList<ItemT>, ObservableList<Property<ItemT>>>() {
-          private final Registration myListsReg;
-          private final List<Registration> myPropertiesRegs = new ArrayList<>();
-          private final MultiWaySync mySyncing = new MultiWaySync();
-
-          {
-            final EventHandler<PropertyChangeEvent<ItemT>> propertyChangePropagator = new EventHandler<PropertyChangeEvent<ItemT>>() {
-              @Override
-              public void onEvent(PropertyChangeEvent<ItemT> event) {
-                int index = from.indexOf(event.getOldValue());
-                if (!to.get(index).get().equals(event.getNewValue())) {
-                  throw new IllegalStateException("Duplicate detected, first entry index=" + index
-                      + ", value=" + to.get(index).get());
-                }
-                from.set(index, event.getNewValue());
-              }
-            };
-
-            final EventHandler<CollectionItemEvent<? extends ItemT>> forwardListener = new EventHandler<CollectionItemEvent<? extends ItemT>>() {
-              @Override
-              public void onEvent(CollectionItemEvent<? extends ItemT> event) {
-                switch (event.getType()) {
-                  case ADD:
-                    Property<ItemT> newProperty = new ValueProperty<ItemT>(event.getNewItem());
-                    Registration newPropertyReg = mySyncing.inSync(newProperty).addHandler(propertyChangePropagator);
-                    myPropertiesRegs.add(event.getIndex(), newPropertyReg);
-                    to.add(event.getIndex(), newProperty);
-                    break;
-                  case REMOVE:
-                    to.remove(event.getIndex());
-                    myPropertiesRegs.remove(event.getIndex()).remove();
-                    break;
-                  case SET:
-                    to.get(event.getIndex()).set(event.getNewItem());
-                    break;
-                }
-              }
-            };
-
-            EventHandler<CollectionItemEvent<? extends Property<ItemT>>> backwardListener = new EventHandler<CollectionItemEvent<? extends Property<ItemT>>>() {
-              @Override
-              public void onEvent(CollectionItemEvent<? extends Property<ItemT>> event) {
-                switch (event.getType()) {
-                  case ADD:
-                    Property<ItemT> newProperty = event.getNewItem();
-                    Registration newPropertyReg = mySyncing.inSync(newProperty).addHandler(propertyChangePropagator);
-                    myPropertiesRegs.add(event.getIndex(), newPropertyReg);
-                    from.add(event.getIndex(), newProperty.get());
-                    break;
-                  case SET:
-                    Property<ItemT> setProperty = event.getNewItem();
-                    Registration setPropertyReg = mySyncing.inSync(setProperty).addHandler(propertyChangePropagator);
-                    Registration oldPropertyReg = myPropertiesRegs.set(event.getIndex(), setPropertyReg);
-                    oldPropertyReg.remove();
-                    from.set(event.getIndex(), setProperty.get());
-                    break;
-                  case REMOVE:
-                    from.remove(event.getIndex());
-                    myPropertiesRegs.remove(event.getIndex()).remove();
-                    break;
-                }
-              }
-            };
-
-            myListsReg = new CompositeRegistration(
-              mySyncing.inSync(from).addHandler(forwardListener),
-              mySyncing.inSync(to).addHandler(backwardListener));
-
-            for (final ListIterator<ItemT> i = from.listIterator(); i.hasNext(); ) {
-              final int index = i.nextIndex();
-              mySyncing.sync(new Runnable() {
-                @Override
-                public void run() {
-                  forwardListener.onEvent(new CollectionItemEvent<>(null, i.next(), index, CollectionItemEvent.EventType.ADD));
-                }
-              });
-            }
-          }
-
-          @Override
-          public ObservableList<ItemT> getSource() {
-            return from;
-          }
-
-          @Override
-          public ObservableList<Property<ItemT>> getTarget() {
-            return to;
-          }
-
-          @Override
-          protected void doDispose() {
-            for (Registration reg : myPropertiesRegs) {
-              reg.remove();
-            }
-            myPropertiesRegs.clear();
-            myListsReg.remove();
           }
         };
       }
