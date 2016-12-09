@@ -17,20 +17,21 @@ package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Runnables;
 import jetbrains.jetpad.base.ThrowableHandlers;
+import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.test.BaseTestCase;
 import jetbrains.jetpad.test.Slow;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import jetbrains.jetpad.base.function.Consumer;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Slow
+@Category(Slow.class)
 public class ExecutorEdtManagerTest extends BaseTestCase {
 
   @Test(expected = RuntimeException.class)

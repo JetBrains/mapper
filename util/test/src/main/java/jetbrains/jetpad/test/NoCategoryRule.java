@@ -15,25 +15,24 @@
  */
 package jetbrains.jetpad.test;
 
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.lang.annotation.Annotation;
+public class NoCategoryRule implements TestRule {
+  public static final String PROP_CATEGORIZED_DISABLED = "categorized.tests.disabled";
 
-public class SystemSwitchRule implements TestRule {
-  private final Class<? extends Annotation> myAnnotation;
-  private final boolean myTestsEnabled;
+  private final boolean myCategorizedDisabled;
 
-  public SystemSwitchRule(Class<? extends Annotation> annotation, String propertyName) {
-    myAnnotation = annotation;
-    myTestsEnabled = "true".equals(System.getProperty(propertyName));
+  public NoCategoryRule() {
+    myCategorizedDisabled = Boolean.getBoolean(PROP_CATEGORIZED_DISABLED);
   }
 
   public Statement apply(final Statement statement, final Description description) {
     return new Statement() {
       public void evaluate() throws Throwable {
-        if (!myTestsEnabled && description.getAnnotation(myAnnotation) != null) {
+        if (myCategorizedDisabled && description.getAnnotation(Category.class) != null) {
           return;
         }
         statement.evaluate();

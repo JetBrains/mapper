@@ -28,13 +28,9 @@ public abstract class BaseTestCase {
   private static Level ourLevel;
 
   @Rule
-  public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
-  @Rule
-  public EnableRemoteTestsRule enableRemoteTestsRule = new EnableRemoteTestsRule();
+  public NoCategoryRule disableCategorized = new NoCategoryRule();
   @ClassRule
-  public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
-  @ClassRule
-  public static EnableRemoteTestsRule enableRemoteSuitesRule = new EnableRemoteTestsRule();
+  public static NoCategoryRule disableCategorizedSuites = new NoCategoryRule();
 
   @BeforeClass
   public static void turnLoggingOff() {
