@@ -7,3 +7,16 @@ java_library(
   ],
   visibility = ["//visibility:public"]
 )
+
+java_library(
+  name = "tests",
+  srcs = glob(["src/test/java/**/*.java"]),
+  deps = [
+    ":jar",
+    "//util/test:jar",
+
+    "@junit//jar",
+    "@org_mockito//jar"
+  ],
+  visibility = ["//visibility:public"]
+)

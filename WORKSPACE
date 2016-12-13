@@ -22,3 +22,13 @@ maven_jar(
   name = "com_google_gwt_elemental",
   artifact = "com.google.gwt:gwt-elemental:2.8.0"
 )
+
+maven_jar(
+  name = "junit",
+  artifact = "junit:junit:4.11"
+)
+
+maven_jar(
+  name = "org_mockito",
+  artifact = "org.mockito:mockito-core:1.9.5"
+)
