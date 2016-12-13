@@ -49,12 +49,12 @@ public class EventSources {
 
   @SafeVarargs
   public static <EventT> EventSource<EventT> composite(EventSource<? extends EventT>... sources) {
-    return new CompositeEventSource<>(sources);
+    return new CompositeEventSource<EventT>(sources);
   }
 
 
   public static <EventT> EventSource<EventT> composite(Iterable<? extends EventSource<? extends EventT>> sources) {
-    return new CompositeEventSource<>(sources);
+    return new CompositeEventSource<EventT>(sources);
   }
 
   public static <EventT> EventSource<EventT> filter(final EventSource<EventT> source, final Predicate<? super EventT> pred) {
