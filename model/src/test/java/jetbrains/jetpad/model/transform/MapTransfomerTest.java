@@ -15,16 +15,16 @@
  */
 package jetbrains.jetpad.model.transform;
 
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import org.junit.Test;
 
 import java.util.Arrays;
-import jetbrains.jetpad.base.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
-public class MapTrasnfomerTest {
+public class MapTransfomerTest {
   private ObservableList<String> source = new ObservableArrayList<>();
   private ObservableList<Integer> target;
   private Transformer<ObservableList<String>, ObservableList<Integer>> transformer = Transformers.listMap(
