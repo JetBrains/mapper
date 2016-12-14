@@ -8,3 +8,26 @@ java_library(
   ],
   visibility = ["//visibility:public"]
 )
+
+java_library(
+  name = "tests",
+  srcs = glob(["src/test/java/**/*.java"]),
+  deps = [
+    ":jar",
+    "//util/base:jar",
+    "//util/test:jar",
+    "//util/geometry:jar",
+
+    "@junit//jar",
+    "@org_mockito//jar"
+  ]
+)
+
+java_test(
+  name = "run_tests",
+  test_class = "jetbrains.jetpad.model.AllTests",
+  size = "small",
+  runtime_deps = [
+    ":tests"
+  ]
+)
