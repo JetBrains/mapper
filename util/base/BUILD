@@ -17,6 +17,14 @@ java_library(
 
     "@junit//jar",
     "@org_mockito//jar"
-  ],
-  visibility = ["//visibility:public"]
+  ]
+)
+
+java_test(
+  name = "run_tests",
+  test_class = "jetbrains.jetpad.base.AllTests",
+  size = "small",
+  runtime_deps = [
+    ":tests"
+  ]
 )

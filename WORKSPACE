@@ -30,5 +30,5 @@ maven_jar(
 
 maven_jar(
   name = "org_mockito",
-  artifact = "org.mockito:mockito-core:1.9.5"
+  artifact = "org.mockito:mockito-all:1.9.5"
 )
