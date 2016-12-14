@@ -1,6 +1,20 @@
+http_archive(
+  name = "io_bazel_rules_gwt",
+  url = "https://github.com/bazelbuild/rules_gwt/archive/0.1.0.tar.gz",
+  sha256 = "7be73daf0a4d90dc5a90561e8e9eec0056e69dd24b099dd253da129a7e8f952f",
+  strip_prefix = "rules_gwt-0.1.0",
+)
+load("@io_bazel_rules_gwt//gwt:gwt.bzl", "gwt_repositories")
+gwt_repositories()
+
 maven_jar(
   name = "com_google_guava",
-  artifact = "com.google.guava:guava:20.0-rc1"
+  artifact = "com.google.guava:guava:20.0"
+)
+
+maven_jar(
+  name = "com_google_guava_gwt",
+  artifact = "com.google.guava:guava-gwt:20.0"
 )
 
 maven_jar(
