@@ -1,4 +1,4 @@
-def jetpad_module(deps, suite):
+def jetpad_module(deps = [], suite = None):
   native.filegroup(
     name = "gwt_files",
     srcs = native.glob([
@@ -15,23 +15,25 @@ def jetpad_module(deps, suite):
     visibility = ["//visibility:public"]
   )
 
-  native.java_library(
-    name = "tests",
-    srcs = native.glob(["src/test/java/**/*.java"]),
-    deps = [
-      ":jar",
 
-      "@junit//jar",
-      "@org_mockito//jar",
-      "//util/test:jar",
-    ] + deps,
-  )
+  if suite != None:
+    native.java_library(
+      name = "tests",
+      srcs = native.glob(["src/test/java/**/*.java"]),
+      deps = [
+        ":jar",
 
-  native.java_test(
-    name = "run_tests",
-    test_class = suite,
-    size = "small",
-    runtime_deps = [
-      ":tests"
-    ]
-  )
+        "@junit//jar",
+        "@org_mockito//jar",
+        "//util/test:jar",
+      ] + deps,
+    )
+
+    native.java_test(
+      name = "run_tests",
+      test_class = suite,
+      size = "small",
+      runtime_deps = [
+        ":tests"
+      ]
+    )

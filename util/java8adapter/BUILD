@@ -1,6 +1,3 @@
-java_library(
-  name = "jar",
-  srcs = glob(["src/main/java/**/*.java"]),
-  deps = ["//util/base:jar"],
-  visibility = ["//visibility:public"]
-)
+load("//macros:jetpad_module.bzl", "jetpad_module")
+
+jetpad_module(deps = ["//util/base:jar"])
