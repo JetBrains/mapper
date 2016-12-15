@@ -5,5 +5,5 @@ jetpad_module(
     "@com_google_guava//jar",
     "@com_google_guava_gwt//jar"
   ],
-  suite = "jetbrains.jetpad.base.AllTests"
+  suite = "jetbrains.jetpad.geometry.AllTests"
 )
