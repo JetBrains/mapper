@@ -9,12 +9,12 @@ gwt_repositories()
 
 maven_jar(
   name = "com_google_guava",
-  artifact = "com.google.guava:guava:20.0"
+  artifact = "com.google.guava:guava:20.0-rc1"
 )
 
 maven_jar(
   name = "com_google_guava_gwt",
-  artifact = "com.google.guava:guava-gwt:20.0"
+  artifact = "com.google.guava:guava-gwt:20.0-rc1"
 )
 
 maven_jar(
@@ -45,4 +45,14 @@ maven_jar(
 maven_jar(
   name = "org_mockito",
   artifact = "org.mockito:mockito-all:1.9.5"
+)
+
+maven_jar(
+  name = "com_google_errorprone",
+  artifact = "com.google.errorprone:error_prone_annotations:2.0.2"
+)
+
+maven_jar(
+  name = "com_google_j2obj_annotations",
+  artifact = "com.google.j2objc:j2objc-annotations:1.1"
 )

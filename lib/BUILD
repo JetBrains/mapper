@@ -11,7 +11,10 @@ java_library(
   runtime_deps = [":findbug_annotations"],
   exports = [
     "@com_google_guava//jar",
-    "@com_google_guava_gwt//jar"
+    "@com_google_guava_gwt//jar",
+
+    "@com_google_errorprone//jar",
+    "@com_google_j2obj_annotations//jar"
   ],
   visibility = ["//visibility:public"]
 )
