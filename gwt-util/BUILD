@@ -7,8 +7,9 @@ jetpad_module(
      "//mapper:jar",
      "//util/geometry:jar",
 
-     "@com_googlecode_gwtquery//jar",
-     "@com_google_gwt_user//jar",
+     "//lib:gwt_user",
+     "//lib:gwt_query",
+
      "@com_google_gwt_elemental//jar"
    ]
 )

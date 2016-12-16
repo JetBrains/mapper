@@ -4,7 +4,8 @@ jetpad_module(
   deps = [
      "//util/geometry:jar",
      "//util/base:jar",
-     "@com_google_guava//jar"
+
+     "//lib:guava"
   ],
   suite = "jetbrains.jetpad.model.AllTests"
 )

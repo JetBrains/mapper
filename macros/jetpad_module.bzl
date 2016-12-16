@@ -23,9 +23,9 @@ def jetpad_module(deps = [], suite = None):
       deps = [
         ":jar",
 
-        "@junit//jar",
-        "@org_mockito//jar",
         "//util/test:jar",
+        "//lib:junit",
+        "//lib:mockito"
       ] + deps,
     )
 
