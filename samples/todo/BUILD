@@ -30,6 +30,7 @@ gwt_application(
     "//lib:gwt_user",
     "//lib:gwt_query",
 
+    # tmp workaround for bug in gwt_application
     "@com_google_code_gson//jar"
   ]
 )
