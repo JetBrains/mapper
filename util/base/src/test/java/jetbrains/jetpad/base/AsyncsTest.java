@@ -219,28 +219,6 @@ public class AsyncsTest {
   }
 
   @Test
-  public void succeededTrue() {
-    assertTrue(Asyncs.isSucceeded(Asyncs.constant(239)));
-  }
-
-  @Test
-  public void succeededFalse() {
-    SimpleAsync<Integer> async = new SimpleAsync<>();
-
-    assertFalse(Asyncs.isSucceeded(async));
-  }
-
-  @Test
-  public void failedTrue() {
-    assertTrue(Asyncs.isFailed(Asyncs.failure(new RuntimeException())));
-  }
-
-  @Test
-  public void failedFalse() {
-    assertFalse(Asyncs.isFailed(Asyncs.constant(null)));
-  }
-
-  @Test
   public void getFailure() {
     IllegalStateException testRuntime = new IllegalStateException("test");
     try {

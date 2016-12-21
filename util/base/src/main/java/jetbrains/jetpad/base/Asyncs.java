@@ -33,28 +33,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
 public class Asyncs {
-  public static boolean isSucceeded(Async<?> async) {
-    final Value<Boolean> succeeded = new Value<>(false);
-    async.onSuccess(new Consumer<Object>() {
-      @Override
-      public void accept(Object value) {
-        succeeded.set(true);
-      }
-    }).remove();
-    return succeeded.get();
-  }
-
-  public static boolean isFailed(Async<?> async) {
-    final Value<Boolean> failed = new Value<>(false);
-    async.onFailure(new Consumer<Throwable>() {
-      @Override
-      public void accept(Throwable t) {
-        failed.set(true);
-      }
-    }).remove();
-    return failed.get();
-  }
-
   public static boolean isFinished(Async<?> async) {
     final Value<Boolean> finished = new Value<>(false);
     async.onResult(new Consumer<Object>() {
