@@ -46,7 +46,7 @@ public class Asserts {
     }
   }
 
-  private static <T> T getResultValue(Async<T> async) {
+  public static <T> T getResultValue(Async<T> async) {
     AsyncResult<T> result = getResult(async);
     if (result.state != AsyncState.SUCCEEDED) {
       throw new AssertionError("Async expected to succeed: async=" + async + ", state=" + result.state);
