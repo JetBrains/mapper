@@ -14,7 +14,7 @@ public class Asserts {
   }
 
   public static <T> void assertSuccessValue(T expected, Async<T> async) {
-    T value = getSucceededValue(async);
+    T value = getResultValue(async);
     if (value == null) {
       if (expected != null) {
         throw new AssertionError("Expected: " + expected + ", but got: " + value);
@@ -25,7 +25,7 @@ public class Asserts {
   }
 
   public static <T> void assertSuccess(Predicate<T> assertion, Async<T> async) {
-    T value = getSucceededValue(async);
+    T value = getResultValue(async);
     if (!assertion.test(value)) {
       throw new AssertionError("succes value failed assertion: " + value);
     }
@@ -46,7 +46,7 @@ public class Asserts {
     }
   }
 
-  private static <T> T getSucceededValue(Async<T> async) {
+  private static <T> T getResultValue(Async<T> async) {
     AsyncResult<T> result = getResult(async);
     if (result.state != AsyncState.SUCCEEDED) {
       throw new AssertionError("Async expected to succeed: async=" + async + ", state=" + result.state);
