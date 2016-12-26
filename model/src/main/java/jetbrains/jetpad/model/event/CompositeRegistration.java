@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.event;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ public final class CompositeRegistration extends Registration {
 
   public CompositeRegistration(Registration... regs) {
     myRegistrations = new ArrayList<>(regs.length);
-    myRegistrations.addAll(Arrays.asList(regs));
+    Collections.addAll(myRegistrations, regs);
   }
 
   public CompositeRegistration add(Registration r) {
@@ -51,8 +51,8 @@ public final class CompositeRegistration extends Registration {
 
   @Override
   protected void doRemove() {
-    for (Registration r : myRegistrations) {
-      r.remove();
+    for (int i = myRegistrations.size() - 1; i > -1; i--) {
+      myRegistrations.get(i).remove();
     }
     myRegistrations.clear();
   }
