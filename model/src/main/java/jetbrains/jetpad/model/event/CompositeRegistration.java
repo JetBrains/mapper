@@ -18,7 +18,7 @@ package jetbrains.jetpad.model.event;
 import jetbrains.jetpad.base.Registration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,9 +28,13 @@ import java.util.List;
 public final class CompositeRegistration extends Registration {
   private List<Registration> myRegistrations;
 
+  public CompositeRegistration(List<Registration> regs) {
+    myRegistrations = regs;
+  }
+
   public CompositeRegistration(Registration... regs) {
     myRegistrations = new ArrayList<>(regs.length);
-    myRegistrations.addAll(Arrays.asList(regs));
+    Collections.addAll(myRegistrations, regs);
   }
 
   public CompositeRegistration add(Registration r) {
