@@ -17,24 +17,24 @@ package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Registration which consists of several subregistrations.
  * Useful as an utility to aggregate registration and them dispose them with one call.
  */
 public final class CompositeRegistration extends Registration {
-  private List<Registration> myRegistrations;
+  private final LinkedList<Registration> myRegistrations;
 
   public CompositeRegistration(Registration... regs) {
-    myRegistrations = new ArrayList<>(regs.length);
-    myRegistrations.addAll(Arrays.asList(regs));
+    myRegistrations = new LinkedList<>();
+    for (Registration reg : regs) {
+      add(reg);
+    }
   }
 
   public CompositeRegistration add(Registration r) {
-    myRegistrations.add(r);
+    myRegistrations.addFirst(r);
     return this;
   }
 
