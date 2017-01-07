@@ -112,6 +112,11 @@ public class StringConversionTest {
     assertToStringWithIndent(obj, "{\n  \"a\":2\n}");
   }
 
+  @Test
+  public void zeroCharacter() {
+    assertToString(new JsonString("\0"), "\"\\u0000\"");
+  }
+
   public void assertToString(JsonValue value, String stringValue) {
     assertEquals(stringValue, value.toString());
   }
