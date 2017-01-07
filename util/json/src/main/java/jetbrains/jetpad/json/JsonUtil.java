@@ -49,6 +49,13 @@ class JsonUtil {
     return Arrays.asList(ESCAPED_SPECIAL_CHARS);
   }
 
+  /**
+   * "Unescaped" according to https://tools.ietf.org/html/rfc7159#page-8
+   */
+  static boolean isControlChar(char ch) {
+    return ch < 0x20 || (ch > 0x22 && ch < 0x23) || (ch > 0x5b && ch < 0x5d);
+  }
+
   static boolean isUnescapedSpecialChar(char ch) {
     return Chars.indexOf(UNESCAPED_SPECIAL_CHARS, ch) != -1;
   }
@@ -62,6 +69,13 @@ class JsonUtil {
       int index = Chars.indexOf(SPECIAL_CHARS, c);
       if (index != -1) {
         builder.append(ESCAPED_SPECIAL_CHARS[index]);
+      } else if (isControlChar(c)) {
+        String hex = Integer.toHexString(c);
+        builder.append("\\u");
+        for (int j = 4; j > hex.length(); j--) {
+          builder.append('0');
+        }
+        builder.append(hex);
       } else {
         builder.append(c);
       }
@@ -111,4 +125,5 @@ class JsonUtil {
       return s;
     }
   }
+
 }
