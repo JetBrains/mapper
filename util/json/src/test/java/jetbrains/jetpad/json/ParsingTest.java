@@ -115,10 +115,10 @@ public class ParsingTest {
   }
 
   @Test
-  public void simpleEscapedString() {
-    JsonString s = (JsonString) Json.parse("\"a\\nbc\"");
+  public void simpleEscapedChars() {
+    JsonString s = (JsonString) Json.parse("\" \\\\ \\n \\f \\t \\b \\r \"");
 
-    assertEquals("a\nbc", s.getStringValue());
+    assertEquals(" \\ \n \f \t \b \r ", s.getStringValue());
   }
 
   @Test
@@ -134,5 +134,22 @@ public class ParsingTest {
     JsonNumber number = (JsonNumber) obj.get("a");
 
     assertEquals(239.0, number.getDoubleValue(), 0.000001f);
+  }
+
+  @Test(expected = JsonParsingException.class)
+  public void newLineInString() {
+    Json.parse("\"a\nb\"");
+  }
+
+  @Test(expected = JsonParsingException.class)
+  public void tabInString() {
+    Json.parse("\"a\tb\"");
+  }
+
+  @Test
+  public void forwardSlash() {
+    // By spec both escaped and non-escaped forms are valid
+    JsonString value = (JsonString) Json.parse("\" / \\/ \"");
+    assertEquals(" / / ", value.getStringValue());
   }
 }
