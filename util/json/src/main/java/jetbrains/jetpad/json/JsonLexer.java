@@ -173,8 +173,6 @@ abstract class JsonLexer {
         } else {
           throw new RuntimeException();
         }
-      } else if (JsonUtil.isControlChar((char) getCurrent())) {
-        throw new JsonParsingException();
       } else {
         advance();
       }
