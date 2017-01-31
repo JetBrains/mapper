@@ -405,10 +405,10 @@ public class Asyncs {
     if (error.get() != null) {
       if (error.get() instanceof RuntimeException) {
         throw (RuntimeException) error.get();
-      } else if (error.get() instanceof Exception) {
-        throw new RuntimeException(error.get());
-      } else {
+      } else if (error.get() instanceof Error) {
         throw (Error) error.get();
+      } else {
+        throw new RuntimeException(error.get());
       }
     } else {
       return result.get();

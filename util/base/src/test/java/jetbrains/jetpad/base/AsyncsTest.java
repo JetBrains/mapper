@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -220,28 +219,27 @@ public class AsyncsTest {
 
   @Test
   public void getFailure() {
-    IllegalStateException testRuntime = new IllegalStateException("test");
-    try {
-      Asyncs.get(Asyncs.failure(testRuntime));
-      fail("get expected to fail");
-    } catch (Throwable t) {
-      assertSame(testRuntime, t);
-    }
+    assertThrow(new IllegalStateException("test"));
+    assertThrow(new AssertionError("test"));
+    assertThrowCause(new IOException("test"));
+    assertThrowCause(new Throwable("test"));
+  }
 
-    IOException testChecked = new IOException("test");
+  private void assertThrowCause(Throwable throwable) {
     try {
-      Asyncs.get(Asyncs.failure(testChecked));
+      Asyncs.get(Asyncs.failure(throwable));
       fail("get expected to fail");
     } catch (Throwable t) {
-      assertSame(testChecked, t.getCause());
+      assertSame(throwable, t.getCause());
     }
+  }
 
-    AssertionError testError = new AssertionError("test");
+  private void assertThrow(Throwable throwable) {
     try {
-      Asyncs.get(Asyncs.failure(testError));
+      Asyncs.get(Asyncs.failure(throwable));
       fail("get expected to fail");
     } catch (Throwable t) {
-      assertSame(testError, t);
+      assertSame(throwable, t);
     }
   }
 
