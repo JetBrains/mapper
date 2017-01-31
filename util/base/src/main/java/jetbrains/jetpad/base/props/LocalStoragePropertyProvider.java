@@ -12,9 +12,9 @@ public class LocalStoragePropertyProvider implements PropertyProvider {
   @Override
   public String get(String key) {
     Storage storage = Storage.getLocalStorageIfSupported();
-    if (storage == null) {
-      throw new IllegalStateException();
+    if (storage != null) {
+      return storage.getItem(myPrefix + "." + key);
     }
-    return storage.getItem(myPrefix + "." + key);
+    return null;
   }
 }
