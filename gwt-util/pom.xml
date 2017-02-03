@@ -37,6 +37,12 @@
     <dependency>
       <groupId>com.googlecode.gwtquery</groupId>
       <artifactId>gwtquery</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-elemental</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -47,7 +53,6 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-elemental</artifactId>
-      <version>${gwt.version}</version>
     </dependency>
   </dependencies>
 </project>
