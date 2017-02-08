@@ -59,13 +59,17 @@ public class ThrowableHandlers {
   }
 
   public static void handle(Throwable t) {
+
     if (isInUnitTests(t)) {
       if (t instanceof RuntimeException) {
-        throw (RuntimeException)t;
+        throw (RuntimeException) t;
       }
       throw new RuntimeException(t);
     }
-    LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", new RuntimeException(t));
+
+    LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
+    handleError(t);
+
     ourHandlers.get().fire(t);
   }
 
@@ -79,6 +83,48 @@ public class ThrowableHandlers {
       }
     }
     return false;
+  }
+
+  static void handleError(Throwable t) {
+
+    if (isClient(t)) {
+      return;
+    }
+
+    Error error = getError(t);
+
+    if (error != null) {
+      throw error;
+    }
+  }
+
+  private static boolean isClient(Throwable t) {
+    boolean isClient = false;
+    StackTraceElement[] stackTrace = t.getStackTrace();
+
+    for (int i = stackTrace.length - 1; !isClient && i >= 0; i--) {
+      String className = stackTrace[i].getClassName();
+
+      if (className.startsWith("com.google.gwt.core.client") || className.equals("Unknown")) {
+        isClient = true;
+      }
+    }
+
+    if (!isClient && t.getCause() != null) {
+      isClient = isClient(t.getCause());
+    }
+
+    return isClient;
+  }
+
+  private static Error getError(Throwable t) {
+    Error error = (t instanceof Error) ? (Error) t : null;
+
+    if (error == null && t.getCause() != null) {
+      error = getError(t.getCause());
+    }
+
+    return error;
   }
 
   static int getHandlersSize() {
