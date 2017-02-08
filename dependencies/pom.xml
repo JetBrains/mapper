@@ -227,6 +227,7 @@
                 <dotGitDirectory>../../.git</dotGitDirectory>
                 <skipPoms>false</skipPoms>
                 <dateFormat>yyyyMMdd_HHmmss</dateFormat>
+                <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
               </configuration>
             </execution>
           </executions>
