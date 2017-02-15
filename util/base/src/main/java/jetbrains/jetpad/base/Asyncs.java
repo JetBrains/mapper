@@ -311,7 +311,7 @@ public class Asyncs {
     return result;
   }
 
-  public static <ValueT> Registration delegate(Async<? extends ValueT> from, final SimpleAsync<? super ValueT> to) {
+  public static <ValueT> Registration delegate(Async<? extends ValueT> from, final AsyncResolver<? super ValueT> to) {
     return from.onResult(new Consumer<ValueT>() {
         @Override
         public void accept(ValueT item) {
