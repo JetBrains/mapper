@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.base.function.Function;
 
-public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
+public final class ThreadSafeAsync<ItemT> implements ResolvableAsync<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
   public ThreadSafeAsync() {

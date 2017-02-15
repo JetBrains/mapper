@@ -20,7 +20,7 @@ import java.util.List;
 import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.base.function.Function;
 
-public final class SimpleAsync<ItemT> implements Async<ItemT> {
+public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
   private ItemT mySuccessItem = null;
   private boolean mySucceeded = false;
 
