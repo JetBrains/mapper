@@ -88,7 +88,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
 
   @Override
   public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
-    return Asyncs.select(this, success);
+    return Asyncs.select(this, success, new SimpleAsync<ResultT>());
   }
 
   public void success(ItemT item) {

@@ -56,40 +56,7 @@ public final class ThreadSafeAsync<ItemT> implements ResolvableAsync<ItemT> {
   @Override
   public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
     synchronized (myAsync) {
-      final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
-      final Consumer<Throwable> failureConsumer = new Consumer<Throwable>() {
-        @Override
-        public void accept(Throwable throwable) {
-          result.failure(throwable);
-        }
-      };
-      myAsync.onResult(
-          new Consumer<ItemT>() {
-            @Override
-            public void accept(ItemT item) {
-              Async<ResultT> async;
-              try {
-                async = success.apply(item);
-              } catch (Exception e) {
-                result.failure(e);
-                return;
-              }
-              if (async == null) {
-                result.success(null);
-              } else {
-
-                async.onResult(
-                    new Consumer<ResultT>() {
-                      @Override
-                      public void accept(ResultT item1) {
-                        result.success(item1);
-                      }
-                    }, failureConsumer);
-              }
-            }
-          },
-          failureConsumer);
-      return result;
+      return Asyncs.select(this, success, new ThreadSafeAsync<ResultT>());
     }
   }
 

@@ -137,7 +137,7 @@ public class AsyncsTest {
   @Test
   public void selectReturnedFailure() {
     Async<Integer> async = Asyncs.constant(1);
-    assertFailure(Asyncs.select(async, new Function<Integer, Async<Integer>>() {
+    assertFailure(async.flatMap(new Function<Integer, Async<Integer>>() {
       @Override
       public Async<Integer> apply(Integer input) {
         return Asyncs.failure(new Throwable());

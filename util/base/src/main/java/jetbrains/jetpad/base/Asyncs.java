@@ -75,7 +75,7 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success);
+        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
       }
     };
   }
@@ -105,7 +105,7 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success);
+        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
       }
     };
   }
@@ -143,9 +143,8 @@ public class Asyncs {
     return resultAsync;
   }
 
-  @Deprecated
-  public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<? super SourceT, Async<TargetT>> f) {
-    final SimpleAsync<TargetT> result = new SimpleAsync<>();
+  static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async,
+      final Function<? super SourceT, Async<TargetT>> f, final ResolvableAsync<TargetT> resultAsync) {
     async.onResult(new Consumer<SourceT>() {
         @Override
         public void accept(SourceT item) {
@@ -153,23 +152,23 @@ public class Asyncs {
           try {
             async1 = f.apply(item);
           } catch (Exception e) {
-            result.failure(e);
+            resultAsync.failure(e);
             return;
           }
           if (async1 == null) {
-            result.success(null);
+            resultAsync.success(null);
           } else {
-            delegate(async1, result);
+            delegate(async1, resultAsync);
           }
         }
       },
       new Consumer<Throwable>() {
         @Override
         public void accept(Throwable throwable) {
-          result.failure(throwable);
+          resultAsync.failure(throwable);
         }
       });
-    return result;
+    return resultAsync;
   }
 
   public static <FirstT, SecondT> Async<SecondT> seq(Async<FirstT> first, final Async<SecondT> second) {
@@ -178,7 +177,7 @@ public class Asyncs {
       public Async<SecondT> apply(FirstT input) {
         return second;
       }
-    });
+    }, new SimpleAsync<SecondT>());
   }
 
   public static Async<Void> parallel(final Async<?>... asyncs) {
