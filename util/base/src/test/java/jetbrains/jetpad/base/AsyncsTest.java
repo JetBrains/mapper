@@ -49,7 +49,7 @@ public class AsyncsTest {
       public Integer apply(Integer input) {
         return input + 1;
       }
-    });
+    }, new SimpleAsync<Integer>());
     assertSuccess(mapped, 240);
   }
 
@@ -61,7 +61,7 @@ public class AsyncsTest {
       public Integer apply(Integer input) {
         return input + 1;
       }
-    }));
+    }, new SimpleAsync<Integer>()));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -96,7 +96,7 @@ public class AsyncsTest {
       public Object apply(Object i) {
         throw new RuntimeException("test");
       }
-    }));
+    }, new SimpleAsync<>()));
   }
 
   @Test

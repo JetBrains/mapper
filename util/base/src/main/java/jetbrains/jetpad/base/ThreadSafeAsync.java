@@ -49,28 +49,7 @@ public final class ThreadSafeAsync<ItemT> implements ResolvableAsync<ItemT> {
   @Override
   public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
     synchronized (myAsync) {
-      final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
-      myAsync.onResult(
-          new Consumer<ItemT>() {
-            @Override
-            public void accept(ItemT item) {
-              ResultT apply;
-              try {
-                apply = success.apply(item);
-              } catch (Exception e) {
-                result.failure(e);
-                return;
-              }
-              result.success(apply);
-            }
-          },
-          new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
-              result.failure(throwable);
-            }
-          });
-      return result;
+      return Asyncs.map(this, success, new ThreadSafeAsync<ResultT>());
     }
   }
 

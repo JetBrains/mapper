@@ -70,7 +70,7 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success);
+        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
       }
 
       @Override
@@ -100,7 +100,7 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success);
+        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
       }
 
       @Override
@@ -116,12 +116,11 @@ public class Asyncs {
       public Void apply(ResultT input) {
         return null;
       }
-    });
+    }, new SimpleAsync<Void>());
   }
 
-  @Deprecated
-  public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, ? extends TargetT> f) {
-    final SimpleAsync<TargetT> result = new SimpleAsync<>();
+  static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async,
+      final Function<SourceT, ? extends TargetT> f, final ResolvableAsync<TargetT> resultAsync) {
     async.onResult(new Consumer<AsyncResultT>() {
         @Override
         public void accept(AsyncResultT item) {
@@ -129,19 +128,19 @@ public class Asyncs {
           try {
             apply = f.apply(item);
           } catch (Exception e) {
-            result.failure(e);
+            resultAsync.failure(e);
             return;
           }
-          result.success(apply);
+          resultAsync.success(apply);
         }
       },
       new Consumer<Throwable>() {
         @Override
         public void accept(Throwable throwable) {
-          result.failure(throwable);
-        }
-      });
-    return result;
+          resultAsync.failure(throwable);
+          }
+        });
+    return resultAsync;
   }
 
   @Deprecated

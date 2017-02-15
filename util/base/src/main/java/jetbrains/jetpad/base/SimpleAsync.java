@@ -83,9 +83,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
 
   @Override
   public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
-    SimpleAsync<ResultT> result = new SimpleAsync<>();
-    Asyncs.delegate(Asyncs.map(this, success), result);
-    return result;
+    return Asyncs.map(this, success, new SimpleAsync<ResultT>());
   }
 
   @Override
