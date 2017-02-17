@@ -70,12 +70,12 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success);
+        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
       }
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success);
+        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
       }
     };
   }
@@ -100,12 +100,12 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success);
+        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
       }
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success);
+        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
       }
     };
   }
@@ -116,12 +116,11 @@ public class Asyncs {
       public Void apply(ResultT input) {
         return null;
       }
-    });
+    }, new SimpleAsync<Void>());
   }
 
-  @Deprecated
-  public static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async, final Function<SourceT, ? extends TargetT> f) {
-    final SimpleAsync<TargetT> result = new SimpleAsync<>();
+  static <SourceT, TargetT, AsyncResultT extends SourceT> Async<TargetT> map(Async<AsyncResultT> async,
+      final Function<SourceT, ? extends TargetT> f, final ResolvableAsync<TargetT> resultAsync) {
     async.onResult(new Consumer<AsyncResultT>() {
         @Override
         public void accept(AsyncResultT item) {
@@ -129,24 +128,23 @@ public class Asyncs {
           try {
             apply = f.apply(item);
           } catch (Exception e) {
-            result.failure(e);
+            resultAsync.failure(e);
             return;
           }
-          result.success(apply);
+          resultAsync.success(apply);
         }
       },
       new Consumer<Throwable>() {
         @Override
         public void accept(Throwable throwable) {
-          result.failure(throwable);
-        }
-      });
-    return result;
+          resultAsync.failure(throwable);
+          }
+        });
+    return resultAsync;
   }
 
-  @Deprecated
-  public static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async, final Function<? super SourceT, Async<TargetT>> f) {
-    final SimpleAsync<TargetT> result = new SimpleAsync<>();
+  static <SourceT, TargetT> Async<TargetT> select(Async<SourceT> async,
+      final Function<? super SourceT, Async<TargetT>> f, final ResolvableAsync<TargetT> resultAsync) {
     async.onResult(new Consumer<SourceT>() {
         @Override
         public void accept(SourceT item) {
@@ -154,23 +152,23 @@ public class Asyncs {
           try {
             async1 = f.apply(item);
           } catch (Exception e) {
-            result.failure(e);
+            resultAsync.failure(e);
             return;
           }
           if (async1 == null) {
-            result.success(null);
+            resultAsync.success(null);
           } else {
-            delegate(async1, result);
+            delegate(async1, resultAsync);
           }
         }
       },
       new Consumer<Throwable>() {
         @Override
         public void accept(Throwable throwable) {
-          result.failure(throwable);
+          resultAsync.failure(throwable);
         }
       });
-    return result;
+    return resultAsync;
   }
 
   public static <FirstT, SecondT> Async<SecondT> seq(Async<FirstT> first, final Async<SecondT> second) {
@@ -179,7 +177,7 @@ public class Asyncs {
       public Async<SecondT> apply(FirstT input) {
         return second;
       }
-    });
+    }, new SimpleAsync<SecondT>());
   }
 
   public static Async<Void> parallel(final Async<?>... asyncs) {
@@ -311,7 +309,7 @@ public class Asyncs {
     return result;
   }
 
-  public static <ValueT> Registration delegate(Async<? extends ValueT> from, final SimpleAsync<? super ValueT> to) {
+  public static <ValueT> Registration delegate(Async<? extends ValueT> from, final AsyncResolver<? super ValueT> to) {
     return from.onResult(new Consumer<ValueT>() {
         @Override
         public void accept(ValueT item) {

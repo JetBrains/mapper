@@ -20,7 +20,7 @@ import java.util.List;
 import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.base.function.Function;
 
-public final class SimpleAsync<ItemT> implements Async<ItemT> {
+public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
   private ItemT mySuccessItem = null;
   private boolean mySucceeded = false;
 
@@ -83,14 +83,12 @@ public final class SimpleAsync<ItemT> implements Async<ItemT> {
 
   @Override
   public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
-    SimpleAsync<ResultT> result = new SimpleAsync<>();
-    Asyncs.delegate(Asyncs.map(this, success), result);
-    return result;
+    return Asyncs.map(this, success, new SimpleAsync<ResultT>());
   }
 
   @Override
   public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
-    return Asyncs.select(this, success);
+    return Asyncs.select(this, success, new SimpleAsync<ResultT>());
   }
 
   public void success(ItemT item) {

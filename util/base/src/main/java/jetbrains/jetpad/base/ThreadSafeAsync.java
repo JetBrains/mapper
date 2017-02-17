@@ -18,7 +18,7 @@ package jetbrains.jetpad.base;
 import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.base.function.Function;
 
-public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
+public final class ThreadSafeAsync<ItemT> implements ResolvableAsync<ItemT> {
   private final SimpleAsync<ItemT> myAsync;
 
   public ThreadSafeAsync() {
@@ -49,68 +49,14 @@ public final class ThreadSafeAsync<ItemT> implements Async<ItemT> {
   @Override
   public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
     synchronized (myAsync) {
-      final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
-      myAsync.onResult(
-          new Consumer<ItemT>() {
-            @Override
-            public void accept(ItemT item) {
-              ResultT apply;
-              try {
-                apply = success.apply(item);
-              } catch (Exception e) {
-                result.failure(e);
-                return;
-              }
-              result.success(apply);
-            }
-          },
-          new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
-              result.failure(throwable);
-            }
-          });
-      return result;
+      return Asyncs.map(this, success, new ThreadSafeAsync<ResultT>());
     }
   }
 
   @Override
   public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
     synchronized (myAsync) {
-      final ThreadSafeAsync<ResultT> result = new ThreadSafeAsync<>();
-      final Consumer<Throwable> failureConsumer = new Consumer<Throwable>() {
-        @Override
-        public void accept(Throwable throwable) {
-          result.failure(throwable);
-        }
-      };
-      myAsync.onResult(
-          new Consumer<ItemT>() {
-            @Override
-            public void accept(ItemT item) {
-              Async<ResultT> async;
-              try {
-                async = success.apply(item);
-              } catch (Exception e) {
-                result.failure(e);
-                return;
-              }
-              if (async == null) {
-                result.success(null);
-              } else {
-
-                async.onResult(
-                    new Consumer<ResultT>() {
-                      @Override
-                      public void accept(ResultT item1) {
-                        result.success(item1);
-                      }
-                    }, failureConsumer);
-              }
-            }
-          },
-          failureConsumer);
-      return result;
+      return Asyncs.select(this, success, new ThreadSafeAsync<ResultT>());
     }
   }
 

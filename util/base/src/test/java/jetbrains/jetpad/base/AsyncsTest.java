@@ -49,7 +49,7 @@ public class AsyncsTest {
       public Integer apply(Integer input) {
         return input + 1;
       }
-    });
+    }, new SimpleAsync<Integer>());
     assertSuccess(mapped, 240);
   }
 
@@ -61,7 +61,7 @@ public class AsyncsTest {
       public Integer apply(Integer input) {
         return input + 1;
       }
-    }));
+    }, new SimpleAsync<Integer>()));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -96,7 +96,7 @@ public class AsyncsTest {
       public Object apply(Object i) {
         throw new RuntimeException("test");
       }
-    }));
+    }, new SimpleAsync<>()));
   }
 
   @Test
@@ -137,7 +137,7 @@ public class AsyncsTest {
   @Test
   public void selectReturnedFailure() {
     Async<Integer> async = Asyncs.constant(1);
-    assertFailure(Asyncs.select(async, new Function<Integer, Async<Integer>>() {
+    assertFailure(async.flatMap(new Function<Integer, Async<Integer>>() {
       @Override
       public Async<Integer> apply(Integer input) {
         return Asyncs.failure(new Throwable());
