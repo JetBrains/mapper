@@ -72,12 +72,24 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
+        ResultT result;
+        try {
+          result = success.apply(val);
+        } catch (Throwable t) {
+          return Asyncs.failure(t);
+        }
+        return Asyncs.constant(result);
       }
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
+        Async<ResultT> result;
+        try {
+          result = success.apply(val);
+        } catch (Throwable t) {
+          return Asyncs.failure(t);
+        }
+        return result == null ? Asyncs.<ResultT>constant(null) : result;
       }
     };
   }
@@ -102,12 +114,12 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
+        return Asyncs.failure(t);
       }
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
+        return Asyncs.failure(t);
       }
     };
   }
