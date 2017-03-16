@@ -24,11 +24,13 @@ import jetbrains.jetpad.base.function.Supplier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
@@ -70,12 +72,26 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
+        ResultT result;
+        try {
+          result = success.apply(val);
+        } catch (Throwable t) {
+          return Asyncs.failure(t);
+        }
+        //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
+        return Asyncs.constant(result);
       }
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
+        Async<ResultT> result;
+        try {
+          result = success.apply(val);
+        } catch (Throwable t) {
+          return Asyncs.failure(t);
+        }
+        //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
+        return result == null ? Asyncs.<ResultT>constant(null) : result;
       }
     };
   }
@@ -100,12 +116,12 @@ public class Asyncs {
 
       @Override
       public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
-        return Asyncs.map(this, success, new SimpleAsync<ResultT>());
+        return Asyncs.failure(t);
       }
 
       @Override
       public <ResultT> Async<ResultT> flatMap(Function<? super ValueT, Async<ResultT>> success) {
-        return Asyncs.select(this, success, new SimpleAsync<ResultT>());
+        return Asyncs.failure(t);
       }
     };
   }
@@ -188,15 +204,27 @@ public class Asyncs {
     return parallel(asyncs, false);
   }
 
-  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed) {
-    final SimpleAsync<Void> result = new SimpleAsync<>();
-    final Value<Integer> inProgress = new Value<>(asyncs.size());
-    final List<Throwable> exceptions = new ArrayList<>();
+  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, boolean alwaysSucceed) {
+    return parallel(asyncs, alwaysSucceed, new SimpleParallelData(asyncs.size()));
+  }
 
+  @GwtIncompatible
+  public static Async<Void> threadSafeParallel(Collection<? extends Async<?>> asyncs) {
+    return parallel(asyncs, false, new ThreadSafeParallelData(asyncs.size()));
+  }
+
+  private static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed,
+      final ParallelData parallelData) {
+    if (asyncs.isEmpty()) {
+      return Asyncs.constant(null);
+    }
+
+    final ResolvableAsync<Void> result = parallelData.getResultAsync();
     final Runnable checkTermination = new Runnable() {
       @Override
       public void run() {
-        if (inProgress.get() == 0) {
+        if (parallelData.decrementInProgressAndGet() == 0) {
+          List<Throwable> exceptions = parallelData.getExceptions();
           if (!exceptions.isEmpty() && !alwaysSucceed) {
             result.failure(new ThrowableCollectionException(exceptions));
           } else {
@@ -210,22 +238,16 @@ public class Asyncs {
       a.onResult(new Consumer<Object>() {
           @Override
           public void accept(Object item) {
-            inProgress.set(inProgress.get() - 1);
             checkTermination.run();
           }
         },
         new Consumer<Throwable>() {
           @Override
           public void accept(Throwable failure) {
-            exceptions.add(failure);
-            inProgress.set(inProgress.get() - 1);
+            parallelData.addException(failure);
             checkTermination.run();
           }
         });
-    }
-
-    if (asyncs.isEmpty()) {
-      checkTermination.run();
     }
 
     return result;
@@ -453,6 +475,64 @@ public class Asyncs {
               async.failure(failure);
             }
           });
+    }
+  }
+
+  private static abstract class ParallelData {
+    private final List<Throwable> myExceptions;
+    private final ResolvableAsync<Void> myResultAsync;
+
+    ParallelData(List<Throwable> expectionsList, ResolvableAsync<Void> resultAsync) {
+      myExceptions = expectionsList;
+      myResultAsync = resultAsync;
+    }
+
+    /**
+     * Decreases amount of asyncs in progress by one and returns remaining amount
+     */
+    abstract int decrementInProgressAndGet();
+
+    void addException(Throwable t) {
+      myExceptions.add(t);
+    }
+
+    List<Throwable> getExceptions() {
+      return myExceptions;
+    }
+
+    ResolvableAsync<Void> getResultAsync() {
+      return myResultAsync;
+    }
+  }
+
+  private static class SimpleParallelData extends ParallelData {
+    private final Value<Integer> myInProgress;
+
+    SimpleParallelData(int asyncsCount) {
+      super(new ArrayList<Throwable>(), new SimpleAsync<Void>());
+      myInProgress = new Value<>(asyncsCount);
+    }
+
+    @Override
+    int decrementInProgressAndGet() {
+      int decreasedValue = myInProgress.get() - 1;
+      myInProgress.set(decreasedValue);
+      return decreasedValue;
+    }
+  }
+
+  @GwtIncompatible
+  private static class ThreadSafeParallelData extends ParallelData {
+    private final AtomicInteger myInProgress;
+
+    ThreadSafeParallelData(int asyncsCount) {
+      super(Collections.synchronizedList(new ArrayList<Throwable>()), new ThreadSafeAsync<Void>());
+      myInProgress = new AtomicInteger(asyncsCount);
+    }
+
+    @Override
+    int decrementInProgressAndGet() {
+      return myInProgress.decrementAndGet();
     }
   }
 }
