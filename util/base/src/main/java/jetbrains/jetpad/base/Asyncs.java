@@ -188,8 +188,12 @@ public class Asyncs {
     return parallel(asyncs, false);
   }
 
-  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed) {
-    final SimpleAsync<Void> result = new SimpleAsync<>();
+  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, boolean alwaysSucceed) {
+    return parallel(asyncs, alwaysSucceed, new SimpleAsync<Void>());
+  }
+
+  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed,
+      final ResolvableAsync<Void> result) {
     final Value<Integer> inProgress = new Value<>(asyncs.size());
     final List<Throwable> exceptions = new ArrayList<>();
 
