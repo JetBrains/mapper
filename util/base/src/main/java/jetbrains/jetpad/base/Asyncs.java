@@ -206,6 +206,7 @@ public class Asyncs {
     return parallel(asyncs, alwaysSucceed, new SimpleParallelData(asyncs.size()));
   }
 
+  @GwtIncompatible
   public static Async<Void> threadSafeParallel(Collection<? extends Async<?>> asyncs) {
     return parallel(asyncs, false, new ThreadSafeParallelData(asyncs.size()));
   }
@@ -518,6 +519,7 @@ public class Asyncs {
     }
   }
 
+  @GwtIncompatible
   private static class ThreadSafeParallelData extends ParallelData {
     private final AtomicInteger myInProgress;
 
