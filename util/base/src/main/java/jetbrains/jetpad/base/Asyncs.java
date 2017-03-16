@@ -213,7 +213,7 @@ public class Asyncs {
     return parallel(asyncs, false, new ThreadSafeParallelData(asyncs.size()));
   }
 
-  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed,
+  private static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed,
       final ParallelData parallelData) {
     final ResolvableAsync<Void> result = parallelData.getResultAsync();
     final Runnable checkTermination = new Runnable() {
