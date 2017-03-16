@@ -215,6 +215,10 @@ public class Asyncs {
 
   private static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed,
       final ParallelData parallelData) {
+    if (asyncs.isEmpty()) {
+      return Asyncs.constant(null);
+    }
+
     final ResolvableAsync<Void> result = parallelData.getResultAsync();
     final Runnable checkTermination = new Runnable() {
       @Override
@@ -244,10 +248,6 @@ public class Asyncs {
             checkTermination.run();
           }
         });
-    }
-
-    if (asyncs.isEmpty()) {
-      return Asyncs.constant(null);
     }
 
     return result;
