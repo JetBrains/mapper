@@ -78,6 +78,7 @@ public class Asyncs {
         } catch (Throwable t) {
           return Asyncs.failure(t);
         }
+        //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
         return Asyncs.constant(result);
       }
 
@@ -89,6 +90,7 @@ public class Asyncs {
         } catch (Throwable t) {
           return Asyncs.failure(t);
         }
+        //return cannot be moved to try block to avoid catching possible errors from Asyncs.constant call
         return result == null ? Asyncs.<ResultT>constant(null) : result;
       }
     };
