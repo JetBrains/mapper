@@ -305,6 +305,20 @@ public class Asyncs {
     return result;
   }
 
+  public static void onAnyResult(Async<?> async, final Runnable r) {
+    async.onResult(new Consumer<Object>() {
+      @Override
+      public void accept(Object value) {
+        r.run();
+      }
+    }, new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable value) {
+        r.run();
+      }
+    });
+  }
+
   public static <ResultT> Async<ResultT> untilSuccess(final Supplier<Async<ResultT>> s) {
     final SimpleAsync<ResultT> result = new SimpleAsync<>();
     Async<ResultT> async;
