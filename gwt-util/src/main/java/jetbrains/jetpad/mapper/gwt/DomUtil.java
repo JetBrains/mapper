@@ -89,35 +89,35 @@ public class DomUtil {
     };
   }
 
-  public static List<WithElement> withElementChildren(final Element e) {
-    return withElementChildren(elementChildren(e));
+  public static <T extends WithElement> List<T> withElementChildren(final Element e) {
+    return DomUtil.withElementChildren(elementChildren(e));
   }
 
-  static List<WithElement> withElementChildren(final List<Node> base) {
-    final List<WithElement> items = new ArrayList<>();
+  static <T extends WithElement> List<T> withElementChildren(final List<Node> base) {
+    final List<T> items = new ArrayList<>();
 
-    return new AbstractList<WithElement>() {
+    return new AbstractList<T>() {
       @Override
-      public WithElement get(int index) {
+      public T get(int index) {
         return items.get(index);
       }
 
       @Override
-      public WithElement set(int index, WithElement element) {
-        WithElement result = items.set(index, element);
+      public T set(int index, T element) {
+        T result = items.set(index, element);
         base.set(index, result.getElement());
         return result;
       }
 
       @Override
-      public void add(int index, WithElement element) {
+      public void add(int index, T element) {
         items.add(index, element);
         base.add(index, element.getElement());
       }
 
       @Override
-      public WithElement remove(int index) {
-        WithElement result = items.remove(index);
+      public T remove(int index) {
+        T result = items.remove(index);
         base.remove(index);
         return result;
       }
