@@ -28,6 +28,10 @@ import java.util.List;
 public final class CompositeRegistration extends Registration {
   private List<Registration> myRegistrations;
 
+  public CompositeRegistration(List<Registration> regs) {
+    myRegistrations = regs;
+  }
+
   public CompositeRegistration(Registration... regs) {
     myRegistrations = new ArrayList<>(regs.length);
     Collections.addAll(myRegistrations, regs);
