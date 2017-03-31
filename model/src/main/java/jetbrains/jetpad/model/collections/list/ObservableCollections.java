@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.collections.list;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Predicate;
 import jetbrains.jetpad.model.collections.*;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
@@ -126,6 +127,69 @@ public class ObservableCollections {
   @SuppressWarnings("unchecked")
   public static <ItemT> ObservableList<ItemT> emptyList() {
     return EMPTY_LIST;
+  }
+
+  private static <ItemT> ReadableProperty<Boolean> total(
+      final ObservableCollection<ItemT> collection,
+      final Predicate<Collection<ItemT>> predicate) {
+    return new BaseDerivedProperty<Boolean>(predicate.test(collection)) {
+      private Registration myCollectionRegistration;
+
+      @Override
+      protected void doAddListeners() {
+        myCollectionRegistration = collection.addListener(new CollectionAdapter<ItemT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+            somethingChanged();
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+            somethingChanged();
+          }
+        });
+      }
+
+      @Override
+      protected void doRemoveListeners() {
+        myCollectionRegistration.remove();
+      }
+
+      @Override
+      protected Boolean doGet() {
+        return predicate.test(collection);
+      }
+    };
+  }
+
+  public static <ItemT> ReadableProperty<Boolean> all(
+      final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
+    return total(collection, new Predicate<Collection<ItemT>>() {
+      @Override
+      public boolean test(Collection<ItemT> value) {
+        for (ItemT item : value) {
+          if (!predicate.test(item)) {
+            return false;
+          }
+        }
+        return true;
+      }
+    });
+  }
+
+  public static <ItemT> ReadableProperty<Boolean> any(
+      final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
+    return total(collection, new Predicate<Collection<ItemT>>() {
+      @Override
+      public boolean test(Collection<ItemT> value) {
+        for (ItemT item : value) {
+          if (predicate.test(item)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    });
   }
 
   public static <ValueT, ItemT> ObservableCollection<ItemT> selectCollection(
