@@ -93,7 +93,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
 
   public void success(ItemT item) {
     if (alreadyHandled()) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Async already completed");
     }
     mySuccessItem = item;
     mySucceeded = true;
@@ -110,7 +110,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
 
   public void failure(Throwable throwable) {
     if (alreadyHandled()) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Async already completed");
     }
     myFailureThrowable = throwable;
     myFailed = true;
