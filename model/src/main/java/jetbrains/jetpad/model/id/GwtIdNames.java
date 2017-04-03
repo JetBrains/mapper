@@ -3,7 +3,7 @@ package jetbrains.jetpad.model.id;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GwtIdNames implements IdNames {
+class GwtIdNames implements IdNames {
   private Map<String, String> myMap = new HashMap<>();
 
   @Override
