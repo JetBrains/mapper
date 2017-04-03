@@ -168,8 +168,7 @@ public class ObservableCollections {
             somethingChanged();
           }
         });
-        myCount = simpleCount
-            (predicate, collection);
+        myCount = simpleCount(predicate, collection);
       }
 
       @Override
@@ -181,8 +180,7 @@ public class ObservableCollections {
       @Override
       protected Integer doGet() {
         if (myCollectionRegistration == null) {
-          return simpleCount
-              (predicate, collection);
+          return simpleCount(predicate, collection);
         } else {
           return myCount;
         }
@@ -190,8 +188,7 @@ public class ObservableCollections {
     };
   }
 
-  private static <ItemT> int simpleCount
-      (final Predicate<? super ItemT> predicate, final Collection<ItemT> collection) {
+  private static <ItemT> int simpleCount(final Predicate<? super ItemT> predicate, final Collection<ItemT> collection) {
     int count = 0;
     for (ItemT i : collection) {
       if (predicate.test(i)) {
