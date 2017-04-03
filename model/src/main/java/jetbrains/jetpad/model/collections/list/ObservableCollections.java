@@ -16,15 +16,29 @@
 package jetbrains.jetpad.model.collections.list;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
-import jetbrains.jetpad.model.collections.*;
+import jetbrains.jetpad.model.collections.CollectionAdapter;
+import jetbrains.jetpad.model.collections.CollectionItemEvent;
+import jetbrains.jetpad.model.collections.CollectionListener;
+import jetbrains.jetpad.model.collections.ObservableCollection;
+import jetbrains.jetpad.model.collections.UnmodifiableObservableCollection;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.property.*;
+import jetbrains.jetpad.model.property.BaseDerivedProperty;
+import jetbrains.jetpad.model.property.Properties;
+import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
+import jetbrains.jetpad.model.property.ReadableProperty;
+import jetbrains.jetpad.model.property.WritableProperty;
 
-import java.util.*;
-import jetbrains.jetpad.base.function.Function;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class ObservableCollections {
   private static final ObservableList EMPTY_LIST = new AbstractObservableList() {
@@ -129,65 +143,80 @@ public class ObservableCollections {
     return EMPTY_LIST;
   }
 
-  private static <ItemT> ReadableProperty<Boolean> total(
-      final ObservableCollection<ItemT> collection,
-      final Predicate<Collection<ItemT>> predicate) {
-    return new BaseDerivedProperty<Boolean>(predicate.test(collection)) {
-      private Registration myCollectionRegistration;
+  public static <ItemT> ReadableProperty<Integer> count(
+      final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
+    return new BaseDerivedProperty<Integer>(simpleCount(predicate, collection)) {
+      private Registration myCollectionRegistration = null;
+      private int myCount;
 
       @Override
       protected void doAddListeners() {
         myCollectionRegistration = collection.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+            if (predicate.test(event.getNewItem())) {
+              myCount++;
+            }
             somethingChanged();
           }
 
           @Override
           public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+            if (predicate.test(event.getOldItem())) {
+              myCount--;
+            }
             somethingChanged();
           }
         });
+        myCount = simpleCount
+            (predicate, collection);
       }
 
       @Override
       protected void doRemoveListeners() {
         myCollectionRegistration.remove();
+        myCollectionRegistration = null;
       }
 
       @Override
-      protected Boolean doGet() {
-        return predicate.test(collection);
+      protected Integer doGet() {
+        if (myCollectionRegistration == null) {
+          return simpleCount
+              (predicate, collection);
+        } else {
+          return myCount;
+        }
       }
     };
   }
 
+  private static <ItemT> int simpleCount
+      (final Predicate<? super ItemT> predicate, final Collection<ItemT> collection) {
+    int count = 0;
+    for (ItemT i : collection) {
+      if (predicate.test(i)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   public static <ItemT> ReadableProperty<Boolean> all(
       final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
-    return total(collection, new Predicate<Collection<ItemT>>() {
+    return Properties.map(count(collection, predicate), new Function<Integer, Boolean>() {
       @Override
-      public boolean test(Collection<ItemT> value) {
-        for (ItemT item : value) {
-          if (!predicate.test(item)) {
-            return false;
-          }
-        }
-        return true;
+      public Boolean apply(Integer value) {
+        return value == collection.size();
       }
     });
   }
 
   public static <ItemT> ReadableProperty<Boolean> any(
       final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
-    return total(collection, new Predicate<Collection<ItemT>>() {
+    return Properties.map(count(collection, predicate), new Function<Integer, Boolean>() {
       @Override
-      public boolean test(Collection<ItemT> value) {
-        for (ItemT item : value) {
-          if (predicate.test(item)) {
-            return true;
-          }
-        }
-        return false;
+      public Boolean apply(Integer value) {
+        return value > 0;
       }
     });
   }
