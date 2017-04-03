@@ -15,11 +15,10 @@
  */
 package jetbrains.jetpad.model.id;
 
+import com.google.gwt.core.shared.GWT;
 import jetbrains.jetpad.base.Objects;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Generic id class for typed ids.
@@ -30,7 +29,15 @@ import java.util.Map;
  */
 public abstract class BaseId implements Serializable {
 
-  private static final Map<String, String> ourNamesMap = new HashMap<>();
+  private static final IdNames ourNames;
+
+  static {
+    if (GWT.isClient()) {
+      ourNames = new GwtIdNames();
+    } else {
+      ourNames = new JvmIdNames();
+    }
+  }
 
   private String myId;
 
@@ -51,15 +58,7 @@ public abstract class BaseId implements Serializable {
     }
 
     if (name != null) {
-      synchronized (ourNamesMap) {
-        String oldName = ourNamesMap.get(id);
-        if (oldName == null) {
-          ourNamesMap.put(id, name);
-        } else if (!oldName.equals(name)) {
-          throw new IllegalStateException(
-              "Different name for known id " + id + ", first name = " + oldName + ", name = " + name + "]");
-        }
-      }
+      ourNames.save(myId, name);
     }
   }
 
@@ -68,9 +67,7 @@ public abstract class BaseId implements Serializable {
   }
 
   public String getName() {
-    synchronized (ourNamesMap) {
-      return ourNamesMap.get(getId());
-    }
+    return ourNames.get(myId);
   }
 
   @Override
