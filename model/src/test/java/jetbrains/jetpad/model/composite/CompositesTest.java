@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.base.function.Predicate;
-import jetbrains.jetpad.geometry.Rectangle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static jetbrains.jetpad.model.composite.TestComposite.create;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -424,12 +424,6 @@ public class CompositesTest {
       result.add(v);
     }
     return result;
-  }
-
-  private TestComposite create(int x, int y, int width, int height) {
-    TestComposite composite = new TestComposite();
-    composite.setBounds(new Rectangle(x, y, width, height));
-    return composite;
   }
 
 }

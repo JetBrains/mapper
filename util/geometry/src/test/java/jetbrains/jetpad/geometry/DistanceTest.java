@@ -17,6 +17,7 @@ package jetbrains.jetpad.geometry;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DistanceTest {
@@ -28,5 +29,11 @@ public class DistanceTest {
     double dist3 = new DoubleRectangle(new DoubleVector(50, 10), new DoubleVector(601, 25)).distance(new DoubleVector(676, 42));
     double dist4 = new DoubleRectangle(new DoubleVector(50, 35), new DoubleVector(601, 42)).distance(new DoubleVector(676, 42));
     assertTrue(dist4 < dist3);
+  }
+
+  @Test
+  public void distanceWhenSegmentIsPoint() {
+    DoubleSegment point = new DoubleSegment(new DoubleVector(3, 4), new DoubleVector(3, 4));
+    assertEquals(5, point.distance(new DoubleVector(0, 0)), 0.0);
   }
 }

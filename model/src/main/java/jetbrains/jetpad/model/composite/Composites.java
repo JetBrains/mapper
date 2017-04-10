@@ -548,11 +548,11 @@ public class Composites {
 
   //has bounds
   public static <CompositeT extends HasBounds> boolean isAbove(CompositeT upper, CompositeT lower) {
-    return ourWithBounds.isAbove(upper, lower);
+    return ourWithBounds.isAbove(upper.getBounds(), lower.getBounds());
   }
 
   public static <CompositeT extends HasBounds> boolean isBelow(CompositeT lower, CompositeT upper) {
-    return ourWithBounds.isBelow(lower, upper);
+    return ourWithBounds.isBelow(lower.getBounds(), upper.getBounds());
   }
 
   public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
@@ -565,12 +565,12 @@ public class Composites {
     return ourWithBounds.endElement(cell);
   }
 
-  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasFocusableBounds>
   CompositeT upperFocusable(CompositeT v, int xOffset) {
     return ourWithBounds.upperFocusable(v, xOffset);
   }
 
-  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasBounds>
+  public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility & HasFocusableBounds>
   CompositeT lowerFocusable(CompositeT v, int xOffset) {
     return ourWithBounds.lowerFocusable(v, xOffset);
   }
