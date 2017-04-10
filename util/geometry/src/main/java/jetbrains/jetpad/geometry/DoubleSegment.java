@@ -25,6 +25,9 @@ public class DoubleSegment {
   }
 
   public double distance(DoubleVector v) {
+    if (start.equals(end)) {
+      return start.subtract(v).length();
+    }
     DoubleVector vs = start.subtract(v);
     DoubleVector ve = end.subtract(v);
 

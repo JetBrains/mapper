@@ -26,11 +26,19 @@ import java.util.List;
 
 class TestComposite
     extends SimpleComposite<TestComposite, TestComposite>
-    implements NavComposite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
+    implements NavComposite<TestComposite>, HasVisibility, HasFocusability, HasBounds, HasFocusableBounds {
   private List<TestComposite> myChildren = new ChildList<>(this);
   private Property<Boolean> myVisible = new ValueProperty<>(true);
   private Property<Boolean> myFocusable = new ValueProperty<>(true);
   private Rectangle myBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
+  private Rectangle myFocusableBounds = new Rectangle(Vector.ZERO, Vector.ZERO);
+
+  static TestComposite create(int x, int y, int width, int height) {
+    TestComposite composite = new TestComposite();
+    composite.setBounds(new Rectangle(x, y, width, height));
+    composite.setFocusableBounds(new Rectangle(x, y, width, height));
+    return composite;
+  }
 
   @Override
   public TestComposite getParent() {
@@ -81,5 +89,14 @@ class TestComposite
 
   public void setBounds(Rectangle rect) {
     myBounds = rect;
+  }
+
+  public void setFocusableBounds(Rectangle rect) {
+    myFocusableBounds = rect;
+  }
+
+  @Override
+  public Rectangle getFocusableBounds() {
+    return myFocusableBounds;
   }
 }
