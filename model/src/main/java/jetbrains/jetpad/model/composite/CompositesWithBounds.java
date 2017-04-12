@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.geometry.Rectangle;
 import jetbrains.jetpad.geometry.Vector;
 
@@ -53,6 +54,16 @@ public class CompositesWithBounds {
       if (next == null || isBelow(next, cell)) return current;
       current = next;
     }
+  }
+
+  public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  Iterable<ViewT> upperFocusables(final ViewT v) {
+    return Composites.iterate(v, new NextUpperFocusable<ViewT>(v));
+  }
+
+  public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+  Iterable<ViewT> lowerFocusables(final ViewT v) {
+    return Composites.iterate(v, new NextLowerFocusable<ViewT>(v));
   }
 
   public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
@@ -106,5 +117,63 @@ public class CompositesWithBounds {
   public <ViewT extends HasBounds> double distanceTo(ViewT c, int x) {
     Rectangle bounds = c.getBounds();
     return bounds.distance(new Vector(x, bounds.origin.y));
+  }
+
+  private class NextUpperFocusable<ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+      implements Function<ViewT, ViewT> {
+
+    private final ViewT myFirstFocusableAbove;
+    private final ViewT myInitial;
+
+    NextUpperFocusable(ViewT initial) {
+      myFirstFocusableAbove = firstFocusableAbove(initial);
+      myInitial = initial;
+    }
+
+    private ViewT firstFocusableAbove(ViewT initial) {
+      ViewT current = Composites.prevFocusable(initial);
+      while (current != null && !isAbove(current, initial)) {
+        current = Composites.prevFocusable(current);
+      }
+      return current;
+    }
+
+    @Override
+    public ViewT apply(ViewT value) {
+      if (value == myInitial) {
+        return myFirstFocusableAbove;
+      }
+      ViewT next = Composites.prevFocusable(value);
+      return next != null && !isAbove(next, myFirstFocusableAbove) ? next : null;
+    }
+  }
+
+  private class NextLowerFocusable<ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
+      implements Function<ViewT, ViewT> {
+
+    private final ViewT myFirstFocusableBelow;
+    private final ViewT myInitial;
+
+    NextLowerFocusable(ViewT initial) {
+      myFirstFocusableBelow = firstFocusableBelow(initial);
+      myInitial = initial;
+    }
+
+    private ViewT firstFocusableBelow(ViewT initial) {
+      ViewT current = Composites.nextFocusable(initial);
+      while (current != null && !isBelow(current, initial)) {
+        current = Composites.nextFocusable(current);
+      }
+      return current;
+    }
+
+    @Override
+    public ViewT apply(ViewT value) {
+      if (value == myInitial) {
+        return myFirstFocusableBelow;
+      }
+      ViewT next = Composites.nextFocusable(value);
+      return next != null && !isBelow(next, myFirstFocusableBelow) ? next : null;
+    }
   }
 }
