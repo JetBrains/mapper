@@ -464,7 +464,7 @@ public class Composites {
     return null;
   }
 
-  private static <ValueT> Iterable<ValueT> iterate(ValueT initial, Function<ValueT, ValueT> trans) {
+  static <ValueT> Iterable<ValueT> iterate(ValueT initial, Function<ValueT, ValueT> trans) {
     return iterateFrom(trans.apply(initial), trans);
   }
 

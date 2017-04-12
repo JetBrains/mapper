@@ -27,6 +27,14 @@ import java.util.List;
 class TestComposite
     extends SimpleComposite<TestComposite, TestComposite>
     implements NavComposite<TestComposite>, HasVisibility, HasFocusability, HasBounds {
+
+  static TestComposite create(int x, int y, int width, int height) {
+    TestComposite composite = new TestComposite();
+    composite.setBounds(new Rectangle(x, y, width, height));
+    return composite;
+  }
+
+
   private List<TestComposite> myChildren = new ChildList<>(this);
   private Property<Boolean> myVisible = new ValueProperty<>(true);
   private Property<Boolean> myFocusable = new ValueProperty<>(true);
