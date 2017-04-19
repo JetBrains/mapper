@@ -35,18 +35,30 @@ public class BaseIdTest extends BaseTestCase {
     assertFalse(id2.equals(id3));
   }
 
+  @Test
+  public void sameName() {
+    new MyId("a.b", "myName");
+    new MyId("a.b", "myName");
+  }
+
   @Test(expected = IllegalStateException.class)
   public void duplicateName() {
-    new MyId("a.b", "newName1");
-    new MyId("a.b", "newName2");
+    new MyId("c.d", "newName1");
+    new MyId("c.d", "newName2");
   }
 
   @Test
   public void nameDiscovery () {
-    new MyId("a.b", "newName1");
-    MyId id2 = new MyId("a.b");
+    new MyId("e.f", "newName1");
+    MyId id2 = new MyId("e.f");
 
-    assertEquals("newName1 [a.b]", id2.toString());
+    assertEquals("newName1", id2.getName());
+  }
+
+  @Test
+  public void stringRepresentation() {
+    assertEquals("newName1 [g.h]", new MyId("g.h", "newName1").toString());
+    assertEquals("i.j", new MyId("i.j").toString());
   }
 
   @Slow
