@@ -54,24 +54,24 @@ public class ThrowableHandlers {
   public static Registration addHandler(Consumer<? super Throwable> handler) {
     final Registration handlerReg = ourHandlers.get().addHandler(handler);
 
-    final Registration[] leakReg = new Registration[1];
+    final Value<Registration> leakReg = new Value<>();
     if (DEBUG) {
       final RuntimeException leakStacktrace = new RuntimeException("Potential leak");
       ourLeaks.add(leakStacktrace);
-      leakReg[0] = new Registration() {
+      leakReg.set(new Registration() {
         @Override
         protected void doRemove() {
           ourLeaks.remove(leakStacktrace);
         }
-      };
+      });
     }
 
     return new Registration() {
       @Override
       protected void doRemove() {
         handlerReg.remove();
-        if (leakReg[0] != null) {
-          leakReg[0].dispose();
+        if (leakReg.get() != null) {
+          leakReg.get().dispose();
         }
       }
     };
