@@ -16,14 +16,20 @@
 package jetbrains.jetpad.base;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import jetbrains.jetpad.base.function.Consumer;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ThrowableHandlers {
   private static final Logger LOG = Logger.getLogger(ThrowableHandlers.class.getName());
+  public static boolean DEBUG = false;
 
   //we can use ThreadLocal here because of our own emulation at model-gwt jetbrains.jetpad.model.jre.java.lang.ThreadLocal
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
@@ -42,8 +48,37 @@ public class ThrowableHandlers {
     }
   };
 
+  private final static Set<RuntimeException> ourLeaks = Collections.newSetFromMap(
+      new IdentityHashMap<RuntimeException, Boolean>());
+
   public static Registration addHandler(Consumer<? super Throwable> handler) {
-    return ourHandlers.get().addHandler(handler);
+    final Registration handlerReg = ourHandlers.get().addHandler(handler);
+
+    final Value<Registration> leakReg = new Value<>();
+    if (DEBUG) {
+      final RuntimeException leakStacktrace = new RuntimeException("Potential leak");
+      synchronized (ourLeaks) {
+        ourLeaks.add(leakStacktrace);
+      }
+      leakReg.set(new Registration() {
+        @Override
+        protected void doRemove() {
+          synchronized (ourLeaks) {
+            ourLeaks.remove(leakStacktrace);
+          }
+        }
+      });
+    }
+
+    return new Registration() {
+      @Override
+      protected void doRemove() {
+        handlerReg.remove();
+        if (leakReg.get() != null) {
+          leakReg.get().dispose();
+        }
+      }
+    };
   }
 
   public static void asInProduction(Runnable r) {
@@ -129,6 +164,18 @@ public class ThrowableHandlers {
 
   static int getHandlersSize() {
     return ourHandlers.get().size();
+  }
+
+  public static boolean checkForLeaks(PrintStream stream) {
+    if (ourHandlers.get().size() == 0) {
+      return false;
+    }
+    synchronized (ourLeaks) {
+      for (RuntimeException leak : ourLeaks) {
+        leak.printStackTrace(stream);
+      }
+    }
+    return true;
   }
 
   private static class MyEventSource {
