@@ -93,4 +93,44 @@ public class TestEdtManagersTest extends BaseTestCase {
     managers.flush(10);
     assertEquals(Arrays.asList(1, 2, 3, 4), order);
   }
+
+  @Test
+  public void flushMultipleManagers() {
+    TestEdtManagers anotherManagers = new TestEdtManagers();
+
+    final TestEventDispatchThread a = managers.createEdtManager("a").getEdt();
+    final TestEventDispatchThread b = anotherManagers.createEdtManager("b").getEdt();
+
+    final List<String> events = new ArrayList<>();
+
+    a.schedule(new Runnable() {
+      @Override
+      public void run() {
+        events.add("a");
+        b.schedule(new Runnable() {
+          @Override
+          public void run() {
+            events.add("b from a");
+          }
+        });
+      }
+
+    });
+    b.schedule(new Runnable() {
+      @Override
+      public void run() {
+        events.add("b");
+        a.schedule(new Runnable() {
+          @Override
+          public void run() {
+            events.add("a from b");
+          }
+        });
+      }
+    });
+
+    TestEdtManagers.flush(managers, anotherManagers);
+
+    assertEquals(Arrays.asList("a", "b", "b from a", "a from b"), events);
+  }
 }

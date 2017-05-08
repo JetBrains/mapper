@@ -8,6 +8,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class TestEdtManagers implements EdtManagerFactory {
+  public static void flush(TestEdtManagers... managers) {
+    while (isSomethingScheduled(managers)) {
+      for (TestEdtManagers edtManagers : managers) {
+        edtManagers.flush();
+      }
+    }
+  }
+
+  private static boolean isSomethingScheduled(TestEdtManagers... managers) {
+    for (TestEdtManagers edtManagers : managers) {
+      if (!edtManagers.nothingScheduled(0)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private final List<TestEdtManager> managers = new ArrayList<>();
 
   @Override
