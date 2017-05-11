@@ -15,16 +15,17 @@
  */
 package jetbrains.jetpad.base;
 
-import jetbrains.jetpad.base.function.Consumer;
+import org.hamcrest.CustomTypeSafeMatcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 public class CompositeAsyncTest {
   private static final int SIZE = 2;
@@ -37,15 +38,13 @@ public class CompositeAsyncTest {
     }
     Async<List<Integer>> async = Asyncs.composite(asyncs);
 
-    Value<Boolean> succeeded = addSuccessHandler(async);
-
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
-      assertFalse(succeeded.get());
     }
+    assertThat(async, AsyncMatchers.<List<Integer>>unfinished());
 
     ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).success(SIZE - 1);
-    assertTrue(succeeded.get());
+    assertThat(async, AsyncMatchers.<List<Integer>>succeeded());
   }
 
   @Test
@@ -54,30 +53,14 @@ public class CompositeAsyncTest {
     for (int i = 0; i < SIZE; i++) {
       asyncs.add(Asyncs.constant(i));
     }
-    Async<List<Integer>> async = Asyncs.composite(asyncs);
-    Value<Boolean> succeeded = addSuccessHandler(async);
-    assertTrue(succeeded.get());
+    assertThat(Asyncs.composite(asyncs), AsyncMatchers.<List<Integer>>succeeded());
   }
 
   @Test
   public void emptyRequest() {
-    Async<List<Integer>> async = Asyncs.composite(new ArrayList<Async<Integer>>(0));
-    final Value<Boolean> succeeded = new Value<>(false);
-    async.onResult(
-        new Consumer<List<Integer>>() {
-          @Override
-          public void accept(List<Integer> item) {
-            succeeded.set(true);
-            assertTrue(item.isEmpty());
-          }
-        },
-        new Consumer<Throwable>() {
-          @Override
-          public void accept(Throwable failure) {
-            throw new RuntimeException(failure);
-          }
-        });
-    assertTrue(succeeded.get());
+    assertThat(
+        Asyncs.composite(new ArrayList<Async<Integer>>(0)),
+        AsyncMatchers.<List<Integer>>result(Matchers.hasSize(0)));
   }
 
   @Test
@@ -88,30 +71,14 @@ public class CompositeAsyncTest {
     }
     Async<List<Integer>> async = Asyncs.composite(asyncs);
 
-    final Value<Boolean> failed = new Value<>(false);
-    async.onResult(
-        new Consumer<List<Integer>>() {
-          @Override
-          public void accept(List<Integer> item) {
-            throw new UnsupportedOperationException();
-          }
-        },
-        new Consumer<Throwable>() {
-          @Override
-          public void accept(Throwable failure) {
-            failed.set(true);
-            assertTrue(failure instanceof IllegalStateException);
-            assertEquals("test", failure.getMessage());
-          }
-        });
-
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
-      assertFalse(failed.get());
     }
+    assertThat(async, AsyncMatchers.<List<Integer>>unfinished());
 
-    ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).failure(new IllegalStateException("test"));
-    assertTrue(failed.get());
+    IllegalStateException failure = new IllegalStateException("test");
+    ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).failure(failure);
+    assertThat(async, AsyncMatchers.<List<Integer>, IllegalStateException>failure(sameInstance(failure)));
   }
 
   @Test
@@ -122,55 +89,24 @@ public class CompositeAsyncTest {
     }
     Async<List<Integer>> async = Asyncs.composite(asyncs);
 
-    final Value<Boolean> failed = new Value<>(false);
-    async.onResult(
-        new Consumer<List<Integer>>() {
-          @Override
-          public void accept(List<Integer> item) {
-            throw new UnsupportedOperationException();
-          }
-        },
-        new Consumer<Throwable>() {
-          @Override
-          public void accept(Throwable failure) {
-            failed.set(true);
-            List<Throwable> throwables = ((ThrowableCollectionException) failure).getThrowables();
-            assertEquals(2, throwables.size());
-            List<String> expected = Arrays.asList("0", "1");
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-            List<String> actual = Arrays.asList(throwables.get(0).getMessage(), throwables.get(1).getMessage());
-            assertEquals(expected, actual);
-          }
-        });
-
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).failure(new IllegalStateException("" + i));
-      assertFalse(failed.get());
     }
-    ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
-    assertTrue(failed.get());
-  }
+    assertThat(async, AsyncMatchers.<List<Integer>>unfinished());
 
-  private Value<Boolean> addSuccessHandler(Async<List<Integer>> async) {
-    final Value<Boolean> succeeded = new Value<>(false);
-    async.onResult(
-        new Consumer<List<Integer>>() {
+    ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
+    assertThat(async, AsyncMatchers.<List<Integer>, ThrowableCollectionException>failure(
+        new CustomTypeSafeMatcher<ThrowableCollectionException>("collection of throwables") {
           @Override
-          public void accept(List<Integer> item) {
-            succeeded.set(true);
-            assertEquals(SIZE, item.size());
-            for (int i = 0; i < SIZE; i++) {
-              assertTrue(item.contains(i));
-            }
+          protected boolean matchesSafely(ThrowableCollectionException failure) {
+            List<Throwable> throwables = failure.getThrowables();
+            assertEquals(2, throwables.size());
+            List<String> expected = Arrays.asList("0", "1");
+            List<String> actual = Arrays.asList(throwables.get(0).getMessage(), throwables.get(1).getMessage());
+            return expected.equals(actual);
           }
-        },
-        new Consumer<Throwable>() {
-          @Override
-          public void accept(Throwable failure) {
-            throw new RuntimeException(failure);
-          }
-        });
-    return succeeded;
+        }
+    ));
   }
 
   @Test
@@ -180,22 +116,11 @@ public class CompositeAsyncTest {
       asyncs.add(new SimpleAsync<Integer>());
     }
 
-    final Value<Boolean> ok = new Value<>(false);
-    Asyncs.composite(asyncs).onSuccess(
-        new Consumer<List<Integer>>() {
-          @Override
-          public void accept(List<Integer> item) {
-            for (int i = 0; i < item.size(); i++) {
-              assertEquals(i, (int) item.get(i));
-            }
-            ok.set(true);
-          }
-        });
-
     ((SimpleAsync<Integer>)asyncs.get(1)).success(1);
     ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
     ((SimpleAsync<Integer>)asyncs.get(0)).success(0);
 
-    assertTrue(ok.get());
+    assertThat(Asyncs.composite(asyncs),
+        AsyncMatchers.<List<Integer>>result(Matchers.contains(0, 1, 2)));
   }
 }
