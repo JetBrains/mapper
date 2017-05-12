@@ -48,6 +48,11 @@ public class StringConversionTest {
   }
 
   @Test
+  public void escapeEsc() {
+    convertForthAndBack("a \u001b b", "\"a \\u001b b\"");
+  }
+
+  @Test
   public void unicodeChar() {
     String data = "\u0125";
     assertEquals(1, data.length());
