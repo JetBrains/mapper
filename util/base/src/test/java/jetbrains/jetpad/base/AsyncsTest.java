@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import static jetbrains.jetpad.base.AsyncMatchers.failed;
 import static jetbrains.jetpad.base.AsyncMatchers.result;
+import static jetbrains.jetpad.base.AsyncMatchers.voidSuccess;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertSame;
@@ -182,7 +183,7 @@ public class AsyncsTest {
   @Test
   public void parallelSuccess() {
     Async<Void> parallel = Asyncs.parallel(Asyncs.constant(1), Asyncs.constant(2));
-    assertThat(parallel, AsyncMatchers.<Void>result(nullValue()));
+    assertThat(parallel, voidSuccess());
   }
 
   @Test
@@ -196,14 +197,12 @@ public class AsyncsTest {
   public void parallelAlwaysSucceed() {
     assertThat(
         Asyncs.parallel(Arrays.asList(Asyncs.constant(1), Asyncs.failure(new Throwable())), true),
-        AsyncMatchers.<Void>result(nullValue()));
+        AsyncMatchers.voidSuccess());
   }
 
   @Test
   public void emptyParallel() {
-    assertThat(
-        Asyncs.parallel(),
-        AsyncMatchers.<Void>result(nullValue()));
+    assertThat(Asyncs.parallel(), AsyncMatchers.voidSuccess());
   }
 
   @Test

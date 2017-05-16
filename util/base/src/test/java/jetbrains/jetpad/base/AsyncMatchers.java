@@ -39,11 +39,11 @@ public class AsyncMatchers {
     };
   }
 
-  public static <T, E extends Throwable> Matcher<Async<T>> failure(final Matcher<? super E> failureMatcher) {
-    return new TypeSafeDiagnosingMatcher<Async<T>>() {
+  public static <E extends Throwable> Matcher<Async<?>> failure(final Matcher<? super E> failureMatcher) {
+    return new TypeSafeDiagnosingMatcher<Async<?>>() {
       @Override
-      protected boolean matchesSafely(Async<T> item, Description mismatchDescription) {
-        AsyncResult<T> result = getResult(item);
+      protected boolean matchesSafely(Async<?> item, Description mismatchDescription) {
+        AsyncResult<?> result = getResult(item);
         switch (result.state) {
           case SUCCEEDED:
             mismatchDescription.appendText("succeeded");
@@ -62,7 +62,6 @@ public class AsyncMatchers {
         }
         return false;
       }
-
       @Override
       public void describeTo(Description description) {
         description.appendText("a failed async which failure ").appendDescriptionOf(failureMatcher);
@@ -70,11 +69,11 @@ public class AsyncMatchers {
     };
   }
 
-  public static <T> Matcher<Async<T>> unfinished() {
-    return new TypeSafeDiagnosingMatcher<Async<T>>() {
+  public static Matcher<Async<?>> unfinished() {
+    return new TypeSafeDiagnosingMatcher<Async<?>>() {
       @Override
-      protected boolean matchesSafely(Async<T> item, Description mismatchDescription) {
-        AsyncResult<T> result = getResult(item);
+      protected boolean matchesSafely(Async<?> item, Description mismatchDescription) {
+        AsyncResult<?> result = getResult(item);
         switch (result.state) {
           case SUCCEEDED:
             mismatchDescription.appendText("async succeeded");
@@ -99,15 +98,19 @@ public class AsyncMatchers {
     return result(Matchers.equalTo(value));
   }
 
-  public static <T, E extends Throwable> Matcher<Async<T>> failureIs(Class<E> failureClass) {
-    return failure(Matchers.isA(failureClass));
-  }
-
   public static <T> Matcher<Async<T>> succeeded() {
     return result(new IsAnything<T>());
   }
 
-  public static <T> Matcher<Async<T>> failed() {
+  public static Matcher<Async<Void>> voidSuccess() {
+    return result(Matchers.nullValue());
+  }
+
+  public static <E extends Throwable> Matcher<Async<?>> failureIs(Class<E> failureClass) {
+    return failure(Matchers.isA(failureClass));
+  }
+
+  public static Matcher<Async<?>> failed() {
     return failure(new IsAnything<>());
   }
 

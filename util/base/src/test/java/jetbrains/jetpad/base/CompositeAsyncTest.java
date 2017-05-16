@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static jetbrains.jetpad.base.AsyncMatchers.failure;
+import static jetbrains.jetpad.base.AsyncMatchers.unfinished;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -41,7 +43,7 @@ public class CompositeAsyncTest {
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
     }
-    assertThat(async, AsyncMatchers.<List<Integer>>unfinished());
+    assertThat(async, unfinished());
 
     ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).success(SIZE - 1);
     assertThat(async, AsyncMatchers.<List<Integer>>succeeded());
@@ -74,11 +76,11 @@ public class CompositeAsyncTest {
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
     }
-    assertThat(async, AsyncMatchers.<List<Integer>>unfinished());
+    assertThat(async, unfinished());
 
     IllegalStateException failure = new IllegalStateException("test");
     ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).failure(failure);
-    assertThat(async, AsyncMatchers.<List<Integer>, IllegalStateException>failure(sameInstance(failure)));
+    assertThat(async, failure(sameInstance(failure)));
   }
 
   @Test
@@ -92,10 +94,10 @@ public class CompositeAsyncTest {
     for (int i = 0; i < asyncs.size() - 1; i++) {
       ((SimpleAsync<Integer>)asyncs.get(i)).failure(new IllegalStateException("" + i));
     }
-    assertThat(async, AsyncMatchers.<List<Integer>>unfinished());
+    assertThat(async, unfinished());
 
     ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
-    assertThat(async, AsyncMatchers.<List<Integer>, ThrowableCollectionException>failure(
+    assertThat(async, failure(
         new CustomTypeSafeMatcher<ThrowableCollectionException>("collection of throwables") {
           @Override
           protected boolean matchesSafely(ThrowableCollectionException failure) {
