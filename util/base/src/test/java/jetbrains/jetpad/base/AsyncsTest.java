@@ -40,7 +40,7 @@ public class AsyncsTest {
 
   @Test
   public void failureAsync() {
-    assertThat(Asyncs.<Integer>failure(new Throwable()), AsyncMatchers.<Integer>failed());
+    assertThat(Asyncs.<Integer>failure(new Throwable()), failed());
   }
 
   @Test
@@ -76,7 +76,7 @@ public class AsyncsTest {
         return input + 1;
       }
     }, new SimpleAsync<Integer>());
-    assertThat(mapped, AsyncMatchers.<Integer>failed());
+    assertThat(mapped, failed());
   }
 
   @Test
@@ -88,7 +88,7 @@ public class AsyncsTest {
         throw new RuntimeException("test");
       }
     });
-    assertThat(mapped, AsyncMatchers.<Integer>failed());
+    assertThat(mapped, failed());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -151,7 +151,7 @@ public class AsyncsTest {
             return Asyncs.constant(input + 1);
           }
         }),
-        AsyncMatchers.<Integer>failed());
+        failed());
   }
 
   @Test
@@ -164,7 +164,7 @@ public class AsyncsTest {
             return Asyncs.failure(new Throwable());
           }
         }),
-        AsyncMatchers.<Integer>failed());
+        failed());
   }
 
   @Test
@@ -190,19 +190,19 @@ public class AsyncsTest {
   public void parallelFailure() {
     assertThat(
         Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())),
-        AsyncMatchers.<Void>failed());
+        failed());
   }
 
   @Test
   public void parallelAlwaysSucceed() {
     assertThat(
         Asyncs.parallel(Arrays.asList(Asyncs.constant(1), Asyncs.failure(new Throwable())), true),
-        AsyncMatchers.voidSuccess());
+        voidSuccess());
   }
 
   @Test
   public void emptyParallel() {
-    assertThat(Asyncs.parallel(), AsyncMatchers.voidSuccess());
+    assertThat(Asyncs.parallel(), voidSuccess());
   }
 
   @Test
