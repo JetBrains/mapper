@@ -23,26 +23,28 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static jetbrains.jetpad.base.AsyncMatchers.failed;
+import static jetbrains.jetpad.base.AsyncMatchers.result;
+import static jetbrains.jetpad.base.AsyncMatchers.voidSuccess;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class AsyncsTest {
   @Test
   public void constantAsync() {
-    Async<Integer> c = Asyncs.constant(239);
-    assertSuccess(c, 239);
+    assertThat(Asyncs.constant(239), result(equalTo(239)));
   }
 
   @Test
   public void failureAsync() {
-    assertFailure(Asyncs.<Integer>failure(new Throwable()));
+    assertThat(Asyncs.<Integer>failure(new Throwable()), failed());
   }
 
   @Test
-  public void map() {
+  public void internalMap() {
     Async<Integer> c = Asyncs.constant(239);
     Async<Integer> mapped = Asyncs.map(c, new Function<Integer, Integer>() {
       @Override
@@ -50,18 +52,43 @@ public class AsyncsTest {
         return input + 1;
       }
     }, new SimpleAsync<Integer>());
-    assertSuccess(mapped, 240);
+    assertThat(mapped, result(equalTo(240)));
   }
 
   @Test
-  public void mapFailure() {
-    Async<Integer> failure = Asyncs.failure(new Throwable());
-    assertFailure(Asyncs.map(failure, new Function<Integer, Integer>() {
+  public void map() {
+    Async<Integer> c = Asyncs.constant(239);
+    Async<Integer> mapped = c.map(new Function<Integer, Integer>() {
       @Override
       public Integer apply(Integer input) {
         return input + 1;
       }
-    }, new SimpleAsync<Integer>()));
+    });
+    assertThat(mapped, result(equalTo(240)));
+  }
+
+  @Test
+  public void internalMapFailure() {
+    Async<Integer> failure = Asyncs.failure(new Throwable());
+    Async<Integer> mapped = Asyncs.map(failure, new Function<Integer, Integer>() {
+      @Override
+      public Integer apply(Integer input) {
+        return input + 1;
+      }
+    }, new SimpleAsync<Integer>());
+    assertThat(mapped, failed());
+  }
+
+  @Test
+  public void mapFailure() {
+    Async<Integer> a = Asyncs.constant(1);
+    Async<Integer> mapped = a.map(new Function<Integer, Integer>() {
+      @Override
+      public Integer apply(Integer i) {
+        throw new RuntimeException("test");
+      }
+    });
+    assertThat(mapped, failed());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -89,132 +116,140 @@ public class AsyncsTest {
   }
 
   @Test
-  public void mapException() {
-    Async<Integer> a = Asyncs.constant(1);
-    assertFailure(Asyncs.map(a, new Function<Object, Object>() {
-      @Override
-      public Object apply(Object i) {
-        throw new RuntimeException("test");
-      }
-    }, new SimpleAsync<>()));
-  }
-
-  @Test
   public void select() {
     Async<Integer> c = Asyncs.constant(239);
-    Async<Integer> selected = c.flatMap(new Function<Integer, Async<Integer>>() {
-      @Override
-      public Async<Integer> apply(Integer input) {
-        return Asyncs.constant(input + 1);
-      }
-    });
-
-    assertSuccess(selected, 240);
+    assertThat(
+        c.flatMap(new Function<Integer, Async<Integer>>() {
+          @Override
+          public Async<Integer> apply(Integer input) {
+            return Asyncs.constant(input + 1);
+          }
+        }),
+        result(equalTo(240)));
   }
 
   @Test
   public void selectException() {
     Async<Integer> a = Asyncs.constant(1);
-    assertFailure(a.flatMap(new Function<Integer, Async<Object>>() {
-      @Override
-      public Async<Object> apply(Integer input) {
-        throw new RuntimeException("test");
-      }
-    }));
+    assertThat(
+        a.flatMap(new Function<Integer, Async<Object>>() {
+          @Override
+          public Async<Object> apply(Integer input) {
+            throw new RuntimeException("test");
+          }
+        }),
+        failed());
   }
 
   @Test
   public void selectFirstFailure() {
     Async<Integer> failure = Asyncs.failure(new Throwable());
-    assertFailure(failure.flatMap(new Function<Integer, Async<Integer>>() {
-      @Override
-      public Async<Integer> apply(Integer input) {
-        return Asyncs.constant(input + 1);
-      }
-    }));
+    assertThat(
+        failure.flatMap(new Function<Integer, Async<Integer>>() {
+          @Override
+          public Async<Integer> apply(Integer input) {
+            return Asyncs.constant(input + 1);
+          }
+        }),
+        failed());
   }
 
   @Test
   public void selectReturnedFailure() {
     Async<Integer> async = Asyncs.constant(1);
-    assertFailure(async.flatMap(new Function<Integer, Async<Integer>>() {
-      @Override
-      public Async<Integer> apply(Integer input) {
-        return Asyncs.failure(new Throwable());
-      }
-    }));
+    assertThat(
+        async.flatMap(new Function<Integer, Async<Integer>>() {
+          @Override
+          public Async<Integer> apply(Integer input) {
+            return Asyncs.failure(new Throwable());
+          }
+        }),
+        failed());
   }
 
   @Test
   public void selectReturnsNull() {
     Async<Integer> async = Asyncs.constant(1);
-    assertSuccessNull(async.flatMap(new Function<Integer, Async<Object>>() {
-      @Override
-      public Async<Object> apply(Integer input) {
-        return null;
-      }
-    }));
+    assertThat(
+        async.flatMap(new Function<Integer, Async<Object>>() {
+          @Override
+          public Async<Object> apply(Integer input) {
+            return null;
+          }
+        }),
+        result(nullValue()));
   }
 
   @Test
   public void parallelSuccess() {
-    assertSuccessNull(Asyncs.parallel(Asyncs.constant(1), Asyncs.constant(2)));
+    Async<Void> parallel = Asyncs.parallel(Asyncs.constant(1), Asyncs.constant(2));
+    assertThat(parallel, voidSuccess());
   }
 
   @Test
   public void parallelFailure() {
-    assertFailure(Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())));
+    assertThat(
+        Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())),
+        failed());
   }
 
   @Test
   public void parallelAlwaysSucceed() {
-    assertSuccessNull(Asyncs.parallel(Arrays.asList(Asyncs.constant(1), Asyncs.failure(new Throwable())), true));
+    assertThat(
+        Asyncs.parallel(Arrays.asList(Asyncs.constant(1), Asyncs.failure(new Throwable())), true),
+        voidSuccess());
   }
 
   @Test
   public void emptyParallel() {
-    assertSuccessNull(Asyncs.parallel());
+    assertThat(Asyncs.parallel(), voidSuccess());
   }
 
   @Test
   public void untilSuccess() {
-    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
-      @Override
-      public Async<Integer> get() {
-        return Asyncs.constant(1);
-      }
-    }), 1);
+    assertThat(
+        Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+          @Override
+          public Async<Integer> get() {
+            return Asyncs.constant(1);
+          }
+        }),
+        result(equalTo(1)));
   }
 
   @Test
   public void untilSuccessException() {
-    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
-      private int myCntr = 0;
-      @Override
-      public Async<Integer> get() {
-        myCntr++;
-        if (myCntr < 2) {
-          throw new RuntimeException();
-        } else {
-          return Asyncs.constant(myCntr);
-        }
-      }
-    }), 2);
+    assertThat(
+        Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+          private int myCntr = 0;
+          @Override
+          public Async<Integer> get() {
+            myCntr++;
+            if (myCntr < 2) {
+              throw new RuntimeException();
+            } else {
+              return Asyncs.constant(myCntr);
+            }
+          }
+        }),
+        result(equalTo(2)));
   }
 
   @Test
   public void untilSuccessWithFailures() {
-    assertSuccess(Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
-      private int myCounter;
+    assertThat(
+        Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
+          private int myCounter;
 
-      @Override
-      public Async<Integer> get() {
-        if (myCounter++ < 10) {
-          return Asyncs.failure(new RuntimeException());
-        }
-        return Asyncs.constant(1);
-      }
-    }), 1);
+          @Override
+          public Async<Integer> get() {
+            if (myCounter++ < 10) {
+              return Asyncs.failure(new RuntimeException());
+            }
+            return Asyncs.constant(1);
+          }
+        }),
+        result(equalTo(1)));
   }
 
   @Test
@@ -241,42 +276,5 @@ public class AsyncsTest {
     } catch (Throwable t) {
       assertSame(throwable, t);
     }
-  }
-
-  private void assertFailure(Async<?> async) {
-    final Value<Boolean> called = new Value<>(false);
-    async.onFailure(new Consumer<Throwable>() {
-      @Override
-      public void accept(Throwable item) {
-        called.set(true);
-      }
-    });
-
-    assertTrue(called.get());
-  }
-
-  private <ValueT> void assertSuccess(Async<ValueT> async, ValueT value) {
-    if (value == null) {
-      throw new IllegalStateException();
-    }
-    final Value<ValueT> result = new Value<>();
-    async.onSuccess(new Consumer<ValueT>() {
-      @Override
-      public void accept(ValueT value1) {
-        result.set(value1);
-      }
-    });
-    assertEquals(result.get(), value);
-  }
-
-  private <ValueT> void assertSuccessNull(Async<ValueT> async) {
-    final Value<Object> result = new Value<>(new Object());
-    async.onSuccess(new Consumer<ValueT>() {
-      @Override
-      public void accept(ValueT value) {
-        result.set(value);
-      }
-    });
-    assertNull(result.get());
   }
 }
