@@ -23,6 +23,9 @@ import jetbrains.jetpad.base.function.Function;
  * You must eventually call either succeedHandler or failureHandler.
  * If you imply a condition on handlers calls (i.e. synchronization)
  * you should imply the same conditions on map/flatMap handlers, and vice versa.
+ *
+ * Users aren't required to call {@link Registration#remove()} for registrations returned by handle methods.
+ * Implementations should make appropriate cleanup to avoid memory leaks when async is succeeded or failed.
  */
 public interface Async<ItemT> {
   Registration onSuccess(Consumer<? super ItemT> successHandler);
