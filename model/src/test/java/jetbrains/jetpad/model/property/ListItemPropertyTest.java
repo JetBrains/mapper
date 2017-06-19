@@ -17,13 +17,24 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.model.property.PropertyEventHandlers.CountingHandler;
-import jetbrains.jetpad.model.property.PropertyEventHandlers.RecordingHandler;
+import jetbrains.jetpad.model.event.EventMatchers.MatchingHandler;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
+import static jetbrains.jetpad.model.event.EventMatchers.allEvents;
+import static jetbrains.jetpad.model.event.EventMatchers.newValue;
+import static jetbrains.jetpad.model.event.EventMatchers.newValueIs;
+import static jetbrains.jetpad.model.event.EventMatchers.noEvents;
+import static jetbrains.jetpad.model.event.EventMatchers.oldValueIs;
+import static jetbrains.jetpad.model.event.EventMatchers.setTestHandler;
+import static jetbrains.jetpad.model.event.EventMatchers.singleEvent;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 public class ListItemPropertyTest {
   @Rule
@@ -122,24 +133,17 @@ public class ListItemPropertyTest {
     ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
     ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
 
-    CountingHandler<Integer> p1counter = new CountingHandler<>();
-    p1.addHandler(p1counter);
-    CountingHandler<Integer> p2counter = new CountingHandler<>();
-    p2.addHandler(p2counter);
-    CountingHandler<Integer> p3counter = new CountingHandler<>();
-    p3.addHandler(p3counter);
-
-    RecordingHandler<Integer> recording = new RecordingHandler<>();
-    p2.addHandler(recording);
+    MatchingHandler<PropertyChangeEvent<Integer>> p1handler = setTestHandler(p1);
+    MatchingHandler<PropertyChangeEvent<Integer>> p2handler = setTestHandler(p2);
+    MatchingHandler<PropertyChangeEvent<Integer>> p3handler = setTestHandler(p3);
 
     list.add(2, 22);
     list.set(3, 12);
 
-    assertEquals(0, p1counter.getCounter());
-    assertEquals(1, p2counter.getCounter());
-    assertEquals(0, p3counter.getCounter());
-    assertEquals(2, recording.getOldValue().intValue());
-    assertEquals(12, recording.getNewValue().intValue());
+    assertThat(p1handler, noEvents());
+    assertThat(p2handler, singleEvent(
+        allOf(oldValueIs(2), newValueIs(12))));
+    assertThat(p3handler, noEvents());
   }
 
   @Test
@@ -147,17 +151,12 @@ public class ListItemPropertyTest {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p = new ListItemProperty<>(list, 2);
 
-    CountingHandler<Integer> counter = new CountingHandler<>();
-    p.addHandler(counter);
-
-    RecordingHandler<Integer> recording = new RecordingHandler<>();
-    p.addHandler(recording);
+    MatchingHandler<PropertyChangeEvent<Integer>> handler = setTestHandler(p);
 
     list.remove(2);
 
-    assertEquals(1, counter.getCounter());
-    assertEquals(2, recording.getOldValue().intValue());
-    assertNull(recording.getNewValue());
+    assertThat(handler, singleEvent(
+        allOf(oldValueIs(2), newValue(nullValue(Integer.class)))));
   }
 
   @Test
@@ -165,16 +164,12 @@ public class ListItemPropertyTest {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
 
-    CountingHandler<Integer> p2counter = new CountingHandler<>();
-    p2.addHandler(p2counter);
-    RecordingHandler<Integer> recording = new RecordingHandler<>();
-    p2.addHandler(recording);
+    MatchingHandler<PropertyChangeEvent<Integer>> p2handler = setTestHandler(p2);
 
     p2.set(12);
 
-    assertEquals(1, p2counter.getCounter());
-    assertEquals(2, recording.getOldValue().intValue());
-    assertEquals(12, recording.getNewValue().intValue());
+    assertThat(p2handler, singleEvent(
+        allOf(oldValueIs(2), newValueIs(12))));
   }
 
   @Test
@@ -183,20 +178,14 @@ public class ListItemPropertyTest {
     ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
     ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
 
-    CountingHandler<Integer> p1indexCounter = new CountingHandler<>();
-    p1.index.addHandler(p1indexCounter);
-    CountingHandler<Integer> p2indexCounter = new CountingHandler<>();
-    p2.index.addHandler(p2indexCounter);
-
-    RecordingHandler<Integer> p2indexRecording = new RecordingHandler<>();
-    p2.index.addHandler(p2indexRecording);
+    MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
+    MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
 
     list.add(2, 22);
 
-    assertEquals(0, p1indexCounter.getCounter());
-    assertEquals(1, p2indexCounter.getCounter());
-    assertEquals(2, p2indexRecording.getOldValue().intValue());
-    assertEquals(3, p2indexRecording.getNewValue().intValue());
+    assertThat(p1indexHandler, noEvents());
+    assertThat(p2indexHandler, singleEvent(
+        allOf(oldValueIs(2), newValueIs(3))));
   }
 
   @Test
@@ -206,27 +195,17 @@ public class ListItemPropertyTest {
     ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
     ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
 
-    CountingHandler<Integer> p1indexCounter = new CountingHandler<>();
-    p1.index.addHandler(p1indexCounter);
-    CountingHandler<Integer> p2indexCounter = new CountingHandler<>();
-    p2.index.addHandler(p2indexCounter);
-    CountingHandler<Integer> p3indexCounter = new CountingHandler<>();
-    p3.index.addHandler(p3indexCounter);
-
-    RecordingHandler<Integer> p2indexRecording = new RecordingHandler<>();
-    p2.index.addHandler(p2indexRecording);
-    RecordingHandler<Integer> p3indexRecording = new RecordingHandler<>();
-    p3.index.addHandler(p3indexRecording);
+    MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
+    MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
+    MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.index);
 
     list.remove(2);
 
-    assertEquals(0, p1indexCounter.getCounter());
-    assertEquals(1, p2indexCounter.getCounter());
-    assertEquals(1, p3indexCounter.getCounter());
-    assertEquals(2, p2indexRecording.getOldValue().intValue());
-    assertNull(p2indexRecording.getNewValue());
-    assertEquals(3, p3indexRecording.getOldValue().intValue());
-    assertEquals(2, p3indexRecording.getNewValue().intValue());
+    assertThat(p1indexHandler, noEvents());
+    assertThat(p2indexHandler, singleEvent(
+        allOf(oldValueIs(2), newValue(nullValue(Integer.class)))));
+    assertThat(p3indexHandler, singleEvent(
+        allOf(oldValueIs(3), newValueIs(2))));
   }
 
   @Test
@@ -236,24 +215,22 @@ public class ListItemPropertyTest {
     ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
     ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
 
-    CountingHandler<Integer> p1indexCounter = new CountingHandler<>();
-    p1.index.addHandler(p1indexCounter);
-    CountingHandler<Integer> p2indexCounter = new CountingHandler<>();
-    p2.index.addHandler(p2indexCounter);
-    CountingHandler<Integer> p3indexCounter = new CountingHandler<>();
-    p3.index.addHandler(p3indexCounter);
+    MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
+    MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
+    MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.index);
 
     list.set(2, 22);
 
-    assertEquals(0, p1indexCounter.getCounter());
-    assertEquals(0, p2indexCounter.getCounter());
-    assertEquals(0, p3indexCounter.getCounter());
+    assertThat(p1indexHandler, noEvents());
+    assertThat(p2indexHandler, noEvents());
+    assertThat(p3indexHandler, noEvents());
   }
 
   @Test
   public void disposeImmediately() {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
+
     p.dispose();
     exception.expect(IllegalStateException.class);
     p.dispose();
@@ -263,7 +240,9 @@ public class ListItemPropertyTest {
   public void disposeInvalid() {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
+
     list.remove(1);
+
     assertFalse(p.isValid());
     p.dispose();
     exception.expect(IllegalStateException.class);
@@ -275,12 +254,10 @@ public class ListItemPropertyTest {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
 
-    CountingHandler<Integer> iCounter = new CountingHandler<>();
-    p.index.addHandler(iCounter);
+    MatchingHandler<PropertyChangeEvent<Integer>> indexHandler = setTestHandler(p.index);
 
     p.dispose();
-
-    assertEquals(0, iCounter.getCounter());
+    assertThat(indexHandler, noEvents());
   }
 
   @Test
@@ -288,13 +265,13 @@ public class ListItemPropertyTest {
     ObservableList<Integer> list = createList(5);
     ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
 
-    CountingHandler<Integer> iCounter = new CountingHandler<>();
-    p.index.addHandler(iCounter);
+    MatchingHandler<PropertyChangeEvent<Integer>> indexHandler = setTestHandler(p.index);
 
     list.remove(1);
-    assertEquals(1, iCounter.getCounter());
+
+    assertThat(indexHandler, allEvents(hasSize(1)));
     p.dispose();
-    assertEquals(1, iCounter.getCounter());
+    assertThat(indexHandler, allEvents(hasSize(1)));
   }
 
 
