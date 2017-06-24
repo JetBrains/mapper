@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -22,6 +23,11 @@ import static org.mockito.Mockito.times;
 
 public class TestEventDispatchThreadTest {
   private TestEventDispatchThread edt = new TestEventDispatchThread();
+
+  @Before
+  public void setUp() {
+    edt.resetOwner();
+  }
 
   @Test
   public void simpleInvokeLater() {
