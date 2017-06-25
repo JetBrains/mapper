@@ -34,7 +34,7 @@ public final class TimeoutEdtTest {
   }
 
   @Test
-  public void testInANewThread() {
+  public void testInNewThread() {
     Runnable r = Mockito.mock(Runnable.class);
     edt.schedule(r);
     edt.executeUpdates();
