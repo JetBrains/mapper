@@ -31,18 +31,20 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   private boolean myFinished = false;
   private boolean myRunning = false;
 
+  private Thread myOwner;
+
   public TestEventDispatchThread() {
     this("");
   }
 
   public TestEventDispatchThread(String name) {
-    final Thread owner = Thread.currentThread();
+    resetOwner();
     myThreadSafeChecker = new Runnable() {
       @Override
       public void run() {
         Thread current = Thread.currentThread();
-        if (owner != current) {
-          throw new IllegalStateException("Test EDT is not thread-safe. Owner is " + owner + ". Attempt to access from " + current);
+        if (myOwner != current) {
+          throw new IllegalStateException("Test EDT is not thread-safe. Owner is " + myOwner + ". Attempt to access from " + current);
         }
       }
     };
@@ -64,6 +66,10 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   public int size() {
     return myRecords.size();
+  }
+
+  public void resetOwner() {
+    myOwner = Thread.currentThread();
   }
 
   public boolean nothingScheduled(int time) {
