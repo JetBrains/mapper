@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.property;
 
-import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
@@ -383,7 +382,7 @@ public class Properties {
     return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT s) {
-        return Objects.equal(value, s);
+        return java.util.Objects.equals(value, s);
       }
     });
   }
@@ -392,7 +391,7 @@ public class Properties {
     return new DerivedProperty<Boolean>(p1, p2) {
       @Override
       public Boolean doGet() {
-        return Objects.equal(p1.get(), p2.get());
+        return java.util.Objects.equals(p1.get(), p2.get());
       }
 
       @Override
@@ -439,7 +438,7 @@ public class Properties {
             TargetT oldValue = sToT.apply(event.getOldValue());
             TargetT newValue = sToT.apply(event.getNewValue());
 
-            if (Objects.equal(oldValue, newValue)) return;
+            if (java.util.Objects.equals(oldValue, newValue)) return;
 
             handler.onEvent(new PropertyChangeEvent<>(oldValue, newValue));
           }

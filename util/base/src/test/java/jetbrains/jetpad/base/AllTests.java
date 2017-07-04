@@ -30,7 +30,6 @@ import org.junit.runners.Suite;
     CompositeAsyncTest.class,
     EnumsTest.class,
     IntervalTest.class,
-    ObjectsTest.class,
     PersistersTest.class,
     RegistrationMapTest.class,
     SimpleAsyncRegistrationsTest.class,

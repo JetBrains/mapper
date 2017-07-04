@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.values;
 
-import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Persister;
 
 public class Colors {
@@ -110,7 +109,7 @@ public class Colors {
 
       @Override
       public String serialize(Color value) {
-        if (Objects.equal(value, defaultValue)) {
+        if (java.util.Objects.equals(value, defaultValue)) {
           return null;
         }
         return value.toString();

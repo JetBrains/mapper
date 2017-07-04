@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.property;
 
-import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
@@ -41,7 +40,7 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
 
   @Override
   public void set(ValueT value) {
-    if (Objects.equal(value, myValue)) return;
+    if (java.util.Objects.equals(value, myValue)) return;
     ValueT oldValue = myValue;
     myValue = value;
 

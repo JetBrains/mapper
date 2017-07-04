@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.id;
 
 import com.google.gwt.core.shared.GWT;
-import jetbrains.jetpad.base.Objects;
 
 import java.io.Serializable;
 
@@ -77,7 +76,7 @@ public abstract class BaseId implements Serializable {
 
     BaseId otherId = (BaseId) obj;
 
-    return Objects.equal(getId(), otherId.getId());
+    return java.util.Objects.equals(getId(), otherId.getId());
   }
 
   @Override

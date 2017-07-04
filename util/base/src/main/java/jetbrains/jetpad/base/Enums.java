@@ -15,15 +15,13 @@
  */
 package jetbrains.jetpad.base;
 
-import jetbrains.jetpad.base.Objects;
-
 public class Enums {
   /**
    * Value of method for enums which takes into account toString() instead of saved generated name
    */
   public static <EnumT extends Enum<EnumT>> EnumT valueOf(Class<EnumT> cls, String name) {
     for (EnumT e : cls.getEnumConstants()) {
-      if (Objects.equal(name, e.toString())) {
+      if (java.util.Objects.equals(name, e.toString())) {
         return e;
       }
     }
