@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.mapper.gwt;
 
-import jetbrains.jetpad.base.Objects;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -117,7 +116,7 @@ public class EditableText implements Property<String> {
 
   @Override
   public void set(String value) {
-    if (Objects.equal(myValue, value)) return;
+    if (java.util.Objects.equals(myValue, value)) return;
 
     String oldValue = myValue;
     myValue = value;

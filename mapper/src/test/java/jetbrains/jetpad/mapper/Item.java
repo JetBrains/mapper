@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.mapper;
 
-import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.property.Property;
@@ -57,7 +56,7 @@ class Item {
   }
 
   boolean contentEquals(Item item) {
-    return Objects.equal(name.get(), item.name.get())
+    return java.util.Objects.equals(name.get(), item.name.get())
         && contentsEqual(observableChildren, item.observableChildren)
         && contentsEqual(children, item.children)
         && contentsEqual(transformedChildren, item.transformedChildren)

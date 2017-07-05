@@ -15,8 +15,6 @@
  */
 package jetbrains.jetpad.model.util;
 
-import jetbrains.jetpad.base.Objects;
-
 import java.util.*;
 
 /**
@@ -172,7 +170,7 @@ public class ListMap<K, V> {
   private int findByKey(K key) {
     for (int i = 0; i < myData.length; i += 2) {
       K k = (K) myData[i];
-      if (Objects.equal(key, k)) {
+      if (java.util.Objects.equals(key, k)) {
         return i;
       }
     }

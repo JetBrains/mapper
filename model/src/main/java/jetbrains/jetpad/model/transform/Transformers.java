@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Functions;
-import jetbrains.jetpad.base.Objects;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Supplier;
@@ -554,7 +553,7 @@ public class Transformers {
                 if (!exists(item)) return;
                 for (Iterator<TargetT> i = to.iterator(); i.hasNext(); ) {
                   TargetT t = i.next();
-                  if (Objects.equal(checker.apply(t), item)) {
+                  if (java.util.Objects.equals(checker.apply(t), item)) {
                     i.remove();
                     return;
                   }
@@ -580,7 +579,7 @@ public class Transformers {
 
           private boolean exists(SourceT item) {
             for (TargetT t: to) {
-              if (Objects.equal(checker.apply(t), item)) return true;
+              if (java.util.Objects.equals(checker.apply(t), item)) return true;
             }
             return false;
           }
