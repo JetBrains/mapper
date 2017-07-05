@@ -31,6 +31,9 @@ public class ThrowableCollectionException extends RuntimeException {
     myThrowables.addAll(throwables);
   }
 
+  public ThrowableCollectionException() {
+  }
+
   public List<Throwable> getThrowables() {
     return myThrowables;
   }
