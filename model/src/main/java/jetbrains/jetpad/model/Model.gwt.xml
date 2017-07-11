@@ -7,4 +7,8 @@
   <source path=""/>
   <inherits name="jetbrains.jetpad.base.Base"/>
   <inherits name="jetbrains.jetpad.geometry.Geometry"/>
+
+  <replace-with class="jetbrains.jetpad.model.id.GwtIdNames">
+    <when-type-is class="jetbrains.jetpad.model.id.JvmIdNames"/>
+  </replace-with>
 </module>

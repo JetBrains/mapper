@@ -15,8 +15,6 @@
  */
 package jetbrains.jetpad.model.id;
 
-import com.google.gwt.core.shared.GWT;
-
 import java.io.Serializable;
 
 /**
@@ -28,15 +26,7 @@ import java.io.Serializable;
  */
 public abstract class BaseId implements Serializable {
 
-  private static final IdNames ourNames;
-
-  static {
-    if (GWT.isClient()) {
-      ourNames = new GwtIdNames();
-    } else {
-      ourNames = new JvmIdNames();
-    }
-  }
+  private static final IdNames ourNames = new DefaultIdNames();
 
   private String myId;
 

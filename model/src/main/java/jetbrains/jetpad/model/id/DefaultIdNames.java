@@ -3,7 +3,7 @@ package jetbrains.jetpad.model.id;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-class JvmIdNames implements IdNames {
+class DefaultIdNames implements IdNames {
   private final ConcurrentMap<String, String> myMap = new ConcurrentHashMap<>();
 
   @Override
