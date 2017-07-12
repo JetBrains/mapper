@@ -22,10 +22,15 @@
   </parent>
 
   <dependencies>
+    <!--
+      Needed for additional pieces of JRE library emulation.
+      guava-gwt depends on gwt-user and shouldn't be included on platforms other than GWT.
+      Basically if a dependent project uses GWT it should explicitly depend on guava-gwt.
+    -->
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
-      <scope>compile</scope>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava-gwt</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
