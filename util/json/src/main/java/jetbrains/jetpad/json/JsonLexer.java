@@ -27,6 +27,8 @@ abstract class JsonLexer {
 
   protected abstract String tokenText();
 
+  protected abstract String literalTokenText();
+
   JsonTokenKind tokenKind() {
     if (myDeferred) {
       myDeferred = false;
