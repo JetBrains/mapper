@@ -26,9 +26,9 @@ public class DefautJsonSupport implements JsonSupport {
   private JsonValue parseValue(JsonLexer lexer) {
     switch (lexer.tokenKind()) {
       case STRING:
-        String sv = lexer.tokenText();
+        String sv = lexer.literalTokenText();
         lexer.next();
-        return new JsonString(getLiteralText(sv));
+        return new JsonString(sv);
       case LEFT_BRACKET:
         return parseArray(lexer);
       case NUMBER:
@@ -64,7 +64,7 @@ public class DefautJsonSupport implements JsonSupport {
       if (lexer.tokenKind() != JsonTokenKind.STRING) {
         throw new JsonParsingException();
       }
-      String key = getLiteralText(lexer.tokenText());
+      String key = lexer.literalTokenText();
       lexer.next();
 
       lexer.readToken(JsonTokenKind.COLON);
@@ -90,9 +90,5 @@ public class DefautJsonSupport implements JsonSupport {
 
     lexer.readToken(JsonTokenKind.RIGHT_BRACKET);
     return result;
-  }
-
-  static String getLiteralText(String literal) {
-    return JsonUtil.unescape(literal.substring(1, literal.length() - 1));
   }
 }

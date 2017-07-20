@@ -83,15 +83,14 @@ class JsonUtil {
     return builder.toString();
   }
 
-  static String unescape(String s) {
+  static String unescape(String s, int start, int end) {
     StringBuilder result = null;
-    int len = s.length();
-    for (int i = 0; i < len; i++) {
+    for (int i = start; i < end; i++) {
       char ch = s.charAt(i);
-      if (ch == '\\' && i < len - 1) {
+      if (ch == '\\' && i < end - 1) {
         if (result == null) {
           result = new StringBuilder();
-          result.append(s.substring(0, i));
+          result.append(s.substring(start, i));
         }
 
         i++;
@@ -103,7 +102,7 @@ class JsonUtil {
         if (specialChar != -1) {
           result.append((char) specialChar);
         } else if (ch == 'u') {
-          if (i >= len - 4) {
+          if (i >= end - 4) {
             throw new RuntimeException();
           }
           String hexNumber = s.substring(i + 1, i + 5);
@@ -122,7 +121,7 @@ class JsonUtil {
     if (result != null) {
       return result.toString();
     } else {
-      return s;
+      return s.substring(start, end);
     }
   }
 

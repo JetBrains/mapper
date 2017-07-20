@@ -43,6 +43,11 @@ class StringJsonLexer extends JsonLexer {
     return myInput.substring(myTokenStart, myPosition);
   }
 
+  @Override
+  protected String literalTokenText() {
+    return JsonUtil.unescape(myInput, myTokenStart + 1, myPosition - 1);
+  }
+
   protected void setTokenStart() {
     myTokenStart = myPosition;
   }

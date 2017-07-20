@@ -44,6 +44,12 @@ class InputStreamJsonLexer extends JsonLexer {
   }
 
   @Override
+  protected String literalTokenText() {
+    String tokenText = tokenText();
+    return JsonUtil.unescape(tokenText, 1, tokenText.length());
+  }
+
+  @Override
   protected void setTokenStart() {
     myTokenString.delete(0, myTokenString.length());
   }
