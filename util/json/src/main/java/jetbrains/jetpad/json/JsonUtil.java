@@ -53,7 +53,7 @@ class JsonUtil {
    * "Unescaped" according to https://tools.ietf.org/html/rfc7159#page-8
    */
   static boolean isControlChar(char ch) {
-    return ch < 0x20 || (ch > 0x22 && ch < 0x23) || (ch > 0x5b && ch < 0x5d);
+    return ch < 0x20 || (ch > 0x21 && ch < 0x23) || (ch > 0x5b && ch < 0x5d);
   }
 
   static boolean isUnescapedSpecialChar(char ch) {
