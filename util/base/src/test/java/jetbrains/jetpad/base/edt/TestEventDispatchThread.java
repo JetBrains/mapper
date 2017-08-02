@@ -101,20 +101,25 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     int mc;
     do {
       mc = myModificationCount;
-      List<RunnableRecord> current = getCurrentRecords();
-      run(current);
-      runCommandsNum += current.size();
-      myRecords.removeAll(current);
+      runCommandsNum += runCurrentRecords();
     } while (myModificationCount != mc);
     return runCommandsNum;
   }
 
-  private void run(List<RunnableRecord> current) {
+  private int runCurrentRecords() {
+    List<RunnableRecord> current = getCurrentRecords();
+    int executedNum = 0;
     myRunning = true;
-    for (RunnableRecord r : current) {
-      r.myRunnable.run();
+    try {
+      for (RunnableRecord r : current) {
+        executedNum++;
+        r.myRunnable.run();
+      }
+    } finally {
+      myRunning = false;
+      myRecords.removeAll(current.subList(0, executedNum));
     }
-    myRunning = false;
+    return executedNum;
   }
 
   private List<RunnableRecord> getCurrentRecords() {
@@ -200,7 +205,7 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     myThreadSafeChecker.run();
     checkCanStop();
     checkInsideTask();
-    run(getCurrentRecords());
+    runCurrentRecords();
     shutdown();
   }
 
