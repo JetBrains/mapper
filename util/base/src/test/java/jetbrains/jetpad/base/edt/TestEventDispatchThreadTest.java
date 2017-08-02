@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 
-public class TestEventDispatchThreadTest {
+public class TestEventDispatchThreadTest extends BaseTestCase {
   private TestEventDispatchThread edt = new TestEventDispatchThread();
 
   @Before
