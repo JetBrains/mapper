@@ -15,13 +15,14 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 
@@ -112,19 +113,13 @@ public class TestEventDispatchThreadTest {
     });
     assertEquals(2, edt.size());
 
-    boolean exceptionHappened = false;
-    try {
-      edt.executeUpdates();
-    } catch (UnsupportedOperationException e) {
-      exceptionHappened = true;
-      assertEquals(1, edt.size());
-      assertFalse(taskExecuted.get());
-
-      edt.executeUpdates();
-      assertTrue(edt.isEmpty());
-      assertTrue(taskExecuted.get());
-    }
-    
-    assertTrue(exceptionHappened);
+    ThrowableHandlers.asInProduction(new Runnable() {
+      @Override
+      public void run() {
+        edt.executeUpdates();
+      }
+    });
+    assertTrue(edt.isEmpty());
+    assertTrue(taskExecuted.get());
   }
 }

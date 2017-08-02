@@ -16,6 +16,7 @@
 package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.base.Value;
 
 import java.util.ArrayList;
@@ -113,7 +114,11 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     try {
       for (RunnableRecord r : current) {
         executedNum++;
-        r.myRunnable.run();
+        try {
+          r.myRunnable.run();
+        } catch (Exception e) {
+          ThrowableHandlers.handle(e);
+        }
       }
     } finally {
       myRunning = false;
