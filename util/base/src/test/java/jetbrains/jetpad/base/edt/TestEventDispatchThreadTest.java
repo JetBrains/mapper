@@ -16,7 +16,6 @@
 package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.ThrowableHandlers;
-import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,13 +103,8 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
       }
     });
 
-    final Value<Boolean> taskExecuted = new Value<>(Boolean.FALSE);
-    edt.schedule(new Runnable() {
-      @Override
-      public void run() {
-        taskExecuted.set(Boolean.TRUE);
-      }
-    });
+    Runnable r = Mockito.mock(Runnable.class);
+    edt.schedule(r);
     assertEquals(2, edt.size());
 
     ThrowableHandlers.asInProduction(new Runnable() {
@@ -120,7 +114,7 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
       }
     });
     assertTrue(edt.isEmpty());
-    assertTrue(taskExecuted.get());
+    Mockito.verify(r).run();
   }
 
   @Test(expected = UnsupportedOperationException.class)
