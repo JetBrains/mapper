@@ -96,7 +96,7 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
   }
 
   @Test
-  public void exceptionInTask() {
+  public void taskExceptionCaught() {
     edt.schedule(new Runnable() {
       @Override
       public void run() {
