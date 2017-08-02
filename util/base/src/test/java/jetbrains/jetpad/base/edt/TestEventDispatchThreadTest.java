@@ -122,4 +122,28 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
     assertTrue(edt.isEmpty());
     assertTrue(taskExecuted.get());
   }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void taskExceptionThrown() {
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        throw new UnsupportedOperationException();
+      }
+    });
+    final Runnable r = Mockito.mock(Runnable.class);
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        edt.schedule(r);
+      }
+    });
+
+    try {
+      edt.executeUpdates();
+    } finally {
+      assertEquals(1, edt.size());
+      Mockito.verify(r, Mockito.never()).run();
+    }
+  }
 }
