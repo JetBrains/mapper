@@ -15,13 +15,17 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.ThrowableHandlers;
+import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 
-public class TestEventDispatchThreadTest {
+public class TestEventDispatchThreadTest extends BaseTestCase {
   private TestEventDispatchThread edt = new TestEventDispatchThread();
 
   @Before
@@ -88,5 +92,52 @@ public class TestEventDispatchThreadTest {
       }
     });
     edt.executeUpdates();
+  }
+
+  @Test
+  public void taskExceptionCaught() {
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        throw new UnsupportedOperationException();
+      }
+    });
+
+    Runnable r = Mockito.mock(Runnable.class);
+    edt.schedule(r);
+    assertEquals(2, edt.size());
+
+    ThrowableHandlers.asInProduction(new Runnable() {
+      @Override
+      public void run() {
+        edt.executeUpdates();
+      }
+    });
+    assertTrue(edt.isEmpty());
+    Mockito.verify(r).run();
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void taskExceptionThrown() {
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        throw new UnsupportedOperationException();
+      }
+    });
+    final Runnable r = Mockito.mock(Runnable.class);
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        edt.schedule(r);
+      }
+    });
+
+    try {
+      edt.executeUpdates();
+    } finally {
+      assertEquals(1, edt.size());
+      Mockito.verify(r, Mockito.never()).run();
+    }
   }
 }
