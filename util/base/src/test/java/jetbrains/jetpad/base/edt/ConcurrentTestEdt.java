@@ -114,4 +114,13 @@ public class ConcurrentTestEdt implements EventDispatchThread, EdtManager {
       myLock.unlock();
     }
   }
+
+  public boolean isEmpty() {
+    myLock.lock();
+    try {
+      return myEdt.isEmpty();
+    } finally {
+      myLock.unlock();
+    }
+  }
 }
