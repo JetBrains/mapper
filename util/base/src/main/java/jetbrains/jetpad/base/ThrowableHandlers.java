@@ -102,7 +102,11 @@ public class ThrowableHandlers {
       throw new RuntimeException(t);
     }
 
-    LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
+    // ourForceProduction is used only in tests, where severe level is logged by default.
+    if (!ourForceProduction.get()) {
+      LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
+    }
+
     handleError(t);
 
     ourHandlers.get().fire(t);
