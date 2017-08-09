@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.test;
 
+import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -37,7 +38,13 @@ public final class LogLevelTestRule implements TestRule {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
+        Test test = description.getAnnotation(Test.class);
+        boolean exceptionExpected = test != null && test.expected() != Test.None.class;
+
         Level level = getLevel(description.getAnnotation(LogLevel.class));
+        if (level == null && exceptionExpected) {
+          level = Level.OFF;
+        }
 
         Level prevLevel;
         if (level != null) {
