@@ -25,12 +25,10 @@ import java.util.logging.Level;
 import static jetbrains.jetpad.test.BaseTestCase.resetLogsLevel;
 
 public final class LogLevelTestRule implements TestRule {
-  private static final Level DEFAULT_LEVEL = Level.WARNING;
+  private final Level myDefaultLevel;
 
-  private final boolean myApplyDefault;
-
-  public LogLevelTestRule(boolean applyDefault) {
-    this.myApplyDefault = applyDefault;
+  public LogLevelTestRule(Level defaultLevel) {
+    myDefaultLevel = defaultLevel;
   }
 
   @Override
@@ -67,10 +65,8 @@ public final class LogLevelTestRule implements TestRule {
   private Level getLevel(LogLevel logLevel) {
     if (logLevel != null) {
       return Level.parse(logLevel.value().toUpperCase());
-    } else if (myApplyDefault) {
-      return DEFAULT_LEVEL;
     } else {
-      return null;
+      return myDefaultLevel;
     }
   }
 }

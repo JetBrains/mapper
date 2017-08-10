@@ -23,19 +23,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class BaseTestCase {
+  private static final Level DEFAULT_LEVEL = Level.WARNING;
+
   @Rule
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
   @Rule
   public EnableRemoteTestsRule enableRemoteTestsRule = new EnableRemoteTestsRule();
   @Rule
-  public LogLevelTestRule logLevelTestRule = new LogLevelTestRule(false);
+  public LogLevelTestRule logLevelTestRule = new LogLevelTestRule(null);
 
   @ClassRule
   public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
   @ClassRule
   public static EnableRemoteTestsRule enableRemoteSuitesRule = new EnableRemoteTestsRule();
   @ClassRule
-  public static LogLevelTestRule logLevelSuitesRule = new LogLevelTestRule(true);
+  public static LogLevelTestRule logLevelSuitesRule = new LogLevelTestRule(DEFAULT_LEVEL);
   
   public static Level resetLogsLevel(Level level) {
     Level oldLevel = Logger.getLogger("").getLevel();
