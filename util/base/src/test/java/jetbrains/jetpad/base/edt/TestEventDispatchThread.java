@@ -114,10 +114,12 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     try {
       for (RunnableRecord r : current) {
         executedNum++;
-        try {
-          r.myRunnable.run();
-        } catch (Exception e) {
-          ThrowableHandlers.handle(e);
+        if (notCancelled(r)) {
+          try {
+            r.myRunnable.run();
+          } catch (Exception e) {
+            ThrowableHandlers.handle(e);
+          }
         }
       }
     } finally {
@@ -125,6 +127,10 @@ public final class TestEventDispatchThread implements EventDispatchThread {
       myRecords.removeAll(current.subList(0, executedNum));
     }
     return executedNum;
+  }
+
+  private boolean notCancelled(RunnableRecord record) {
+    return myRecords.contains(record);
   }
 
   private List<RunnableRecord> getCurrentRecords() {
