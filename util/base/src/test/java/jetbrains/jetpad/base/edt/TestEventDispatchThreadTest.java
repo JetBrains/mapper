@@ -126,12 +126,7 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
       }
     });
     final Runnable r = Mockito.mock(Runnable.class);
-    edt.schedule(new Runnable() {
-      @Override
-      public void run() {
-        edt.schedule(r);
-      }
-    });
+    edt.schedule(r);
 
     try {
       edt.executeUpdates();
