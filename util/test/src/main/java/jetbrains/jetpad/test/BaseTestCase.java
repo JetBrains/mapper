@@ -15,8 +15,6 @@
  */
 package jetbrains.jetpad.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 
@@ -25,27 +23,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class BaseTestCase {
-  private static Level ourLevel;
+  private static final Level DEFAULT_LEVEL = Level.WARNING;
 
   @Rule
   public EnableSlowTestsRule enableSlowTestsRule = new EnableSlowTestsRule();
   @Rule
   public EnableRemoteTestsRule enableRemoteTestsRule = new EnableRemoteTestsRule();
+  @Rule
+  public LogLevelTestRule logLevelTestRule = new LogLevelTestRule(null);
+
   @ClassRule
   public static EnableSlowTestsRule enableSlowSuitesRule = new EnableSlowTestsRule();
   @ClassRule
   public static EnableRemoteTestsRule enableRemoteSuitesRule = new EnableRemoteTestsRule();
-
-  @BeforeClass
-  public static void turnLoggingOff() {
-    ourLevel = resetLogsLevel(Level.OFF);
-  }
-
-  @AfterClass
-  public static void turnLoggingBack() {
-    resetLogsLevel(ourLevel);
-  }
-
+  @ClassRule
+  public static LogLevelTestRule logLevelSuitesRule = new LogLevelTestRule(DEFAULT_LEVEL);
+  
   public static Level resetLogsLevel(Level level) {
     Level oldLevel = Logger.getLogger("").getLevel();
     Logger.getLogger("").setLevel(level);
