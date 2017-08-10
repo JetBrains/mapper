@@ -15,7 +15,9 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
+import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,12 +128,7 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
       }
     });
     final Runnable r = Mockito.mock(Runnable.class);
-    edt.schedule(new Runnable() {
-      @Override
-      public void run() {
-        edt.schedule(r);
-      }
-    });
+    edt.schedule(r);
 
     try {
       edt.executeUpdates();
@@ -139,5 +136,24 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
       assertEquals(1, edt.size());
       Mockito.verify(r, Mockito.never()).run();
     }
+  }
+
+  @Test
+  public void scheduledTaskCancelledByTaskInSameTime() {
+    final Value<Registration> scheduledReg = new Value<>();
+
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        scheduledReg.get().remove();
+      }
+    });
+
+    final Runnable r = Mockito.mock(Runnable.class);
+    scheduledReg.set(edt.schedule(0, r));
+
+    edt.executeUpdates();
+    assertTrue(edt.isEmpty());
+    Mockito.verify(r, Mockito.never()).run();
   }
 }
