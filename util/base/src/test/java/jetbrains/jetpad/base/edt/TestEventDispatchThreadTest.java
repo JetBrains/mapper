@@ -23,6 +23,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
@@ -155,5 +159,30 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
     edt.executeUpdates();
     assertTrue(edt.isEmpty());
     Mockito.verify(r, Mockito.never()).run();
+  }
+
+  @Test
+  public void executeLast() {
+    final List<Integer> executionOrder = new ArrayList<>();
+
+    edt.schedule(1, new Runnable() {
+      @Override
+      public void run() {
+        executionOrder.add(1);
+      }
+    });
+    edt.executeUpdates(1, false);
+
+    assertTrue(executionOrder.isEmpty());
+
+    edt.schedule(new Runnable() {
+      @Override
+      public void run() {
+        executionOrder.add(2);
+      }
+    });
+    edt.executeUpdates();
+
+    assertEquals(Arrays.asList(1, 2), executionOrder);
   }
 }
