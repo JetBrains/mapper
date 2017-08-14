@@ -87,10 +87,16 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   public int executeUpdates(int passedTime) {
+    return executeUpdates(passedTime, true);
+  }
+
+  public int executeUpdates(int passedTime, boolean executeLast) {
     int runCommandsNum = 0;
-    runCommandsNum += executeCurrentUpdates();
     for (int i = 0; i < passedTime; i++) {
+      runCommandsNum += executeCurrentUpdates();
       myCurrentTime++;
+    }
+    if (executeLast) {
       runCommandsNum += executeCurrentUpdates();
     }
     return runCommandsNum;
