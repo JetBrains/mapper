@@ -28,7 +28,7 @@ public class MappingContextTest extends BaseTestCase {
 
   @Test
   public void registerNonFindableMapper() {
-    Mapper mapper = createNonFindableMapper();
+    Mapper<Item, Item> mapper = createNonFindableMapper();
 
     final Value<Boolean> mapperRegistered = new Value<>(false);
     context.addListener(new MappingContextListener() {
@@ -49,7 +49,7 @@ public class MappingContextTest extends BaseTestCase {
 
   @Test
   public void unregisterNonFindableMapper() {
-    Mapper mapper = createNonFindableMapper();
+    Mapper<Item, Item> mapper = createNonFindableMapper();
     mapper.attach(context);
 
     final Value<Boolean> mapperUnregistered = new Value<>(false);
