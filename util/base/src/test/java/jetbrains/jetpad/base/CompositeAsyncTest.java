@@ -15,12 +15,15 @@
  */
 package jetbrains.jetpad.base;
 
+import jetbrains.jetpad.test.BaseTestCase;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static jetbrains.jetpad.base.AsyncMatchers.failure;
@@ -29,75 +32,54 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class CompositeAsyncTest {
-  private static final int SIZE = 2;
+public class CompositeAsyncTest extends BaseTestCase {
+  private SimpleAsync<Integer> first;
+  private SimpleAsync<Integer> second;
+  private Async<List<Integer>> composite;
+
+  @Before
+  public void setup() {
+    first = new SimpleAsync<>();
+    second = new SimpleAsync<>();
+    composite = Asyncs.composite(Arrays.<Async<Integer>>asList(first, second));
+  }
 
   @Test
   public void successOneByOne() {
-    List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
-    for (int i = 0; i < SIZE; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
-    }
-    Async<List<Integer>> async = Asyncs.composite(asyncs);
+    first.success(0);
+    assertThat(composite, unfinished());
 
-    for (int i = 0; i < asyncs.size() - 1; i++) {
-      ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
-    }
-    assertThat(async, unfinished());
-
-    ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).success(SIZE - 1);
-    assertThat(async, AsyncMatchers.<List<Integer>>succeeded());
+    second.success(1);
+    assertThat(composite, AsyncMatchers.<List<Integer>>succeeded());
   }
 
   @Test
   public void alreadySucceeded() {
-    List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
-    for (int i = 0; i < SIZE; i++) {
-      asyncs.add(Asyncs.constant(i));
-    }
-    assertThat(Asyncs.composite(asyncs), AsyncMatchers.<List<Integer>>succeeded());
+    assertThat(Asyncs.composite(Collections.<Async<Integer>>singletonList(Asyncs.constant(0))),
+        AsyncMatchers.<List<Integer>>succeeded());
   }
 
   @Test
   public void emptyRequest() {
-    assertThat(
-        Asyncs.composite(new ArrayList<Async<Integer>>(0)),
+    assertThat(Asyncs.composite(Collections.<Async<Integer>>emptyList()),
         AsyncMatchers.<List<Integer>>result(Matchers.hasSize(0)));
   }
 
   @Test
-  public void partialFailureSingleException() {
-    List<Async<Integer>> asyncs = new ArrayList<>(SIZE);
-    for (int i = 0; i < SIZE; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
-    }
-    Async<List<Integer>> async = Asyncs.composite(asyncs);
-
-    for (int i = 0; i < asyncs.size() - 1; i++) {
-      ((SimpleAsync<Integer>)asyncs.get(i)).success(i);
-    }
-    assertThat(async, unfinished());
+  public void failWithSingleException() {
+    first.success(0);
+    assertThat(composite, unfinished());
 
     IllegalStateException failure = new IllegalStateException("test");
-    ((SimpleAsync<Integer>)asyncs.get(SIZE - 1)).failure(failure);
-    assertThat(async, failure(sameInstance(failure)));
+    second.failure(failure);
+    assertThat(composite, failure(sameInstance(failure)));
   }
 
   @Test
-  public void partialFailureSeveralExceptions() {
-    List<Async<Integer>> asyncs = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
-    }
-    Async<List<Integer>> async = Asyncs.composite(asyncs);
-
-    for (int i = 0; i < asyncs.size() - 1; i++) {
-      ((SimpleAsync<Integer>)asyncs.get(i)).failure(new IllegalStateException("" + i));
-    }
-    assertThat(async, unfinished());
-
-    ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
-    assertThat(async, failure(
+  public void failWithSeveralExceptions() {
+    first.failure(new RuntimeException("0"));
+    second.failure(new RuntimeException("1"));
+    assertThat(composite, failure(
         new CustomTypeSafeMatcher<ThrowableCollectionException>("collection of throwables") {
           @Override
           protected boolean matchesSafely(ThrowableCollectionException failure) {
@@ -113,16 +95,8 @@ public class CompositeAsyncTest {
 
   @Test
   public void resultListOrder() {
-    List<Async<Integer>> asyncs = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
-      asyncs.add(new SimpleAsync<Integer>());
-    }
-
-    ((SimpleAsync<Integer>)asyncs.get(1)).success(1);
-    ((SimpleAsync<Integer>)asyncs.get(2)).success(2);
-    ((SimpleAsync<Integer>)asyncs.get(0)).success(0);
-
-    assertThat(Asyncs.composite(asyncs),
-        AsyncMatchers.<List<Integer>>result(Matchers.contains(0, 1, 2)));
+    second.success(1);
+    first.success(0);
+    assertThat(composite, AsyncMatchers.<List<Integer>>result(Matchers.contains(0, 1)));
   }
 }
