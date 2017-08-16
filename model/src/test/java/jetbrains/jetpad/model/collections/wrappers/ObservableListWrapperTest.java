@@ -184,7 +184,7 @@ public class ObservableListWrapperTest {
   }
 
   @Test
-  public void listMapListenerTargerThenSourceOnTargetAdd() {
+  public void listMapListenerTargetThenSourceOnTargetAdd() {
     target.addListener(targetListener);
     source.addListener(sourceListener);
 

@@ -23,6 +23,8 @@ import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +54,10 @@ public class ObservableSetWrapperTest {
     }
   };
   private ObservableSet<Integer> target = new ObservableSetWrapper<>(source, toTarget, toSource);
+
+  private CollectionListener<Double> sourceListener = Mockito.mock(CollectionListener.class);
+  private CollectionListener<Integer> targetListener = Mockito.mock(CollectionListener.class);
+  private InOrder inOrder = Mockito.inOrder(sourceListener, targetListener);
 
   private List<CollectionItemEvent<?extends Integer>> addEvents = new ArrayList<>();
   private List<CollectionItemEvent<?extends Integer>> setEvents = new ArrayList<>();
@@ -125,106 +131,54 @@ public class ObservableSetWrapperTest {
   }
 
   @Test
-  public void setMapListenerOrderOnSourceAdd1() {
-    final boolean[] sourceFired = {false};
-    final boolean[] targetFired = {false};
-
-    source.addListener(new CollectionAdapter<Double>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Double> event) {
-        assertThat(sourceFired[0], is(false));
-        assertThat(targetFired[0], is(false));
-        sourceFired[0] = true;
-      }
-    });
-    target.addListener(new CollectionAdapter<Integer>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
-        assertThat(sourceFired[0], is(true));
-        assertThat(targetFired[0], is(false));
-        targetFired[0] = true;
-      }
-    });
+  public void setMapListenerSourceThenTargetOnSourceAdd() {
+    source.addListener(sourceListener);
+    target.addListener(targetListener);
     source.add(0.0);
-    assertThat(sourceFired[0], is(true));
-    assertThat(targetFired[0], is(true));
+
+    inOrder.verify(sourceListener)
+        .onItemAdded(new CollectionItemEvent<>(null, 0.0, -1, CollectionItemEvent.EventType.ADD));
+    inOrder.verify(targetListener)
+        .onItemAdded(new CollectionItemEvent<>(null, 1, -1, CollectionItemEvent.EventType.ADD));
   }
 
   @Test
-  public void setMapListenerOrderOnSourceAdd2() {
-    final boolean[] sourceFired = {false};
-    final boolean[] targetFired = {false};
+  public void setMapListenerTargetThenSourceOnSourceAdd() {
+    target.addListener(targetListener);
+    source.addListener(sourceListener);
 
-    target.addListener(new CollectionAdapter<Integer>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
-        assertThat(sourceFired[0], is(false));
-        assertThat(targetFired[0], is(false));
-        targetFired[0] = true;
-      }
-    });
-    source.addListener(new CollectionAdapter<Double>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Double> event) {
-        assertThat(sourceFired[0], is(false));
-        assertThat(targetFired[0], is(true));
-        sourceFired[0] = true;
-      }
-    });
     source.add(0.0);
-    assertThat(sourceFired[0], is(true));
-    assertThat(targetFired[0], is(true));
+
+    inOrder.verify(targetListener)
+        .onItemAdded(new CollectionItemEvent<>(null, 1, -1, CollectionItemEvent.EventType.ADD));
+    inOrder.verify(sourceListener)
+        .onItemAdded(new CollectionItemEvent<>(null, 0.0, -1, CollectionItemEvent.EventType.ADD));
   }
 
   @Test
-  public void setMapListenerOrderOnTargetAdd1() {
-    final boolean[] sourceFired = {false};
-    final boolean[] targetFired = {false};
+  public void setMapListenerSourceThenTargetOnTargetAdd() {
+    source.addListener(sourceListener);
+    target.addListener(targetListener);
 
-    source.addListener(new CollectionAdapter<Double>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Double> event) {
-        assertThat(sourceFired[0], is(false));
-        assertThat(targetFired[0], is(false));
-        sourceFired[0] = true;
-      }
-    });
-    target.addListener(new CollectionAdapter<Integer>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
-        assertThat(sourceFired[0], is(true));
-        assertThat(targetFired[0], is(false));
-        targetFired[0] = true;
-      }
-    });
     target.add(0);
-    assertThat(sourceFired[0], is(true));
-    assertThat(targetFired[0], is(true));
+
+    inOrder.verify(sourceListener)
+        .onItemAdded(new CollectionItemEvent<>(null, -1.0, -1, CollectionItemEvent.EventType.ADD));
+    inOrder.verify(targetListener)
+        .onItemAdded(new CollectionItemEvent<>(null, 0, -1, CollectionItemEvent.EventType.ADD));
   }
 
   @Test
-  public void setMapListenerOrderOnTargetAdd2() {
-    final boolean[] sourceFired = {false};
-    final boolean[] targetFired = {false};
+  public void setMapListenerTargetThenSourceOnTargetAdd() {
+    target.addListener(targetListener);
+    source.addListener(sourceListener);
 
-    target.addListener(new CollectionAdapter<Integer>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
-        assertThat(sourceFired[0], is(false));
-        assertThat(targetFired[0], is(false));
-        targetFired[0] = true;
-      }
-    });
-    source.addListener(new CollectionAdapter<Double>() {
-      @Override
-      public void onItemAdded(CollectionItemEvent<? extends Double> event) {
-        assertThat(sourceFired[0], is(false));
-        assertThat(targetFired[0], is(true));
-        sourceFired[0] = true;
-      }
-    });
     target.add(0);
-    assertThat(sourceFired[0], is(true));
-    assertThat(targetFired[0], is(true));
+
+    inOrder.verify(targetListener)
+        .onItemAdded(new CollectionItemEvent<>(null, 0, -1, CollectionItemEvent.EventType.ADD));
+    inOrder.verify(sourceListener)
+        .onItemAdded(new CollectionItemEvent<>(null, -1.0, -1, CollectionItemEvent.EventType.ADD));
   }
+
 }
