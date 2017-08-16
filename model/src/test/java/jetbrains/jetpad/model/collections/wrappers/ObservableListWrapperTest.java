@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.collections.wrappers;
 
 import jetbrains.jetpad.base.function.Function;
-import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
@@ -26,15 +25,14 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import static jetbrains.jetpad.model.collections.ObservableItemEventMatchers.*;
+import static jetbrains.jetpad.model.collections.ObservableItemEventMatchers.addEvent;
+import static jetbrains.jetpad.model.collections.ObservableItemEventMatchers.removeEvent;
+import static jetbrains.jetpad.model.collections.ObservableItemEventMatchers.setEvent;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 public class ObservableListWrapperTest {
@@ -57,31 +55,7 @@ public class ObservableListWrapperTest {
   private CollectionListener<Integer> targetListener = Mockito.mock(CollectionListener.class);
   private InOrder inOrder = Mockito.inOrder(sourceListener, targetListener);
 
-  private List<CollectionItemEvent<?extends Integer>> addEvents = new ArrayList<>();
-  private List<CollectionItemEvent<?extends Integer>> setEvents = new ArrayList<>();
-  private List<CollectionItemEvent<?extends Integer>> removeEvents = new ArrayList<>();
-  private CollectionListener<Integer> listener = new CollectionListener<Integer>() {
-    @Override
-    public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
-      addEvents.add(event);
-    }
-
-    @Override
-    public void onItemSet(CollectionItemEvent<? extends Integer> event) {
-      setEvents.add(event);
-    }
-
-    @Override
-    public void onItemRemoved(CollectionItemEvent<? extends Integer> event) {
-      removeEvents.add(event);
-    }
-  };
-  private void assertEvents(int addCount, int setCount, int removeCount) {
-    assertThat(addEvents, hasSize(addCount));
-    assertThat(setEvents, hasSize(setCount));
-    assertThat(removeEvents, hasSize(removeCount));
-  }
-
+  private CollectingListener listener = new CollectingListener();
 
   @Before
   public void setup() {
@@ -98,8 +72,8 @@ public class ObservableListWrapperTest {
   public void listMapAddSource() {
     source.add(1, 15.0);
     assertThat(target, contains(11, 16, 21, 31));
-    assertEvents(1, 0, 0);
-    assertThat(addEvents.get(0), is(addEvent(equalTo(16), equalTo(1))));
+    listener.assertEvents(1, 0, 0);
+    assertThat(listener.addEvents.get(0), is(addEvent(equalTo(16), equalTo(1))));
   }
 
   @Test
@@ -107,16 +81,16 @@ public class ObservableListWrapperTest {
     target.add(1, 15);
     assertThat(target, contains(11, 15, 21, 31));
     assertThat(source, contains(10.0, 14.0, 20.0, 30.0));
-    assertEvents(1, 0, 0);
-    assertThat(addEvents.get(0), is(addEvent(equalTo(15), equalTo(1))));
+    listener.assertEvents(1, 0, 0);
+    assertThat(listener.addEvents.get(0), is(addEvent(equalTo(15), equalTo(1))));
   }
 
   @Test
   public void listMapSetSource() {
     source.set(0, 15.0);
     assertThat(target, contains(16, 21, 31));
-    assertEvents(0, 1, 0);
-    assertThat(setEvents.get(0), is(setEvent(equalTo(11), equalTo(16), equalTo(0))));
+    listener.assertEvents(0, 1, 0);
+    assertThat(listener.setEvents.get(0), is(setEvent(equalTo(11), equalTo(16), equalTo(0))));
   }
 
   @Test
@@ -124,16 +98,16 @@ public class ObservableListWrapperTest {
     target.set(0, 15);
     assertThat(target, contains(15, 21, 31));
     assertThat(source, contains(14.0, 20.0, 30.0));
-    assertEvents(0, 1, 0);
-    assertThat(setEvents.get(0), is(setEvent(equalTo(11), equalTo(15), equalTo(0))));
+    listener.assertEvents(0, 1, 0);
+    assertThat(listener.setEvents.get(0), is(setEvent(equalTo(11), equalTo(15), equalTo(0))));
   }
 
   @Test
   public void listMapRemoveSource() {
     source.remove(2);
     assertThat(target, contains(11, 21));
-    assertEvents(0, 0, 1);
-    assertThat(removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(2))));
+    listener.assertEvents(0, 0, 1);
+    assertThat(listener.removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(2))));
   }
 
   @Test
@@ -141,8 +115,8 @@ public class ObservableListWrapperTest {
     target.remove(2);
     assertThat(target, contains(11, 21));
     assertThat(source, contains(10.0, 20.0));
-    assertEvents(0, 0, 1);
-    assertThat(removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(2))));
+    listener.assertEvents(0, 0, 1);
+    assertThat(listener.removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(2))));
   }
 
   @Test
