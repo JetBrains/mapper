@@ -37,33 +37,34 @@ public class PropertyBinding {
   public static <ValueT> Registration bindTwoWay(final Property<ValueT> source, final Property<ValueT> target) {
     final Property<Boolean> syncing = new ValueProperty<>(false);
     target.set(source.get());
-    return new CompositeRegistration(
-      source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
-        @Override
-        public void onEvent(PropertyChangeEvent<ValueT> event) {
-          if (syncing.get()) return;
 
-          syncing.set(true);
-          try {
+    class UpdatingEventHandler implements EventHandler<PropertyChangeEvent<ValueT>> {
+      private boolean myForward;
+
+      UpdatingEventHandler(boolean forward) {
+        myForward = forward;
+      }
+
+      @Override
+      public void onEvent(PropertyChangeEvent<ValueT> event) {
+        if (syncing.get()) return;
+
+        syncing.set(true);
+        try {
+          if (myForward) {
             target.set(source.get());
-          } finally {
-            syncing.set(false);
-          }
-        }
-      }),
-      target.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
-        @Override
-        public void onEvent(PropertyChangeEvent<ValueT> event) {
-          if (syncing.get()) return;
-
-          syncing.set(true);
-          try {
+          } else {
             source.set(target.get());
-          } finally {
-            syncing.set(false);
           }
+        } finally {
+          syncing.set(false);
         }
-      })
+      }
+    }
+
+    return new CompositeRegistration(
+      source.addHandler(new UpdatingEventHandler(true)),
+      target.addHandler(new UpdatingEventHandler(false))
     );
   }
 }
