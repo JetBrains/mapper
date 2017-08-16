@@ -41,34 +41,50 @@ public class Color {
   public static final Color PINK = new Color(255, 175, 175);
   public static final Color LIGHT_PINK = new Color(255, 210, 210);
 
+  private static final String RGB = "rgb";
+  private static final String COLOR = "color";
+  private static final String RGBA = "rgba";
+
   public static Color parseColor(String text) {
-    int firstParen = text.indexOf("(");
-    if (firstParen == -1) {
-      throw new IllegalArgumentException();
-    }
-    int firstComma = text.indexOf(",", firstParen + 1);
-    if (firstComma == -1) {
-      throw new IllegalArgumentException();
-    }
-    int secondComma = text.indexOf(",", firstComma + 1);
-    if (secondComma == -1) {
-      throw new IllegalArgumentException();
-    }
-    int thirdComma = text.indexOf(",", secondComma + 1);
-    if (thirdComma == -1) {
-      throw new IllegalArgumentException();
-    }
-    int lastParen = text.indexOf(")", thirdComma + 1);
-    if (lastParen == -1) {
+    int firstParen = findNext(text, "(", 0);
+    String prefix = text.substring(0, firstParen);
+
+    int firstComma = findNext(text, ",", firstParen + 1);
+    int secondComma = findNext(text, ",", firstComma + 1);
+
+    int thirdComma = -1;
+
+    if (prefix.equals(RGBA)) {
+      thirdComma = findNext(text, ",", secondComma + 1);
+    } else if (prefix.equals(COLOR)) {
+      thirdComma = text.indexOf(",", secondComma + 1);
+    } else if (!prefix.equals(RGB)) {
       throw new IllegalArgumentException();
     }
 
-    int red = Integer.parseInt(text.substring(firstParen + 1, firstComma));
-    int green = Integer.parseInt(text.substring(firstComma + 1, secondComma));
-    int blue = Integer.parseInt(text.substring(secondComma + 1, thirdComma));
-    int alpha = Integer.parseInt(text.substring(thirdComma + 1, lastParen));
+    int lastParen = findNext(text, ")", thirdComma + 1);
+    int red = Integer.parseInt(text.substring(firstParen + 1, firstComma).trim());
+    int green = Integer.parseInt(text.substring(firstComma + 1, secondComma).trim());
+
+    int blue;
+    int alpha;
+    if (thirdComma == -1) {
+      blue = Integer.parseInt(text.substring(secondComma + 1, lastParen).trim());
+      alpha = 255;
+    } else {
+      blue = Integer.parseInt(text.substring(secondComma + 1, thirdComma).trim());
+      alpha = Integer.parseInt(text.substring(thirdComma + 1, lastParen).trim());
+    }
 
     return new Color(red, green, blue, alpha);
+  }
+
+  private static int findNext(String s, String what, int from) {
+    int result = s.indexOf(what, from);
+    if (result == -1) {
+      throw new IllegalArgumentException();
+    }
+    return result;
   }
 
   public static Color parseHex(String hexColor) {
