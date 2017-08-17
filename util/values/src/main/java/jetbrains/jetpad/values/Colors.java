@@ -17,7 +17,54 @@ package jetbrains.jetpad.values;
 
 import jetbrains.jetpad.base.Persister;
 
+import java.util.HashMap;
+
 public class Colors {
+  public static final double DEFAULT_FACTOR = 0.7d;
+
+  private static HashMap<String, Color> colorsList = createColorsList();
+
+  private static HashMap<String, Color> createColorsList () {
+    HashMap <String, Color> colorList = new HashMap<>();
+    colorList.put("white", Color.WHITE);
+    colorList.put("black", Color.BLACK);
+    colorList.put("light-gray", Color.LIGHT_GRAY);
+    colorList.put("very-light-gray", Color.VERY_LIGHT_GRAY);
+    colorList.put("gray", Color.GRAY);
+    colorList.put("red", Color.RED);
+    colorList.put("light-green", Color.LIGHT_GREEN);
+    colorList.put("green", Color.GREEN);
+    colorList.put("dark-green", Color.DARK_GREEN);
+    colorList.put("blue", Color.BLUE);
+    colorList.put("dark-blue", Color.DARK_BLUE);
+    colorList.put("light-blue", Color.LIGHT_BLUE);
+    colorList.put("yellow", Color.YELLOW);
+    colorList.put("light-yellow", Color.LIGHT_YELLOW);
+    colorList.put("very-light-yellow", Color.VERY_LIGHT_YELLOW);
+    colorList.put("magenta", Color.MAGENTA);
+    colorList.put("light-magenta", Color.LIGHT_MAGENTA);
+    colorList.put("dark-magenta", Color.DARK_MAGENTA);
+    colorList.put("cyan", Color.CYAN);
+    colorList.put("light-cyan", Color.LIGHT_CYAN);
+    colorList.put("orange", Color.ORANGE);
+    colorList.put("pink", Color.PINK);
+    colorList.put("light-pink", Color.LIGHT_PINK);
+    return colorList;
+  }
+
+  public static boolean isColorName(String colorName) {
+    return colorsList.containsKey(colorName.toLowerCase());
+  }
+
+  public static Color forName(String colorName) {
+    Color res = colorsList.get(colorName.toLowerCase());
+    if (res != null) {
+      return res;
+    } else {
+      throw new IllegalArgumentException();
+    }
+  }
+
   public static double generateHueColor() {
     return 360 * Math.random();
   }
@@ -85,6 +132,81 @@ public class Colors {
     }
 
     return new double[]{360 * h, v, max};
+  }
+
+  public static Color darker(Color c) {
+    return darker(c, DEFAULT_FACTOR);
+  }
+
+  public static Color lighter(Color c) {
+    return lighter(c, DEFAULT_FACTOR);
+  }
+
+  public static Color darker(Color c, double factor) {
+    if (c != null) {
+      return new Color(
+          Math.max((int) (c.getRed() * factor), 0),
+          Math.max((int) (c.getGreen() * factor), 0),
+          Math.max((int) (c.getBlue() * factor), 0),
+          c.getAlpha());
+    } else {
+      return null;
+    }
+  }
+
+  public static Color lighter(Color c, double factor) {
+    if (c != null) {
+      int r = c.getRed();
+      int g = c.getGreen();
+      int b = c.getBlue();
+      int alpha = c.getAlpha();
+
+      int i = (int) (1.0 / (1.0 - factor));
+      if (r == 0 && g == 0 && b == 0) {
+        return new Color(i, i, i, alpha);
+      }
+      if (r > 0 && r < i) r = i;
+      if (g > 0 && g < i) g = i;
+      if (b > 0 && b < i) b = i;
+
+      return new Color(
+          Math.min((int) (r / factor), 255),
+          Math.min((int) (g / factor), 255),
+          Math.min((int) (b / factor), 255),
+          alpha);
+    } else {
+      return null;
+    }
+  }
+
+  public static Color mimicTransparency(Color color, double alpha, Color background) {
+    int red = (int) (color.getRed() * alpha + background.getRed() * (1 - alpha));
+    int green = (int) (color.getGreen() * alpha + background.getGreen() * (1 - alpha));
+    int blue = (int) (color.getBlue() * alpha + background.getBlue() * (1 - alpha));
+    return new Color(red, green, blue);
+  }
+
+  public static Color withOpacity(Color c, double opacity) {
+    if (opacity < 1d) {
+      return c.changeAlpha(Math.max(0, Math.min(255, (int) Math.round(255 * opacity))));
+    }
+    return c;
+  }
+
+  public static double contrast(Color color, Color other) {
+    return (luminance(color) + .05) / (luminance(other) + .05);
+  }
+
+  public static double luminance(Color color) {
+    return .2126 * colorLuminance(color.getRed()) + .7152 * colorLuminance(color.getGreen()) + .0722 * colorLuminance(color.getBlue());
+  }
+
+  private static double colorLuminance(int componentValue) {
+    return componentValue <= 10 ? componentValue / 3294d : Math.pow(componentValue / 269d + .0513, 2.4);
+  }
+
+  public static boolean solid(Color c) {
+    return c.getAlpha() == 255;
   }
 
   public static Color[] distributeEvenly(int count, double saturation) {
