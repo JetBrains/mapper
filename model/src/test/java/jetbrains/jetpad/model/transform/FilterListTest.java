@@ -29,6 +29,8 @@ import org.junit.Test;
 
 import jetbrains.jetpad.base.function.Function;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -84,11 +86,7 @@ public class FilterListTest {
     source.add(0, "a");
     p.set(true);
 
-    assertEquals(4, target.size());
-    assertEquals("a", target.get(0));
-    assertEquals("b", target.get(1));
-    assertEquals("c", target.get(2));
-    assertEquals("d", target.get(3));
+    assertEquals(Arrays.asList("a", "b", "c", "d"), target);
   }
 
   @Test
@@ -123,10 +121,7 @@ public class FilterListTest {
     from.add(s);
     filter.transform(from, to);
 
-    assertEquals(3, to.size());
-    assertEquals("aa", to.get(0));
-    assertEquals("bb", to.get(1));
-    assertEquals("aa", to.get(2));
+    assertEquals(Arrays.asList("aa", "bb", "aa"), to);
   }
 
   @Test
@@ -138,10 +133,7 @@ public class FilterListTest {
     from.add("bb");
     from.add(s);
 
-    assertEquals(3, to.size());
-    assertEquals("aa", to.get(0));
-    assertEquals("bb", to.get(1));
-    assertEquals("aa", to.get(2));
+    assertEquals(Arrays.asList("aa", "bb", "aa"), to);
   }
 
   @Test
