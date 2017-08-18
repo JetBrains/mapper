@@ -30,7 +30,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SynchonizersTest extends BaseTestCase {
+public class SynchronizersTest extends BaseTestCase {
   @Test
   public void forEventSourceOnAttach() {
     final Value<Integer> runNum = new Value<>(0);

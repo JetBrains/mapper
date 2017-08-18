@@ -25,7 +25,7 @@ import org.junit.runners.Suite;
     MapperTest.class,
     MappingContextTest.class,
     PartIteratorsTest.class,
-    SynchonizersTest.class,
+    SynchronizersTest.class,
     TransformingSynchronizerTest.class
 })
 public class AllTests {
