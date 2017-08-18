@@ -15,7 +15,10 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Disposable;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Consumer;
+import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.ObservableCollection;
@@ -30,8 +33,6 @@ import jetbrains.jetpad.model.property.WritableProperty;
 import jetbrains.jetpad.model.transform.Transformer;
 
 import java.util.List;
-import jetbrains.jetpad.base.function.Consumer;
-import jetbrains.jetpad.base.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -204,6 +205,32 @@ public class Synchronizers {
       @Override
       public void detach() {
         r.remove();
+      }
+    };
+  }
+
+  public static Synchronizer forDisposable(final Disposable disposable) {
+    return new Synchronizer() {
+      @Override
+      public void attach(SynchronizerContext ctx) {}
+
+      @Override
+      public void detach() {
+        disposable.dispose();
+      }
+    };
+  }
+
+  public static Synchronizer forDisposables(final Disposable... disposables) {
+    return new Synchronizer() {
+      @Override
+      public void attach(SynchronizerContext ctx) {}
+
+      @Override
+      public void detach() {
+        for (Disposable disposable : disposables) {
+          disposable.dispose();
+        }
       }
     };
   }
