@@ -19,6 +19,7 @@ import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
+import jetbrains.jetpad.model.collections.RelayCollectionListener;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 
@@ -39,20 +40,10 @@ public class ObservableListWrapper<SourceItemT, TargetItemT> extends AbstractLis
 
   @Override
   public Registration addListener(final CollectionListener<TargetItemT> l) {
-    return mySource.addListener(new CollectionListener<SourceItemT>() {
+    return mySource.addListener(new RelayCollectionListener<SourceItemT, TargetItemT>(l) {
       @Override
-      public void onItemAdded(CollectionItemEvent<? extends SourceItemT> event) {
-        l.onItemAdded(wrapEvent(event, myStoT));
-      }
-
-      @Override
-      public void onItemSet(CollectionItemEvent<? extends SourceItemT> event) {
-        l.onItemSet(wrapEvent(event, myStoT));
-      }
-
-      @Override
-      public void onItemRemoved(CollectionItemEvent<? extends SourceItemT> event) {
-        l.onItemRemoved(wrapEvent(event, myStoT));
+      protected CollectionItemEvent<? extends TargetItemT> transform(CollectionItemEvent<? extends SourceItemT> event) {
+        return wrapEvent(event, myStoT);
       }
     });
   }
