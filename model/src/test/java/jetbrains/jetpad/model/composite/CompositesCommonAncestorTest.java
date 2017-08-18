@@ -36,30 +36,34 @@ public class CompositesCommonAncestorTest extends BaseTestCase {
 
   @Test
   public void same() {
-    assertSame(tree.a, Composites.commonAncestor(tree.a, tree.a));
-    assertSame(tree.d, Composites.commonAncestor(tree.d, tree.d));
-    assertSame(tree.y, Composites.commonAncestor(tree.y, tree.y));
+    assertCommonAncestor(tree.a, tree.a, tree.a);
+    assertCommonAncestor(tree.d, tree.d, tree.d);
+    assertCommonAncestor(tree.y, tree.y, tree.y);
   }
 
   @Test
   public void ancestor() {
-    assertSame(tree.a, Composites.commonAncestor(tree.a, tree.h));
-    assertSame(tree.c, Composites.commonAncestor(tree.c, tree.g));
-    assertSame(tree.d, Composites.commonAncestor(tree.d, tree.m));
-    assertSame(tree.d, Composites.commonAncestor(tree.d, tree.r));
+    assertCommonAncestor(tree.a, tree.h, tree.a);
+    assertCommonAncestor(tree.c, tree.g, tree.c);
+    assertCommonAncestor(tree.d, tree.m, tree.d);
+    assertCommonAncestor(tree.d, tree.r, tree.d);
+  }
+
+  private void assertCommonAncestor(SimpleComposite first, SimpleComposite second, SimpleComposite expected) {
+    assertSame(expected, Composites.commonAncestor(first, second));
   }
 
   @Test
   public void sameLevel() {
-    assertSame(tree.a, Composites.commonAncestor(tree.c, tree.d));
-    assertSame(tree.d, Composites.commonAncestor(tree.i, tree.h));
-    assertSame(tree.m, Composites.commonAncestor(tree.r, tree.t));
+    assertCommonAncestor(tree.c, tree.d, tree.a);
+    assertCommonAncestor(tree.i, tree.h, tree.d);
+    assertCommonAncestor(tree.r, tree.t, tree.m);
   }
 
   @Test
   public void differentLevels() {
-    assertSame(tree.a, Composites.commonAncestor(tree.e, tree.c));
-    assertSame(tree.d, Composites.commonAncestor(tree.m, tree.i));
-    assertSame(tree.d, Composites.commonAncestor(tree.t, tree.i));
+    assertCommonAncestor(tree.e, tree.c, tree.a);
+    assertCommonAncestor(tree.m, tree.i, tree.d);
+    assertCommonAncestor(tree.t, tree.i, tree.d);
   }
 }
