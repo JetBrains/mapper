@@ -53,8 +53,7 @@ public class CompositesBetweenTest extends BaseTestCase {
   @Test
   public void neighbors() {
     assertBetween(tree.e, tree.f, Collections.<SimpleComposite>emptyList());
-    List<SimpleComposite> expected = asList(tree.v, tree.w, tree.x);
-    assertBetween(tree.u, tree.y, expected);
+    assertBetween(tree.u, tree.y, asList(tree.v, tree.w, tree.x));
     assertBetween(tree.v, tree.y, asList(tree.w, tree.x));
     assertBetween(tree.u, tree.x, asList(tree.v, tree.w));
     assertBetween(tree.v, tree.x, asList(tree.w));
