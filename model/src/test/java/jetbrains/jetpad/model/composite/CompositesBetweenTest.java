@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 import static java.util.Arrays.*;
 import static org.junit.Assert.*;
@@ -35,9 +36,8 @@ public class CompositesBetweenTest extends BaseTestCase {
   @Test
   public void same() {
     SimpleComposite root = new SimpleComposite("root");
-    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(root, root));
-
-    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(tree.g, tree.g));
+    assertBetween(root, root, Collections.<SimpleComposite>emptyList());
+    assertBetween(tree.g, tree.g, Collections.<SimpleComposite>emptyList());
   }
 
   @Test(expected=IllegalArgumentException.class)
@@ -52,31 +52,34 @@ public class CompositesBetweenTest extends BaseTestCase {
 
   @Test
   public void neighbors() {
-    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(tree.e, tree.f));
-    assertEquals(asList(tree.v, tree.w, tree.x), Composites.allBetween(tree.u, tree.y));
-    assertEquals(asList(tree.w, tree.x), Composites.allBetween(tree.v, tree.y));
-    assertEquals(asList(tree.v, tree.w), Composites.allBetween(tree.u, tree.x));
-    assertEquals(asList(tree.w), Composites.allBetween(tree.v, tree.x));
+    assertBetween(tree.e, tree.f, Collections.<SimpleComposite>emptyList());
+    List<SimpleComposite> expected = asList(tree.v, tree.w, tree.x);
+    assertBetween(tree.u, tree.y, expected);
+    assertBetween(tree.v, tree.y, asList(tree.w, tree.x));
+    assertBetween(tree.u, tree.x, asList(tree.v, tree.w));
+    assertBetween(tree.v, tree.x, asList(tree.w));
   }
 
   @Test
   public void down() {
-    assertEquals(asList(tree.l, tree.r, tree.s), Composites.allBetween(tree.k, tree.t));
-    assertEquals(asList(tree.l, tree.r), Composites.allBetween(tree.k, tree.s));
-    assertEquals(asList(tree.r, tree.s), Composites.allBetween(tree.l, tree.t));
-    assertEquals(asList(tree.r), Composites.allBetween(tree.l, tree.s));
+    assertBetween(tree.k, tree.t, asList(tree.l, tree.r, tree.s));
+    assertBetween(tree.k, tree.s, asList(tree.l, tree.r));
+    assertBetween(tree.l, tree.t, asList(tree.r, tree.s));
+    assertBetween(tree.l, tree.s, asList(tree.r));
   }
 
   @Test
   public void up() {
-    assertEquals(asList(tree.f), Composites.allBetween(tree.e, tree.g));
-    assertEquals(Collections.<SimpleComposite>emptyList(), Composites.allBetween(tree.f, tree.g));
-    assertEquals(asList(tree.g, tree.c, tree.k, tree.l), Composites.allBetween(tree.f, tree.r));
-    assertEquals(asList(tree.g, tree.c, tree.k, tree.l, tree.r, tree.s, tree.t, tree.m, tree.h),
-      Composites.allBetween(tree.f, tree.i));
-    assertEquals(asList(tree.t, tree.i, tree.o), Composites.allBetween(tree.s, tree.p));
-    assertEquals(asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v, tree.w, tree.x),
-      Composites.allBetween(tree.s, tree.y));
-    assertEquals(asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v), Composites.allBetween(tree.s, tree.w));
+    assertBetween(tree.e, tree.g, asList(tree.f));
+    assertBetween(tree.f, tree.g, Collections.<SimpleComposite>emptyList());
+    assertBetween(tree.f, tree.r, asList(tree.g, tree.c, tree.k, tree.l));
+    assertBetween(tree.f, tree.i, asList(tree.g, tree.c, tree.k, tree.l, tree.r, tree.s, tree.t, tree.m, tree.h));
+    assertBetween(tree.s, tree.p, asList(tree.t, tree.i, tree.o));
+    assertBetween(tree.s, tree.y, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v, tree.w, tree.x));
+    assertBetween(tree.s, tree.w, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v));
+  }
+
+  private void assertBetween(SimpleComposite left, SimpleComposite right, List<SimpleComposite> expected) {
+    assertEquals(expected, Composites.allBetween(left, right));
   }
 }
