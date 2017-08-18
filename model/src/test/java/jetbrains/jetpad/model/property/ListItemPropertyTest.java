@@ -40,6 +40,20 @@ public class ListItemPropertyTest {
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
+  private ObservableList<Integer> list = createList(5);
+  private ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
+  private ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
+  private ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
+
+  private MatchingHandler<PropertyChangeEvent<Integer>> p1Handler = setTestHandler(p1);
+  private MatchingHandler<PropertyChangeEvent<Integer>> p2Handler = setTestHandler(p2);
+  private MatchingHandler<PropertyChangeEvent<Integer>> p3Handler = setTestHandler(p3);
+
+  private MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
+  private MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
+  private MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.index);
+
+
   @Test
   public void rejectsNegativeIndex() {
     ObservableList<Integer> list = createList(5);
@@ -92,10 +106,6 @@ public class ListItemPropertyTest {
 
   @Test
   public void tracksItemOnAdd() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
-    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
-    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
     list.add(2, 22);
     assertEquals(1, p1.get().intValue());
     assertEquals(2, p2.get().intValue());
@@ -109,10 +119,6 @@ public class ListItemPropertyTest {
 
   @Test
   public void tracksItemOnRemove() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
-    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
-    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
     list.remove(2);
     assertEquals(1, p1.get().intValue());
     assertEquals(3, p3.get().intValue());
@@ -128,34 +134,20 @@ public class ListItemPropertyTest {
 
   @Test
   public void firesOnListSet() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
-    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
-    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> p1handler = setTestHandler(p1);
-    MatchingHandler<PropertyChangeEvent<Integer>> p2handler = setTestHandler(p2);
-    MatchingHandler<PropertyChangeEvent<Integer>> p3handler = setTestHandler(p3);
-
     list.add(2, 22);
     list.set(3, 12);
 
-    assertThat(p1handler, noEvents());
-    assertThat(p2handler, singleEvent(
+    assertThat(p1Handler, noEvents());
+    assertThat(p2Handler, singleEvent(
         allOf(oldValueIs(2), newValueIs(12))));
-    assertThat(p3handler, noEvents());
+    assertThat(p3Handler, noEvents());
   }
 
   @Test
   public void firesOnTrackedItemRemove() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p = new ListItemProperty<>(list, 2);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> handler = setTestHandler(p);
-
     list.remove(2);
 
-    assertThat(handler, singleEvent(
+    assertThat(p2indexHandler, singleEvent(
         allOf(oldValueIs(2), newValue(nullValue(Integer.class)))));
   }
 
@@ -174,13 +166,6 @@ public class ListItemPropertyTest {
 
   @Test
   public void indexFiresOnListAdd() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
-    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
-    MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
-
     list.add(2, 22);
 
     assertThat(p1indexHandler, noEvents());
@@ -190,15 +175,6 @@ public class ListItemPropertyTest {
 
   @Test
   public void indexFiresOnListRemove() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
-    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
-    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
-    MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
-    MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.index);
-
     list.remove(2);
 
     assertThat(p1indexHandler, noEvents());
@@ -210,15 +186,6 @@ public class ListItemPropertyTest {
 
   @Test
   public void indexFiresNotOnListSet() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p1 = new ListItemProperty<>(list, 1);
-    ListItemProperty<Integer> p2 = new ListItemProperty<>(list, 2);
-    ListItemProperty<Integer> p3 = new ListItemProperty<>(list, 3);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
-    MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
-    MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.index);
-
     list.set(2, 22);
 
     assertThat(p1indexHandler, noEvents());
@@ -228,50 +195,34 @@ public class ListItemPropertyTest {
 
   @Test
   public void disposeImmediately() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
-
-    p.dispose();
+    p1.dispose();
     exception.expect(IllegalStateException.class);
-    p.dispose();
+    p1.dispose();
   }
 
   @Test
   public void disposeInvalid() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
-
     list.remove(1);
 
-    assertFalse(p.isValid());
-    p.dispose();
+    assertFalse(p1.isValid());
+    p1.dispose();
     exception.expect(IllegalStateException.class);
-    p.dispose();
+    p1.dispose();
   }
 
   @Test
   public void indexFiresNotOnDispose() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> indexHandler = setTestHandler(p.index);
-
-    p.dispose();
-    assertThat(indexHandler, noEvents());
+    p1.dispose();
+    assertThat(p1indexHandler, noEvents());
   }
 
   @Test
   public void indexFiresNotOnDisposeInvalid() {
-    ObservableList<Integer> list = createList(5);
-    ListItemProperty<Integer> p = new ListItemProperty<>(list, 1);
-
-    MatchingHandler<PropertyChangeEvent<Integer>> indexHandler = setTestHandler(p.index);
-
     list.remove(1);
 
-    assertThat(indexHandler, allEvents(hasSize(1)));
-    p.dispose();
-    assertThat(indexHandler, allEvents(hasSize(1)));
+    assertThat(p1indexHandler, allEvents(hasSize(1)));
+    p1.dispose();
+    assertThat(p1indexHandler, allEvents(hasSize(1)));
   }
 
 
