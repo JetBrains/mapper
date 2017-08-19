@@ -18,68 +18,122 @@ package jetbrains.jetpad.base;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-public class IntervalTest {
+public final class IntervalTest {
+
+  private static final Interval I_1_4 = i(1, 4);
+
   private static Interval i(int lower, int upper) {
     return new Interval(lower, upper);
   }
 
+  private static void checkContains(Interval interval, boolean expected) {
+    assertEquals(expected, I_1_4.contains(interval));
+  }
+
+  private static void checkContains(Interval interval) {
+    checkContains(interval, true);
+  }
+
+  private static void checkContains(int lower, int upper, boolean expected) {
+    checkContains(i(lower, upper), expected);
+  }
+
+  private static void checkContains(int lower, int upper) {
+    checkContains(lower, upper, true);
+  }
+
+  private static void checkNotContains(int lower, int upper) {
+    checkContains(lower, upper, false);
+  }
+
+  private static void checkIntersects(Interval interval, boolean expected) {
+    assertEquals(expected, I_1_4.intersects(interval));
+  }
+
+  private static void checkIntersects(Interval interval) {
+    checkIntersects(interval, true);
+  }
+
+  private static void checkIntersects(int lower, int upper) {
+    checkIntersects(i(lower, upper));
+  }
+
+  private static void checkNotIntersects(int lower, int upper) {
+    checkIntersects(i(lower, upper), false);
+  }
+
+  private static void assertInterval(Interval interval) {
+    assertEquals(I_1_4, interval);
+  }
+
+  private static void checkUnion(Interval i1, Interval i2) {
+    assertInterval(i1.union(i2));
+  }
+
+  private static void checkAdd(Interval interval, int delta) {
+    assertInterval(interval.add(delta));
+  }
+
+  private static void checkSub(Interval interval, int delta) {
+    assertInterval(interval.sub(delta));
+  }
+
   @Test
   public void contains() {
-    assertTrue(i(1, 4).contains(i(1, 4)));
-    assertTrue(i(1, 4).contains(i(2, 3)));
-    assertTrue(i(1, 4).contains(i(1, 2)));
-    assertTrue(i(1, 4).contains(i(3, 4)));
+    checkContains(I_1_4);
+    checkContains(2, 3);
+    checkContains(1, 2);
+    checkContains(3, 4);
 
-    assertFalse(i(1, 4).contains(i(0, 4)));
-    assertFalse(i(1, 4).contains(i(1, 5)));
-    assertFalse(i(1, 4).contains(i(0, 5)));
-    assertFalse(i(1, 4).contains(i(4, 10)));
+    checkNotContains(0, 4);
+    checkNotContains(1, 5);
+    checkNotContains(0, 5);
+    checkNotContains(4, 10);
   }
 
   @Test
   public void intersects() {
-    assertTrue(i(1, 4).intersects(i(1, 4)));
-    assertTrue(i(1, 4).intersects(i(2, 3)));
-    assertTrue(i(1, 4).intersects(i(1, 2)));
-    assertTrue(i(1, 4).intersects(i(3, 4)));
+    checkIntersects(I_1_4);
+    checkIntersects(2, 3);
+    checkIntersects(1, 2);
+    checkIntersects(3, 4);
 
-    assertTrue(i(1, 4).intersects(i(0, 4)));
-    assertTrue(i(1, 4).intersects(i(0, 1)));
-    assertTrue(i(1, 4).intersects(i(2, 5)));
-    assertTrue(i(1, 4).intersects(i(4, 5)));
+    checkIntersects(0, 4);
+    checkIntersects(0, 1);
+    checkIntersects(2, 5);
+    checkIntersects(4, 5);
 
-    assertTrue(i(1, 4).intersects(i(0, 5)));
+    checkIntersects(0, 5);
 
-    assertFalse(i(1, 4).intersects(i(-1, 0)));
-    assertFalse(i(1, 4).intersects(i(5, 6)));
+    checkNotIntersects(-1, 0);
+    checkNotIntersects(5, 6);
   }
 
   @Test
   public void union() {
-    assertEquals(i(1, 4), i(1, 2).union(i(3, 4)));
-    assertEquals(i(1, 4), i(1, 3).union(i(2, 4)));
+    checkUnion(i(1, 2), i(3, 4));
+    checkUnion(i(1, 3), i(2, 4));
 
-    assertEquals(i(1, 4), i(3, 4).union(i(1, 2)));
-    assertEquals(i(1, 4), i(2, 4).union(i(1, 3)));
+    checkUnion(i(3, 4), i(1, 2));
+    checkUnion(i(2, 4), i(1, 3));
 
-    assertEquals(i(1, 4), i(1, 4).union(i(2, 3)));
-    assertEquals(i(1, 4), i(2, 3).union(i(1, 4)));
+    checkUnion(I_1_4, i(2, 3));
+    checkUnion(i(2, 3), I_1_4);
   }
 
   @Test
   public void add() {
-    assertEquals(i(1, 4), i(0, 3).add(1));
-    assertEquals(i(1, 4), i(1, 4).add(0));
-    assertEquals(i(1, 4), i(2, 5).add(-1));
+    checkAdd(i(0, 3), 1);
+    checkAdd(I_1_4, 0);
+    checkAdd(i(2, 5), -1);
   }
 
   @Test
   public void sub() {
-    assertEquals(i(1, 4), i(0, 3).sub(-1));
-    assertEquals(i(1, 4), i(1, 4).sub(0));
-    assertEquals(i(1, 4), i(2, 5).sub(1));
+    checkSub(i(0, 3), -1);
+    checkSub(I_1_4, 0);
+    checkSub(i(2, 5), 1);
   }
+
 }
