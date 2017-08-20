@@ -21,67 +21,15 @@ import static org.junit.Assert.assertEquals;
 
 public final class IntervalTest {
 
-  private static final Interval I_1_4 = i(1, 4);
-
   private static Interval i(int lower, int upper) {
     return new Interval(lower, upper);
   }
 
-  private static void checkContains(Interval interval, boolean expected) {
-    assertEquals(expected, I_1_4.contains(interval));
-  }
-
-  private static void checkContains(Interval interval) {
-    checkContains(interval, true);
-  }
-
-  private static void checkContains(int lower, int upper, boolean expected) {
-    checkContains(i(lower, upper), expected);
-  }
-
-  private static void checkContains(int lower, int upper) {
-    checkContains(lower, upper, true);
-  }
-
-  private static void checkNotContains(int lower, int upper) {
-    checkContains(lower, upper, false);
-  }
-
-  private static void checkIntersects(Interval interval, boolean expected) {
-    assertEquals(expected, I_1_4.intersects(interval));
-  }
-
-  private static void checkIntersects(Interval interval) {
-    checkIntersects(interval, true);
-  }
-
-  private static void checkIntersects(int lower, int upper) {
-    checkIntersects(i(lower, upper));
-  }
-
-  private static void checkNotIntersects(int lower, int upper) {
-    checkIntersects(i(lower, upper), false);
-  }
-
-  private static void assertInterval(Interval interval) {
-    assertEquals(I_1_4, interval);
-  }
-
-  private static void checkUnion(Interval i1, Interval i2) {
-    assertInterval(i1.union(i2));
-  }
-
-  private static void checkAdd(Interval interval, int delta) {
-    assertInterval(interval.add(delta));
-  }
-
-  private static void checkSub(Interval interval, int delta) {
-    assertInterval(interval.sub(delta));
-  }
+  private final Interval i_1_4 = i(1, 4);
 
   @Test
   public void contains() {
-    checkContains(I_1_4);
+    checkContains(i_1_4);
     checkContains(2, 3);
     checkContains(1, 2);
     checkContains(3, 4);
@@ -94,7 +42,7 @@ public final class IntervalTest {
 
   @Test
   public void intersects() {
-    checkIntersects(I_1_4);
+    checkIntersects(i_1_4);
     checkIntersects(2, 3);
     checkIntersects(1, 2);
     checkIntersects(3, 4);
@@ -118,22 +66,74 @@ public final class IntervalTest {
     checkUnion(i(3, 4), i(1, 2));
     checkUnion(i(2, 4), i(1, 3));
 
-    checkUnion(I_1_4, i(2, 3));
-    checkUnion(i(2, 3), I_1_4);
+    checkUnion(i_1_4, i(2, 3));
+    checkUnion(i(2, 3), i_1_4);
   }
 
   @Test
   public void add() {
     checkAdd(i(0, 3), 1);
-    checkAdd(I_1_4, 0);
+    checkAdd(i_1_4, 0);
     checkAdd(i(2, 5), -1);
   }
 
   @Test
   public void sub() {
     checkSub(i(0, 3), -1);
-    checkSub(I_1_4, 0);
+    checkSub(i_1_4, 0);
     checkSub(i(2, 5), 1);
+  }
+
+  private void checkContains(Interval interval, boolean expected) {
+    assertEquals(expected, i_1_4.contains(interval));
+  }
+
+  private void checkContains(Interval interval) {
+    checkContains(interval, true);
+  }
+
+  private void checkContains(int lower, int upper, boolean expected) {
+    checkContains(i(lower, upper), expected);
+  }
+
+  private void checkContains(int lower, int upper) {
+    checkContains(lower, upper, true);
+  }
+
+  private void checkNotContains(int lower, int upper) {
+    checkContains(lower, upper, false);
+  }
+
+  private void checkIntersects(Interval interval, boolean expected) {
+    assertEquals(expected, i_1_4.intersects(interval));
+  }
+
+  private void checkIntersects(Interval interval) {
+    checkIntersects(interval, true);
+  }
+
+  private void checkIntersects(int lower, int upper) {
+    checkIntersects(i(lower, upper));
+  }
+
+  private void checkNotIntersects(int lower, int upper) {
+    checkIntersects(i(lower, upper), false);
+  }
+
+  private void assertInterval(Interval interval) {
+    assertEquals(i_1_4, interval);
+  }
+
+  private void checkUnion(Interval i1, Interval i2) {
+    assertInterval(i1.union(i2));
+  }
+
+  private void checkAdd(Interval interval, int delta) {
+    assertInterval(interval.add(delta));
+  }
+
+  private void checkSub(Interval interval, int delta) {
+    assertInterval(interval.sub(delta));
   }
 
 }
