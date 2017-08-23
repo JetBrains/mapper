@@ -110,7 +110,7 @@ public abstract class ListenersTestCase {
     };
   }
 
-  protected static interface MyCollection extends ObservableCollection<Integer> {
+  protected interface MyCollection extends ObservableCollection<Integer> {
     void verifyLastSuccess(boolean expected);
     void verifyBeforeAfter();
     int getBeforeItemAddedCallsNumber();

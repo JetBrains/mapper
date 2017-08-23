@@ -22,7 +22,7 @@ package jetbrains.jetpad.mapper;
  *  - pass a configuration into a Mapper
  */
 public interface MapperProcessor<SourceT, TargetT> {
-  public static final MapperProcessor[] EMPTY_ARRAY = new MapperProcessor[0];
+  MapperProcessor[] EMPTY_ARRAY = new MapperProcessor[0];
 
   void process(Mapper<? extends SourceT, ? extends TargetT> mapper);
 }
