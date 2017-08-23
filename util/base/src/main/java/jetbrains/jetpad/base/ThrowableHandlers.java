@@ -144,7 +144,7 @@ public class ThrowableHandlers {
     for (int i = stackTrace.length - 1; !isClient && i >= 0; i--) {
       String className = stackTrace[i].getClassName();
 
-      if (className.startsWith("com.google.gwt.core.client") || className.equals("Unknown")) {
+      if (className.startsWith("com.google.gwt.core.client") || "Unknown".equals(className)) {
         isClient = true;
       }
     }

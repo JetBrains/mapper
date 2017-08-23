@@ -28,7 +28,7 @@ class IdCoder {
     do {
       char ch = myTable.valueToCh((int) (l % base));
       result.insert(0, ch);
-      l = l >> 6;
+      l >>= 6;
     } while (l != 0);
 
     return result.toString();

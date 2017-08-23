@@ -41,7 +41,7 @@ public class FilterListTest {
     @Override
     public ReadableProperty<Boolean> apply(String s) {
       Boolean value;
-      if (s.equals("null")) {
+      if ("null".equals(s)) {
         value = null;
       } else {
         value = s.length() % 2 == 0;
@@ -57,7 +57,7 @@ public class FilterListTest {
     from.add("aa");
     filter.transform(from, to);
     assertTrue(to.size() == 1);
-    assertTrue(to.get(0).equals("aa"));
+    assertTrue("aa".equals(to.get(0)));
   }
 
   @Test
@@ -66,7 +66,7 @@ public class FilterListTest {
     filter.transform(from, to);
     from.add("aa");
     assertTrue(to.size() == 1);
-    assertTrue(to.get(0).equals("aa"));
+    assertTrue("aa".equals(to.get(0)));
   }
 
   @Test

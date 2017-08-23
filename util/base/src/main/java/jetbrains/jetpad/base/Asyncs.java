@@ -71,7 +71,7 @@ public class Asyncs {
       }
 
       @Override
-      public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
+      public <ResultT> Async<ResultT> map(Function<? super ValueT, ? extends ResultT> success) {
         ResultT result;
         try {
           result = success.apply(val);
@@ -115,7 +115,7 @@ public class Asyncs {
       }
 
       @Override
-      public <ResultT> Async<ResultT> map(final Function<? super ValueT, ? extends ResultT> success) {
+      public <ResultT> Async<ResultT> map(Function<? super ValueT, ? extends ResultT> success) {
         return Asyncs.failure(t);
       }
 
@@ -196,11 +196,11 @@ public class Asyncs {
     }, new SimpleAsync<SecondT>());
   }
 
-  public static Async<Void> parallel(final Async<?>... asyncs) {
+  public static Async<Void> parallel(Async<?>... asyncs) {
     return parallel(Arrays.asList(asyncs));
   }
 
-  public static Async<Void> parallel(final Collection<? extends Async<?>> asyncs) {
+  public static Async<Void> parallel(Collection<? extends Async<?>> asyncs) {
     return parallel(asyncs, false);
   }
 
@@ -359,7 +359,7 @@ public class Asyncs {
       });
   }
 
-  public static <FirstT, SecondT> Async<Pair<FirstT, SecondT>> pair(final Async<FirstT> first, Async<SecondT> second) {
+  public static <FirstT, SecondT> Async<Pair<FirstT, SecondT>> pair(Async<FirstT> first, Async<SecondT> second) {
     final SimpleAsync<Pair<FirstT, SecondT>> res = new SimpleAsync<>();
     SimpleAsync<Void> proxy = new SimpleAsync<>();
     final PairedAsync<FirstT> firstPaired = new PairedAsync<>(first);
