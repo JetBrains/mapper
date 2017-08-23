@@ -17,7 +17,6 @@ package jetbrains.jetpad.base.edt;
 
 public class BufferingEdtManager extends RunningEdtManager {
   public BufferingEdtManager() {
-    super();
   }
 
   public BufferingEdtManager(String name) {

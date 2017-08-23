@@ -20,6 +20,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
+import java.util.Objects;
+
 public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> implements Property<ValueT> {
   private Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>> myHandlers;
   private PropertyChangeEvent<ValueT> myPendingEvent;
@@ -40,7 +42,7 @@ public class DelayedValueProperty<ValueT> extends BaseReadableProperty<ValueT> i
 
   @Override
   public void set(ValueT value) {
-    if (java.util.Objects.equals(value, myValue)) return;
+    if (Objects.equals(value, myValue)) return;
     ValueT oldValue = myValue;
     myValue = value;
 

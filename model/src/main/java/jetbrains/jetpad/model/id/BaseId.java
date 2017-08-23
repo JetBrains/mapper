@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.id;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Generic id class for typed ids.
@@ -66,7 +67,7 @@ public abstract class BaseId implements Serializable {
 
     BaseId otherId = (BaseId) obj;
 
-    return java.util.Objects.equals(getId(), otherId.getId());
+    return Objects.equals(getId(), otherId.getId());
   }
 
   @Override

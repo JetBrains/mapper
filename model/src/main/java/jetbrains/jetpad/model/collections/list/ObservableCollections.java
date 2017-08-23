@@ -225,7 +225,7 @@ public class ObservableCollections {
 
   private static class SelectorDerivedCollection<ValueT, ItemT>
       extends SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>> {
-    public SelectorDerivedCollection(ReadableProperty<ValueT> source, Function<ValueT, ObservableCollection<ItemT>> fun) {
+    SelectorDerivedCollection(ReadableProperty<ValueT> source, Function<ValueT, ObservableCollection<ItemT>> fun) {
       super(source, fun);
     }
 
@@ -279,7 +279,7 @@ public class ObservableCollections {
 
   private static class SelectorDerivedList<ValueT, ItemT>
       extends SelectedCollection<ValueT, ItemT, ObservableList<ItemT>> {
-    public SelectorDerivedList(ReadableProperty<ValueT> source, Function<ValueT, ObservableList<ItemT>> fun) {
+    SelectorDerivedList(ReadableProperty<ValueT> source, Function<ValueT, ObservableList<ItemT>> fun) {
       super(source, fun);
     }
 

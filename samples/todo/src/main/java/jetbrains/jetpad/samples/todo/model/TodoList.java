@@ -16,7 +16,6 @@
 package jetbrains.jetpad.samples.todo.model;
 
 import jetbrains.jetpad.model.children.ChildList;
-import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
 public class TodoList {

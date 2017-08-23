@@ -17,12 +17,8 @@ package jetbrains.jetpad.samples.todo.mapper;
 
 import com.google.gwt.query.client.Function;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import jetbrains.jetpad.mapper.Mapper;
-import jetbrains.jetpad.mapper.Synchronizer;
 import jetbrains.jetpad.mapper.Synchronizers;
-import jetbrains.jetpad.mapper.gwt.EditableText;
-import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.samples.todo.model.TodoListItem;
 
 import static com.google.gwt.query.client.GQuery.$;

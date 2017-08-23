@@ -52,7 +52,7 @@ public class AtomicReference<ItemT> implements Serializable {
   }
 
   public final ItemT getAndSet(ItemT newValue) {
-    ItemT current = this.value;
+    ItemT current = value;
     value = newValue;
     return current;
   }

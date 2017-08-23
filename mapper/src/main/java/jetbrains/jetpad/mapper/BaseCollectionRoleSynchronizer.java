@@ -26,7 +26,6 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
   private List<Mapper<? extends SourceT, ? extends TargetT>> myMappers;
 
   protected BaseCollectionRoleSynchronizer(Mapper<?, ?> mapper) {
-    super();
     myMappers = mapper.createChildList();
   }
 

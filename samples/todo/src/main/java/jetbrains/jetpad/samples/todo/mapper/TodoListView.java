@@ -46,7 +46,7 @@ class TodoListView extends BaseWithElement {
   @UiField
   ButtonElement clearCompleted;
 
-  public TodoListView() {
+  TodoListView() {
     setElement(ourUiBinder.createAndBindUi(this));
     getElement().addClassName("centered");
   }

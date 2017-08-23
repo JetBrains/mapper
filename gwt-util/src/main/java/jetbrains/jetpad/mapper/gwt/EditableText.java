@@ -28,6 +28,8 @@ import jetbrains.jetpad.model.event.Listeners;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 
+import java.util.Objects;
+
 import static com.google.gwt.query.client.GQuery.$;
 
 public class EditableText implements Property<String> {
@@ -116,7 +118,7 @@ public class EditableText implements Property<String> {
 
   @Override
   public void set(String value) {
-    if (java.util.Objects.equals(myValue, value)) return;
+    if (Objects.equals(myValue, value)) return;
 
     String oldValue = myValue;
     myValue = value;

@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 
 import static jetbrains.jetpad.model.collections.CollectionItemEvent.*;
 
@@ -555,7 +556,7 @@ public class Transformers {
                 if (!exists(item)) return;
                 for (Iterator<TargetT> i = to.iterator(); i.hasNext(); ) {
                   TargetT t = i.next();
-                  if (java.util.Objects.equals(checker.apply(t), item)) {
+                  if (Objects.equals(checker.apply(t), item)) {
                     i.remove();
                     return;
                   }
@@ -581,7 +582,7 @@ public class Transformers {
 
           private boolean exists(SourceT item) {
             for (TargetT t: to) {
-              if (java.util.Objects.equals(checker.apply(t), item)) return true;
+              if (Objects.equals(checker.apply(t), item)) return true;
             }
             return false;
           }

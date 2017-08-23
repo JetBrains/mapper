@@ -24,7 +24,7 @@ class SimpleComposite implements NavComposite<SimpleComposite> {
   private SimpleComposite parent;
   private List<SimpleComposite> children;
 
-  public SimpleComposite(String name, SimpleComposite... children) {
+  SimpleComposite(String name, SimpleComposite... children) {
     this.name = name;
     this.children = asList(children);
     for (SimpleComposite c : children) {

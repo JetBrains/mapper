@@ -40,7 +40,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   public ExecutorEdtManager(String name) {
     myThreadFactory = new NamedThreadFactory(name);
     myEdt = new ExecutorEdt(myThreadFactory);
-    LOG.info("Created " + ExecutorEdtManager.this);
+    LOG.info("Created " + this);
   }
 
   @Override
@@ -64,12 +64,12 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
 
   private void ensureCanShutdown() {
     if (myThreadFactory.inProducedThread()) {
-      throw new IllegalStateException(ExecutorEdtManager.this + ": cannot kill or finish from its own thread");
+      throw new IllegalStateException(this + ": cannot kill or finish from its own thread");
     }
   }
 
   private void waitTermination() {
-    LOG.info("Start termination " + ExecutorEdtManager.this);
+    LOG.info("Start termination " + this);
     boolean terminated = false;
     try {
       terminated = myEdt.getExecutor().awaitTermination(BIG_TIMEOUT_DAYS, TimeUnit.DAYS);
@@ -77,10 +77,10 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
       Thread.currentThread().interrupt();
     }
     if (!terminated) {
-      ThrowableHandlers.handle(new RuntimeException(ExecutorEdtManager.this
+      ThrowableHandlers.handle(new RuntimeException(this
           + ": failed to terminate in " + BIG_TIMEOUT_DAYS + " days"));
     }
-    LOG.info("Terminated " + ExecutorEdtManager.this);
+    LOG.info("Terminated " + this);
   }
 
   @Override

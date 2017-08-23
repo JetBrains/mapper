@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.samples.todo.mapper;
 
-import com.google.gwt.aria.client.ListitemRole;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;

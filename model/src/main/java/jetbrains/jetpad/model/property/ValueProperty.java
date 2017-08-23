@@ -20,6 +20,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
+import java.util.Objects;
+
 /**
  * A simple implementation of Read/Write property which stores the value in a field
  */
@@ -42,7 +44,7 @@ public class ValueProperty<ValueT> extends BaseReadableProperty<ValueT> implemen
 
   @Override
   public void set(ValueT value) {
-    if (java.util.Objects.equals(value, myValue)) return;
+    if (Objects.equals(value, myValue)) return;
     ValueT oldValue = myValue;
     myValue = value;
 

@@ -20,6 +20,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
+import java.util.Objects;
+
 /**
  * Base class for creation of derived properties, i.e. properties whose values are calculated based on other values
   */
@@ -57,7 +59,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
 
   protected void somethingChanged() {
     ValueT newValue = doGet();
-    if (java.util.Objects.equals(myValue, newValue)) return;
+    if (Objects.equals(myValue, newValue)) return;
 
     final PropertyChangeEvent<ValueT> event = new PropertyChangeEvent<>(myValue, newValue);
     myValue = newValue;

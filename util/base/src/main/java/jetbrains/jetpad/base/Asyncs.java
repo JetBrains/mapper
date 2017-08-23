@@ -460,7 +460,7 @@ public class Asyncs {
     private Boolean mySucceeded = false;
     private Registration myReg = null;
 
-    public PairedAsync(Async<ItemT> async) {
+    private PairedAsync(Async<ItemT> async) {
       myAsync = async;
     }
 

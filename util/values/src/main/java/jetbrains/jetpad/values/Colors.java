@@ -18,6 +18,7 @@ package jetbrains.jetpad.values;
 import jetbrains.jetpad.base.Persister;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Colors {
   public static final double DEFAULT_FACTOR = 0.7d;
@@ -111,7 +112,7 @@ public class Colors {
   }
 
   public static double[] hsvFromRgb(Color color) {
-    final double scale = 1.f / 255;
+    double scale = 1.f / 255;
     double r = color.getRed() * scale;
     double g = color.getGreen() * scale;
     double b = color.getBlue() * scale;
@@ -231,7 +232,7 @@ public class Colors {
 
       @Override
       public String serialize(Color value) {
-        if (java.util.Objects.equals(value, defaultValue)) {
+        if (Objects.equals(value, defaultValue)) {
           return null;
         }
         return value.toString();

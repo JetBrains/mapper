@@ -170,7 +170,7 @@ public class ListMap<K, V> {
   private int findByKey(K key) {
     for (int i = 0; i < myData.length; i += 2) {
       K k = (K) myData[i];
-      if (java.util.Objects.equals(key, k)) {
+      if (Objects.equals(key, k)) {
         return i;
       }
     }

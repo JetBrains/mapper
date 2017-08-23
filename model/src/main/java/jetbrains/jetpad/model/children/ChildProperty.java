@@ -57,7 +57,7 @@ public class ChildProperty<ParentT, ChildT extends SimpleComposite<? super Paren
 
         @Override
         public void remove() {
-          ChildProperty.this.set(null);
+          set(null);
         }
       };
     }

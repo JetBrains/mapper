@@ -39,7 +39,7 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration schedule(int delay, final Runnable r) {
-    final Timer timer = new Timer(delay, null);
+    Timer timer = new Timer(delay, null);
     timer.setRepeats(false);
     timer.addActionListener(new ActionListener() {
       @Override
@@ -53,7 +53,7 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
 
   @Override
   public Registration scheduleRepeating(int period, final Runnable r) {
-    final Timer timer = new Timer(period, null);
+    Timer timer = new Timer(period, null);
     timer.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

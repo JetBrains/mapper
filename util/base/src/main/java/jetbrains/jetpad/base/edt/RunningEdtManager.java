@@ -93,7 +93,7 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
 
   private void checkCanStop() {
     if (myFinished) {
-      throw new IllegalStateException(RunningEdtManager.this + ": has already been stopped");
+      throw new IllegalStateException(this + ": has already been stopped");
     }
   }
 
@@ -126,7 +126,7 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
 
   private void flush(Supplier<Integer> tasksCount) {
     if (myFlushing) {
-      throw new IllegalStateException((RunningEdtManager.this + ": recursive flush is prohibited"));
+      throw new IllegalStateException((this + ": recursive flush is prohibited"));
     }
     myFlushing = true;
     int executedTasksCounter = 0;

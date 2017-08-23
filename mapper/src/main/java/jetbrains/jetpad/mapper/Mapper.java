@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
  *
  * Responsibilities of a Mapper:
  *  - create and configure view
- *  - create and configure {@link jetbrains.jetpad.mapper.Synchronizer}s
+ *  - create and configure {@link Synchronizer}s
  *  - configure listeners and handlers on the view
  *
  * Mapper can be in one of three states:
@@ -89,14 +89,14 @@ public abstract class Mapper<SourceT, TargetT> {
   }
 
   /**
-   * @return Whether this mapper should be findable in {@link jetbrains.jetpad.mapper.MappingContext}
+   * @return Whether this mapper should be findable in {@link MappingContext}
    */
   protected boolean isFindable() {
     return true;
   }
 
   /**
-   * Lifecycle method to register {@link jetbrains.jetpad.mapper.Synchronizer}s in this mapper
+   * Lifecycle method to register {@link Synchronizer}s in this mapper
    */
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
   }
@@ -339,7 +339,7 @@ public abstract class Mapper<SourceT, TargetT> {
       throw new IllegalStateException("State =  " + myState);
     }
 
-    child.myParent = Mapper.this;
+    child.myParent = this;
     if (myState != State.ATTACHING_SYNCHRONIZERS) {
       child.attach(myMappingContext);
     }
@@ -395,22 +395,22 @@ public abstract class Mapper<SourceT, TargetT> {
   private class ChildList<MapperT extends Mapper<?, ?>> extends ObservableArrayList<MapperT> implements ChildContainer<MapperT> {
     @Override
     protected void checkAdd(int index, MapperT item) {
-      Mapper.this.checkCanAdd(item);
+      checkCanAdd(item);
 
       super.checkAdd(index, item);
     }
 
     @Override
     protected void checkSet(int index, MapperT oldItem, MapperT newItem) {
-      Mapper.this.checkCanRemove(oldItem);
-      Mapper.this.checkCanAdd(newItem);
+      checkCanRemove(oldItem);
+      checkCanAdd(newItem);
 
       super.checkSet(index, oldItem, newItem);
     }
 
     @Override
     protected void checkRemove(int index, MapperT item) {
-      Mapper.this.checkCanRemove(item);
+      checkCanRemove(item);
 
       super.checkRemove(index, item);
     }
@@ -449,14 +449,14 @@ public abstract class Mapper<SourceT, TargetT> {
   private class ChildSet<MapperT extends Mapper<?, ?>> extends ObservableHashSet<MapperT> implements ChildContainer<MapperT> {
     @Override
     protected void checkAdd(MapperT item) {
-      Mapper.this.checkCanAdd(item);
+      checkCanAdd(item);
 
       super.checkAdd(item);
     }
 
     @Override
     protected void checkRemove(MapperT item) {
-      Mapper.this.checkCanRemove(item);
+      checkCanRemove(item);
 
       super.checkRemove(item);
     }

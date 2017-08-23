@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.model.collections.list;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ObservableTreeList<ItemT> extends AbstractObservableList<ItemT> {

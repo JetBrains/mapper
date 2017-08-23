@@ -108,7 +108,7 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
     return index.get() != null;
   }
 
-  protected void invalidate() {
+  private void invalidate() {
     index.set(null);
     myReg.dispose();
   }

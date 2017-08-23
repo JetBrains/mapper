@@ -65,7 +65,7 @@ public class Rectangle {
 
   public Rectangle intersect(Rectangle r) {
     if (!intersects(r)) {
-      throw new IllegalStateException("rectangle [" + Rectangle.this + "] doesn't intersect [" + r + "]");
+      throw new IllegalStateException("rectangle [" + this + "] doesn't intersect [" + r + "]");
     }
 
     Vector too = origin.add(dimension);

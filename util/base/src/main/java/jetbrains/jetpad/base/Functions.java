@@ -104,7 +104,7 @@ public final class Functions {
     private ItemT myCachedValue = null;
     private boolean myCached = false;
 
-    public Memo(Supplier<ItemT> supplier) {
+    Memo(Supplier<ItemT> supplier) {
       mySupplier = supplier;
     }
 

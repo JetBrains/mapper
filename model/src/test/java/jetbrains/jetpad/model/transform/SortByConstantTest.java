@@ -19,7 +19,6 @@ import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

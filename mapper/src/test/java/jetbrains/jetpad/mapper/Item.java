@@ -23,6 +23,7 @@ import jetbrains.jetpad.model.property.ValueProperty;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 class Item {
   private static boolean contentsEqual(Item item1, Item item2) {
@@ -56,7 +57,7 @@ class Item {
   }
 
   boolean contentEquals(Item item) {
-    return java.util.Objects.equals(name.get(), item.name.get())
+    return Objects.equals(name.get(), item.name.get())
         && contentsEqual(observableChildren, item.observableChildren)
         && contentsEqual(children, item.children)
         && contentsEqual(transformedChildren, item.transformedChildren)
