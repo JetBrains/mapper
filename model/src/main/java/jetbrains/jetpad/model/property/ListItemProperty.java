@@ -69,7 +69,7 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
           ListItemProperty.this.index.set(ListItemProperty.this.index.get() - 1);
         } else if (event.getIndex() == ListItemProperty.this.index.get()) {
           invalidate();
-          final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<ValueT>(event.getOldItem(), null);
+          final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<>(event.getOldItem(), null);
           myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
             @Override
             public void call(EventHandler<? super PropertyChangeEvent<ValueT>> l) {

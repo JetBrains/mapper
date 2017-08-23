@@ -116,7 +116,7 @@ public class DoubleRectangle {
     return new DoubleRectangle(origin.subtract(v), dimension);
   }
 
-  public double distance(final DoubleVector to) {
+  public double distance(DoubleVector to) {
     double result = 0.0;
     boolean hasResult = false;
     for (DoubleSegment s : getParts()) {

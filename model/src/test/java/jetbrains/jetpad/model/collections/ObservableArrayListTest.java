@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.collections;
 
+import jetbrains.jetpad.model.collections.CollectionItemEvent.EventType;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import org.junit.Before;
@@ -44,7 +45,7 @@ public class ObservableArrayListTest {
   };
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     list.addListener(listener);
   }
 
@@ -54,7 +55,7 @@ public class ObservableArrayListTest {
 
     list.add(item);
 
-    assertEvent(0, null, item, CollectionItemEvent.EventType.ADD);
+    assertEvent(0, null, item, EventType.ADD);
   }
 
   @Test
@@ -63,7 +64,7 @@ public class ObservableArrayListTest {
 
     list.remove(item);
 
-    assertEvent(0, item, null, CollectionItemEvent.EventType.REMOVE);
+    assertEvent(0, item, null, EventType.REMOVE);
   }
 
   @Test
@@ -78,7 +79,7 @@ public class ObservableArrayListTest {
   public void addAtOkIndex() {
     String item = "xyz";
     list.add(0, item);
-    assertEvent(0, null, item, CollectionItemEvent.EventType.ADD);
+    assertEvent(0, null, item, EventType.ADD);
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
@@ -93,15 +94,15 @@ public class ObservableArrayListTest {
 
   @Test
   public void removeAtOkIndex() {
-    final String item = addSampleItem();
+    String item = addSampleItem();
     String removed = list.remove(0);
     assertEquals(item, removed);
-    assertEvent(0, item, null, CollectionItemEvent.EventType.REMOVE);
+    assertEvent(0, item, null, EventType.REMOVE);
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
   public void removeAtInvalidIndex() {
-    final String item = addSampleItem();
+    String item = addSampleItem();
     try {
       String removed = list.remove(1);
       assertEquals(item, removed);
@@ -117,7 +118,7 @@ public class ObservableArrayListTest {
     Iterator<String> i = list.iterator();
     i.next();
     i.remove();
-    assertEvent(0, "xyz", null, CollectionItemEvent.EventType.REMOVE);
+    assertEvent(0, "xyz", null, EventType.REMOVE);
   }
 
   @Test
@@ -131,13 +132,13 @@ public class ObservableArrayListTest {
   }
 
   private String addSampleItem() {
-    final String item = "xyz";
+    String item = "xyz";
     list.add(item);
     events.clear();
     return item;
   }
 
-  private void assertEvent(int index, String oldItem, String newItem, CollectionItemEvent.EventType type) {
+  private void assertEvent(int index, String oldItem, String newItem, EventType type) {
     assertEquals(1, events.size());
 
     CollectionItemEvent<? extends String> event = events.get(0);

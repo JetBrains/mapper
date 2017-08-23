@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import static jetbrains.jetpad.model.collections.CollectionItemEvent.*;
+
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
     return coerce();
@@ -129,20 +131,20 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from, final ObservableList<TargetT> to) {
         final List<Registration> itemRegistrations = new ArrayList<>();
 
-        final CollectionListener<SourceT> listener = new CollectionListener<SourceT>() {
+        CollectionListener<SourceT> listener = new CollectionListener<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
-            final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
+            Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
             to.add(event.getIndex(), transformation.getTarget());
             itemRegistrations.add(event.getIndex(), Registration.from(transformation));
           }
 
           @Override
           public void onItemSet(CollectionItemEvent<? extends SourceT> event) {
-            final Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
+            Transformation<SourceT, TargetT> transformation = transformer.transform(event.getNewItem());
             to.set(event.getIndex(), transformation.getTarget());
             itemRegistrations.set(event.getIndex(), Registration.from(transformation))
               .remove();
@@ -157,7 +159,7 @@ public class Transformers {
 
 
         for (int i = 0; i < from.size(); i++) {
-          listener.onItemAdded(new CollectionItemEvent<>(null, from.get(i), i, CollectionItemEvent.EventType.ADD));
+          listener.onItemAdded(new CollectionItemEvent<>(null, from.get(i), i, EventType.ADD));
         }
 
         final Registration reg = from.addListener(listener);
@@ -174,17 +176,17 @@ public class Transformers {
     };
   }
   public static <SourceT, TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> listMap(final Function<SourceT, TargetT> f) {
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> listMap(Function<SourceT, TargetT> f) {
     return listMap(fromFun(f));
   }
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec) {
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec) {
     return sortBy(propSpec, Order.ASCENDING);
   }
 
   public static <SpecItemT, ItemT extends SpecItemT, ValueT extends Comparable<ValueT>, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableList<ItemT>> sortBy(final Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec, final Order order) {
+  Transformer<CollectionT, ObservableList<ItemT>> sortBy(Function<SpecItemT, ? extends ReadableProperty<ValueT>> propSpec, final Order order) {
     return sortBy(propSpec, new Comparator<ValueT>() {
       @Override
       public int compare(ValueT o1, ValueT o2) {
@@ -308,7 +310,7 @@ public class Transformers {
                   }
                 }
                 if (needMove) {
-                  myCollectionListener.onItemSet(new CollectionItemEvent<>(item, item, -1, CollectionItemEvent.EventType.SET));
+                  myCollectionListener.onItemSet(new CollectionItemEvent<>(item, item, -1, EventType.SET));
                 }
               }
             }));
@@ -414,7 +416,7 @@ public class Transformers {
 
 
   public static <ItemT, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableList<ItemT>> listFilter(final Function<ItemT, ReadableProperty<Boolean>> filterBy) {
+  Transformer<CollectionT, ObservableList<ItemT>> listFilter(Function<ItemT, ReadableProperty<Boolean>> filterBy) {
     return new BaseFilterTransformer<ItemT, CollectionT, ObservableList<ItemT>>(filterBy) {
       @Override
       protected void add(ItemT item, CollectionT from, ObservableList<ItemT> to) {
@@ -450,7 +452,7 @@ public class Transformers {
   }
 
   public static <ItemT, CollectionT extends ObservableCollection<ItemT>>
-  Transformer<CollectionT, ObservableCollection<ItemT>> filter(final Function<ItemT, ReadableProperty<Boolean>> filterBy) {
+  Transformer<CollectionT, ObservableCollection<ItemT>> filter(Function<ItemT, ReadableProperty<Boolean>> filterBy) {
     return new BaseFilterTransformer<ItemT, CollectionT, ObservableCollection<ItemT>>(filterBy) {
       @Override
       protected void add(ItemT item, CollectionT from, ObservableCollection<ItemT> to) {
@@ -603,7 +605,7 @@ public class Transformers {
 
       @Override
       public Transformation<ObservableList<ItemT>, ObservableList<ItemT>> transform(final ObservableList<ItemT> from, final ObservableList<ItemT> to) {
-        final Registration fromReg = from.addListener(new CollectionListener<ItemT>() {
+        Registration fromReg = from.addListener(new CollectionListener<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             int n = value.get();
@@ -631,7 +633,7 @@ public class Transformers {
           }
         });
 
-        final Registration propReg = value.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
+        Registration propReg = value.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
           @Override
           public void onEvent(PropertyChangeEvent<Integer> event) {
             int n = event.getNewValue();
@@ -667,7 +669,7 @@ public class Transformers {
   }
 
   public static <SourceT, TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> flattenList(final Function<SourceT, ? extends ObservableList<? extends TargetT>> f) {
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> flattenList(Function<SourceT, ? extends ObservableList<? extends TargetT>> f) {
     return Transformers.flattenList(f, Transformers.<ObservableList<? extends TargetT>>identity());
   }
 
@@ -686,7 +688,7 @@ public class Transformers {
 
         CollectionAdapter<SourceT> sourceListener = new CollectionAdapter<SourceT>() {
           @Override
-          public void onItemAdded(final CollectionItemEvent<? extends SourceT> event) {
+          public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             SelectedT selected = f.apply(event.getNewItem());
             final Transformation<SelectedT, ? extends ObservableList<? extends ResultT>> transform = t.transform(selected);
             ObservableList<? extends ResultT> target = transform.getTarget();
@@ -741,7 +743,7 @@ public class Transformers {
         final Registration sourceRegistration = from.addListener(sourceListener);
         int index = 0;
         for (SourceT s : from) {
-          sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, index++, CollectionItemEvent.EventType.ADD));
+          sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, index++, EventType.ADD));
         }
 
         return new SimpleTransformation<>(from, to, new Registration() {
@@ -800,7 +802,7 @@ public class Transformers {
         };
 
         for (int i = 0; i < from.size(); i++) {
-          listener.onItemAdded(new CollectionItemEvent<>(null, from.get(i), i, CollectionItemEvent.EventType.ADD));
+          listener.onItemAdded(new CollectionItemEvent<>(null, from.get(i), i, EventType.ADD));
         }
 
         final Registration reg = from.addListener(listener);
@@ -906,7 +908,7 @@ public class Transformers {
   }
 
   public static <SourceT, TargetT>
-  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> flatten(final Function<SourceT, ObservableCollection<TargetT>> f) {
+  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> flatten(Function<SourceT, ObservableCollection<TargetT>> f) {
     return Transformers.flatten(f, Transformers.<ObservableCollection<TargetT>>identity());
   }
 
@@ -961,7 +963,7 @@ public class Transformers {
         };
         final Registration sourceRegistration = from.addListener(sourceListener);
         for (SourceT s : from) {
-          sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, -1, CollectionItemEvent.EventType.ADD));
+          sourceListener.onItemAdded(new CollectionItemEvent<>(null, s, -1, EventType.ADD));
         }
 
         return new SimpleTransformation<>(from, to, new Registration() {
@@ -985,8 +987,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableList<ItemT>, ObservableList<ItemT>> transform(final ObservableList<ItemT> from, final ObservableList<ItemT> to) {
-        final Registration registration = from.addListener(new CollectionAdapter<ItemT>() {
+      public Transformation<ObservableList<ItemT>, ObservableList<ItemT>> transform(ObservableList<ItemT> from, final ObservableList<ItemT> to) {
+        Registration registration = from.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             to.add(event.getIndex(), event.getNewItem());
@@ -1016,8 +1018,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(final ObservableCollection<ItemT> from, final ObservableCollection<ItemT> to) {
-        final Registration registration = from.addListener(new CollectionAdapter<ItemT>() {
+      public Transformation<ObservableCollection<ItemT>, ObservableCollection<ItemT>> transform(ObservableCollection<ItemT> from, final ObservableCollection<ItemT> to) {
+        Registration registration = from.addListener(new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             to.add(event.getNewItem());
@@ -1044,8 +1046,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
-        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+        CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             int pos = event.getIndex();
@@ -1076,15 +1078,16 @@ public class Transformers {
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> merge(final ObservableList<ItemT> items) {
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
-      int fromSize = 0;
+      int fromSize;
+
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {
         return transform(from, new ObservableArrayList<TargetT>());
       }
 
       @Override
-      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
-        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+        CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             int pos = event.getIndex();
@@ -1106,7 +1109,7 @@ public class Transformers {
           }
         };
 
-        final CollectionListener<ItemT> itemsListener = new CollectionAdapter<ItemT>() {
+        CollectionListener<ItemT> itemsListener = new CollectionAdapter<ItemT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
             int pos = event.getIndex();
@@ -1137,13 +1140,13 @@ public class Transformers {
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(jetbrains.jetpad.base.Functions.constantSupplier(item), condition);
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(ItemT item, ReadableProperty<Boolean> condition) {
+    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
-    final Supplier<ItemT> memoizedItem = jetbrains.jetpad.base.Functions.memorize(item);
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
+    final Supplier<ItemT> memoizedItem = Functions.memorize(item);
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {
@@ -1151,8 +1154,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
-        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+        CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             int pos = event.getIndex();
@@ -1181,7 +1184,7 @@ public class Transformers {
           }
         };
 
-        final EventHandler<PropertyChangeEvent<Boolean>> conditionHandler = new EventHandler<PropertyChangeEvent<Boolean>>() {
+        EventHandler<PropertyChangeEvent<Boolean>> conditionHandler = new EventHandler<PropertyChangeEvent<Boolean>>() {
           @Override
           public void onEvent(PropertyChangeEvent<Boolean> event) {
             if (event.getNewValue()) {
@@ -1205,13 +1208,13 @@ public class Transformers {
 
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final ItemT item, final ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(jetbrains.jetpad.base.Functions.constantSupplier(item), condition);
+  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(ItemT item, ReadableProperty<Boolean> condition) {
+    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(final Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
-    final Supplier<ItemT> memoizedItem = jetbrains.jetpad.base.Functions.memorize(item);
+  Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
+    final Supplier<ItemT> memoizedItem = Functions.memorize(item);
     return new BaseTransformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>>() {
       @Override
       public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(ObservableCollection<SourceT> from) {
@@ -1219,8 +1222,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(final ObservableCollection<SourceT> from, final ObservableCollection<TargetT> to) {
-        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+      public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(ObservableCollection<SourceT> from, final ObservableCollection<TargetT> to) {
+        CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             to.add(event.getNewItem());
@@ -1232,7 +1235,7 @@ public class Transformers {
           }
         };
 
-        final EventHandler<PropertyChangeEvent<Boolean>> conditionHandler = new EventHandler<PropertyChangeEvent<Boolean>>() {
+        EventHandler<PropertyChangeEvent<Boolean>> conditionHandler = new EventHandler<PropertyChangeEvent<Boolean>>() {
           @Override
           public void onEvent(PropertyChangeEvent<Boolean> event) {
             if (event.getNewValue()) {
@@ -1264,7 +1267,7 @@ public class Transformers {
 
       @Override
       public Transformation<ObservableList<ItemT>, List<ItemT>> transform(final ObservableList<ItemT> from, final List<ItemT> to) {
-        final Registration fromRegistration = from.addListener(new CollectionAdapter<ItemT>() {
+        Registration fromRegistration = from.addListener(new CollectionAdapter<ItemT>() {
           private ItemT myPlaceholder;
 
           {
@@ -1390,8 +1393,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(final ObservableCollection<SourceT> from, final ObservableCollection<TargetT> to) {
-        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+      public Transformation<ObservableCollection<SourceT>, ObservableCollection<TargetT>> transform(ObservableCollection<SourceT> from, final ObservableCollection<TargetT> to) {
+        CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             to.add(function.apply(event.getNewItem()));
@@ -1421,8 +1424,8 @@ public class Transformers {
       }
 
       @Override
-      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(final ObservableList<SourceT> from, final ObservableList<TargetT> to) {
-        final CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+        CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             to.add(event.getIndex(), function.apply(event.getNewItem()));
@@ -1461,7 +1464,7 @@ public class Transformers {
         if (!to.isEmpty()) {
           throw new IllegalStateException("'to' list should be empty: " + to);
         }
-        final Registration fromRegistration = from.addListener(new CollectionAdapter<SourceT>() {
+        Registration fromRegistration = from.addListener(new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {
             int index = from.size() - event.getIndex() - 1;

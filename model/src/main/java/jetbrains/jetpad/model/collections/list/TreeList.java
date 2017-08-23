@@ -136,7 +136,7 @@ public class TreeList<T> extends AbstractList<T> {
         }
         return new AvlTree<>(myLeft.set(index, value), myRight, myValue);
       } else if (index == leftSize) {
-        return new AvlTree<T>(myLeft, myRight, value);
+        return new AvlTree<>(myLeft, myRight, value);
       } else {
         if (myRight == null) {
           throw new IndexOutOfBoundsException();
@@ -157,19 +157,19 @@ public class TreeList<T> extends AbstractList<T> {
             throw new IndexOutOfBoundsException();
           }
         } else {
-          unbalanced = new AvlTree<T>(myLeft.insert(index, value), myRight, myValue);
+          unbalanced = new AvlTree<>(myLeft.insert(index, value), myRight, myValue);
         }
         return balanceLeft(unbalanced);
       } else {
         AvlTree<T> unbalanced;
         if (myRight == null) {
           if (index == leftSize + 1) {
-            unbalanced = new AvlTree<T>(myLeft, new AvlTree<T>(value), myValue);
+            unbalanced = new AvlTree<>(myLeft, new AvlTree<>(value), myValue);
           } else {
             throw new IndexOutOfBoundsException();
           }
         } else {
-          unbalanced = new AvlTree<T>(myLeft, myRight.insert(index - 1 - leftSize, value), myValue);
+          unbalanced = new AvlTree<>(myLeft, myRight.insert(index - 1 - leftSize, value), myValue);
         }
         return balanceRight(unbalanced);
       }
@@ -181,7 +181,7 @@ public class TreeList<T> extends AbstractList<T> {
         if (height(result.myRight.myLeft) <= height(result.myRight.myRight)) {
           return result.rotateLeft();
         } else {
-          return new AvlTree<T>(result.myLeft, result.myRight.rotateRight(), result.myValue).rotateLeft();
+          return new AvlTree<>(result.myLeft, result.myRight.rotateRight(), result.myValue).rotateLeft();
         }
       }
       return result;
@@ -218,7 +218,7 @@ public class TreeList<T> extends AbstractList<T> {
         if (myRight == null) {
           throw new IndexOutOfBoundsException();
         }
-        return balanceLeft(new AvlTree<T>(myLeft, myRight.remove(index - leftSize - 1), myValue));
+        return balanceLeft(new AvlTree<>(myLeft, myRight.remove(index - leftSize - 1), myValue));
       }
     }
 

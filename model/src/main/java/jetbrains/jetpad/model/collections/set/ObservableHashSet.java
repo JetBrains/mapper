@@ -29,7 +29,7 @@ public class ObservableHashSet<ItemT> extends AbstractObservableSet<ItemT> {
 
   @Override
   public boolean contains(Object o) {
-    return mySet == null ? false : mySet.contains(o);
+    return mySet != null && mySet.contains(o);
   }
 
   @Override
