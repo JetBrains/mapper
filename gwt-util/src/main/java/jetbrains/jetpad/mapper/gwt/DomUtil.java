@@ -39,7 +39,7 @@ import jetbrains.jetpad.base.function.Supplier;
 import static com.google.gwt.query.client.GQuery.$;
 
 public class DomUtil {
-  public static List<Node> elementChildren(final Element e) {
+  public static List<Node> elementChildren(Element e) {
     return nodeChildren(e);
   }
 
@@ -89,7 +89,7 @@ public class DomUtil {
     };
   }
 
-  public static <ElementT extends WithElement> List<ElementT> withElementChildren(final Element e) {
+  public static <ElementT extends WithElement> List<ElementT> withElementChildren(Element e) {
     return DomUtil.withElementChildren(elementChildren(e));
   }
 
@@ -158,7 +158,7 @@ public class DomUtil {
       }
 
       @Override
-      public Registration addHandler(final EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
+      public Registration addHandler(EventHandler<? super PropertyChangeEvent<Boolean>> handler) {
         if (myListeners.isEmpty()) {
           final Value<Boolean> value = new Value<>(element.isChecked());
           final Timer timer = new Timer() {

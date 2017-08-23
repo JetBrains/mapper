@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 public class CollectionBinding {
-  public static <ItemT> Registration bindOneWay(final ObservableList<ItemT> source, final List<ItemT> target) {
+  public static <ItemT> Registration bindOneWay(ObservableList<ItemT> source, final List<ItemT> target) {
     target.addAll(source);
     return source.addListener(new CollectionListener<ItemT>() {
       @Override
@@ -43,7 +43,7 @@ public class CollectionBinding {
     });
   }
 
-  public static <ItemT> Registration bindOneWay(final ObservableSet<ItemT> source, final Set<ItemT> target) {
+  public static <ItemT> Registration bindOneWay(ObservableSet<ItemT> source, final Set<ItemT> target) {
     target.addAll(source);
     return source.addListener(new CollectionAdapter<ItemT>() {
       @Override

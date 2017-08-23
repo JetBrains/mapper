@@ -145,8 +145,8 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
     super.registerSynchronizers(conf);
 
     // create filters
-    final Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnActive;
-    final Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnComplete;
+    Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnActive;
+    Transformer<ObservableCollection<TodoListItem>, ObservableList<TodoListItem>> xfnComplete;
 
     xfnComplete = Transformers.listFilter(new jetbrains.jetpad.base.function.Function<TodoListItem, ReadableProperty<Boolean>>() {
       @Override

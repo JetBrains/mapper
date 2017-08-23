@@ -21,10 +21,10 @@ import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.base.function.Function;
 
 public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
-  private ItemT mySuccessItem = null;
+  private ItemT mySuccessItem;
   private boolean mySucceeded = false;
 
-  private Throwable myFailureThrowable = null;
+  private Throwable myFailureThrowable;
   private boolean myFailed = false;
 
   private List<Consumer<? super ItemT>> mySuccessHandlers = new ArrayList<>();
@@ -50,7 +50,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
   }
 
   @Override
-  public Registration onResult(Consumer<? super ItemT> successHandler, final Consumer<Throwable> failureHandler) {
+  public Registration onResult(Consumer<? super ItemT> successHandler, Consumer<Throwable> failureHandler) {
     final Registration successRegistration = onSuccess(successHandler);
     final Registration failureRegistration = onFailure(failureHandler);
     return new Registration() {
@@ -82,12 +82,12 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
   }
 
   @Override
-  public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
+  public <ResultT> Async<ResultT> map(Function<? super ItemT, ? extends ResultT> success) {
     return Asyncs.map(this, success, new SimpleAsync<ResultT>());
   }
 
   @Override
-  public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
+  public <ResultT> Async<ResultT> flatMap(Function<? super ItemT, Async<ResultT>> success) {
     return Asyncs.select(this, success, new SimpleAsync<ResultT>());
   }
 

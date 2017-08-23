@@ -131,7 +131,7 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
         throw new UnsupportedOperationException();
       }
     });
-    final Runnable r = Mockito.mock(Runnable.class);
+    Runnable r = Mockito.mock(Runnable.class);
     edt.schedule(r);
 
     try {
@@ -153,7 +153,7 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
       }
     });
 
-    final Runnable r = Mockito.mock(Runnable.class);
+    Runnable r = Mockito.mock(Runnable.class);
     scheduledReg.set(edt.schedule(0, r));
 
     edt.executeUpdates();

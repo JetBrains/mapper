@@ -41,7 +41,7 @@ public class ObservableSetWrapper<SourceItemT, TargetItemT> implements Observabl
   }
 
   @Override
-  public Registration addListener(final CollectionListener<TargetItemT> l) {
+  public Registration addListener(CollectionListener<TargetItemT> l) {
     return mySource.addListener(new RelayCollectionListener<SourceItemT, TargetItemT>(l) {
       @Override
       protected CollectionItemEvent<? extends TargetItemT> transform(CollectionItemEvent<? extends SourceItemT> event) {

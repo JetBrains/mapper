@@ -75,7 +75,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
   }
 
   @Override
-  public Registration addHandler(final EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
+  public Registration addHandler(EventHandler<? super PropertyChangeEvent<ValueT>> handler) {
     if (myHandlers == null) {
       myHandlers = new Listeners<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
         @Override

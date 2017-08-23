@@ -47,14 +47,14 @@ public final class ThreadSafeAsync<ItemT> implements ResolvableAsync<ItemT> {
   }
 
   @Override
-  public <ResultT> Async<ResultT> map(final Function<? super ItemT, ? extends ResultT> success) {
+  public <ResultT> Async<ResultT> map(Function<? super ItemT, ? extends ResultT> success) {
     synchronized (myAsync) {
       return Asyncs.map(this, success, new ThreadSafeAsync<ResultT>());
     }
   }
 
   @Override
-  public <ResultT> Async<ResultT> flatMap(final Function<? super ItemT, Async<ResultT>> success) {
+  public <ResultT> Async<ResultT> flatMap(Function<? super ItemT, Async<ResultT>> success) {
     synchronized (myAsync) {
       return Asyncs.select(this, success, new ThreadSafeAsync<ResultT>());
     }

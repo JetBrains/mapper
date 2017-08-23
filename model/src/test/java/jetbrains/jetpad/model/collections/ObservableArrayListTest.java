@@ -60,7 +60,7 @@ public class ObservableArrayListTest {
 
   @Test
   public void itemRemove() {
-    final String item = addSampleItem();
+    String item = addSampleItem();
 
     list.remove(item);
 

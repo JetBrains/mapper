@@ -38,7 +38,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   }
 
   @Override
-  public final boolean add(final ItemT item) {
+  public final boolean add(ItemT item) {
     if (contains(item)) return false;
     doBeforeAdd(item);
     boolean success = false;

@@ -29,7 +29,7 @@ import java.util.List;
  * - firing events
  */
 public class Listeners<ListenerT> {
-  private List<Object> myListeners = null;
+  private List<Object> myListeners;
   private int myFireDepth;
   private int myListenersCount;
 
@@ -68,7 +68,7 @@ public class Listeners<ListenerT> {
     };
   }
 
-  public void fire(final ListenerCaller<ListenerT> h) {
+  public void fire(ListenerCaller<ListenerT> h) {
     if (isEmpty()) return;
     beforeFire();
     //exception can be thrown from ThrowableHandlers.handle()

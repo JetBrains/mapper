@@ -64,7 +64,7 @@ public class SelectTest {
     select.transform(from, to);
     from.remove(0);
 
-    assertTrue(to.size() == 0);
+    assertTrue(to.isEmpty());
   }
 
   @Test
@@ -73,6 +73,6 @@ public class SelectTest {
     transformation.dispose();
     from.add(0);
 
-    assertTrue(to.size() == 0);
+    assertTrue(to.isEmpty());
   }
 }

@@ -72,7 +72,7 @@ public class DefautJsonSupport implements JsonSupport {
     lexer.readToken(JsonTokenKind.LEFT_BRACE);
 
     while (lexer.tokenKind() != JsonTokenKind.RIGHT_BRACE) {
-      if (result.getKeys().size() > 0) {
+      if (!result.getKeys().isEmpty()) {
         lexer.readToken(JsonTokenKind.COMMA);
       }
 

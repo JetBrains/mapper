@@ -57,12 +57,12 @@ public class CompositesWithBounds {
   }
 
   public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  Iterable<ViewT> upperFocusables(final ViewT v) {
+  Iterable<ViewT> upperFocusables(ViewT v) {
     return Composites.iterate(v, new NextUpperFocusable<>(v));
   }
 
   public <ViewT extends NavComposite<ViewT> & HasFocusability & HasVisibility & HasBounds>
-  Iterable<ViewT> lowerFocusables(final ViewT v) {
+  Iterable<ViewT> lowerFocusables(ViewT v) {
     return Composites.iterate(v, new NextLowerFocusable<>(v));
   }
 

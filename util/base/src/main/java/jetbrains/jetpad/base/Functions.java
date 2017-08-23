@@ -101,7 +101,7 @@ public final class Functions {
 
   private static class Memo<ItemT> implements Supplier<ItemT> {
     private final Supplier<ItemT> mySupplier;
-    private ItemT myCachedValue = null;
+    private ItemT myCachedValue;
     private boolean myCached = false;
 
     Memo(Supplier<ItemT> supplier) {

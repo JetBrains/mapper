@@ -32,12 +32,12 @@ public class PropertyPersistersTest {
 
   @Test
   public void nullStringValueProperty() {
-    testNull(PropertyPersisters.valuePropertyPersister(Persisters.stringPersister()));
+    testNull(PropertyPersisters.valuePropertyPersister(stringPersister()));
   }
 
   @Test
   public void valuePropertyEmptyString() {
-    assertTrue(PropertyPersisters.valuePropertyPersister(Persisters.stringPersister()).deserialize("").get() == null);
+    assertTrue(PropertyPersisters.valuePropertyPersister(stringPersister()).deserialize("").get() == null);
   }
 
   @Test

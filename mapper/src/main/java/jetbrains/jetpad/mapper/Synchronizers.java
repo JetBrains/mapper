@@ -110,8 +110,8 @@ public class Synchronizers {
   public static <SourceT, TargetT>
   RoleSynchronizer<SourceT, TargetT> forSingleRole(
       Mapper<?, ?> mapper,
-      final ReadableProperty<SourceT> source,
-      final WritableProperty<TargetT> target,
+      ReadableProperty<SourceT> source,
+      WritableProperty<TargetT> target,
       MapperFactory<SourceT, TargetT> factory) {
     return new SingleChildRoleSynchronizer<>(mapper, source, target, factory);
   }
@@ -159,7 +159,7 @@ public class Synchronizers {
   /**
    * Creates a synchronizer which invokes the specified runnable on changes to the property
    */
-  public static <ValueT> Synchronizer forProperty(final ReadableProperty<ValueT> property, final Runnable sync) {
+  public static <ValueT> Synchronizer forProperty(ReadableProperty<ValueT> property, Runnable sync) {
     return forEventSource(property, sync);
   }
 

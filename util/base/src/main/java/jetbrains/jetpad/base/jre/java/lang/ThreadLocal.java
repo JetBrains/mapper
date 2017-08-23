@@ -22,7 +22,7 @@ package java.lang;
  */
 
 public class ThreadLocal<ItemT> {
-  private ItemT myValue = null;
+  private ItemT myValue;
 
   public ItemT get() {
     if (myValue == null) {

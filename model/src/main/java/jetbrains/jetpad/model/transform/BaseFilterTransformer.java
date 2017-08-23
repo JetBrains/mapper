@@ -33,7 +33,7 @@ abstract class BaseFilterTransformer <ItemT, CollectionS extends ObservableColle
   protected abstract void add(ItemT item, CollectionS from, CollectionT to);
   protected abstract CollectionT createTo();
 
-  BaseFilterTransformer(final Function<ItemT, ReadableProperty<Boolean>> filterBy) {
+  BaseFilterTransformer(Function<ItemT, ReadableProperty<Boolean>> filterBy) {
     myFilterBy = filterBy;
   }
 

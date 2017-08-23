@@ -146,7 +146,7 @@ public class ObservableCollections {
   public static <ItemT> ReadableProperty<Integer> count(
       final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
     return new BaseDerivedProperty<Integer>(simpleCount(predicate, collection)) {
-      private Registration myCollectionRegistration = null;
+      private Registration myCollectionRegistration;
       private int myCount;
 
       @Override
@@ -188,7 +188,7 @@ public class ObservableCollections {
     };
   }
 
-  private static <ItemT> int simpleCount(final Predicate<? super ItemT> predicate, final Collection<ItemT> collection) {
+  private static <ItemT> int simpleCount(Predicate<? super ItemT> predicate, Collection<ItemT> collection) {
     int count = 0;
     for (ItemT i : collection) {
       if (predicate.test(i)) {
@@ -199,7 +199,7 @@ public class ObservableCollections {
   }
 
   public static <ItemT> ReadableProperty<Boolean> all(
-      final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
+      final ObservableCollection<ItemT> collection, Predicate<? super ItemT> predicate) {
     return Properties.map(count(collection, predicate), new Function<Integer, Boolean>() {
       @Override
       public Boolean apply(Integer value) {
@@ -209,7 +209,7 @@ public class ObservableCollections {
   }
 
   public static <ItemT> ReadableProperty<Boolean> any(
-      final ObservableCollection<ItemT> collection, final Predicate<? super ItemT> predicate) {
+      ObservableCollection<ItemT> collection, Predicate<? super ItemT> predicate) {
     return Properties.map(count(collection, predicate), new Function<Integer, Boolean>() {
       @Override
       public Boolean apply(Integer value) {

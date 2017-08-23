@@ -60,15 +60,15 @@ public class ObservableItemEventMatchers {
     };
   }
 
-  public static <T> Matcher<CollectionItemEvent<? extends T>> addEvent(final Matcher<? super T> item, final Matcher<Integer> index) {
+  public static <T> Matcher<CollectionItemEvent<? extends T>> addEvent(Matcher<? super T> item, Matcher<Integer> index) {
     return event(nullValue(), item, index, equalTo(ADD));
   }
 
-  public static <T> Matcher<CollectionItemEvent<? extends T>> setEvent(final Matcher<? super T> oldItem, final Matcher<? super T> newItem, final Matcher<Integer> index) {
+  public static <T> Matcher<CollectionItemEvent<? extends T>> setEvent(Matcher<? super T> oldItem, Matcher<? super T> newItem, Matcher<Integer> index) {
     return event(oldItem, newItem, index, equalTo(SET));
   }
 
-  public static <T> Matcher<CollectionItemEvent<? extends T>> removeEvent(final Matcher<? super T> item, final Matcher<Integer> index) {
+  public static <T> Matcher<CollectionItemEvent<? extends T>> removeEvent(Matcher<? super T> item, Matcher<Integer> index) {
     return event(item, nullValue(), index, equalTo(REMOVE));
   }
 }

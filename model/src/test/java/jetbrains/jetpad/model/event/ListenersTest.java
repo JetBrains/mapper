@@ -67,7 +67,7 @@ public class ListenersTest {
       }
     });
 
-    final Value<RuntimeException> exception = new Value<>(null);
+    Value<RuntimeException> exception = new Value<>(null);
 
     //default ThrowableHandlers test handler throws exception
     try {

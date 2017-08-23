@@ -47,7 +47,7 @@ final class CompositeEventSource<EventT> implements EventSource<EventT> {
   }
 
   @Override
-  public Registration addHandler(final EventHandler<? super EventT> handler) {
+  public Registration addHandler(EventHandler<? super EventT> handler) {
     if (myHandlers == null) {
       myHandlers = new Listeners<EventHandler<? super EventT>>() {
         @Override

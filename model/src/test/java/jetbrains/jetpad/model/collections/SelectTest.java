@@ -37,7 +37,7 @@ public class SelectTest {
   @Test
   public void nonListenedList() {
     Property<Boolean> src = new ValueProperty<>(false);
-    final ObservableList<String> selected = new ObservableArrayList<>();
+    ObservableList<String> selected = new ObservableArrayList<>();
     ObservableList<String> res = testList(src, selected);
 
     testNonListened(src, selected, res);
@@ -46,7 +46,7 @@ public class SelectTest {
   @Test
   public void nonListenedCollection() {
     Property<Boolean> src = new ValueProperty<>(false);
-    final ObservableCollection<String> selected = new ObservableHashSet<>();
+    ObservableCollection<String> selected = new ObservableHashSet<>();
     ObservableCollection<String> res = testCollection(src, selected);
 
     testNonListened(src, selected, res);
@@ -55,7 +55,7 @@ public class SelectTest {
   @Test
   public void listenedList() {
     Property<Boolean> src = new ValueProperty<>(false);
-    final ObservableList<String> selected = new ObservableArrayList<>();
+    ObservableList<String> selected = new ObservableArrayList<>();
     ObservableList<String> res = testList(src, selected);
 
     testListened(src, selected, res);
@@ -64,7 +64,7 @@ public class SelectTest {
   @Test
   public void listenedCollection() {
     Property<Boolean> src = new ValueProperty<>(false);
-    final ObservableCollection<String> selected = new ObservableHashSet<>();
+    ObservableCollection<String> selected = new ObservableHashSet<>();
     ObservableCollection<String> res = testCollection(src, selected);
 
     testListened(src, selected, res);
@@ -72,8 +72,8 @@ public class SelectTest {
 
   @Test
   public void listRegistrations() {
-    final AtomicInteger pc = new AtomicInteger();
-    final AtomicInteger cc = new AtomicInteger();
+    AtomicInteger pc = new AtomicInteger();
+    AtomicInteger cc = new AtomicInteger();
     Property<Boolean> src = listenersCountingProperty(pc);
     ObservableList<String> selected = listenersCountingList(cc);
 
@@ -84,8 +84,8 @@ public class SelectTest {
 
   @Test
   public void collectionRegistrations() {
-    final AtomicInteger propertyLsnrs = new AtomicInteger();
-    final AtomicInteger collectionLsnrs = new AtomicInteger();
+    AtomicInteger propertyLsnrs = new AtomicInteger();
+    AtomicInteger collectionLsnrs = new AtomicInteger();
     Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
     ObservableList<String> selected = listenersCountingList(collectionLsnrs);
 
@@ -96,8 +96,8 @@ public class SelectTest {
 
   @Test
   public void listInnerUnfollow() {
-    final AtomicInteger propertyLsnrs = new AtomicInteger();
-    final AtomicInteger collectionLsnrs = new AtomicInteger();
+    AtomicInteger propertyLsnrs = new AtomicInteger();
+    AtomicInteger collectionLsnrs = new AtomicInteger();
     final Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
     ObservableList<String> selected = listenersCountingList(collectionLsnrs);
 

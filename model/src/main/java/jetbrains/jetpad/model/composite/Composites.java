@@ -138,7 +138,7 @@ public class Composites {
    * @return Iterable containing the current node and all ancestors.
    */
   public static <CompositeT extends Composite<CompositeT>>
-  Iterable<CompositeT> ancestorsFrom(final CompositeT current) {
+  Iterable<CompositeT> ancestorsFrom(CompositeT current) {
     return iterateFrom(current, new Function<CompositeT, CompositeT>() {
       @Override
       public CompositeT apply(CompositeT compositeT) {
@@ -151,7 +151,7 @@ public class Composites {
    * @return Iterable containing all ancestors, but not the current node.
    */
   public static <CompositeT extends Composite<CompositeT>>
-  Iterable<CompositeT> ancestors(final CompositeT current) {
+  Iterable<CompositeT> ancestors(CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
       public CompositeT apply(CompositeT compositeT) {
@@ -161,7 +161,7 @@ public class Composites {
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
-  Iterable<CompositeT> nextLeaves(final CompositeT current) {
+  Iterable<CompositeT> nextLeaves(CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
       public CompositeT apply(CompositeT c) {
@@ -171,7 +171,7 @@ public class Composites {
   }
 
   public static <CompositeT extends NavComposite<CompositeT>>
-  Iterable<CompositeT> prevLeaves(final CompositeT current) {
+  Iterable<CompositeT> prevLeaves(CompositeT current) {
     return iterate(current, new Function<CompositeT, CompositeT>() {
       @Override
       public CompositeT apply(CompositeT c) {

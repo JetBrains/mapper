@@ -46,7 +46,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   @Override
-  public final void add(final int index, final ItemT item) {
+  public final void add(int index, ItemT item) {
     checkAdd(index, item);
     beforeItemAdded(index, item);
     boolean success = false;
@@ -80,8 +80,8 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   @Override
-  public final ItemT set(final int index, final ItemT item) {
-    final ItemT old = get(index);
+  public final ItemT set(int index, ItemT item) {
+    ItemT old = get(index);
     checkSet(index, old, item);
     beforeItemSet(index, old, item);
     boolean success = false;
@@ -119,8 +119,8 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   @Override
-  public final ItemT remove(final int index) {
-    final ItemT item = get(index);
+  public final ItemT remove(int index) {
+    ItemT item = get(index);
     checkRemove(index, item);
     beforeItemRemoved(index, item);
     boolean success = false;
@@ -175,7 +175,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
 
   @Override
   public Registration addHandler(final EventHandler<? super CollectionItemEvent<? extends ItemT>> handler) {
-    final CollectionListener<ItemT> listener = new CollectionListener<ItemT>() {
+    CollectionListener<ItemT> listener = new CollectionListener<ItemT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
         handler.onEvent(event);

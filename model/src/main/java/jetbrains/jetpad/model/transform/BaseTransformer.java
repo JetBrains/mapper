@@ -22,15 +22,15 @@ public abstract class BaseTransformer<SourceT, TargetT> implements Transformer<S
     return new BaseTransformer<SourceT, ParameterTargetT>() {
       @Override
       public Transformation<SourceT, ParameterTargetT> transform(SourceT source) {
-        final Transformation<SourceT, TargetT> tn1 = firstTransformer.transform(source);
-        final Transformation<TargetT, ParameterTargetT> tn2 = transformer.transform(tn1.getTarget());
+        Transformation<SourceT, TargetT> tn1 = firstTransformer.transform(source);
+        Transformation<TargetT, ParameterTargetT> tn2 = transformer.transform(tn1.getTarget());
         return createTransformation(tn1, tn2);
       }
 
       @Override
       public Transformation<SourceT, ParameterTargetT> transform(SourceT source, ParameterTargetT to) {
-        final Transformation<SourceT, TargetT> tn1 = firstTransformer.transform(source);
-        final Transformation<TargetT, ParameterTargetT> tn2 = transformer.transform(tn1.getTarget(), to);
+        Transformation<SourceT, TargetT> tn1 = firstTransformer.transform(source);
+        Transformation<TargetT, ParameterTargetT> tn2 = transformer.transform(tn1.getTarget(), to);
         return createTransformation(tn1, tn2);
       }
 
