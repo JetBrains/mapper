@@ -28,6 +28,8 @@ import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
 import jetbrains.jetpad.base.function.Supplier;
 
+import java.util.Objects;
+
 public class Properties {
   public static final ReadableProperty<Boolean> TRUE = Properties.constant(Boolean.TRUE);
   public static final ReadableProperty<Boolean> FALSE = Properties.constant(Boolean.FALSE);
@@ -84,7 +86,7 @@ public class Properties {
       @Override
       public Boolean doGet() {
         String val = prop.get();
-        return val == null || val.length() == 0;
+        return val == null || val.isEmpty();
       }
 
       @Override
@@ -171,7 +173,7 @@ public class Properties {
     };
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Function<? super SourceT, ReadableProperty<TargetT>> fun) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(ReadableProperty<SourceT> source, Function<? super SourceT, ReadableProperty<TargetT>> fun) {
     return select(source, fun, null);
   }
 
@@ -203,7 +205,7 @@ public class Properties {
             somethingChanged();
           }
         };
-        final EventHandler<PropertyChangeEvent<SourceT>> sourceHandler = new EventHandler<PropertyChangeEvent<SourceT>>() {
+        EventHandler<PropertyChangeEvent<SourceT>> sourceHandler = new EventHandler<PropertyChangeEvent<SourceT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
             if (myTargetProperty != null) {
@@ -279,7 +281,7 @@ public class Properties {
             somethingChanged();
           }
         };
-        final EventHandler<PropertyChangeEvent<SourceT>> sourceHandler = new EventHandler<PropertyChangeEvent<SourceT>>() {
+        EventHandler<PropertyChangeEvent<SourceT>> sourceHandler = new EventHandler<PropertyChangeEvent<SourceT>>() {
           @Override
           public void onEvent(PropertyChangeEvent<SourceT> event) {
             if (myTargetProperty != null) {
@@ -369,7 +371,7 @@ public class Properties {
     };
   }
 
-  public static <ValueT> ReadableProperty<Boolean> same(final ReadableProperty<ValueT> prop, final ValueT value) {
+  public static <ValueT> ReadableProperty<Boolean> same(ReadableProperty<ValueT> prop, final ValueT value) {
     return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT s) {
@@ -378,11 +380,11 @@ public class Properties {
     });
   }
 
-  public static <ValueT> ReadableProperty<Boolean> equals(final ReadableProperty<ValueT> prop, final ValueT value) {
+  public static <ValueT> ReadableProperty<Boolean> equals(ReadableProperty<ValueT> prop, final ValueT value) {
     return map(prop, new Function<ValueT, Boolean>() {
       @Override
       public Boolean apply(ValueT s) {
-        return java.util.Objects.equals(value, s);
+        return Objects.equals(value, s);
       }
     });
   }
@@ -391,7 +393,7 @@ public class Properties {
     return new DerivedProperty<Boolean>(p1, p2) {
       @Override
       public Boolean doGet() {
-        return java.util.Objects.equals(p1.get(), p2.get());
+        return Objects.equals(p1.get(), p2.get());
       }
 
       @Override
@@ -401,11 +403,11 @@ public class Properties {
     };
   }
 
-  public static <ValueT> ReadableProperty<Boolean> notEquals(final ReadableProperty<ValueT> prop, final ValueT value) {
+  public static <ValueT> ReadableProperty<Boolean> notEquals(ReadableProperty<ValueT> prop, ValueT value) {
     return not(equals(prop, value));
   }
 
-  public static <ValueT> ReadableProperty<Boolean> notEquals(final ReadableProperty<? extends ValueT> p1, final ReadableProperty<? extends ValueT> p2) {
+  public static <ValueT> ReadableProperty<Boolean> notEquals(ReadableProperty<? extends ValueT> p1, ReadableProperty<? extends ValueT> p2) {
     return not(equals(p1, p2));
   }
 
@@ -438,7 +440,7 @@ public class Properties {
             TargetT oldValue = sToT.apply(event.getOldValue());
             TargetT newValue = sToT.apply(event.getNewValue());
 
-            if (java.util.Objects.equals(oldValue, newValue)) return;
+            if (Objects.equals(oldValue, newValue)) return;
 
             handler.onEvent(new PropertyChangeEvent<>(oldValue, newValue));
           }
@@ -571,7 +573,7 @@ public class Properties {
     };
   }
 
-  public static <ItemT> ReadableProperty<Boolean> notEmpty(final ObservableCollection<ItemT> collection) {
+  public static <ItemT> ReadableProperty<Boolean> notEmpty(ObservableCollection<ItemT> collection) {
     return not(empty(collection));
   }
 
@@ -634,7 +636,7 @@ public class Properties {
     };
   }
 
-  public static <ValueT> ReadableProperty<ValueT> ifProp(final ReadableProperty<Boolean> cond, final ValueT ifTrue, final ValueT ifFalse) {
+  public static <ValueT> ReadableProperty<ValueT> ifProp(ReadableProperty<Boolean> cond, ValueT ifTrue, ValueT ifFalse) {
     return ifProp(cond, constant(ifTrue), constant(ifFalse));
   }
 
@@ -713,7 +715,7 @@ public class Properties {
 
   public static <ValueT> Property<ValueT> validatedProperty(final Property<ValueT> source, final Predicate<ValueT> validator) {
     class ValidatedProperty extends DerivedProperty<ValueT> implements Property<ValueT> {
-      private ValueT myLastValid = null;
+      private ValueT myLastValid;
 
       ValidatedProperty() {
         super(source);
@@ -745,7 +747,7 @@ public class Properties {
     return new ValidatedProperty();
   }
 
-  public static ReadableProperty<String> toStringOf(final ReadableProperty<?> p) {
+  public static ReadableProperty<String> toStringOf(ReadableProperty<?> p) {
     return toStringOf(p, "null");
   }
 
@@ -813,7 +815,7 @@ public class Properties {
       @Override
       public void set(ItemT value) {
         ItemT current = get();
-        if (current != null && current.equals(value)) return;
+        if (Objects.equals(current, value)) return;
         coll.clear();
         if (value != null) {
           coll.add(value);
@@ -828,7 +830,7 @@ public class Properties {
             if (coll.size() != 1) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(null, event.getNewItem()));
+            handler.onEvent(new PropertyChangeEvent<>(null, event.getNewItem()));
           }
 
           @Override
@@ -836,7 +838,7 @@ public class Properties {
             if (event.getIndex() != 0) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), event.getNewItem()));
+            handler.onEvent(new PropertyChangeEvent<>(event.getOldItem(), event.getNewItem()));
           }
 
           @Override
@@ -844,7 +846,7 @@ public class Properties {
             if (!coll.isEmpty()) {
               throw new IllegalStateException();
             }
-            handler.onEvent(new PropertyChangeEvent<ItemT>(event.getOldItem(), null));
+            handler.onEvent(new PropertyChangeEvent<>(event.getOldItem(), null));
           }
         });
       }
