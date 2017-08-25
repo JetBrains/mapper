@@ -206,6 +206,16 @@ public class AsyncsTest {
   }
 
   @Test
+  public void parallelResult() {
+    assertThat(
+        Asyncs.parallelResult(Arrays.asList(
+            Asyncs.constant(1), Asyncs.<Integer>failure(new Throwable()), Asyncs.constant(2)
+        )),
+        result(equalTo(Arrays.asList(1, 2)))
+    );
+  }
+
+  @Test
   public void untilSuccess() {
     assertThat(
         Asyncs.untilSuccess(new Supplier<Async<Integer>>() {

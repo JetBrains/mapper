@@ -213,6 +213,27 @@ public class Asyncs {
     return parallel(asyncs, false, new ThreadSafeParallelData(asyncs.size()));
   }
 
+  @GwtIncompatible
+  public static <ItemT> Async<List<ItemT>> parallelResult(Collection<Async<ItemT>> asyncs) {
+    final List<ItemT> result = Collections.synchronizedList(new ArrayList<ItemT>());
+
+    for (Async<ItemT> async : asyncs) {
+      async.onSuccess(
+          new Consumer<ItemT>() {
+            @Override
+            public void accept(ItemT item) {
+              result.add(item);
+            }
+          }
+      );
+    }
+
+    return seq(
+        parallel(asyncs, true, new ThreadSafeParallelData(asyncs.size())),
+        Asyncs.constant(result)
+    );
+  }
+
   private static Async<Void> parallel(Collection<? extends Async<?>> asyncs, final boolean alwaysSucceed,
       final ParallelData parallelData) {
     if (asyncs.isEmpty()) {
