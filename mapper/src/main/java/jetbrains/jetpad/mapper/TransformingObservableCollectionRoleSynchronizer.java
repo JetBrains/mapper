@@ -15,11 +15,11 @@
  */
 package jetbrains.jetpad.mapper;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
-import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.transform.Transformation;
 import jetbrains.jetpad.model.transform.Transformer;
 

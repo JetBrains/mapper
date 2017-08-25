@@ -15,8 +15,8 @@
  */
 package jetbrains.jetpad.model.property;
 
-import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.EventHandler;
 
 /**
  * Simplified version of {@link BaseDerivedProperty} which can depend only on other properties instead of

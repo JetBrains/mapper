@@ -15,7 +15,13 @@
  */
 package jetbrains.jetpad.model.util;
 
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Memory efficient implementation of a map based on an array.

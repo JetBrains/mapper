@@ -15,8 +15,8 @@
  */
 package jetbrains.jetpad.model.collections;
 
-import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.EventSource;
 
 import java.util.Collection;
 

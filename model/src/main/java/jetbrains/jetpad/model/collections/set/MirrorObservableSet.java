@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.collections.set;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
@@ -26,7 +27,6 @@ import jetbrains.jetpad.model.event.Listeners;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
-import jetbrains.jetpad.base.function.Function;
 
 public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> implements ObservableSet<TargetT> {
   private ObservableCollection<SourceT> myBaseCollection;

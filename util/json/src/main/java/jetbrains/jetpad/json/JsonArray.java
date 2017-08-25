@@ -16,7 +16,10 @@
 package jetbrains.jetpad.json;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class JsonArray extends JsonValue implements Iterable<JsonValue> {
   private List<JsonValue> myValues;

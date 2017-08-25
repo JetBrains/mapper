@@ -19,7 +19,8 @@ import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 public class CompositesCommonAncestorTest extends BaseTestCase {
   private SimpleCompositesTree tree;

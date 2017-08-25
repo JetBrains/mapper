@@ -42,7 +42,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 
-import static jetbrains.jetpad.model.collections.CollectionItemEvent.*;
+import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType;
 
 public class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {

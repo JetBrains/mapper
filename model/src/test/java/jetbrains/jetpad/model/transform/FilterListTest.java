@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.transform;
 
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
@@ -26,8 +27,6 @@ import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
-
-import jetbrains.jetpad.base.function.Function;
 
 import java.util.Arrays;
 

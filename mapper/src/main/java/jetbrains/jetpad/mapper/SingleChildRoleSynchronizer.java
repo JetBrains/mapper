@@ -15,8 +15,8 @@
  */
 package jetbrains.jetpad.mapper;
 
-import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.Property;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;

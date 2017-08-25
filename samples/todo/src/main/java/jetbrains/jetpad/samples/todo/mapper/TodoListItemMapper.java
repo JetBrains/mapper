@@ -22,7 +22,9 @@ import jetbrains.jetpad.mapper.Synchronizers;
 import jetbrains.jetpad.samples.todo.model.TodoListItem;
 
 import static com.google.gwt.query.client.GQuery.$;
-import static jetbrains.jetpad.mapper.gwt.DomUtil.*;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.checkbox;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.editableTextOf;
+import static jetbrains.jetpad.mapper.gwt.DomUtil.hasClass;
 
 class TodoListItemMapper extends Mapper<TodoListItem, TodoListItemView> {
   TodoListItemMapper(TodoListItem source) {

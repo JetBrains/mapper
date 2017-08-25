@@ -15,10 +15,11 @@
  */
 package jetbrains.jetpad.base;
 
-import java.util.ArrayList;
-import java.util.List;
 import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.base.function.Function;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
   private ItemT mySuccessItem;
