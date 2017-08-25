@@ -16,9 +16,8 @@
 package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.base.function.Predicate;
-import org.junit.Test;
-
 import jetbrains.jetpad.base.function.Supplier;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

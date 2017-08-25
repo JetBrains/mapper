@@ -18,7 +18,11 @@ package jetbrains.jetpad.model.composite;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Stack;
 
 public class Composites {
   private static CompositesWithBounds ourWithBounds = new CompositesWithBounds(0);

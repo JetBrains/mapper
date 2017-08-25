@@ -16,7 +16,12 @@
 package jetbrains.jetpad.json;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JsonObject extends JsonValue {
   private Map<String, JsonValue> myValues = new LinkedHashMap<>();

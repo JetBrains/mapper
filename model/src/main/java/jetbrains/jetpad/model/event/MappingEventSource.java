@@ -16,7 +16,6 @@
 package jetbrains.jetpad.model.event;
 
 import jetbrains.jetpad.base.Registration;
-
 import jetbrains.jetpad.base.function.Function;
 
 final class MappingEventSource<SourceEventT, TargetEventT> implements EventSource<TargetEventT> {

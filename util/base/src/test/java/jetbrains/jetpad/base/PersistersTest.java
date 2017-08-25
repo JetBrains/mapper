@@ -15,12 +15,12 @@
  */
 package jetbrains.jetpad.base;
 
+import jetbrains.jetpad.base.function.Supplier;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import jetbrains.jetpad.base.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

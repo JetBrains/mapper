@@ -15,10 +15,10 @@
  */
 package jetbrains.jetpad.base;
 
+import jetbrains.jetpad.base.function.Consumer;
 import org.junit.Test;
 
 import java.util.ConcurrentModificationException;
-import jetbrains.jetpad.base.function.Consumer;
 
 public class SimpleAsyncRegistrationsTest {
   private SimpleAsync<Void> async = new SimpleAsync<>();

@@ -21,6 +21,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.Timer;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.geometry.Vector;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
@@ -34,7 +35,6 @@ import jetbrains.jetpad.model.property.WritableProperty;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import jetbrains.jetpad.base.function.Supplier;
 
 import static com.google.gwt.query.client.GQuery.$;
 

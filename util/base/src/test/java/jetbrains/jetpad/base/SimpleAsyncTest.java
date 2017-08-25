@@ -15,10 +15,9 @@
  */
 package jetbrains.jetpad.base;
 
+import jetbrains.jetpad.base.function.Consumer;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
-
-import jetbrains.jetpad.base.function.Consumer;
 
 import static org.junit.Assert.assertTrue;
 

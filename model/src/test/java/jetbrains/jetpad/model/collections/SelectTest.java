@@ -22,14 +22,22 @@ import jetbrains.jetpad.model.collections.list.ObservableCollections;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.model.property.*;
+import jetbrains.jetpad.model.property.Properties;
+import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
+import jetbrains.jetpad.model.property.ReadableProperty;
+import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.ADD;
+import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.REMOVE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class SelectTest {
   public static final int TEST_LIST_SIZE = 3;

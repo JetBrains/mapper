@@ -16,7 +16,11 @@
 package jetbrains.jetpad.samples.todo.mapper;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.*;
+import com.google.gwt.dom.client.ButtonElement;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.LIElement;
+import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import jetbrains.jetpad.mapper.gwt.BaseWithElement;

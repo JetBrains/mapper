@@ -15,9 +15,9 @@
  */
 package jetbrains.jetpad.model.property;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.EventHandler;
-import jetbrains.jetpad.base.Registration;
 
 /**
  * One and two-way property binding support

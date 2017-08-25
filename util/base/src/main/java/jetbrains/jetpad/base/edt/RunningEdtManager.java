@@ -17,10 +17,10 @@ package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
+import jetbrains.jetpad.base.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.List;
-import jetbrains.jetpad.base.function.Supplier;
 
 public class RunningEdtManager implements EdtManager, EventDispatchThread {
   private String myName;

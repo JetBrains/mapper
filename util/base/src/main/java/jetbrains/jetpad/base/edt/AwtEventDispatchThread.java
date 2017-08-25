@@ -17,7 +17,8 @@ package jetbrains.jetpad.base.edt;
 
 import jetbrains.jetpad.base.Registration;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

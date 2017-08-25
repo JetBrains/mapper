@@ -16,12 +16,11 @@
 package jetbrains.jetpad.model.event.stream;
 
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.base.function.Predicate;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.EventSource;
 import jetbrains.jetpad.model.event.EventSources;
-
-import jetbrains.jetpad.base.function.Function;
-import jetbrains.jetpad.base.function.Predicate;
 
 /**
  * This class is inspired by different implementations of observable/event streams, including: Rx, RxJava, bacon.js,

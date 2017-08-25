@@ -15,12 +15,11 @@
  */
 package jetbrains.jetpad.model.property;
 
+import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.event.EventHandler;
 import org.junit.Test;
-
-import jetbrains.jetpad.base.function.Supplier;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

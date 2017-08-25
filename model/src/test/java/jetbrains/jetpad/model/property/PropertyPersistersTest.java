@@ -18,11 +18,11 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.base.Persister;
 import jetbrains.jetpad.base.Persisters;
+import jetbrains.jetpad.base.function.Supplier;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import jetbrains.jetpad.base.function.Supplier;
 
 import static jetbrains.jetpad.base.Persisters.stringPersister;
 import static org.junit.Assert.assertEquals;

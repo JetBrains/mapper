@@ -17,13 +17,13 @@ package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Functions;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import jetbrains.jetpad.base.function.Function;
 
 public class HighestPriorityErrorCasesTest {
   private static final Function<Object, Integer> INCONSISTENT_PRIORITY = new Function<Object, Integer>() {

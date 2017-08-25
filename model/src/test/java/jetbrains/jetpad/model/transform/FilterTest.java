@@ -17,6 +17,7 @@ package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.event.EventHandler;
@@ -25,8 +26,6 @@ import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import org.junit.Test;
-
-import jetbrains.jetpad.base.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

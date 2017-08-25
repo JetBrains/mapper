@@ -15,13 +15,13 @@
  */
 package jetbrains.jetpad.model.collections.set;
 
+import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.CollectionListener;
 import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
-import jetbrains.jetpad.base.Registration;
 
 import java.util.AbstractSet;
 import java.util.Collections;

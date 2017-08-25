@@ -20,7 +20,11 @@ import jetbrains.jetpad.model.event.CompositeRegistration;
 import jetbrains.jetpad.model.event.ListenerCaller;
 import jetbrains.jetpad.model.event.Listeners;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public final class MappingContext {
   public static final MappingContextProperty<CompositeRegistration> ON_DISPOSE =
