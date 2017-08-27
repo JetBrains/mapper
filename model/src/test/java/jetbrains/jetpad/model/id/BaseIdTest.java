@@ -64,7 +64,7 @@ public class BaseIdTest extends BaseTestCase {
   @Slow
   @Test
   public void idRandomness() {
-    int stats[] = new int[128];
+    int[] stats = new int[128];
 
     for (int i = 0; i < 62000; i++) {
       String id = new BaseId() {}.getId();

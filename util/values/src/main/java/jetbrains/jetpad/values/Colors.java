@@ -211,7 +211,7 @@ public class Colors {
   }
 
   public static Color[] distributeEvenly(int count, double saturation) {
-    Color result[] = new Color[count];
+    Color[] result = new Color[count];
 
     int sector = 360 / count;
     for (int i = 0; i < count; i++) {
