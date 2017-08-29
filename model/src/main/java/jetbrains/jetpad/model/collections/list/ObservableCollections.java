@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ObservableCollections {
+public final class ObservableCollections {
   private static final ObservableList EMPTY_LIST = new AbstractObservableList() {
     @Override
     public int size() {
@@ -120,7 +120,7 @@ public class ObservableCollections {
       @Override
       public Registration addHandler(final EventHandler<? super PropertyChangeEvent<List<ItemT>>> handler) {
         return list.addHandler(new EventHandler<CollectionItemEvent<? extends ItemT>>() {
-          List<ItemT> myLastValue = new ArrayList<>(list);
+          private List<ItemT> myLastValue = new ArrayList<>(list);
 
           @Override
           public void onEvent(CollectionItemEvent<? extends ItemT> event) {
@@ -223,6 +223,14 @@ public class ObservableCollections {
     return new UnmodifiableObservableCollection<>(new SelectorDerivedCollection<>(p, s));
   }
 
+  public static <ValueT, ItemT> ObservableList<ItemT> selectList(
+      ReadableProperty<ValueT> p, Function<ValueT, ObservableList<ItemT>> s) {
+    return new UnmodifiableObservableList<>(new SelectorDerivedList<>(p, s));
+  }
+
+  private ObservableCollections() {
+  }
+
   private static class SelectorDerivedCollection<ValueT, ItemT>
       extends SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>> {
     SelectorDerivedCollection(ReadableProperty<ValueT> source, Function<ValueT, ObservableCollection<ItemT>> fun) {
@@ -270,11 +278,6 @@ public class ObservableCollections {
         return select().iterator();
       }
     }
-  }
-
-  public static <ValueT, ItemT> ObservableList<ItemT> selectList(
-      ReadableProperty<ValueT> p, Function<ValueT, ObservableList<ItemT>> s) {
-    return new UnmodifiableObservableList<>(new SelectorDerivedList<>(p, s));
   }
 
   private static class SelectorDerivedList<ValueT, ItemT>

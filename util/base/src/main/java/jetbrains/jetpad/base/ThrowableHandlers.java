@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ThrowableHandlers {
+public final class ThrowableHandlers {
   private static final Logger LOG = Logger.getLogger(ThrowableHandlers.class.getName());
   public static boolean DEBUG = false;
 
@@ -180,6 +180,9 @@ public class ThrowableHandlers {
       }
     }
     return true;
+  }
+
+  private ThrowableHandlers() {
   }
 
   private static class MyEventSource {

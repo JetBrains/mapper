@@ -17,7 +17,7 @@ package jetbrains.jetpad.model.property;
 
 import jetbrains.jetpad.base.Persister;
 
-public class PropertyPersisters {
+public final class PropertyPersisters {
   public static <T> Persister<Property<T>> valuePropertyPersister(final Persister<T> itemPersister) {
     return new Persister<Property<T>>() {
       @Override
@@ -48,5 +48,8 @@ public class PropertyPersisters {
         return "valuePropertyPersister[using = " + itemPersister + "]";
       }
     };
+  }
+
+  private PropertyPersisters() {
   }
 }

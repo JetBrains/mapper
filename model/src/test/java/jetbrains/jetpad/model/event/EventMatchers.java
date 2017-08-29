@@ -24,15 +24,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventMatchers {
-  public static class MatchingHandler<EventT> implements EventHandler<EventT> {
-    final List<EventT> events = new ArrayList<>();
-
-    @Override
-    public void onEvent(EventT event) {
-      events.add(event);
-    }
-  }
+public final class EventMatchers {
 
   public static <EventT> MatchingHandler<EventT> setTestHandler(EventSource<? extends EventT> source) {
     MatchingHandler<EventT> handler = new MatchingHandler<>();
@@ -199,5 +191,17 @@ public class EventMatchers {
 
   public static <ValueT> Matcher<PropertyChangeEvent<ValueT>> oldValueIs(ValueT value) {
     return oldValue(CoreMatchers.is(value));
+  }
+
+  private EventMatchers() {
+  }
+
+  public static class MatchingHandler<EventT> implements EventHandler<EventT> {
+    private final List<EventT> events = new ArrayList<>();
+
+    @Override
+    public void onEvent(EventT event) {
+      events.add(event);
+    }
   }
 }

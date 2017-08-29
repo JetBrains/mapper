@@ -18,7 +18,7 @@ package jetbrains.jetpad.mapper;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 
-public class Mappers {
+public final class Mappers {
   public static boolean isDescendant(Mapper<?, ?> ancestor, Mapper<?, ?> descendant) {
     if (descendant == ancestor) return true;
     Mapper<?, ?> parent = descendant.getParent();
@@ -57,5 +57,8 @@ public class Mappers {
         };
       }
     };
+  }
+
+  private Mappers() {
   }
 }

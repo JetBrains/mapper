@@ -25,7 +25,7 @@ import jetbrains.jetpad.model.collections.list.ObservableList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventSources {
+public final class EventSources {
   /**
    * Event source which always dispatched the same events on subscription. It's useful for testing and
    * composition. In Rx-like libraries a similar thing is called cold observable.
@@ -111,5 +111,8 @@ public class EventSources {
         };
       }
     };
+  }
+
+  private EventSources() {
   }
 }

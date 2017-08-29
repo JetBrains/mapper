@@ -18,7 +18,7 @@ package jetbrains.jetpad.base.base64;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Base64Coder {
+public final class Base64Coder {
   private static final Base64Table ourTable = new Base64Table('+', '/');
 
   public static String encode(byte[] bytes) {
@@ -89,5 +89,8 @@ public class Base64Coder {
   public static void main(String[] args) {
     byte b = -1;
     System.out.println(b & 0xFF);
+  }
+
+  private Base64Coder() {
   }
 }

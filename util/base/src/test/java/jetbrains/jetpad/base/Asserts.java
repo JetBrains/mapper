@@ -22,7 +22,7 @@ import jetbrains.jetpad.base.function.Predicate;
  * @deprecated Use {@link AsyncMatchers} instead
  */
 @Deprecated
-public class Asserts {
+public final class Asserts {
   public static <T> void assertSuccess(Async<T> async) {
     assertSuccess(new Predicate<T>() {
       @Override

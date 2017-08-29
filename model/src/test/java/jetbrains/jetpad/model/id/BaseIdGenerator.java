@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-public class BaseIdGenerator {
+public final class BaseIdGenerator {
   private static final int DEFAULT_NUM_IDS = 5;
   private static final String USAGE = "usage: num_ids file_to_save_in";
 
@@ -66,6 +66,9 @@ public class BaseIdGenerator {
     StringSelection stringSelection = new StringSelection(idString);
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     clipboard.setContents(stringSelection, null);
+  }
+
+  private BaseIdGenerator() {
   }
 
   private static class MyId extends BaseId {}

@@ -19,7 +19,7 @@ package jetbrains.jetpad.geometry;
  * X axis positive direction is right;
  * Y axis positive direction is down.
  */
-public class Rectangles {
+public final class Rectangles {
   public static Rectangle zeroOrigin(Rectangle r) {
     return new Rectangle(Vector.ZERO, r.dimension);
   }

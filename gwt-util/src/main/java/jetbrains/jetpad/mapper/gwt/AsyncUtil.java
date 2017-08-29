@@ -18,7 +18,7 @@ package jetbrains.jetpad.mapper.gwt;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import jetbrains.jetpad.base.SimpleAsync;
 
-public class AsyncUtil {
+public final class AsyncUtil {
   public static <ItemT> AsyncCallback<ItemT> getCallback(final SimpleAsync<ItemT> async) {
     return new AsyncCallback<ItemT>() {
       @Override
@@ -33,4 +33,6 @@ public class AsyncUtil {
     };
   }
 
+  private AsyncUtil() {
+  }
 }

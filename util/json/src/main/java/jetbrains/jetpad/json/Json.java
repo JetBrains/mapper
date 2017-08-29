@@ -17,7 +17,7 @@ package jetbrains.jetpad.json;
 
 import java.util.logging.Logger;
 
-public class Json {
+public final class Json {
   private static final Logger LOG = Logger.getLogger(Json.class.getName());
 
   private static JsonSupport ourJsonSupport = new DefautJsonSupport();
@@ -33,5 +33,8 @@ public class Json {
   public static void setJsonSupport(JsonSupport parser) {
     ourJsonSupport = parser;
     LOG.info("Set Json Parser to " + parser);
+  }
+
+  private Json() {
   }
 }

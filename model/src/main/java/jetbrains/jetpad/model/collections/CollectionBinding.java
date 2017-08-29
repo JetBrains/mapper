@@ -22,7 +22,7 @@ import jetbrains.jetpad.model.collections.set.ObservableSet;
 import java.util.List;
 import java.util.Set;
 
-public class CollectionBinding {
+public final class CollectionBinding {
   public static <ItemT> Registration bindOneWay(ObservableList<ItemT> source, final List<ItemT> target) {
     target.addAll(source);
     return source.addListener(new CollectionListener<ItemT>() {
@@ -56,5 +56,8 @@ public class CollectionBinding {
         target.remove(event.getOldItem());
       }
     });
+  }
+
+  private CollectionBinding() {
   }
 }

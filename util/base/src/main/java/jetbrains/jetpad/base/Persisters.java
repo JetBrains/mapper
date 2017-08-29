@@ -19,7 +19,7 @@ import jetbrains.jetpad.base.function.Supplier;
 
 import java.util.List;
 
-public class Persisters {
+public final class Persisters {
   private static final Persister<String> STRING_PERSISTER = new Persister<String>() {
     @Override
     public String deserialize(String value) {
@@ -240,5 +240,8 @@ public class Persisters {
         return "listPersister[using = " + itemPersister + "]";
       }
     };
+  }
+
+  private Persisters() {
   }
 }

@@ -16,7 +16,7 @@
 package jetbrains.jetpad.base.base64;
 
 //see RFC 4648 'base64url' encoding
-public class Base64URLSafeCoder {
+public final class Base64URLSafeCoder {
   private static final IdCoder ourCoder = new IdCoder(new Base64Table('_'));
 
   public static String encode(long l) {
@@ -25,5 +25,8 @@ public class Base64URLSafeCoder {
 
   public static long decode(String s) {
     return ourCoder.decode(s);
+  }
+
+  private Base64URLSafeCoder() {
   }
 }

@@ -20,7 +20,7 @@ import jetbrains.jetpad.base.Persister;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Colors {
+public final class Colors {
   public static final double DEFAULT_FACTOR = 0.7d;
 
   private static HashMap<String, Color> colorsList = createColorsList();
@@ -243,5 +243,8 @@ public class Colors {
         return "colorPersister";
       }
     };
+  }
+
+  private Colors() {
   }
 }

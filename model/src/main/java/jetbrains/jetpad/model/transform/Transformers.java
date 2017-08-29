@@ -44,7 +44,7 @@ import java.util.Objects;
 
 import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType;
 
-public class Transformers {
+public final class Transformers {
   public static <ItemT> Transformer<ItemT, ItemT> identity() {
     return coerce();
   }
@@ -1490,6 +1490,9 @@ public class Transformers {
         return new SimpleTransformation<>(from, to, fromRegistration);
       }
     };
+  }
+
+  private Transformers() {
   }
 
   private static class SimpleTransformation<SourceT, TargetT> extends Transformation<SourceT, TargetT> {

@@ -22,7 +22,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.core.IsAnything;
 
-public class AsyncMatchers {
+public final class AsyncMatchers {
   public static <T> Matcher<Async<T>> result(final Matcher<? super T> valueMatcher) {
     return new TypeSafeDiagnosingMatcher<Async<T>>() {
       @Override
@@ -145,6 +145,9 @@ public class AsyncMatchers {
           }
         });
     return resultValue.get();
+  }
+
+  private AsyncMatchers() {
   }
 
   private static class AsyncResult<T> {

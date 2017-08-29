@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
-public class Composites {
+public final class Composites {
   private static CompositesWithBounds ourWithBounds = new CompositesWithBounds(0);
 
   public static <CompositeT extends Composite<CompositeT>>
@@ -590,5 +590,8 @@ public class Composites {
     for (CompositeT c : branch.children()) {
       addBranch(c, accum);
     }
+  }
+
+  private Composites() {
   }
 }

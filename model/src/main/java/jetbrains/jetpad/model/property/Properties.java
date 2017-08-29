@@ -29,7 +29,7 @@ import jetbrains.jetpad.model.event.EventSource;
 
 import java.util.Objects;
 
-public class Properties {
+public final class Properties {
   public static final ReadableProperty<Boolean> TRUE = Properties.constant(Boolean.TRUE);
   public static final ReadableProperty<Boolean> FALSE = Properties.constant(Boolean.FALSE);
 
@@ -909,5 +909,8 @@ public class Properties {
         return propExpr.append(")").toString();
       }
     };
+  }
+
+  private Properties() {
   }
 }

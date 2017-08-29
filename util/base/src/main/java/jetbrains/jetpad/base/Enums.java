@@ -17,7 +17,7 @@ package jetbrains.jetpad.base;
 
 import java.util.Objects;
 
-public class Enums {
+public final class Enums {
   /**
    * Value of method for enums which takes into account toString() instead of saved generated name
    */
@@ -29,5 +29,8 @@ public class Enums {
     }
 
     throw new IllegalArgumentException(name);
+  }
+
+  private Enums() {
   }
 }

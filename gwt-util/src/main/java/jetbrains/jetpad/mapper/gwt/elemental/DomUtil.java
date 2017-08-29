@@ -20,7 +20,7 @@ import elemental.dom.Node;
 import java.util.AbstractList;
 import java.util.List;
 
-public class DomUtil {
+public final class DomUtil {
   public static List<Node> nodeChildren(final Node n) {
     return new AbstractList<Node>() {
       @Override
@@ -65,5 +65,8 @@ public class DomUtil {
         return n.getChildNodes().getLength();
       }
     };
+  }
+
+  private DomUtil() {
   }
 }

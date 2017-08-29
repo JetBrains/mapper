@@ -17,7 +17,7 @@ package jetbrains.jetpad.model.id;
 
 import java.util.Random;
 
-class IdGenerator {
+final class IdGenerator {
   private static final Random ourRandom = new Random();
 
   static String nextBase62RandomId(int length) {
@@ -43,5 +43,8 @@ class IdGenerator {
 
   private static char toChar(int x) {
     return (char) (x < 10 ? '0' + x : x < 36 ? 'a' + x - 10 : 'A' + x - 36);
+  }
+
+  private IdGenerator() {
   }
 }

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @GwtCompatible
-public class Asyncs {
+public final class Asyncs {
   public static boolean isFinished(Async<?> async) {
     final Value<Boolean> finished = new Value<>(false);
     async.onResult(new Consumer<Object>() {
@@ -468,6 +468,9 @@ public class Asyncs {
     } else {
       return result.get();
     }
+  }
+
+  private Asyncs() {
   }
 
   @GwtIncompatible("Uses threading primitives")

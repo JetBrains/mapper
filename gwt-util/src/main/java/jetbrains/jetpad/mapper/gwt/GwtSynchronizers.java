@@ -20,7 +20,7 @@ import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.mapper.Synchronizer;
 import jetbrains.jetpad.mapper.SynchronizerContext;
 
-public class GwtSynchronizers {
+public final class GwtSynchronizers {
   public static Synchronizer forRegistration(final Supplier<HandlerRegistration> reg) {
     return new Synchronizer() {
       HandlerRegistration myReg;
@@ -48,5 +48,8 @@ public class GwtSynchronizers {
         r.removeHandler();
       }
     };
+  }
+
+  private GwtSynchronizers() {
   }
 }

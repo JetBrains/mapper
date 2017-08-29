@@ -38,7 +38,7 @@ import java.util.List;
 
 import static com.google.gwt.query.client.GQuery.$;
 
-public class DomUtil {
+public final class DomUtil {
   public static List<Node> elementChildren(Element e) {
     return nodeChildren(e);
   }
@@ -316,4 +316,6 @@ public class DomUtil {
 
   }
 
+  private DomUtil() {
+  }
 }

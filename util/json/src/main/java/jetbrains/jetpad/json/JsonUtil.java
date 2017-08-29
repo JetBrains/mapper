@@ -20,7 +20,7 @@ import com.google.common.primitives.Chars;
 import java.util.Arrays;
 import java.util.List;
 
-class JsonUtil {
+final class JsonUtil {
   private static final char[] SPECIAL_CHARS = {'\"', '\\', '/', '\b', '\f', '\n', '\r', '\t'};
   private static final String[] ESCAPED_SPECIAL_CHARS = {"\\\"", "\\\\", "\\/", "\\b", "\\f", "\\n", "\\r", "\\t"};
   private static final char[] UNESCAPED_SPECIAL_CHARS = {'"', '\\', '/', 'b', 'f', 'n', 'r', 't'};
@@ -36,9 +36,6 @@ class JsonUtil {
       table[UNESCAPED_SPECIAL_CHARS[i]] = SPECIAL_CHARS[i];
     }
     UNESCAPED_SPECIAL_CHAR_LOOKUP_TABLE = table;
-  }
-
-  private JsonUtil() {
   }
 
   static List<Character> getSpecialChars() {
@@ -123,6 +120,9 @@ class JsonUtil {
     } else {
       return s.substring(start, end);
     }
+  }
+
+  private JsonUtil() {
   }
 
 }

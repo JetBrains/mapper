@@ -22,7 +22,7 @@ import jetbrains.jetpad.model.event.EventHandler;
 /**
  * One and two-way property binding support
  */
-public class PropertyBinding {
+public final class PropertyBinding {
   public static <ValueT> Registration bindOneWay(
       ReadableProperty<? extends ValueT> source, final WritableProperty<? super ValueT> target) {
     target.set(source.get());
@@ -66,5 +66,8 @@ public class PropertyBinding {
       source.addHandler(new UpdatingEventHandler(true)),
       target.addHandler(new UpdatingEventHandler(false))
     );
+  }
+
+  private PropertyBinding() {
   }
 }

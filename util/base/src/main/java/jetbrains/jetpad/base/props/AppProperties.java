@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base.props;
 
-public class AppProperties {
+public final class AppProperties {
   private static PropertyProvider ourPropertyProvider = new EmptyPropertyProvider();
 
   public static void setProvider(PropertyProvider provider) {
@@ -32,5 +32,8 @@ public class AppProperties {
 
   public static String get(String key) {
     return ourPropertyProvider.get(key);
+  }
+
+  private AppProperties() {
   }
 }

@@ -25,7 +25,7 @@ import static jetbrains.jetpad.model.collections.CollectionItemEvent.EventType.S
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-public class ObservableItemEventMatchers {
+public final class ObservableItemEventMatchers {
   public static <T> Matcher<CollectionItemEvent<? extends T>> event(final Matcher<? super T> oldItem, final Matcher<? super T> newItem,
                                                              final Matcher<Integer> index, final Matcher<CollectionItemEvent.EventType> type) {
     return new TypeSafeDiagnosingMatcher<CollectionItemEvent<? extends T>>() {
@@ -70,5 +70,8 @@ public class ObservableItemEventMatchers {
 
   public static <T> Matcher<CollectionItemEvent<? extends T>> removeEvent(Matcher<? super T> item, Matcher<Integer> index) {
     return event(item, nullValue(), index, equalTo(REMOVE));
+  }
+
+  private ObservableItemEventMatchers() {
   }
 }

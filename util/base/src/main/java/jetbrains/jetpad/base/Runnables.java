@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.base;
 
-public class Runnables {
+public final class Runnables {
   public static final Runnable EMPTY = new Runnable() {
     @Override
     public void run() {
@@ -31,5 +31,8 @@ public class Runnables {
         }
       }
     };
+  }
+
+  private Runnables() {
   }
 }

@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 /**
  * Utility class for synchronizer creation
  */
-public class Synchronizers {
+public final class Synchronizers {
   private static final Logger LOG = Logger.getLogger(Synchronizers.class.getName());
 
   private static final Synchronizer EMPTY = new Synchronizer() {
@@ -319,5 +319,8 @@ public class Synchronizers {
 
   public static Synchronizer empty() {
     return EMPTY;
+  }
+
+  private Synchronizers() {
   }
 }

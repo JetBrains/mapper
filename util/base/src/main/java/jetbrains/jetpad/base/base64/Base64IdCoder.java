@@ -15,11 +15,8 @@
  */
 package jetbrains.jetpad.base.base64;
 
-public class Base64IdCoder {
+public final class Base64IdCoder {
   private static final IdCoder ourCoder = new IdCoder(new Base64Table('-'));
-
-  private Base64IdCoder() {
-  }
 
   public static String encode(long l) {
     return ourCoder.encode(l);
@@ -27,5 +24,8 @@ public class Base64IdCoder {
 
   public static long decode(String s) {
     return ourCoder.decode(s);
+  }
+
+  private Base64IdCoder() {
   }
 }
