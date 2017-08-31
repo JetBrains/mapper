@@ -69,7 +69,7 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CollectionItemEvent that = (CollectionItemEvent) o;
+    CollectionItemEvent<?> that = (CollectionItemEvent<?>) o;
 
     return Objects.equals(myOldItem, that.myOldItem) && Objects.equals(myNewItem, that.myNewItem) &&
            Objects.equals(myType, that.myType) && myIndex == that.myIndex;
