@@ -29,7 +29,7 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
   private int myIndex;
 
   public CollectionItemEvent(ItemT oldItem, ItemT newItem, int index, EventType type) {
-    if (EventType.ADD.equals(type) && oldItem != null || EventType.REMOVE.equals(type) && newItem != null) {
+    if (EventType.ADD == type && oldItem != null || EventType.REMOVE == type && newItem != null) {
       throw new IllegalStateException();
     }
     myOldItem = oldItem;
@@ -56,9 +56,9 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
 
   @Override
   public void dispatch(CollectionListener<ItemT> l) {
-    if (EventType.ADD.equals(myType)) {
+    if (EventType.ADD == myType) {
       l.onItemAdded(this);
-    } else if (EventType.SET.equals(myType)) {
+    } else if (EventType.SET == myType) {
       l.onItemSet(this);
     } else {
       l.onItemRemoved(this);
@@ -82,9 +82,9 @@ public class CollectionItemEvent<ItemT> implements ListenerEvent<CollectionListe
 
   @Override
   public String toString() {
-    if (EventType.ADD.equals(myType)) {
+    if (EventType.ADD == myType) {
       return myNewItem + " added at " + myIndex;
-    } else if (EventType.SET.equals(myType)) {
+    } else if (EventType.SET == myType) {
       return myOldItem + " replaced with " + myNewItem + " at " + myIndex;
     } else {
       return myOldItem + " removed at " + myIndex;
