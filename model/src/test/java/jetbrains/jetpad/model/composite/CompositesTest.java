@@ -15,14 +15,13 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import com.google.common.collect.Lists;
 import jetbrains.jetpad.base.function.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static jetbrains.jetpad.model.composite.TestComposite.create;
 import static org.junit.Assert.assertEquals;
@@ -107,12 +106,12 @@ public class CompositesTest {
 
   @Test
   public void nextLeaves() {
-    assertEquals(Arrays.asList(leaf12, leaf21, leaf22), asList(Composites.nextLeaves(leaf11)));
+    assertEquals(Arrays.asList(leaf12, leaf21, leaf22), Lists.newArrayList(Composites.nextLeaves(leaf11)));
   }
 
   @Test
   public void prevLeaves() {
-    assertEquals(Arrays.asList(leaf12, leaf11), asList(Composites.prevLeaves(leaf21)));
+    assertEquals(Arrays.asList(leaf12, leaf11), Lists.newArrayList(Composites.prevLeaves(leaf21)));
   }
 
   @Test
@@ -415,15 +414,7 @@ public class CompositesTest {
   @Test
   public void iterateBranch() {
     assertEquals(Arrays.asList(root, child1, leaf11, leaf12, child2, leaf21, leaf22),
-      Composites.iterateBranch(root));
-  }
-
-  private List<TestComposite> asList(Iterable<TestComposite> it) {
-    List<TestComposite> result = new ArrayList<>();
-    for (TestComposite v : it) {
-      result.add(v);
-    }
-    return result;
+        Lists.newArrayList(Composites.preOrderTraversal(root)));
   }
 
 }

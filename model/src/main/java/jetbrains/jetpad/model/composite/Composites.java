@@ -15,10 +15,12 @@
  */
 package jetbrains.jetpad.model.composite;
 
+import com.google.common.collect.TreeTraverser;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -579,17 +581,13 @@ public final class Composites {
     return ourWithBounds.lowerFocusable(v, xOffset);
   }
 
-  public static <CompositeT extends Composite<CompositeT>> Iterable<CompositeT> iterateBranch(CompositeT branch) {
-    List<CompositeT> list = new ArrayList<>();
-    addBranch(branch, list);
-    return list;
-  }
-
-  private static <CompositeT extends Composite<CompositeT>> void addBranch(CompositeT branch, List<CompositeT> accum) {
-    accum.add(branch);
-    for (CompositeT c : branch.children()) {
-      addBranch(c, accum);
-    }
+  public static <CompositeT extends Composite<CompositeT>> Iterable<CompositeT> preOrderTraversal(CompositeT root) {
+    return TreeTraverser.using(new com.google.common.base.Function<CompositeT, Iterable<CompositeT>>() {
+      @Override
+      public Iterable<CompositeT> apply(CompositeT input) {
+        return input == null ? Collections.<CompositeT>emptyList() : input.children();
+      }
+    }).preOrderTraversal(root);
   }
 
   private Composites() {
