@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ListMapTest {
   private ListMap<String, String> list = new ListMap<>();
-  private HashMap<String, String> map = new HashMap<>();
+  private Map<String, String> map = new HashMap<>();
   private final static int RANDOM_STEPS = 100000;
   private Random random = new Random(1000);
 

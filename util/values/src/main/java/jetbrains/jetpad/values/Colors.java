@@ -18,12 +18,13 @@ package jetbrains.jetpad.values;
 import jetbrains.jetpad.base.Persister;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public final class Colors {
   public static final double DEFAULT_FACTOR = 0.7d;
 
-  private static HashMap<String, Color> colorsList = createColorsList();
+  private static Map<String, Color> colorsList = createColorsList();
 
   private static HashMap<String, Color> createColorsList () {
     HashMap <String, Color> colorList = new HashMap<>();
