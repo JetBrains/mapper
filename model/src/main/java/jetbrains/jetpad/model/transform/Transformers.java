@@ -1142,7 +1142,7 @@ public final class Transformers {
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(ItemT item, ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addFirstWithCondition(Functions.constantSupplier(item), condition);
+    return Transformers.addFirstWithCondition(Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
@@ -1210,7 +1210,7 @@ public final class Transformers {
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableCollection<SourceT>, ObservableCollection<TargetT>> addWithCondition(ItemT item, ReadableProperty<Boolean> condition) {
-    return Transformers.<TargetT, SourceT, ItemT>addWithCondition(Functions.constantSupplier(item), condition);
+    return Transformers.addWithCondition(Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>

@@ -388,7 +388,7 @@ public abstract class Mapper<SourceT, TargetT> {
     public Iterator<MapperT> iterator() {
       MapperT value = get();
       if (value == null) return Collections.emptyIterator();
-      return Iterators.<MapperT>singletonIterator(value);
+      return Iterators.singletonIterator(value);
     }
   }
 

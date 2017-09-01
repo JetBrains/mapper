@@ -54,7 +54,7 @@ public class CompositeAsyncTest extends BaseTestCase {
 
   @Test
   public void alreadySucceeded() {
-    assertThat(Asyncs.composite(Collections.<Async<Integer>>singletonList(Asyncs.constant(0))),
+    assertThat(Asyncs.composite(Collections.singletonList(Asyncs.constant(0))),
         AsyncMatchers.<List<Integer>>succeeded());
   }
 
