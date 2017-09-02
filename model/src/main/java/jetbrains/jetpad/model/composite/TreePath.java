@@ -126,8 +126,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
   }
 
   public TreePath<CompositeT> getChild(int index) {
-    List<Integer> newPath = new ArrayList<>();
-    newPath.addAll(myPath);
+    List<Integer> newPath = new ArrayList<>(myPath);
     newPath.add(index);
     return new TreePath<>(newPath);
   }
