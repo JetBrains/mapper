@@ -84,7 +84,7 @@ public class PersistersTest {
   }
 
   @Test
-  public void courrptedListOfStringsWithoutColon() {
+  public void corruptedListOfStringsWithoutColon() {
     testBadListOfStrings("5");
   }
 

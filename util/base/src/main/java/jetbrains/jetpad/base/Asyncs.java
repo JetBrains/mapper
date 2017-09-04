@@ -520,8 +520,8 @@ public final class Asyncs {
     private final List<Throwable> myExceptions;
     private final ResolvableAsync<Void> myResultAsync;
 
-    ParallelData(List<Throwable> expectionsList, ResolvableAsync<Void> resultAsync) {
-      myExceptions = expectionsList;
+    ParallelData(List<Throwable> exceptionsList, ResolvableAsync<Void> resultAsync) {
+      myExceptions = exceptionsList;
       myResultAsync = resultAsync;
     }
 

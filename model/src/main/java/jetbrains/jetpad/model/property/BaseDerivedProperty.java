@@ -39,7 +39,7 @@ public abstract class BaseDerivedProperty<ValueT> extends BaseReadableProperty<V
   protected abstract void doAddListeners();
 
   /**
-   * Stop listening to the objects which our value depende on
+   * Stop listening to the objects which our value depend on
    */
   protected abstract void doRemoveListeners();
 

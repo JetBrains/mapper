@@ -77,7 +77,7 @@ public class SortByConstantTest {
   }
 
   @Test
-  public void dipose() {
+  public void dispose() {
     items.add("a");
     items.add("z");
 

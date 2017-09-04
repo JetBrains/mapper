@@ -48,7 +48,7 @@ import jetbrains.jetpad.model.transform.FlattenListTest;
 import jetbrains.jetpad.model.transform.FlattenPropertyListTest;
 import jetbrains.jetpad.model.transform.HighestPriorityErrorCasesTest;
 import jetbrains.jetpad.model.transform.HighestPriorityTest;
-import jetbrains.jetpad.model.transform.MapTransfomerTest;
+import jetbrains.jetpad.model.transform.MapTransformerTest;
 import jetbrains.jetpad.model.transform.PropertyToCollectionTest;
 import jetbrains.jetpad.model.transform.ReverseTest;
 import jetbrains.jetpad.model.transform.SelectListTest;
@@ -103,7 +103,7 @@ import org.junit.runners.Suite;
     FlattenPropertyListTest.class,
     HighestPriorityErrorCasesTest.class,
     HighestPriorityTest.class,
-    MapTransfomerTest.class,
+    MapTransformerTest.class,
     PropertyToCollectionTest.class,
     ReverseTest.class,
     SelectListTest.class,

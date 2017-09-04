@@ -45,7 +45,7 @@ public class ByTargetIndexTest extends BaseTestCase {
 
     hidden_item = new Item();
     hidden_item.observableChildren.add(hidden_child);
-    mapper.createChildProperty().set(new MyNotFinableItemMapper(hidden_item));
+    mapper.createChildProperty().set(new MyNotFindableItemMapper(hidden_item));
 
     finder = new ByTargetIndex(mapper.getMappingContext());
   }
@@ -122,8 +122,8 @@ public class ByTargetIndexTest extends BaseTestCase {
     }
   }
 
-  private class MyNotFinableItemMapper extends MyItemMapper {
-    MyNotFinableItemMapper(Item item) {
+  private class MyNotFindableItemMapper extends MyItemMapper {
+    MyNotFindableItemMapper(Item item) {
       super(item);
     }
 

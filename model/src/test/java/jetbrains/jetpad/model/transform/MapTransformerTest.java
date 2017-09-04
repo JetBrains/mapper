@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-public class MapTransfomerTest {
+public class MapTransformerTest {
   private ObservableList<String> source = new ObservableArrayList<>();
   private ObservableList<Integer> target;
   private Transformer<ObservableList<String>, ObservableList<Integer>> transformer = Transformers.listMap(

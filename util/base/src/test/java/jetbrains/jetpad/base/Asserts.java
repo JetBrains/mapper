@@ -46,7 +46,7 @@ public final class Asserts {
   public static <T> void assertSuccess(Predicate<T> assertion, Async<T> async) {
     T value = getResultValue(async);
     if (!assertion.test(value)) {
-      throw new AssertionError("succes value failed assertion: " + value);
+      throw new AssertionError("success value failed assertion: " + value);
     }
   }
 

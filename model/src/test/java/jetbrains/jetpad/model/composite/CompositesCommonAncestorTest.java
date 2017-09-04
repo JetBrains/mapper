@@ -31,7 +31,7 @@ public class CompositesCommonAncestorTest extends BaseTestCase {
   }
 
   @Test
-  public void diffrentTrees() {
+  public void differentTrees() {
     assertNull(Composites.commonAncestor(tree.c, new SimpleComposite("alien")));
   }
 

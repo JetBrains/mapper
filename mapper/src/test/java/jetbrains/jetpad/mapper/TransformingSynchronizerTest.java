@@ -43,7 +43,7 @@ public class TransformingSynchronizerTest extends BaseTestCase {
   }
 
   @Test
-  public void initalMapping() {
+  public void initialMapping() {
     init("z", "c", "b");
 
     assertTarget("b", "c", "z");

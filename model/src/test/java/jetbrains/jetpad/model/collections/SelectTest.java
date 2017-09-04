@@ -92,22 +92,22 @@ public class SelectTest {
 
   @Test
   public void collectionRegistrations() {
-    AtomicInteger propertyLsnrs = new AtomicInteger();
-    AtomicInteger collectionLsnrs = new AtomicInteger();
-    Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
-    ObservableList<String> selected = listenersCountingList(collectionLsnrs);
+    AtomicInteger propertyListeners = new AtomicInteger();
+    AtomicInteger collectionListeners = new AtomicInteger();
+    Property<Boolean> src = listenersCountingProperty(propertyListeners);
+    ObservableList<String> selected = listenersCountingList(collectionListeners);
 
     ObservableCollection<String> res = testCollection(src, selected);
 
-    testRegistrations(src, res, propertyLsnrs, collectionLsnrs);
+    testRegistrations(src, res, propertyListeners, collectionListeners);
   }
 
   @Test
   public void listInnerUnfollow() {
-    AtomicInteger propertyLsnrs = new AtomicInteger();
-    AtomicInteger collectionLsnrs = new AtomicInteger();
-    final Property<Boolean> src = listenersCountingProperty(propertyLsnrs);
-    ObservableList<String> selected = listenersCountingList(collectionLsnrs);
+    AtomicInteger propertyListeners = new AtomicInteger();
+    AtomicInteger collectionListeners = new AtomicInteger();
+    final Property<Boolean> src = listenersCountingProperty(propertyListeners);
+    ObservableList<String> selected = listenersCountingList(collectionListeners);
 
     ObservableList<String> res = testList(src, selected);
 
@@ -222,29 +222,30 @@ public class SelectTest {
   }
 
   @SuppressWarnings("unchecked")
-  private void testRegistrations(Property<Boolean> src, ObservableCollection<String> res, AtomicInteger propertyLsnrs, AtomicInteger collectionLsnrs) {
-    assertEquals(0, propertyLsnrs.get());
-    assertEquals(0, collectionLsnrs.get());
+  private void testRegistrations(Property<Boolean> src, ObservableCollection<String> res,
+      AtomicInteger propertyListeners, AtomicInteger collectionListeners) {
+    assertEquals(0, propertyListeners.get());
+    assertEquals(0, collectionListeners.get());
 
     CollectionListener<String> mock = mock(CollectionListener.class);
     Registration mockReg = res.addListener(mock);
-    assertEquals(1, propertyLsnrs.get());
-    assertEquals(0, collectionLsnrs.get());
+    assertEquals(1, propertyListeners.get());
+    assertEquals(0, collectionListeners.get());
 
     src.set(true);
-    assertEquals(1, propertyLsnrs.get());
-    assertEquals(1, collectionLsnrs.get());
+    assertEquals(1, propertyListeners.get());
+    assertEquals(1, collectionListeners.get());
 
     src.set(false);
-    assertEquals(1, propertyLsnrs.get());
-    assertEquals(0, collectionLsnrs.get());
+    assertEquals(1, propertyListeners.get());
+    assertEquals(0, collectionListeners.get());
 
     src.set(true);
-    assertEquals(1, propertyLsnrs.get());
-    assertEquals(1, collectionLsnrs.get());
+    assertEquals(1, propertyListeners.get());
+    assertEquals(1, collectionListeners.get());
     mockReg.remove();
-    assertEquals(0, propertyLsnrs.get());
-    assertEquals(0, collectionLsnrs.get());
+    assertEquals(0, propertyListeners.get());
+    assertEquals(0, collectionListeners.get());
   }
 
   private ObservableList<String> testList(ReadableProperty<Boolean> src, final ObservableList<String> selected) {

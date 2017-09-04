@@ -1141,12 +1141,14 @@ public final class Transformers {
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(ItemT item, ReadableProperty<Boolean> condition) {
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(
+      ItemT item, ReadableProperty<Boolean> condition) {
     return Transformers.addFirstWithCondition(Functions.constantSupplier(item), condition);
   }
 
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
-  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
+  Transformer<ObservableList<SourceT>, ObservableList<TargetT>> addFirstWithCondition(
+      Supplier<ItemT> item, final ReadableProperty<Boolean> condition) {
     final Supplier<ItemT> memoizedItem = Functions.memorize(item);
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
       @Override
@@ -1155,7 +1157,8 @@ public final class Transformers {
       }
 
       @Override
-      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from, final ObservableList<TargetT> to) {
+      public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(
+          ObservableList<SourceT> from, final ObservableList<TargetT> to) {
         CollectionListener<SourceT> fromListener = new CollectionAdapter<SourceT>() {
           @Override
           public void onItemAdded(CollectionItemEvent<? extends SourceT> event) {

@@ -231,14 +231,14 @@ public class AsyncsTest {
   public void untilSuccessException() {
     assertThat(
         Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
-          private int myCntr = 0;
+          private int myCounter = 0;
           @Override
           public Async<Integer> get() {
-            myCntr++;
-            if (myCntr < 2) {
+            myCounter++;
+            if (myCounter < 2) {
               throw new RuntimeException();
             } else {
-              return Asyncs.constant(myCntr);
+              return Asyncs.constant(myCounter);
             }
           }
         }),

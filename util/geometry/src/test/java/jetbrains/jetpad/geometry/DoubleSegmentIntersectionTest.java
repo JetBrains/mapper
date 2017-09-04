@@ -36,7 +36,7 @@ public class DoubleSegmentIntersectionTest {
   }
 
   @Test
-  public void noIntesectBecauseOutOfSegments() {
+  public void noIntersectBecauseOutOfSegments() {
     DoubleSegment s1 = new DoubleSegment(new DoubleVector(10, 0), new DoubleVector(9, 0));
     DoubleSegment s2 = new DoubleSegment(new DoubleVector(0, 10), new DoubleVector(0, 9));
     assertNull(s1.intersection(s2));

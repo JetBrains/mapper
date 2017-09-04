@@ -65,7 +65,7 @@ public class StringConversionTest {
   }
 
   @Test
-  public void unsecapeUnicode() {
+  public void unescapeUnicode() {
     JsonValue parsed = Json.parse("\"\\u0125\"");
     assertTrue(parsed instanceof JsonString);
     assertEquals(3, parsed.toString().length());
