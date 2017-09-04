@@ -25,17 +25,20 @@ public class RectangleTest {
   @Test
   public void equals() {
     assertEquals(new Rectangle(new Vector(1, 2), new Vector(2, 2)), new Rectangle(new Vector(1, 2), new Vector(2, 2)));
-    assertFalse(new Rectangle(new Vector(1, 2), new Vector(2, 2)).equals(new Rectangle(new Vector(1, 2), new Vector(2, 3))));
+    assertFalse(new Rectangle(new Vector(1, 2), new Vector(2, 2))
+        .equals(new Rectangle(new Vector(1, 2), new Vector(2, 3))));
   }
 
   @Test
   public void add() {
-    assertEquals(new Rectangle(new Vector(1, 2), new Vector(2, 2)), new Rectangle(new Vector(0, 0), new Vector(2, 2)).add(new Vector(1, 2)));
+    assertEquals(new Rectangle(new Vector(1, 2), new Vector(2, 2)),
+        new Rectangle(new Vector(0, 0), new Vector(2, 2)).add(new Vector(1, 2)));
   }
 
   @Test
   public void sub() {
-    assertEquals(new Rectangle(new Vector(0, 0), new Vector(2, 2)), new Rectangle(new Vector(1, 2), new Vector(2, 2)).sub(new Vector(1, 2)));
+    assertEquals(new Rectangle(new Vector(0, 0), new Vector(2, 2)),
+        new Rectangle(new Vector(1, 2), new Vector(2, 2)).sub(new Vector(1, 2)));
   }
 
   @Test
@@ -61,5 +64,10 @@ public class RectangleTest {
   @Test
   public void union() {
     assertEquals(new Rectangle(0, 0, 3, 3), new Rectangle(0, 0, 1, 1).union(new Rectangle(2, 2, 1, 1)));
+  }
+
+  @Test
+  public void hashCodeWorks() {
+    assertEquals(new Rectangle(0, 0, 3, 3).hashCode(), new Rectangle(0, 0, 3, 3).hashCode());
   }
 }

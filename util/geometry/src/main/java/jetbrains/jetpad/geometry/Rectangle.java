@@ -101,6 +101,11 @@ public class Rectangle {
   }
 
   @Override
+  public int hashCode() {
+    return origin.hashCode() * 31 + dimension.hashCode();
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Rectangle)) return false;
 
@@ -118,11 +123,15 @@ public class Rectangle {
 
   public Segment[] getBoundSegments() {
     Vector[] p = getBoundPoints();
-    return new Segment[]{new Segment(p[0], p[1]), new Segment(p[1], p[2]), new Segment(p[2], p[3]), new Segment(p[3], p[0])};
+    return new Segment[] {
+        new Segment(p[0], p[1]), new Segment(p[1], p[2]), new Segment(p[2], p[3]), new Segment(p[3], p[0]) };
   }
 
   public Vector[] getBoundPoints() {
-    return new Vector[]{origin, origin.add(new Vector(dimension.x, 0)), origin.add(dimension), origin.add(new Vector(0, dimension.y))};
+    return new Vector[] {
+        origin, origin.add(new Vector(dimension.x, 0)),
+        origin.add(dimension), origin.add(new Vector(0, dimension.y))
+    };
   }
 
   @Override

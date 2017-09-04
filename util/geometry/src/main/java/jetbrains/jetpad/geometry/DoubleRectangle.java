@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DoubleRectangle {
+  public static DoubleRectangle span(DoubleVector leftTop, DoubleVector rightBottom) {
+    return new DoubleRectangle(leftTop, rightBottom.subtract(leftTop));
+  }
   public final DoubleVector origin;
   public final DoubleVector dimension;
 
@@ -142,6 +145,12 @@ public class DoubleRectangle {
     return result;
   }
 
+  @Override
+  public int hashCode() {
+    return origin.hashCode() * 31 + dimension.hashCode();
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof DoubleRectangle)) {
       return false;
@@ -150,11 +159,8 @@ public class DoubleRectangle {
     return r.origin.equals(origin) && r.dimension.equals(dimension);
   }
 
+  @Override
   public String toString() {
     return "[rect " + origin + ", " + dimension + "]";
-  }
-
-  public static DoubleRectangle span(DoubleVector leftTop, DoubleVector rightBottom) {
-    return new DoubleRectangle(leftTop, rightBottom.subtract(leftTop));
   }
 }
