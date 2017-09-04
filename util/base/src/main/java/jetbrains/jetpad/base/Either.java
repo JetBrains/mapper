@@ -65,7 +65,7 @@ public abstract class Either<L, R> {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof Left)) return false;
-      return Objects.equals(myLeft, ((Left) obj).myLeft);
+      return Objects.equals(myLeft, ((Left<?, ?>) obj).myLeft);
     }
 
     @Override
@@ -105,7 +105,7 @@ public abstract class Either<L, R> {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof Right)) return false;
-      return Objects.equals(myRight, ((Right) obj).myRight);
+      return Objects.equals(myRight, ((Right<?, ?>) obj).myRight);
     }
 
     @Override
