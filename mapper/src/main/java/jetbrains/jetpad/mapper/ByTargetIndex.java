@@ -64,6 +64,7 @@ public class ByTargetIndex implements Disposable {
     return myTargetToMappers.get(target);
   }
 
+  @Override
   public void dispose() {
     myRegistration.remove();
   }

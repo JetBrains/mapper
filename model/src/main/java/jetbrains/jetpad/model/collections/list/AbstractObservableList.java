@@ -154,6 +154,7 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   protected void afterItemRemoved(int index, ItemT item, boolean success) {
   }
 
+  @Override
   public Registration addListener(CollectionListener<ItemT> listener) {
     if (myListeners == null) {
       myListeners = new Listeners<CollectionListener<ItemT>>() {

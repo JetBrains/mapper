@@ -29,7 +29,8 @@ import java.util.Iterator;
 
 public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> implements ObservableSet<ItemT> {
   private Listeners<CollectionListener<ItemT>> myListeners;
-  
+
+  @Override
   public Registration addListener(CollectionListener<ItemT> l) {
     if (myListeners == null) {
       myListeners = new Listeners<>();

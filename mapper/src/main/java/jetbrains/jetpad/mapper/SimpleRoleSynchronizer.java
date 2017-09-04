@@ -32,6 +32,7 @@ public class SimpleRoleSynchronizer<SourceT, TargetT> extends BaseCollectionRole
     addMapperFactory(factory);
   }
 
+  @Override
   public void refresh() {
     new MapperUpdater() {
       @Override

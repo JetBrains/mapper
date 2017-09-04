@@ -107,6 +107,7 @@ public class JsonObject extends JsonValue {
     return Collections.unmodifiableSet(myValues.keySet());
   }
 
+  @Override
   protected void toString(IndentBuilder builder) {
     builder.append("{");
     builder.indent();

@@ -30,8 +30,10 @@ public class SystemSwitchRule implements TestRule {
     myTestsEnabled = "true".equals(System.getProperty(propertyName));
   }
 
+  @Override
   public Statement apply(final Statement statement, final Description description) {
     return new Statement() {
+      @Override
       public void evaluate() throws Throwable {
         if (!myTestsEnabled && description.getAnnotation(myAnnotation) != null) {
           return;

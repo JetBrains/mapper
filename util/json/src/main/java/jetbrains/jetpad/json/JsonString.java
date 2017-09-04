@@ -28,6 +28,7 @@ public class JsonString extends JsonValue {
     return myValue;
   }
 
+  @Override
   protected void toString(IndentBuilder builder) {
     builder.append("\"");
     builder.append(JsonUtil.escape(myValue));

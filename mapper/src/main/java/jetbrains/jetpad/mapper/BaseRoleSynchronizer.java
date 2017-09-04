@@ -30,6 +30,7 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> implements RoleSynchronize
     myMapperFactories = newMapperFactories;
   }
 
+  @Override
   public final void addMapperProcessor(MapperProcessor<SourceT, TargetT> processor) {
     MapperProcessor[] newMapperProcessors = new MapperProcessor[myMapperProcessors.length + 1];
     System.arraycopy(myMapperProcessors, 0, newMapperProcessors, 0, myMapperProcessors.length);

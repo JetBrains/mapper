@@ -43,6 +43,7 @@ class ObservableCollectionRoleSynchronizer<
     addMapperFactory(factory);
   }
 
+  @Override
   protected void onAttach() {
     super.onAttach();
 
@@ -73,6 +74,7 @@ class ObservableCollectionRoleSynchronizer<
     });
   }
 
+  @Override
   protected void onDetach() {
     super.onDetach();
     myCollectionRegistration.remove();

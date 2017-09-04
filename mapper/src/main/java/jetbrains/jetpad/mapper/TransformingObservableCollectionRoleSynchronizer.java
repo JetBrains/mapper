@@ -54,6 +54,7 @@ class TransformingObservableCollectionRoleSynchronizer<
     addMapperFactory(factory);
   }
 
+  @Override
   protected void onAttach() {
     super.onAttach();
     mySourceList = new ObservableArrayList<>();
@@ -79,6 +80,7 @@ class TransformingObservableCollectionRoleSynchronizer<
     });
   }
 
+  @Override
   protected void onDetach() {
     super.onDetach();
     myCollectionRegistration.remove();

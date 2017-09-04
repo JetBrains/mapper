@@ -72,6 +72,7 @@ public class DoubleVector {
     return new DoubleVector(x, y);
   }
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof DoubleVector)) {
       return false;
@@ -80,10 +81,12 @@ public class DoubleVector {
     return v.x == x && v.y == y;
   }
 
+  @Override
   public int hashCode() {
     return new Double(x).hashCode() + 31 * new Double(y).hashCode();
   }
 
+  @Override
   public String toString() {
     return "(" + x + ", " + y + ")";
   }

@@ -57,6 +57,7 @@ public class AtomicReference<ItemT> implements Serializable {
     return current;
   }
 
+  @Override
   public String toString() {
     return String.valueOf(get());
   }

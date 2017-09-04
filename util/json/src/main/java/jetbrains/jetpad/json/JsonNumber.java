@@ -34,6 +34,7 @@ public class JsonNumber extends JsonValue {
     return myValue;
   }
 
+  @Override
   protected void toString(IndentBuilder builder) {
     if (Math.floor(myValue) == myValue) {
       builder.append((long) myValue);

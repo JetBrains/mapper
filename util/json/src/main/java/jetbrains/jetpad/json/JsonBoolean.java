@@ -26,6 +26,7 @@ public class JsonBoolean extends JsonValue {
     return myValue;
   }
 
+  @Override
   protected void toString(IndentBuilder builder) {
     builder.append(myValue);
   }

@@ -44,6 +44,7 @@ class IndentBuilder {
     myCurrentIndent--;
   }
 
+  @Override
   public String toString() {
     return myBuilder.toString();
   }

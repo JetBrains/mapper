@@ -36,6 +36,7 @@ public class StringBuilderDumpContext implements DumpContext {
     myResult.append(Strings.repeat("  ", myIndent)).append(text).append("\n");
   }
 
+  @Override
   public String toString() {
     return myResult.toString();
   }

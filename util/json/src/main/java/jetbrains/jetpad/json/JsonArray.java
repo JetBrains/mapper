@@ -28,6 +28,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
   }
 
 
+  @Override
   public Iterator<JsonValue> iterator() {
     if (myValues == null) {
       return Collections.emptyIterator();
@@ -101,6 +102,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
     return (long) getDouble(index);
   }
 
+  @Override
   protected void toString(IndentBuilder builder) {
     builder.append("[");
     builder.indent();

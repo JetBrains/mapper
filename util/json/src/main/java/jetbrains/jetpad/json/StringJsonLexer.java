@@ -39,6 +39,7 @@ class StringJsonLexer extends JsonLexer {
     return myCurrent;
   }
 
+  @Override
   protected String tokenText() {
     return myInput.substring(myTokenStart, myPosition);
   }
@@ -48,6 +49,7 @@ class StringJsonLexer extends JsonLexer {
     return JsonUtil.unescape(myInput, myTokenStart + 1, myPosition - 1);
   }
 
+  @Override
   protected void setTokenStart() {
     myTokenStart = myPosition;
   }
@@ -60,11 +62,13 @@ class StringJsonLexer extends JsonLexer {
     }
   }
 
+  @Override
   protected void advance() {
     myPosition++;
     hasReadCurrent = false;
   }
 
+  @Override
   protected boolean readString(String s) {
     if (getCurrent() == -1) {
       return false;

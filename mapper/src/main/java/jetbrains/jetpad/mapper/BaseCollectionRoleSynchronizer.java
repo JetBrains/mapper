@@ -33,10 +33,12 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
     return myMappers;
   }
 
+  @Override
   public final List<Mapper<? extends SourceT, ? extends TargetT>> getMappers() {
     return Collections.unmodifiableList(myMappers);
   }
 
+  @Override
   public final void attach(SynchronizerContext ctx) {
     if (myMappingContext != null) {
       throw new IllegalStateException();
@@ -47,6 +49,7 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
     onAttach();
   }
 
+  @Override
   public final void detach() {
     if (myMappingContext == null) {
       throw new IllegalStateException();

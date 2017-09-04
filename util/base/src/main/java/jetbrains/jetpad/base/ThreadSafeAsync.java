@@ -71,12 +71,14 @@ public final class ThreadSafeAsync<ItemT> implements ResolvableAsync<ItemT> {
     };
   }
 
+  @Override
   public void success(ItemT item) {
     synchronized (myAsync) {
       myAsync.success(item);
     }
   }
 
+  @Override
   public void failure(Throwable throwable) {
     synchronized (myAsync) {
       myAsync.failure(throwable);

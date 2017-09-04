@@ -31,6 +31,7 @@ public final class Value<ValueT> implements Supplier<ValueT> {
     myValue = value;
   }
 
+  @Override
   public ValueT get() {
     return myValue;
   }

@@ -19,6 +19,7 @@ public class JsonNull extends JsonValue {
   public JsonNull() {
   }
 
+  @Override
   protected void toString(IndentBuilder builder) {
     builder.append("null");
   }

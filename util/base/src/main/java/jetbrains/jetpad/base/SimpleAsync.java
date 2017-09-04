@@ -92,6 +92,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
     return Asyncs.select(this, success, new SimpleAsync<ResultT>());
   }
 
+  @Override
   public void success(ItemT item) {
     if (alreadyHandled()) {
       throw new IllegalStateException("Async already completed");
@@ -109,6 +110,7 @@ public final class SimpleAsync<ItemT> implements ResolvableAsync<ItemT> {
     clearHandlers();
   }
 
+  @Override
   public void failure(Throwable throwable) {
     if (alreadyHandled()) {
       throw new IllegalStateException("Async already completed");

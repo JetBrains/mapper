@@ -132,6 +132,7 @@ public class ByTargetIndexTest extends BaseTestCase {
       return false;
     }
 
+    @Override
     protected MapperFactory<Item, Item> createMapperFactory() {
       return new MapperFactory<Item, Item>() {
         @Override
