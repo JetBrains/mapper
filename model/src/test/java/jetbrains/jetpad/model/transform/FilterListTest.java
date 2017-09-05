@@ -31,7 +31,6 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class FilterListTest {
   private ObservableArrayList<String> from = new ObservableArrayList<>();
@@ -55,8 +54,8 @@ public class FilterListTest {
     from.add("a");
     from.add("aa");
     filter.transform(from, to);
-    assertTrue(to.size() == 1);
-    assertTrue("aa".equals(to.get(0)));
+    assertEquals(1, to.size());
+    assertEquals("aa", to.get(0));
   }
 
   @Test
@@ -64,8 +63,8 @@ public class FilterListTest {
     from.add("null");
     filter.transform(from, to);
     from.add("aa");
-    assertTrue(to.size() == 1);
-    assertTrue("aa".equals(to.get(0)));
+    assertEquals(1, to.size());
+    assertEquals("aa", to.get(0));
   }
 
   @Test

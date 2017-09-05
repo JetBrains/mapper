@@ -53,8 +53,8 @@ public class FilterTest {
     from.add("a");
     from.add("aa");
     filter.transform(from, to);
-    assertTrue(to.size() == 1);
-    assertTrue("aa".equals(to.iterator().next()));
+    assertEquals(1, to.size());
+    assertEquals("aa", to.iterator().next());
   }
 
   @Test
@@ -62,8 +62,8 @@ public class FilterTest {
     from.add("null");
     filter.transform(from, to);
     from.add("aa");
-    assertTrue(to.size() == 1);
-    assertTrue("aa".equals(to.iterator().next()));
+    assertEquals(1, to.size());
+    assertEquals("aa", to.iterator().next());
   }
 
   @Test

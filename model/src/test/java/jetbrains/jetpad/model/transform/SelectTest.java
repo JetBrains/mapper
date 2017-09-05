@@ -21,6 +21,7 @@ import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SelectTest {
@@ -45,7 +46,7 @@ public class SelectTest {
     from.add(0);
     select.transform(from, to);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains("0"));
   }
 
@@ -54,7 +55,7 @@ public class SelectTest {
     select.transform(from, to);
     from.add(0);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains("0"));
   }
 

@@ -26,7 +26,7 @@ import java.util.List;
 
 import static jetbrains.jetpad.base.Persisters.stringPersister;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 public class PropertyPersistersTest {
 
@@ -37,7 +37,7 @@ public class PropertyPersistersTest {
 
   @Test
   public void valuePropertyEmptyString() {
-    assertTrue(PropertyPersisters.valuePropertyPersister(stringPersister()).deserialize("").get() == null);
+    assertNull(PropertyPersisters.valuePropertyPersister(stringPersister()).deserialize("").get());
   }
 
   @Test
@@ -80,7 +80,7 @@ public class PropertyPersistersTest {
     for (int i = 0; i < expected.size(); i++) {
       Property<String> left = expected.get(i);
       Property<String> right = actual.get(i);
-      assertTrue((left == null) == (right == null));
+      assertEquals((left == null), (right == null));
       if (left != null) {
         assertEquals(left.get(), right.get());
       }

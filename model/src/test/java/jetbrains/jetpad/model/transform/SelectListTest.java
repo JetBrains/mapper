@@ -46,7 +46,7 @@ public class SelectListTest {
     from.add(0);
     select.transform(from, to);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains("0"));
   }
 
@@ -55,7 +55,7 @@ public class SelectListTest {
     select.transform(from, to);
     from.add(0);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains("0"));
   }
 
@@ -83,12 +83,12 @@ public class SelectListTest {
     select.transform(from, to);
 
     from.add(1, 1);
-    assertTrue(to.size() == 2);
+    assertEquals(2, to.size());
     assertEquals("0", to.get(0));
     assertEquals("1", to.get(1));
 
     from.add(0, 2);
-    assertTrue(to.size() == 3);
+    assertEquals(3, to.size());
     assertEquals("2", to.get(0));
   }
 }

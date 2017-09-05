@@ -43,7 +43,7 @@ public class ParsingTest {
   public void emptyArray() {
     JsonArray array = (JsonArray) Json.parse("[]");
 
-    assertTrue(array.size() == 0);
+    assertEquals(0, array.size());
   }
 
   @Test

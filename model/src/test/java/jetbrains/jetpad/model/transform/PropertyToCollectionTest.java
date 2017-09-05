@@ -22,6 +22,7 @@ import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PropertyToCollectionTest {
@@ -40,7 +41,7 @@ public class PropertyToCollectionTest {
   public void initTransformation() {
     transformer.transform(from, to);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains(0));
   }
 
@@ -49,7 +50,7 @@ public class PropertyToCollectionTest {
     transformer.transform(from, to);
     from.set(1);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains(1));
   }
 
@@ -59,7 +60,7 @@ public class PropertyToCollectionTest {
     transformation.dispose();
     from.set(1);
 
-    assertTrue(to.size() == 1);
+    assertEquals(1, to.size());
     assertTrue(to.contains(0));
   }
 

@@ -57,7 +57,7 @@ public class TreePathTest {
   public void pathComparison() {
     assertTrue(new TreePath<>(root).compareTo(new TreePath<>(child1)) < 0);
     assertTrue(new TreePath<>(child1).compareTo(new TreePath<>(child2)) < 0);
-    assertTrue(new TreePath<>(child1).compareTo(new TreePath<>(child1)) == 0);
+    assertEquals(0, new TreePath<>(child1).compareTo(new TreePath<>(child1)));
   }
 
   @Test

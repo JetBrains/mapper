@@ -213,10 +213,10 @@ public class CollectionTransformationTest {
     from.add(new MyObject("a"));
 
     flatten.transform(from, to);
-    assertTrue(to.size() == 2);
+    assertEquals(2, to.size());
 
     from.add(new MyObject("b"));
-    assertTrue(to.size() == 4);
+    assertEquals(4, to.size());
   }
 
   @Test
