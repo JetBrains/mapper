@@ -55,7 +55,12 @@ public class ListMap<K, V> {
     return new AbstractSet<K>() {
       @Override
       public Iterator<K> iterator() {
-        return mapIterator(IteratorKind.KEY);
+        return mapIterator(new IteratorSpec() {
+          @Override
+          public Object get(int index) {
+            return myData[index];
+          }
+        });
       }
 
       @Override
@@ -73,7 +78,12 @@ public class ListMap<K, V> {
     return new AbstractCollection<V>() {
       @Override
       public Iterator<V> iterator() {
-        return mapIterator(IteratorKind.VALUE);
+        return mapIterator(new IteratorSpec() {
+          @Override
+          public Object get(int index) {
+            return myData[index + 1];
+          }
+        });
       }
 
       @Override
@@ -87,7 +97,12 @@ public class ListMap<K, V> {
     return new AbstractSet<Entry>() {
       @Override
       public Iterator<Entry> iterator() {
-        return mapIterator(IteratorKind.ENTRY);
+        return mapIterator(new IteratorSpec() {
+          @Override
+          public Object get(int index) {
+            return new Entry(index);
+          }
+        });
       }
 
       @Override
@@ -141,7 +156,7 @@ public class ListMap<K, V> {
     return builder.toString();
   }
 
-  private<T> Iterator<T> mapIterator(final IteratorKind kind) {
+  private <T> Iterator<T> mapIterator(final IteratorSpec spec) {
     return new Iterator<T>() {
       int index = 0;
       boolean nextCalled = false;
@@ -156,7 +171,7 @@ public class ListMap<K, V> {
           throw new NoSuchElementException();
         }
         nextCalled = true;
-        T value = (T) kind.createItem(ListMap.this, index);
+        T value = (T) spec.get(index);
         index += 2;
         return value;
       }
@@ -207,25 +222,7 @@ public class ListMap<K, V> {
     }
   }
 
-  private enum IteratorKind {
-    KEY {
-      @Override
-      protected Object createItem(ListMap map, int index) {
-        return map.myData[index];
-      }
-    },
-    VALUE {
-      @Override
-      protected Object createItem(ListMap map, int index) {
-        return map.myData[index + 1];
-      }
-    },
-    ENTRY {
-      @Override
-      protected Object createItem(ListMap map, int index) {
-        return map.new Entry(index);
-      }
-    };
-    protected abstract Object createItem(ListMap map, int index);
+  private interface IteratorSpec {
+    Object get(int index);
   }
 }
