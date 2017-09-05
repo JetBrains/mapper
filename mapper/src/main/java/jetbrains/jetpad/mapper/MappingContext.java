@@ -47,6 +47,7 @@ public final class MappingContext {
       } else {
         Object ms = myMappers.get(source);
         if (ms instanceof Set) {
+          //noinspection unchecked
           Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
           mappers.add(mapper);
         } else {
@@ -75,6 +76,7 @@ public final class MappingContext {
       }
       Object ms = myMappers.get(source);
       if (ms instanceof Set) {
+        //noinspection unchecked
         Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
         mappers.remove(mapper);
         if (mappers.size() == 1) {
@@ -141,6 +143,7 @@ public final class MappingContext {
     if (value == null) {
       throw new IllegalStateException("Property " + property + " wasn't found");
     }
+    //noinspection unchecked
     return (ValueT) value;
   }
 
@@ -152,6 +155,7 @@ public final class MappingContext {
     if (!myProperties.containsKey(property)) {
       throw new IllegalStateException("Property " + property + " wasn't found");
     }
+    //noinspection unchecked
     return (ValueT) myProperties.remove(property);
   }
 
@@ -169,11 +173,13 @@ public final class MappingContext {
     }
     Object mappers = myMappers.get(source);
     if (mappers instanceof Mapper) {
+      //noinspection unchecked
       return Collections.<Mapper<? super S, ?>>singleton((Mapper<? super S, ?>) mappers);
     } else {
       Set<Mapper<? super S, ?>> result = new HashSet<>();
-      for (Mapper<?, ?> m : (Set<Mapper<? super S, ?>>) mappers) {
-        result.add((Mapper<? super S, ?>) m);
+      //noinspection unchecked
+      for (Mapper<? super S, ?> m : (Set<Mapper<? super S, ?>>) mappers) {
+        result.add(m);
       }
       return result;
     }
