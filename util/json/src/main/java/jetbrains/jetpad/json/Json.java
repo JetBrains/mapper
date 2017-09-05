@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public final class Json {
   private static final Logger LOG = Logger.getLogger(Json.class.getName());
 
-  private static JsonSupport ourJsonSupport = new DefautJsonSupport();
+  private static JsonSupport ourJsonSupport = new DefaultJsonSupport();
 
   public static JsonValue parse(String input) {
     return ourJsonSupport.parse(input);

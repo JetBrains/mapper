@@ -15,8 +15,8 @@
  */
 package jetbrains.jetpad.json;
 
-public class DefautJsonSupport implements JsonSupport {
-  public DefautJsonSupport() {
+public class DefaultJsonSupport implements JsonSupport {
+  public DefaultJsonSupport() {
   }
 
   @Override
