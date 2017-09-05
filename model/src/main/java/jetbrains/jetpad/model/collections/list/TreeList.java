@@ -264,9 +264,11 @@ public class TreeList<T> extends AbstractList<T> {
         return false;
       }
 
-      AvlTree otherTree = (AvlTree) obj;
+      AvlTree<?> otherTree = (AvlTree<?>) obj;
 
-      return otherTree.myValue == myValue && Objects.equals(otherTree.myLeft, myLeft) && Objects.equals(otherTree.myRight, myRight);
+      return otherTree.myValue == myValue
+          && Objects.equals(otherTree.myLeft, myLeft)
+          && Objects.equals(otherTree.myRight, myRight);
     }
   }
 }
