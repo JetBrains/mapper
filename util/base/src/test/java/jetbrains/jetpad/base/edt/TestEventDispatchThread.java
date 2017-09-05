@@ -45,7 +45,8 @@ public final class TestEventDispatchThread implements EventDispatchThread {
       public void run() {
         Thread current = Thread.currentThread();
         if (myOwner != current) {
-          throw new IllegalStateException("Test EDT is not thread-safe. Owner is " + myOwner + ". Attempt to access from " + current);
+          throw new IllegalStateException("Test EDT is not thread-safe. Owner is " + myOwner
+              + ". Attempt to access from " + current);
         }
       }
     };

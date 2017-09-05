@@ -22,8 +22,10 @@ public class CollectionAdapter<ItemT> implements CollectionListener<ItemT> {
 
   @Override
   public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
-    onItemRemoved(new CollectionItemEvent<>(event.getOldItem(), null, event.getIndex(), CollectionItemEvent.EventType.REMOVE));
-    onItemAdded(new CollectionItemEvent<>(null, event.getNewItem(), event.getIndex(), CollectionItemEvent.EventType.ADD));
+    onItemRemoved(
+        new CollectionItemEvent<>(event.getOldItem(), null, event.getIndex(), CollectionItemEvent.EventType.REMOVE));
+    onItemAdded(
+        new CollectionItemEvent<>(null, event.getNewItem(), event.getIndex(), CollectionItemEvent.EventType.ADD));
   }
 
   @Override

@@ -23,10 +23,13 @@ public class DistanceTest {
   @Test
   public void simpleDistance() {
     double dist = new DoubleSegment(new DoubleVector(0, 0), new DoubleVector(0, 25)).distance(new DoubleVector(20, 30));
-    double dist2 = new DoubleSegment(new DoubleVector(0, 25), new DoubleVector(0, 50)).distance(new DoubleVector(20, 30));
+    double dist2 = new DoubleSegment(new DoubleVector(0, 25), new DoubleVector(0, 50))
+        .distance(new DoubleVector(20, 30));
     assertTrue(dist2 < dist);
-    double dist3 = new DoubleRectangle(new DoubleVector(50, 10), new DoubleVector(601, 25)).distance(new DoubleVector(676, 42));
-    double dist4 = new DoubleRectangle(new DoubleVector(50, 35), new DoubleVector(601, 42)).distance(new DoubleVector(676, 42));
+    double dist3 = new DoubleRectangle(new DoubleVector(50, 10), new DoubleVector(601, 25))
+        .distance(new DoubleVector(676, 42));
+    double dist4 = new DoubleRectangle(new DoubleVector(50, 35), new DoubleVector(601, 42))
+        .distance(new DoubleVector(676, 42));
     assertTrue(dist4 < dist3);
   }
 }

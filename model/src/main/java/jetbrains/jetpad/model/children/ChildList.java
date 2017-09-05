@@ -19,7 +19,8 @@ import jetbrains.jetpad.model.collections.CollectionAdapter;
 import jetbrains.jetpad.model.collections.CollectionItemEvent;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 
-public class ChildList<ParentT, ChildT extends SimpleComposite<? super ParentT, ? super ChildT>> extends ObservableArrayList<ChildT> {
+public class ChildList<ParentT, ChildT extends SimpleComposite<? super ParentT, ? super ChildT>>
+    extends ObservableArrayList<ChildT> {
   private ParentT myParent;
 
   public ChildList(ParentT parent) {

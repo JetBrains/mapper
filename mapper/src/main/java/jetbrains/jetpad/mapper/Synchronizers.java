@@ -93,7 +93,8 @@ public final class Synchronizers {
       final SourceT source,
       final List<TargetT> target,
       MapperFactory<SourceT, KindTargetT> factory) {
-    BaseCollectionRoleSynchronizer<SourceT, KindTargetT> result = new BaseCollectionRoleSynchronizer<SourceT, KindTargetT>(mapper) {
+    BaseCollectionRoleSynchronizer<SourceT, KindTargetT> result
+        = new BaseCollectionRoleSynchronizer<SourceT, KindTargetT>(mapper) {
       @Override
       protected void onAttach() {
         super.onAttach();

@@ -94,7 +94,8 @@ public class PersistersTest {
     assertEquals(defaultValue, persister.deserialize(persister.serialize(null)));
   }
 
-  private Persister<List<String>> listPersister = Persisters.listPersister(Persisters.stringPersister(), new Supplier<List<String>>() {
+  private Persister<List<String>> listPersister = Persisters.listPersister(Persisters.stringPersister(),
+      new Supplier<List<String>>() {
     @Override
     public List<String> get() {
       return new ArrayList<>();

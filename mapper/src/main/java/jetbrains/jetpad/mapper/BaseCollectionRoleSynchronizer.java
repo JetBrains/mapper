@@ -74,7 +74,8 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
         targetContent.add((SourceT) m.getSource());
       }
 
-      List<DifferenceBuilder<SourceT>.DifferenceItem> difference = new DifferenceBuilder<>(sourceList, targetContent).build();
+      List<DifferenceBuilder<SourceT>.DifferenceItem> difference
+          = new DifferenceBuilder<>(sourceList, targetContent).build();
       for (DifferenceBuilder<SourceT>.DifferenceItem item : difference) {
         if (item.isAdd) {
           Mapper<? extends SourceT, ? extends TargetT> mapper = createMapper(item.item);

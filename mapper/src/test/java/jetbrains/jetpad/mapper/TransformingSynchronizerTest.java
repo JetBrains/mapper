@@ -80,7 +80,9 @@ public class TransformingSynchronizerTest extends BaseTestCase {
     protected void registerSynchronizers(SynchronizersConfiguration conf) {
       super.registerSynchronizers(conf);
 
-      conf.add(new TransformingObservableCollectionRoleSynchronizer<>(this, getSource(), Transformers.<String, String, String, ObservableList<String>>sortBy(new Function<String, ReadableProperty<String>>() {
+      conf.add(new TransformingObservableCollectionRoleSynchronizer<>(this, getSource(),
+          Transformers.<String, String, String, ObservableList<String>>sortBy(
+              new Function<String, ReadableProperty<String>>() {
           @Override
           public ReadableProperty<String> apply(String s) {
             return Properties.constant(s);

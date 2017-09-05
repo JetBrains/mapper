@@ -289,7 +289,8 @@ public final class DomUtil {
     }, 200);
   }
 
-  public static <ValueT> ReadableProperty<ValueT> timerBasedProperty(final Supplier<ValueT> supplier, final int period) {
+  public static <ValueT>
+  ReadableProperty<ValueT> timerBasedProperty(final Supplier<ValueT> supplier, final int period) {
     return new UpdatableProperty<ValueT>() {
       private Timer myTimer = new Timer() {
         @Override

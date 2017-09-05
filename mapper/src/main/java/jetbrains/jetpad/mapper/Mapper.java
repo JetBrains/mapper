@@ -362,7 +362,8 @@ public abstract class Mapper<SourceT, TargetT> {
     }
   }
 
-  private class ChildProperty<MapperT extends Mapper<?, ?>> extends ValueProperty<MapperT> implements ChildContainer<MapperT> {
+  private class ChildProperty<MapperT extends Mapper<?, ?>>
+      extends ValueProperty<MapperT> implements ChildContainer<MapperT> {
     @Override
     public void set(MapperT value) {
       if (get() == null && value != null) {
@@ -392,7 +393,8 @@ public abstract class Mapper<SourceT, TargetT> {
     }
   }
 
-  private class ChildList<MapperT extends Mapper<?, ?>> extends ObservableArrayList<MapperT> implements ChildContainer<MapperT> {
+  private class ChildList<MapperT extends Mapper<?, ?>>
+      extends ObservableArrayList<MapperT> implements ChildContainer<MapperT> {
     @Override
     protected void checkAdd(int index, MapperT item) {
       checkCanAdd(item);
@@ -446,7 +448,8 @@ public abstract class Mapper<SourceT, TargetT> {
     }
   }
 
-  private class ChildSet<MapperT extends Mapper<?, ?>> extends ObservableHashSet<MapperT> implements ChildContainer<MapperT> {
+  private class ChildSet<MapperT extends Mapper<?, ?>>
+      extends ObservableHashSet<MapperT> implements ChildContainer<MapperT> {
     @Override
     protected void checkAdd(MapperT item) {
       checkCanAdd(item);

@@ -178,7 +178,8 @@ public final class Persisters {
     };
   }
 
-  public static <T, ListT extends List<T>> Persister<ListT> listPersister(final Persister<T> itemPersister, final Supplier<ListT> empty) {
+  public static <T, ListT extends List<T>>
+  Persister<ListT> listPersister(final Persister<T> itemPersister, final Supplier<ListT> empty) {
     return new Persister<ListT>() {
       @Override
       public ListT deserialize(String value) {

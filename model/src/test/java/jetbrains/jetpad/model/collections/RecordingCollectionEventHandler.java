@@ -20,7 +20,8 @@ import jetbrains.jetpad.model.event.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RecordingCollectionEventHandler<ItemT> implements EventHandler<CollectionItemEvent<? extends ItemT>> {
+public final class RecordingCollectionEventHandler<ItemT>
+    implements EventHandler<CollectionItemEvent<? extends ItemT>> {
   private List<CollectionItemEvent<? extends ItemT>> myEvents = new ArrayList<>();
 
   public int getCounter() {

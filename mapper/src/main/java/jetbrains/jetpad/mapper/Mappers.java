@@ -42,7 +42,9 @@ public final class Mappers {
     };
   }
 
-  public static <SourceT, Target1T, Target2T> MapperFactory<SourceT, Target2T> compose(final MapperFactory<SourceT, Target1T> f1, final MapperFactory<Target1T, Target2T> f2) {
+  public static <SourceT, Target1T, Target2T>
+  MapperFactory<SourceT, Target2T>
+  compose(final MapperFactory<SourceT, Target1T> f1, final MapperFactory<Target1T, Target2T> f2) {
     return new MapperFactory<SourceT, Target2T>() {
       @Override
       public Mapper<? extends SourceT, ? extends Target2T> createMapper(SourceT source) {

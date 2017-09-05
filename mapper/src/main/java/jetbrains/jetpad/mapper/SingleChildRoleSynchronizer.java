@@ -31,7 +31,8 @@ class SingleChildRoleSynchronizer<SourceT, TargetT> extends BaseRoleSynchronizer
   private WritableProperty<TargetT> myTargetProperty;
   private Registration myChildRegistration;
 
-  SingleChildRoleSynchronizer(Mapper<?, ?> mapper, ReadableProperty<SourceT> childProperty, WritableProperty<TargetT> targetProperty, MapperFactory<SourceT, TargetT> factory) {
+  SingleChildRoleSynchronizer(Mapper<?, ?> mapper, ReadableProperty<SourceT> childProperty,
+      WritableProperty<TargetT> targetProperty, MapperFactory<SourceT, TargetT> factory) {
     if (childProperty == null || targetProperty == null) {
       throw new NullPointerException();
     }

@@ -26,8 +26,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 public final class ObservableItemEventMatchers {
-  public static <T> Matcher<CollectionItemEvent<? extends T>> event(final Matcher<? super T> oldItem, final Matcher<? super T> newItem,
-                                                             final Matcher<Integer> index, final Matcher<CollectionItemEvent.EventType> type) {
+  public static <T>
+  Matcher<CollectionItemEvent<? extends T>> event(final Matcher<? super T> oldItem, final Matcher<? super T> newItem,
+      final Matcher<Integer> index, final Matcher<CollectionItemEvent.EventType> type) {
     return new TypeSafeDiagnosingMatcher<CollectionItemEvent<? extends T>>() {
       @Override
       protected boolean matchesSafely(CollectionItemEvent<? extends T> event, Description description) {

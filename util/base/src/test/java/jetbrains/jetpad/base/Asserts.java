@@ -57,7 +57,8 @@ public final class Asserts {
   public static void assertFailure(Class<? extends Throwable> expected, Async<?> async) {
     AsyncResult<?> result = getResult(async);
     if (result.state != AsyncState.FAILED) {
-      throw new AssertionError("Async expected to fail async=" + async + ", value=" + result.value + ", state=" + result.state);
+      throw new AssertionError("Async expected to fail async=" + async + ", value=" + result.value
+          + ", state=" + result.state);
     }
     Throwable t = result.error;
     if (!expected.isAssignableFrom(t.getClass())) {
@@ -68,7 +69,8 @@ public final class Asserts {
   public static <T> T getResultValue(Async<T> async) {
     AsyncResult<T> result = getResult(async);
     if (result.state != AsyncState.SUCCEEDED) {
-      throw new AssertionError("Async expected to succeed async=" + async + ", failure=" + result.error + ", state=" + result.state);
+      throw new AssertionError("Async expected to succeed async=" + async + ", failure=" + result.error
+          + ", state=" + result.state);
     }
     return result.value;
   }

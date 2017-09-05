@@ -172,7 +172,8 @@ public final class EdtManagerPool implements EdtManagerFactory {
 
     @Override
     public String toString() {
-      return "EdtManagerPool.EdtManagerAdapter@" + Integer.toHexString(hashCode()) + ("".equals(myName) ? "" : " (" + myName + ")");
+      return "EdtManagerPool.EdtManagerAdapter@" + Integer.toHexString(hashCode())
+          + ("".equals(myName) ? "" : " (" + myName + ")");
     }
   }
 }

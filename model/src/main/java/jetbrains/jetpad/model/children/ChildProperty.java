@@ -17,7 +17,8 @@ package jetbrains.jetpad.model.children;
 
 import jetbrains.jetpad.model.property.ValueProperty;
 
-public class ChildProperty<ParentT, ChildT extends SimpleComposite<? super ParentT, ? super ChildT>> extends ValueProperty<ChildT> {
+public class ChildProperty<ParentT, ChildT extends SimpleComposite<? super ParentT, ? super ChildT>>
+    extends ValueProperty<ChildT> {
   private ParentT myParent;
 
   public ChildProperty(ParentT parent) {

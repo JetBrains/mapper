@@ -182,7 +182,8 @@ public class SelectTest {
     return test;
   }
 
-  private void testNonListened(Property<Boolean> src, ObservableCollection<String> selected, ObservableCollection<String> res) {
+  private void testNonListened(Property<Boolean> src,
+      ObservableCollection<String> selected, ObservableCollection<String> res) {
     assertEquals(0, res.size());
 
     selected.add("1");
@@ -199,7 +200,8 @@ public class SelectTest {
   }
 
   @SuppressWarnings("unchecked")
-  private void testListened(Property<Boolean> src, ObservableCollection<String> selected, ObservableCollection<String> res) {
+  private void testListened(Property<Boolean> src,
+      ObservableCollection<String> selected, ObservableCollection<String> res) {
     CollectionListener<String> mock = mock(CollectionListener.class);
     res.addListener(mock);
 
