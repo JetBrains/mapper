@@ -20,7 +20,6 @@ import jetbrains.jetpad.base.function.Predicate;
 import jetbrains.jetpad.base.function.Supplier;
 
 public final class Functions {
-
   private static final Predicate<?> TRUE_PREDICATE = new Predicate<Object>() {
     @Override
     public boolean test(Object t) {
@@ -33,16 +32,22 @@ public final class Functions {
       return false;
     }
   };
-  public static final Predicate<?> NULL_PREDICATE = new Predicate<Object>() {
+  private static final Predicate<?> NULL_PREDICATE = new Predicate<Object>() {
     @Override
     public boolean test(Object value) {
       return value == null;
     }
   };
-  public static final Predicate<?> NOT_NULL_PREDICATE = new Predicate<Object>() {
+  private static final Predicate<?> NOT_NULL_PREDICATE = new Predicate<Object>() {
     @Override
     public boolean test(Object value) {
       return value != null;
+    }
+  };
+  private static final Function<?, ?> IDENTITY_FUNCTION = new Function<Object, Object>() {
+    @Override
+    public Object apply(Object value) {
+      return value;
     }
   };
 
@@ -90,11 +95,16 @@ public final class Functions {
     return (Predicate<ArgT>) NOT_NULL_PREDICATE;
   }
 
+  @SuppressWarnings("unchecked")
   public static <ValueT> Function<ValueT, ValueT> identity() {
-    return new Function<ValueT, ValueT>() {
+    return (Function<ValueT, ValueT>) IDENTITY_FUNCTION;
+  }
+
+  public static <ValueT> Predicate<ValueT> same(final Object value) {
+    return new Predicate<ValueT>() {
       @Override
-      public ValueT apply(ValueT value) {
-        return value;
+      public boolean test(ValueT v) {
+        return v == value;
       }
     };
   }
