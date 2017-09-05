@@ -39,7 +39,7 @@ public class ObservableListWrapper<SourceItemT, TargetItemT> extends AbstractLis
   }
 
   @Override
-  public Registration addListener(CollectionListener<TargetItemT> l) {
+  public Registration addListener(CollectionListener<? super TargetItemT> l) {
     return mySource.addListener(new RelayCollectionListener<SourceItemT, TargetItemT>(l) {
       @Override
       protected CollectionItemEvent<? extends TargetItemT> transform(CollectionItemEvent<? extends SourceItemT> event) {

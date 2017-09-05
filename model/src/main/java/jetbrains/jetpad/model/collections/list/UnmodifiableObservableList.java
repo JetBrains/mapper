@@ -31,7 +31,7 @@ public class UnmodifiableObservableList<ElementT> extends UnmodifiableList<Eleme
   }
 
   @Override
-  public Registration addListener(CollectionListener<ElementT> l) {
+  public Registration addListener(CollectionListener<? super ElementT> l) {
     return getWrappedList().addListener(l);
   }
 

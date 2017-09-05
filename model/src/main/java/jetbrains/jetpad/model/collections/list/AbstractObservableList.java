@@ -25,7 +25,7 @@ import jetbrains.jetpad.model.event.Listeners;
 import java.util.AbstractList;
 
 public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> implements ObservableList<ItemT> {
-  private Listeners<CollectionListener<ItemT>> myListeners;
+  private Listeners<CollectionListener<? super ItemT>> myListeners;
 
   protected void checkAdd(int index, ItemT item) {
     if (index < 0 || index > size()) {
@@ -56,9 +56,9 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       onItemAdd(index, item);
       if (myListeners != null) {
         final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(null, item, index, CollectionItemEvent.EventType.ADD);
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super ItemT>>() {
           @Override
-          public void call(CollectionListener<ItemT> l) {
+          public void call(CollectionListener<? super ItemT> l) {
             l.onItemAdded(event);
           }
         });
@@ -91,9 +91,9 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       onItemSet(index, old, item);
       if (myListeners != null) {
         final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(old, item, index, CollectionItemEvent.EventType.SET);
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super ItemT>>() {
           @Override
-          public void call(CollectionListener<ItemT> l) {
+          public void call(CollectionListener<? super ItemT> l) {
             l.onItemSet(event);
           }
         });
@@ -130,9 +130,9 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
       onItemRemove(index, item);
       if (myListeners != null) {
         final CollectionItemEvent<ItemT> event = new CollectionItemEvent<>(item, null, index, CollectionItemEvent.EventType.REMOVE);
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super ItemT>>() {
           @Override
-          public void call(CollectionListener<ItemT> l) {
+          public void call(CollectionListener<? super ItemT> l) {
             l.onItemRemoved(event);
           }
         });
@@ -155,9 +155,9 @@ public abstract class AbstractObservableList<ItemT> extends AbstractList<ItemT> 
   }
 
   @Override
-  public Registration addListener(CollectionListener<ItemT> listener) {
+  public Registration addListener(CollectionListener<? super ItemT> listener) {
     if (myListeners == null) {
-      myListeners = new Listeners<CollectionListener<ItemT>>() {
+      myListeners = new Listeners<CollectionListener<? super ItemT>>() {
         @Override
         protected void beforeFirstAdded() {
           onListenersAdded();

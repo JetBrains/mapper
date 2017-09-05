@@ -32,7 +32,7 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
   private ObservableCollection<SourceT> myBaseCollection;
   private Function<SourceT, TargetT> myTargetSupplier;
   private Function<TargetT, SourceT> mySourceSupplier;
-  private Listeners<CollectionListener<TargetT>> myListeners = new Listeners<>();
+  private Listeners<CollectionListener<? super TargetT>> myListeners = new Listeners<>();
 
   public MirrorObservableSet(ObservableCollection<SourceT> baseSet, Function<SourceT, TargetT> targetSupplier, Function<TargetT, SourceT> sourceSupplier) {
     myBaseCollection = baseSet;
@@ -41,9 +41,9 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
     myBaseCollection.addListener(new CollectionAdapter<SourceT>() {
       @Override
       public void onItemAdded(final CollectionItemEvent<? extends SourceT> event) {
-        myListeners.fire(new ListenerCaller<CollectionListener<TargetT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super TargetT>>() {
           @Override
-          public void call(CollectionListener<TargetT> l) {
+          public void call(CollectionListener<? super TargetT> l) {
             l.onItemAdded(new CollectionItemEvent<>(null, myTargetSupplier.apply(event.getNewItem()), -1, CollectionItemEvent.EventType.ADD));
           }
         });
@@ -51,9 +51,9 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
 
       @Override
       public void onItemRemoved(final CollectionItemEvent<? extends SourceT> event) {
-        myListeners.fire(new ListenerCaller<CollectionListener<TargetT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super TargetT>>() {
           @Override
-          public void call(CollectionListener<TargetT> l) {
+          public void call(CollectionListener<? super TargetT> l) {
             l.onItemRemoved(new CollectionItemEvent<>(myTargetSupplier.apply(event.getOldItem()), null, -1, CollectionItemEvent.EventType.REMOVE));
           }
         });
@@ -93,7 +93,7 @@ public class MirrorObservableSet<SourceT, TargetT> extends AbstractSet<TargetT> 
   }
 
   @Override
-  public Registration addListener(CollectionListener<TargetT> l) {
+  public Registration addListener(CollectionListener<? super TargetT> l) {
     return myListeners.add(l);
   }
 

@@ -29,7 +29,7 @@ public class UnmodifiableObservableCollection<ItemT> implements ObservableCollec
   }
 
   @Override
-  public Registration addListener(CollectionListener<ItemT> l) {
+  public Registration addListener(CollectionListener<? super ItemT> l) {
     return myWrappedCollection.addListener(l);
   }
 

@@ -28,10 +28,10 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> implements ObservableSet<ItemT> {
-  private Listeners<CollectionListener<ItemT>> myListeners;
+  private Listeners<CollectionListener<? super ItemT>> myListeners;
 
   @Override
-  public Registration addListener(CollectionListener<ItemT> l) {
+  public Registration addListener(CollectionListener<? super ItemT> l) {
     if (myListeners == null) {
       myListeners = new Listeners<>();
     }
@@ -60,9 +60,9 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   private void doAfterAdd(final ItemT item, boolean success) {
     try {
       if (success && myListeners != null) {
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super ItemT>>() {
           @Override
-          public void call(CollectionListener<ItemT> l) {
+          public void call(CollectionListener<? super ItemT> l) {
             l.onItemAdded(new CollectionItemEvent<>(null, item, -1, CollectionItemEvent.EventType.ADD));
           }
         });
@@ -135,9 +135,9 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   private void doAfterRemove(final ItemT item, boolean success) {
     try {
       if (success && myListeners != null) {
-        myListeners.fire(new ListenerCaller<CollectionListener<ItemT>>() {
+        myListeners.fire(new ListenerCaller<CollectionListener<? super ItemT>>() {
           @Override
-          public void call(CollectionListener<ItemT> l) {
+          public void call(CollectionListener<? super ItemT> l) {
             l.onItemRemoved(new CollectionItemEvent<>(item, null, -1, CollectionItemEvent.EventType.REMOVE));
           }
         });

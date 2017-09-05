@@ -272,7 +272,7 @@ public class SelectTest {
   private ObservableList<String> listenersCountingList(final AtomicInteger counter) {
     return new ObservableArrayList<String>() {
       @Override
-      public Registration addListener(CollectionListener<String> listener) {
+      public Registration addListener(CollectionListener<? super String> listener) {
         final Registration r = super.addListener(listener);
         counter.incrementAndGet();
         return new Registration() {

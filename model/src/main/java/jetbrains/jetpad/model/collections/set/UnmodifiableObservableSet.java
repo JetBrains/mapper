@@ -31,7 +31,7 @@ public class UnmodifiableObservableSet<ElementT> extends UnmodifiableSet<Element
   }
 
   @Override
-  public Registration addListener(CollectionListener<ElementT> l) {
+  public Registration addListener(CollectionListener<? super ElementT> l) {
     return getWrappedSet().addListener(l);
   }
 
