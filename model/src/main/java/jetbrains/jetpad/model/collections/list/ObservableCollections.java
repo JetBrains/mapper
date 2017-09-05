@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.model.collections.list;
 
+import com.google.common.collect.Iterators;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
@@ -41,38 +42,6 @@ import java.util.List;
 import java.util.Set;
 
 public final class ObservableCollections {
-  private static final ObservableList EMPTY_LIST = new AbstractObservableList() {
-    @Override
-    public int size() {
-      return 0;
-    }
-
-    @Override
-    public Object get(int index) {
-      throw new ArrayIndexOutOfBoundsException();
-    }
-
-    @Override
-    protected void doAdd(int index, Object item) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void doRemove(int index) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Registration addListener(CollectionListener listener) {
-      return Registration.EMPTY;
-    }
-
-    @Override
-    public Registration addHandler(EventHandler handler) {
-      return Registration.EMPTY;
-    }
-  };
-
   public static <ItemT> ObservableList<ItemT> toObservable(List<ItemT> l) {
     ObservableList<ItemT> result = new ObservableArrayList<>();
     result.addAll(l);
@@ -125,7 +94,8 @@ public final class ObservableCollections {
           @Override
           public void onEvent(CollectionItemEvent<? extends ItemT> event) {
             List<ItemT> newValue = new ArrayList<>(list);
-            handler.onEvent(new PropertyChangeEvent<>(Collections.unmodifiableList(myLastValue), Collections.unmodifiableList(newValue)));
+            handler.onEvent(new PropertyChangeEvent<>(
+                Collections.unmodifiableList(myLastValue), Collections.unmodifiableList(newValue)));
             myLastValue = newValue;
           }
         });
@@ -133,14 +103,12 @@ public final class ObservableCollections {
     };
   }
 
-  @SuppressWarnings("unchecked")
   public static <ItemT> ObservableCollection<ItemT> empty() {
-    return EMPTY_LIST;
+    return new EmptyList<>();
   }
 
-  @SuppressWarnings("unchecked")
   public static <ItemT> ObservableList<ItemT> emptyList() {
-    return EMPTY_LIST;
+    return new EmptyList<>();
   }
 
   public static <ItemT> ReadableProperty<Integer> count(
@@ -219,12 +187,12 @@ public final class ObservableCollections {
   }
 
   public static <ValueT, ItemT> ObservableCollection<ItemT> selectCollection(
-      ReadableProperty<ValueT> p, Function<ValueT, ObservableCollection<ItemT>> s) {
+      ReadableProperty<ValueT> p, Function<ValueT, ObservableCollection<? extends ItemT>> s) {
     return new UnmodifiableObservableCollection<>(new SelectorDerivedCollection<>(p, s));
   }
 
   public static <ValueT, ItemT> ObservableList<ItemT> selectList(
-      ReadableProperty<ValueT> p, Function<ValueT, ObservableList<ItemT>> s) {
+      ReadableProperty<ValueT> p, Function<ValueT, ObservableList<? extends ItemT>> s) {
     return new UnmodifiableObservableList<>(new SelectorDerivedList<>(p, s));
   }
 
@@ -232,18 +200,18 @@ public final class ObservableCollections {
   }
 
   private static class SelectorDerivedCollection<ValueT, ItemT>
-      extends SelectedCollection<ValueT, ItemT, ObservableCollection<ItemT>> {
-    SelectorDerivedCollection(ReadableProperty<ValueT> source, Function<ValueT, ObservableCollection<ItemT>> fun) {
+      extends SelectedCollection<ValueT, ItemT, ObservableCollection<? extends ItemT>> {
+    SelectorDerivedCollection(ReadableProperty<ValueT> source, Function<ValueT, ObservableCollection<? extends ItemT>> fun) {
       super(source, fun);
     }
 
     @Override
-    protected ObservableCollection<ItemT> empty() {
+    protected ObservableCollection<? extends ItemT> empty() {
       return ObservableCollections.empty();
     }
 
     @Override
-    protected Registration follow(ObservableCollection<ItemT> srcCollection) {
+    protected Registration follow(ObservableCollection<? extends ItemT> srcCollection) {
       for (ItemT i : srcCollection) {
         add(i);
       }
@@ -275,24 +243,24 @@ public final class ObservableCollections {
       if (isFollowing()) {
         return super.iterator();
       } else {
-        return select().iterator();
+        return Iterators.concat(select().iterator());
       }
     }
   }
 
   private static class SelectorDerivedList<ValueT, ItemT>
-      extends SelectedCollection<ValueT, ItemT, ObservableList<ItemT>> {
-    SelectorDerivedList(ReadableProperty<ValueT> source, Function<ValueT, ObservableList<ItemT>> fun) {
+      extends SelectedCollection<ValueT, ItemT, ObservableList<? extends ItemT>> {
+    SelectorDerivedList(ReadableProperty<ValueT> source, Function<ValueT, ObservableList<? extends ItemT>> fun) {
       super(source, fun);
     }
 
     @Override
-    protected ObservableList<ItemT> empty() {
+    protected ObservableList<? extends ItemT> empty() {
       return ObservableCollections.emptyList();
     }
 
     @Override
-    protected Registration follow(ObservableList<ItemT> srcList) {
+    protected Registration follow(ObservableList<? extends ItemT> srcList) {
       for (int i = 0; i < srcList.size(); i++) {
         add(i, srcList.get(i));
       }
@@ -324,8 +292,35 @@ public final class ObservableCollections {
       if (isFollowing()) {
         return super.iterator();
       } else {
-        return select().iterator();
+        return Iterators.concat(select().iterator());
       }
+    }
+  }
+
+  private static class EmptyList<ItemT> extends AbstractObservableList<ItemT> {
+    @Override
+    public int size() {
+      return 0;
+    }
+
+    @Override
+    public ItemT get(int index) {
+      throw new ArrayIndexOutOfBoundsException();
+    }
+
+    @Override
+    protected void doAdd(int index, ItemT item) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected void doRemove(int index) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Registration addListener(CollectionListener<? super ItemT> listener) {
+      return Registration.EMPTY;
     }
   }
 }

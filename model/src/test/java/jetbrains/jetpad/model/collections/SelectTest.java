@@ -250,7 +250,7 @@ public class SelectTest {
   private ObservableList<String> testList(ReadableProperty<Boolean> src, final ObservableList<String> selected) {
     return ObservableCollections.selectList(
       src,
-        new Function<Boolean, ObservableList<String>>() {
+        new Function<Boolean, ObservableList<? extends String>>() {
           @Override
           public ObservableList<String> apply(Boolean source) {
             return source ? selected : null;
@@ -258,10 +258,11 @@ public class SelectTest {
         });
   }
 
-  private ObservableCollection<String> testCollection(ReadableProperty<Boolean> src, final ObservableCollection<String> selected) {
+  private ObservableCollection<String> testCollection(ReadableProperty<Boolean> src,
+      final ObservableCollection<String> selected) {
     return ObservableCollections.selectCollection(
       src,
-        new Function<Boolean, ObservableCollection<String>>() {
+        new Function<Boolean, ObservableCollection<? extends String>>() {
           @Override
           public ObservableCollection<String> apply(Boolean source) {
             return source ? selected : null;
