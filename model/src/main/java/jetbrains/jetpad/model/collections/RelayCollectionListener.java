@@ -1,9 +1,9 @@
 package jetbrains.jetpad.model.collections;
 
 public abstract class RelayCollectionListener<SourceItemT, TargetItemT> implements CollectionListener<SourceItemT> {
-  private CollectionListener<TargetItemT> myRelayTo;
+  private CollectionListener<? super TargetItemT> myRelayTo;
 
-  public RelayCollectionListener(CollectionListener relayTo) {
+  public RelayCollectionListener(CollectionListener<? super TargetItemT> relayTo) {
     myRelayTo = relayTo;
   }
 
@@ -22,7 +22,8 @@ public abstract class RelayCollectionListener<SourceItemT, TargetItemT> implemen
     myRelayTo.onItemRemoved(transform(event));
   }
 
-  protected abstract CollectionItemEvent<? extends TargetItemT> transform(CollectionItemEvent<? extends SourceItemT> event);
+  protected abstract CollectionItemEvent<? extends TargetItemT>
+  transform(CollectionItemEvent<? extends SourceItemT> event);
 
 
 }

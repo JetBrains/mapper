@@ -234,12 +234,12 @@ public class TreeList<T> extends AbstractList<T> {
       }
     }
 
-    private int height(AvlTree tree) {
+    private int height(AvlTree<?> tree) {
       if (tree == null) return 0;
       return tree.myHeight;
     }
 
-    private int size(AvlTree tree) {
+    private int size(AvlTree<?> tree) {
       if (tree == null) return 0;
       return tree.mySize;
     }
