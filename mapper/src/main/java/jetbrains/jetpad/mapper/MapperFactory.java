@@ -16,7 +16,5 @@
 package jetbrains.jetpad.mapper;
 
 public interface MapperFactory<SourceT, TargetT> {
-  MapperFactory[] EMPTY_ARRAY = new MapperFactory[0];
-
   Mapper<? extends SourceT, ? extends TargetT> createMapper(SourceT source);
 }
