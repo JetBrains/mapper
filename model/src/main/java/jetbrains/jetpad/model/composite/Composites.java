@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.composite;
 
 import com.google.common.collect.TreeTraverser;
+import jetbrains.jetpad.base.Functions;
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
 
@@ -28,6 +29,30 @@ import java.util.Stack;
 
 public final class Composites {
   private static CompositesWithBounds ourWithBounds = new CompositesWithBounds(0);
+
+  private static final Predicate<?> IS_FOCUSABLE = new Predicate<HasFocusability>() {
+    @Override
+    public boolean test(HasFocusability value) {
+      return value.focusable().get();
+    }
+  };
+
+  private static final Predicate<?> IS_INVISIBLE = new Predicate<HasVisibility>() {
+    @Override
+    public boolean test(HasVisibility value) {
+      return !value.visible().get();
+    }
+  };
+
+  @SuppressWarnings("unchecked")
+  public static <HasParentT extends HasParent<HasParentT> & HasFocusability> Predicate<HasParentT> isFocusable() {
+    return (Predicate<HasParentT>) IS_FOCUSABLE;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <HasParentT extends HasParent<HasParentT> & HasVisibility> Predicate<HasParentT> isInvisible() {
+    return (Predicate<HasParentT>) IS_INVISIBLE;
+  }
 
   public static <CompositeT extends Composite<CompositeT>>
   void removeFromParent(CompositeT c) {
@@ -131,9 +156,8 @@ public final class Composites {
     }
   }
 
-  public static <CompositeT extends Composite<CompositeT>>
-  CompositeT root(CompositeT current) {
-    for (CompositeT c = current; ; c = c.getParent()) {
+  public static <HasParentT extends HasParent<HasParentT>> HasParentT root(HasParentT current) {
+    for (HasParentT c = current; ; c = c.getParent()) {
       if (c.getParent() == null) {
         return c;
       }
@@ -143,12 +167,11 @@ public final class Composites {
   /**
    * @return Iterable containing the current node and all ancestors.
    */
-  public static <CompositeT extends Composite<CompositeT>>
-  Iterable<CompositeT> ancestorsFrom(CompositeT current) {
-    return iterateFrom(current, new Function<CompositeT, CompositeT>() {
+  public static <HasParentT extends HasParent<HasParentT>> Iterable<HasParentT> ancestorsFrom(HasParentT current) {
+    return iterateFrom(current, new Function<HasParentT, HasParentT>() {
       @Override
-      public CompositeT apply(CompositeT compositeT) {
-        return compositeT.getParent();
+      public HasParentT apply(HasParentT hasParent) {
+        return hasParent.getParent();
       }
     });
   }
@@ -156,12 +179,11 @@ public final class Composites {
   /**
    * @return Iterable containing all ancestors, but not the current node.
    */
-  public static <CompositeT extends Composite<CompositeT>>
-  Iterable<CompositeT> ancestors(CompositeT current) {
-    return iterate(current, new Function<CompositeT, CompositeT>() {
+  public static <HasParentT extends HasParent<HasParentT>> Iterable<HasParentT> ancestors(HasParentT current) {
+    return iterate(current, new Function<HasParentT, HasParentT>() {
       @Override
-      public CompositeT apply(CompositeT compositeT) {
-        return compositeT.getParent();
+      public HasParentT apply(HasParentT hasParent) {
+        return hasParent.getParent();
       }
     });
   }
@@ -205,7 +227,6 @@ public final class Composites {
       }
     });
   }
-
 
   private static <CompositeT extends NavComposite<CompositeT>>
   CompositeT nextNavOrder(CompositeT start, CompositeT current) {
@@ -321,24 +342,30 @@ public final class Composites {
     }
   }
 
-  public static boolean isDescendant(Object ancestor, HasParent<?> descendant) {
-    while (true) {
-      if (ancestor == descendant) return true;
-      if (descendant.getParent() == null) return false;
-      descendant = descendant.getParent();
+  public static <HasParentT extends HasParent<HasParentT>> HasParentT getClosestAncestor(HasParentT current,
+      boolean acceptSelf, Predicate<HasParentT> p) {
+    Iterable<HasParentT> ancestors = acceptSelf ? ancestorsFrom(current) : ancestors(current);
+    for (HasParentT c : ancestors) {
+      if (p.test(c)) {
+        return c;
+      }
     }
+    return null;
   }
 
-  private static <CompositeT extends Composite<CompositeT>>
-  List<CompositeT> reverseAncestors(CompositeT c) {
-    List<CompositeT> result = new ArrayList<>();
+  public static <HasParentT extends HasParent<HasParentT>> boolean isDescendant(Object ancestor, HasParentT current) {
+    return getClosestAncestor(current, true, Functions.<HasParentT>same(ancestor)) != null;
+  }
+
+  private static <HasParentT extends HasParent<HasParentT>> List<HasParentT> reverseAncestors(HasParentT c) {
+    List<HasParentT> result = new ArrayList<>();
     collectReverseAncestors(c, result);
     return result;
   }
 
-  private static <CompositeT extends Composite<CompositeT>>
-  void collectReverseAncestors(CompositeT c, List<CompositeT> result) {
-    CompositeT parent = c.getParent();
+  private static <HasParentT extends HasParent<HasParentT>>
+  void collectReverseAncestors(HasParentT c, List<HasParentT> result) {
+    HasParentT parent = c.getParent();
     if (parent != null) {
       collectReverseAncestors(parent, result);
     }
@@ -420,23 +447,16 @@ public final class Composites {
     return null;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasVisibility> boolean isVisible(CompositeT v) {
-    if (!v.visible().get()) return false;
-    CompositeT parent = v.getParent();
-    if (parent == null) return true;
-    return isVisible(parent);
+  public static <HasParentT extends HasParent<HasParentT> & HasVisibility> boolean isVisible(HasParentT v) {
+    return getClosestAncestor(v, true, Composites.<HasParentT>isInvisible()) == null;
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability>
-  CompositeT focusableParent(CompositeT v) {
-    CompositeT parent = v.getParent();
-    if (parent == null) return null;
-    if (parent.focusable().get()) return parent;
-    return focusableParent(parent);
+  public static <HasParentT extends HasParent<HasParentT> & HasFocusability> HasParentT focusableParent(HasParentT v) {
+    return getClosestAncestor(v, false, Composites.<HasParentT>isFocusable());
   }
 
-  public static <CompositeT extends Composite<CompositeT> & HasFocusability & HasVisibility>
-  boolean isFocusable(CompositeT v) {
+  public static <HasParentT extends HasParent<HasParentT> & HasFocusability & HasVisibility>
+  boolean isFocusable(HasParentT v) {
     return v.focusable().get() && isVisible(v);
   }
 
@@ -456,7 +476,7 @@ public final class Composites {
 
   public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility>
   CompositeT nextFocusable(CompositeT v) {
-    for (CompositeT cv : Composites.nextNavOrder(v)) {
+    for (CompositeT cv : nextNavOrder(v)) {
       if (isFocusable(cv)) return cv;
     }
     return null;
@@ -464,7 +484,7 @@ public final class Composites {
 
   public static <CompositeT extends NavComposite<CompositeT> & HasFocusability & HasVisibility>
   CompositeT prevFocusable(CompositeT v) {
-    for (CompositeT cv : Composites.prevNavOrder(v)) {
+    for (CompositeT cv : prevNavOrder(v)) {
       if (isFocusable(cv)) return cv;
     }
     return null;
