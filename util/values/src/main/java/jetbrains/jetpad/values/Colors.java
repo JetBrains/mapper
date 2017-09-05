@@ -27,7 +27,7 @@ public final class Colors {
   private static Map<String, Color> colorsList = createColorsList();
 
   private static Map<String, Color> createColorsList() {
-    HashMap <String, Color> colorList = new HashMap<>();
+    Map<String, Color> colorList = new HashMap<>();
     colorList.put("white", Color.WHITE);
     colorList.put("black", Color.BLACK);
     colorList.put("light-gray", Color.LIGHT_GRAY);
