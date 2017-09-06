@@ -21,10 +21,12 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.mockito.Mockito;
 
+import java.util.concurrent.TimeUnit;
+
 public final class TimeoutEdtTest {
 
   @Rule
-  public final Timeout testTimeout = new Timeout(10000);
+  public final Timeout testTimeout = new Timeout(10000, TimeUnit.MILLISECONDS);
 
   private TestEventDispatchThread edt = new TestEventDispatchThread();
 
