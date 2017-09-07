@@ -13,6 +13,8 @@
     <exclude name="edt/ExecutorEdtManagerFactory.java" />
     <exclude name="edt/EdtManagerPool.java" />
 
+    <exclude name="platform/PlatformAwt.java" />
+
     <exclude name="props/SystemPropertyProvider.java" />
   </source>
 
