@@ -17,7 +17,8 @@ package jetbrains.jetpad.model.transform;
 
 public abstract class BaseTransformer<SourceT, TargetT> implements Transformer<SourceT, TargetT> {
   @Override
-  public <ParameterTargetT> Transformer<SourceT, ParameterTargetT> andThen(final Transformer<TargetT, ParameterTargetT> transformer) {
+  public <ParameterTargetT> Transformer<SourceT, ParameterTargetT> andThen(
+      final Transformer<TargetT, ParameterTargetT> transformer) {
     final Transformer<SourceT, TargetT> firstTransformer = this;
     return new BaseTransformer<SourceT, ParameterTargetT>() {
       @Override
@@ -34,7 +35,8 @@ public abstract class BaseTransformer<SourceT, TargetT> implements Transformer<S
         return createTransformation(tn1, tn2);
       }
 
-      private Transformation<SourceT, ParameterTargetT> createTransformation(final Transformation<SourceT, TargetT> tn1, final Transformation<TargetT, ParameterTargetT> tn2) {
+      private Transformation<SourceT, ParameterTargetT> createTransformation(
+          final Transformation<SourceT, TargetT> tn1, final Transformation<TargetT, ParameterTargetT> tn2) {
         return new Transformation<SourceT, ParameterTargetT>() {
           @Override
           public SourceT getSource() {

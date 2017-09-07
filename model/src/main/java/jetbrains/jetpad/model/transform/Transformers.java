@@ -50,7 +50,7 @@ public final class Transformers {
   }
 
   public static <TargetT, SourceT extends TargetT> Transformer<SourceT, TargetT> coerce() {
-    return new BaseTransformer<SourceT, TargetT>() {
+    Transformer<SourceT, TargetT> transformer = new BaseTransformer<SourceT, TargetT>() {
       @Override
       public Transformation<SourceT, TargetT> transform(final SourceT from) {
         return new Transformation<SourceT, TargetT>() {
@@ -71,6 +71,7 @@ public final class Transformers {
         throw new UnsupportedOperationException();
       }
     };
+    return transformer;
   }
 
   public static <ItemT> Transformer<ObservableList<ItemT>, ObservableList<? extends ItemT>> coerceList() {
