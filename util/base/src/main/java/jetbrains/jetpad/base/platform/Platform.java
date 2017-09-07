@@ -19,10 +19,16 @@ public final class Platform {
   private static PlatformType ourPlatform;
 
   public static PlatformType getPlatform() {
+    if (ourPlatform == null) {
+      throw new IllegalStateException("Platform was not set");
+    }
     return ourPlatform;
   }
 
   public static void setPlatform(PlatformType platform) {
+    if (ourPlatform != null && ourPlatform != platform) {
+      throw new IllegalStateException("Overwrite platform value: current=" + ourPlatform + ", new=" + platform);
+    }
     ourPlatform = platform;
   }
 
