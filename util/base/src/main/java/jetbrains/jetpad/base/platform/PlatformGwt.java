@@ -19,6 +19,10 @@ import com.google.gwt.user.client.Window;
 
 public final class PlatformGwt {
 
+  public static void setPlatform() {
+    Platform.setPlatform(getPlatform());
+  }
+
   public static PlatformType getPlatform() {
     return PlatformType.fromName(Window.Navigator.getPlatform());
   }
