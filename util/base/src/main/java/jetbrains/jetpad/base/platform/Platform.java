@@ -16,20 +16,29 @@
 package jetbrains.jetpad.base.platform;
 
 public final class Platform {
-  private static PlatformType ourPlatform;
+  private static final ThreadLocal<PlatformType> PLATFORM = new ThreadLocal<PlatformType>();
 
   public static PlatformType getPlatform() {
-    if (ourPlatform == null) {
+    PlatformType platform = PLATFORM.get();
+    if (platform == null) {
       throw new IllegalStateException("Platform was not set");
     }
-    return ourPlatform;
+    return platform;
   }
 
   public static void setPlatform(PlatformType platform) {
-    if (ourPlatform != null && ourPlatform != platform) {
-      throw new IllegalStateException("Overwrite platform value: current=" + ourPlatform + ", new=" + platform);
+    if (platform == null) {
+      throw new IllegalArgumentException("Null new platform value");
     }
-    ourPlatform = platform;
+    PlatformType oldValue = PLATFORM.get();
+    if (oldValue != null && oldValue != platform) {
+      throw new IllegalStateException("Overwrite platform value: current=" + oldValue + ", new=" + platform);
+    }
+    PLATFORM.set(platform);
+  }
+
+  static void reset() {
+    PLATFORM.set(null);
   }
 
   private Platform() {
