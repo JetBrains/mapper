@@ -199,9 +199,9 @@ public class SelectTest {
     assertEquals(0, res.size());
   }
 
-  @SuppressWarnings("unchecked")
   private void testListened(Property<Boolean> src,
       ObservableCollection<String> selected, ObservableCollection<String> res) {
+    @SuppressWarnings("unchecked")
     CollectionListener<String> mock = mock(CollectionListener.class);
     res.addListener(mock);
 
@@ -223,12 +223,12 @@ public class SelectTest {
     assertEquals(0, res.size());
   }
 
-  @SuppressWarnings("unchecked")
   private void testRegistrations(Property<Boolean> src, ObservableCollection<String> res,
       AtomicInteger propertyListeners, AtomicInteger collectionListeners) {
     assertEquals(0, propertyListeners.get());
     assertEquals(0, collectionListeners.get());
 
+    @SuppressWarnings("unchecked")
     CollectionListener<String> mock = mock(CollectionListener.class);
     Registration mockReg = res.addListener(mock);
     assertEquals(1, propertyListeners.get());

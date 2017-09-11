@@ -44,14 +44,16 @@ public final class Composites {
     }
   };
 
-  @SuppressWarnings("unchecked")
   public static <HasParentT extends HasParent<HasParentT> & HasFocusability> Predicate<HasParentT> isFocusable() {
-    return (Predicate<HasParentT>) IS_FOCUSABLE;
+    @SuppressWarnings("unchecked")
+    Predicate<HasParentT> predicate = (Predicate<HasParentT>) IS_FOCUSABLE;
+    return predicate;
   }
 
-  @SuppressWarnings("unchecked")
   public static <HasParentT extends HasParent<HasParentT> & HasVisibility> Predicate<HasParentT> isInvisible() {
-    return (Predicate<HasParentT>) IS_INVISIBLE;
+    @SuppressWarnings("unchecked")
+    Predicate<HasParentT> predicate = (Predicate<HasParentT>) IS_INVISIBLE;
+    return predicate;
   }
 
   public static <CompositeT extends Composite<CompositeT>>

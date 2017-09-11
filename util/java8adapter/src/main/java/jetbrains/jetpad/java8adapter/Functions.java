@@ -24,13 +24,15 @@ public final class Functions {
 
   private Functions() { }
 
-  @SuppressWarnings("unchecked")
   public static <ArgT> Predicate<ArgT> alwaysTrue() {
-    return (Predicate<ArgT>) TRUE_PREDICATE;
+    @SuppressWarnings("unchecked")
+    Predicate<ArgT> predicate = (Predicate<ArgT>) TRUE_PREDICATE;
+    return predicate;
   }
 
-  @SuppressWarnings("unchecked")
   public static <ArgT> Predicate<ArgT> alwaysFalse() {
-    return (Predicate<ArgT>) FALSE_PREDICATE;
+    @SuppressWarnings("unchecked")
+    Predicate<ArgT> predicate = (Predicate<ArgT>) FALSE_PREDICATE;
+    return predicate;
   }
 }

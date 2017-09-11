@@ -66,14 +66,16 @@ public final class Functions {
     return new Memo<>(supplier);
   }
 
-  @SuppressWarnings("unchecked")
   public static <ArgT> Predicate<ArgT> alwaysTrue() {
-    return (Predicate<ArgT>) TRUE_PREDICATE;
+    @SuppressWarnings("unchecked")
+    Predicate<ArgT> predicate = (Predicate<ArgT>) TRUE_PREDICATE;
+    return predicate;
   }
 
-  @SuppressWarnings("unchecked")
   public static <ArgT> Predicate<ArgT> alwaysFalse() {
-    return (Predicate<ArgT>) FALSE_PREDICATE;
+    @SuppressWarnings("unchecked")
+    Predicate<ArgT> predicate = (Predicate<ArgT>) FALSE_PREDICATE;
+    return predicate;
   }
 
   public static <ArgT, ResultT> Function<ArgT, ResultT> constant(final ResultT result) {
@@ -85,19 +87,22 @@ public final class Functions {
     };
   }
 
-  @SuppressWarnings("unchecked")
   public static <ArgT> Predicate<ArgT> isNull() {
-    return (Predicate<ArgT>) NULL_PREDICATE;
+    @SuppressWarnings("unchecked")
+    Predicate<ArgT> predicate = (Predicate<ArgT>) NULL_PREDICATE;
+    return predicate;
   }
 
-  @SuppressWarnings("unchecked")
   public static <ArgT> Predicate<ArgT> isNotNull() {
-    return (Predicate<ArgT>) NOT_NULL_PREDICATE;
+    @SuppressWarnings("unchecked")
+    Predicate<ArgT> predicate = (Predicate<ArgT>) NOT_NULL_PREDICATE;
+    return predicate;
   }
 
-  @SuppressWarnings("unchecked")
   public static <ValueT> Function<ValueT, ValueT> identity() {
-    return (Function<ValueT, ValueT>) IDENTITY_FUNCTION;
+    @SuppressWarnings("unchecked")
+    Function<ValueT, ValueT> function = (Function<ValueT, ValueT>) IDENTITY_FUNCTION;
+    return function;
   }
 
   public static <ValueT> Predicate<ValueT> same(final Object value) {
