@@ -25,6 +25,7 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> implements RoleSynchronize
   @Override
   public final void addMapperFactory(MapperFactory<SourceT, TargetT> factory) {
     int len = myMapperFactories == null ? 0 : myMapperFactories.length;
+    @SuppressWarnings("unchecked")
     MapperFactory<SourceT, TargetT>[] newMapperFactories = new MapperFactory[len + 1];
     if (myMapperFactories != null) {
       System.arraycopy(myMapperFactories, 0, newMapperFactories, 0, myMapperFactories.length);
@@ -36,6 +37,7 @@ abstract class BaseRoleSynchronizer<SourceT, TargetT> implements RoleSynchronize
   @Override
   public final void addMapperProcessor(MapperProcessor<SourceT, TargetT> processor) {
     int len = myMapperProcessors == null ? 0 : myMapperProcessors.length;
+    @SuppressWarnings("unchecked")
     MapperProcessor<SourceT, TargetT>[] newMapperProcessors = new MapperProcessor[len + 1];
     if (myMapperProcessors != null) {
       System.arraycopy(myMapperProcessors, 0, newMapperProcessors, 0, myMapperProcessors.length);
