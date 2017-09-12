@@ -71,8 +71,9 @@ abstract class BaseCollectionRoleSynchronizer<SourceT, TargetT> extends BaseRole
       List<SourceT> targetContent = new ArrayList<>();
       List<Mapper<? extends SourceT, ? extends TargetT>> mappers = getModifiableMappers();
       for (Mapper<?, ? extends TargetT> m : mappers) {
-        //noinspection unchecked
-        targetContent.add((SourceT) m.getSource());
+        @SuppressWarnings("unchecked")
+        SourceT source = (SourceT) m.getSource();
+        targetContent.add(source);
       }
 
       List<DifferenceBuilder<SourceT>.DifferenceItem> difference

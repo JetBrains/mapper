@@ -47,7 +47,7 @@ public final class MappingContext {
       } else {
         Object ms = myMappers.get(source);
         if (ms instanceof Set) {
-          //noinspection unchecked
+          @SuppressWarnings("unchecked")
           Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
           mappers.add(mapper);
         } else {
@@ -76,7 +76,7 @@ public final class MappingContext {
       }
       Object ms = myMappers.get(source);
       if (ms instanceof Set) {
-        //noinspection unchecked
+        @SuppressWarnings("unchecked")
         Set<Mapper<?, ?>> mappers = (Set<Mapper<?, ?>>) ms;
         mappers.remove(mapper);
         if (mappers.size() == 1) {
@@ -143,8 +143,9 @@ public final class MappingContext {
     if (value == null) {
       throw new IllegalStateException("Property " + property + " wasn't found");
     }
-    //noinspection unchecked
-    return (ValueT) value;
+    @SuppressWarnings("unchecked")
+    ValueT result = (ValueT) value;
+    return result;
   }
 
   public boolean contains(MappingContextProperty<?> property) {
@@ -155,8 +156,9 @@ public final class MappingContext {
     if (!myProperties.containsKey(property)) {
       throw new IllegalStateException("Property " + property + " wasn't found");
     }
-    //noinspection unchecked
-    return (ValueT) myProperties.remove(property);
+    @SuppressWarnings("unchecked")
+    ValueT result = (ValueT) myProperties.remove(property);
+    return result;
   }
 
   Set<Mapper<?, ?>> getMappers() {
@@ -171,14 +173,16 @@ public final class MappingContext {
     if (!(myMappers.containsKey(source))) {
       return Collections.emptySet();
     }
-    Object mappers = myMappers.get(source);
-    if (mappers instanceof Mapper) {
-      //noinspection unchecked
-      return Collections.<Mapper<? super S, ?>>singleton((Mapper<? super S, ?>) mappers);
+    Object mappersObject = myMappers.get(source);
+    if (mappersObject instanceof Mapper) {
+      @SuppressWarnings("unchecked")
+      Mapper<? super S, ?> mapper = (Mapper<? super S, ?>) mappersObject;
+      return Collections.<Mapper<? super S, ?>>singleton(mapper);
     } else {
       Set<Mapper<? super S, ?>> result = new HashSet<>();
-      //noinspection unchecked
-      for (Mapper<? super S, ?> m : (Set<Mapper<? super S, ?>>) mappers) {
+      @SuppressWarnings("unchecked")
+      Set<Mapper<? super S, ?>> mapperSet = (Set<Mapper<? super S, ?>>) mappersObject;
+      for (Mapper<? super S, ?> m : mapperSet) {
         result.add(m);
       }
       return result;
