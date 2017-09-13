@@ -176,7 +176,10 @@ public final class Properties {
     return select(source, fun, null);
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(final ReadableProperty<SourceT> source, final Function<? super SourceT, ReadableProperty<TargetT>> fun, final TargetT nullValue) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(
+      final ReadableProperty<SourceT> source, final Function<? super SourceT, ReadableProperty<TargetT>> fun,
+      final TargetT nullValue
+  ) {
     final Supplier<TargetT> calc = new Supplier<TargetT>() {
       @Override
       public TargetT get() {
@@ -424,7 +427,10 @@ public final class Properties {
     };
   }
 
-  public static <SourceT, TargetT> Property<TargetT> map(final Property<SourceT> prop, final Function<? super SourceT, ? extends TargetT> sToT, final Function<? super TargetT, ? extends SourceT> tToS) {
+  public static <SourceT, TargetT> Property<TargetT> map(
+      final Property<SourceT> prop, final Function<? super SourceT, ? extends TargetT> sToT,
+      final Function<? super TargetT, ? extends SourceT> tToS
+  ) {
     class TransformedProperty implements Property<TargetT> {
       @Override
       public TargetT get() {
