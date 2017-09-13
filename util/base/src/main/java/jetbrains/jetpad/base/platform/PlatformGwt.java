@@ -23,6 +23,10 @@ public final class PlatformGwt {
     return PlatformType.fromName(Window.Navigator.getPlatform());
   }
 
+  public static void setPlatform() {
+    Platform.setPlatform(getPlatform());
+  }
+
   private PlatformGwt() {
   }
 }

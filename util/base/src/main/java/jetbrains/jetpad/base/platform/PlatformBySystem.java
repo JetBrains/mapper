@@ -15,12 +15,16 @@
  */
 package jetbrains.jetpad.base.platform;
 
-public final class PlatformAwt {
+public final class PlatformBySystem {
 
   public static PlatformType getPlatform() {
     return PlatformType.fromName(System.getProperty("os.name"));
   }
 
-  private PlatformAwt() {
+  public static void setPlatform() {
+    Platform.setPlatform(getPlatform());
+  }
+
+  private PlatformBySystem() {
   }
 }
