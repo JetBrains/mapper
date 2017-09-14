@@ -15,6 +15,8 @@
  */
 package jetbrains.jetpad.samples.todo.mapper;
 
+import com.google.gwt.dom.client.AnchorElement;
+import com.google.gwt.dom.client.UListElement;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.user.client.Event;
@@ -33,6 +35,7 @@ import jetbrains.jetpad.samples.todo.model.TodoList;
 import jetbrains.jetpad.samples.todo.model.TodoListItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.google.gwt.query.client.GQuery.$;
@@ -92,41 +95,10 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
     // create event handlers for selecting filters
     // TODO: this can probably be cleaned up using synchronizers
 
-    $(getTarget().showAll).click(new Function() {
-      @Override
-      public boolean f(Event e) {
-        $("a.inline").removeClass("selected");
-        $(getTarget().showAll).addClass("selected");
-        $(getTarget().active).hide();
-        $(getTarget().complete).hide();
-        $(getTarget().children).show();
-        return false;
-      }
-    });
-
-    $(getTarget().showActive).click(new Function() {
-      @Override
-      public boolean f(Event e) {
-        $("a.inline").removeClass("selected");
-        $(getTarget().showActive).addClass("selected");
-        $(getTarget().children).hide();
-        $(getTarget().complete).hide();
-        $(getTarget().active).show();
-        return false;
-      }
-    });
-
-    $(getTarget().showComplete).click(new Function() {
-      @Override
-      public boolean f(Event e) {
-        $("a.inline").removeClass("selected");
-        $(getTarget().showComplete).addClass("selected");
-        $(getTarget().active).hide();
-        $(getTarget().children).hide();
-        $(getTarget().complete).show();
-        return false;
-      }
-    });
+    List<UListElement> allElements = Arrays.asList(getTarget().children, getTarget().active, getTarget().complete);
+    setActive(getTarget().showAll, getTarget().children, allElements);
+    setActive(getTarget().showActive, getTarget().active, allElements);
+    setActive(getTarget().showComplete, getTarget().complete, allElements);
 
     $(getTarget().toggleAll).click(new Function() {
       @Override
@@ -138,6 +110,23 @@ public class TodoListMapper extends Mapper<TodoList, TodoListView> {
       }
     });
 
+  }
+
+  private void setActive(final AnchorElement element, final UListElement active, final List<UListElement> allElements) {
+    $(element).click(new Function() {
+      @Override
+      public boolean f(Event e) {
+        $("a.inline").removeClass("selected");
+        $(element).addClass("selected");
+        for (UListElement otherElement : allElements) {
+          if (otherElement != active) {
+            $(otherElement).hide();
+          }
+        }
+        $(active).show();
+        return false;
+      }
+    });
   }
 
   @Override
