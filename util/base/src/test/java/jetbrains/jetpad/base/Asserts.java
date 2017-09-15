@@ -16,21 +16,12 @@
 package jetbrains.jetpad.base;
 
 import jetbrains.jetpad.base.function.Consumer;
-import jetbrains.jetpad.base.function.Predicate;
 
 /**
  * @deprecated Use {@link AsyncMatchers} instead
  */
 @Deprecated
 public final class Asserts {
-  public static <T> void assertSuccess(Async<T> async) {
-    assertSuccess(new Predicate<T>() {
-      @Override
-      public boolean test(T value) {
-        return true;
-      }
-    }, async);
-  }
 
   public static <T> void assertSuccessValue(T expected, Async<T> async) {
     T value = getResultValue(async);
@@ -41,17 +32,6 @@ public final class Asserts {
     } else if (!value.equals(expected)) {
       throw new AssertionError("Expected: " + expected + ", but got: " + value);
     }
-  }
-
-  public static <T> void assertSuccess(Predicate<T> assertion, Async<T> async) {
-    T value = getResultValue(async);
-    if (!assertion.test(value)) {
-      throw new AssertionError("success value failed assertion: " + value);
-    }
-  }
-
-  public static void assertFailure(Async<?> async) {
-    assertFailure(Throwable.class, async);
   }
 
   public static void assertFailure(Class<? extends Throwable> expected, Async<?> async) {
@@ -91,7 +71,8 @@ public final class Asserts {
     return resultValue.get();
   }
 
-  private Asserts() { }
+  private Asserts() {
+  }
 
   private static class AsyncResult<T> {
     private final AsyncState state;
