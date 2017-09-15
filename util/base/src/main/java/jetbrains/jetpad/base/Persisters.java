@@ -107,14 +107,22 @@ public final class Persisters {
   }
 
   public static <E extends Enum<E>> Persister<E> enumPersister(final Class<E> cls, final E defaultValue) {
-    return new Persister<E>() {
+    @SuppressWarnings("unchecked")
+    Class<Enum<?>> enumClass = (Class<Enum<?>>) cls;
+    @SuppressWarnings("unchecked")
+    Persister<E> persister = (Persister<E>) genericEnumPersister(enumClass, defaultValue);
+    return persister;
+  }
+
+  public static Persister<Enum<?>> genericEnumPersister(final Class<Enum<?>> cls, final Enum<?> defaultValue) {
+    return new Persister<Enum<?>>() {
       @Override
-      public E deserialize(String value) {
-        return value == null ? defaultValue : Enums.valueOf(cls, value);
+      public Enum<?> deserialize(String value) {
+        return value == null ? defaultValue : Enums.genericValueOf(cls, value);
       }
 
       @Override
-      public String serialize(E value) {
+      public String serialize(Enum<?> value) {
         return value == null ? (defaultValue != null ? defaultValue.toString() : null) : value.toString();
       }
 
