@@ -22,7 +22,15 @@ public final class Enums {
    * Value of method for enums which takes into account toString() instead of saved generated name
    */
   public static <EnumT extends Enum<EnumT>> EnumT valueOf(Class<EnumT> cls, String name) {
-    for (EnumT e : cls.getEnumConstants()) {
+    @SuppressWarnings("unchecked")
+    Class<Enum<?>> enumClass = (Class<Enum<?>>) cls;
+    @SuppressWarnings("unchecked")
+    EnumT value = (EnumT) genericValueOf(enumClass, name);
+    return value;
+  }
+
+  public static Enum<?> genericValueOf(Class<Enum<?>> cls, String name) {
+    for (Enum<?> e : cls.getEnumConstants()) {
       if (Objects.equals(name, e.toString())) {
         return e;
       }
