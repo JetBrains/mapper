@@ -16,52 +16,56 @@
 package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.test.BaseTestCase;
-import org.junit.Before;
 import org.junit.Test;
 
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c0;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c11;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c2;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c21;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c31;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c313;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3131;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3133;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c32;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3335;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 public class CompositesCommonAncestorTest extends BaseTestCase {
-  private SimpleCompositesTree tree;
-
-  @Before
-  public void init() {
-    tree = new SimpleCompositesTree();
-  }
 
   @Test
   public void differentTrees() {
-    assertNull(Composites.commonAncestor(tree.c, new SimpleComposite("alien")));
+    assertNull(Composites.commonAncestor(c2, new SimpleComposite("alien")));
   }
 
   @Test
   public void same() {
-    assertCommonAncestor(tree.a, tree.a, tree.a);
-    assertCommonAncestor(tree.d, tree.d, tree.d);
-    assertCommonAncestor(tree.y, tree.y, tree.y);
+    assertCommonAncestor(c0, c0, c0);
+    assertCommonAncestor(c3, c3, c3);
+    assertCommonAncestor(c3335, c3335, c3335);
   }
 
   @Test
   public void ancestor() {
-    assertCommonAncestor(tree.a, tree.h, tree.a);
-    assertCommonAncestor(tree.c, tree.g, tree.c);
-    assertCommonAncestor(tree.d, tree.m, tree.d);
-    assertCommonAncestor(tree.d, tree.r, tree.d);
+    assertCommonAncestor(c0, c31, c0);
+    assertCommonAncestor(c2, c21, c2);
+    assertCommonAncestor(c3, c313, c3);
+    assertCommonAncestor(c3, c3131, c3);
   }
 
   @Test
   public void sameLevel() {
-    assertCommonAncestor(tree.c, tree.d, tree.a);
-    assertCommonAncestor(tree.i, tree.h, tree.d);
-    assertCommonAncestor(tree.r, tree.t, tree.m);
+    assertCommonAncestor(c2, c3, c0);
+    assertCommonAncestor(c32, c31, c3);
+    assertCommonAncestor(c3131, c3133, c313);
   }
 
   @Test
   public void differentLevels() {
-    assertCommonAncestor(tree.e, tree.c, tree.a);
-    assertCommonAncestor(tree.m, tree.i, tree.d);
-    assertCommonAncestor(tree.t, tree.i, tree.d);
+    assertCommonAncestor(c11, c2, c0);
+    assertCommonAncestor(c313, c32, c3);
+    assertCommonAncestor(c3133, c32, c3);
   }
 
   private void assertCommonAncestor(SimpleComposite first, SimpleComposite second, SimpleComposite expected) {

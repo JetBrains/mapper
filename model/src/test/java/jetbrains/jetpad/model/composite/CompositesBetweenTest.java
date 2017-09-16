@@ -16,66 +16,78 @@
 package jetbrains.jetpad.model.composite;
 
 import jetbrains.jetpad.test.BaseTestCase;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c11;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c12;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c2;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c21;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c31;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c311;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c312;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c313;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3131;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3132;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3133;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c32;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c331;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c332;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3331;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3332;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3333;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3334;
+import static jetbrains.jetpad.model.composite.SimpleCompositesTree.c3335;
 import static org.junit.Assert.assertEquals;
 
 public class CompositesBetweenTest extends BaseTestCase {
-  private SimpleCompositesTree tree;
-
-  @Before
-  public void init() {
-    tree = new SimpleCompositesTree();
-  }
 
   @Test
   public void same() {
     SimpleComposite root = new SimpleComposite("root");
     assertBetween(root, root, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.g, tree.g, Collections.<SimpleComposite>emptyList());
+    assertBetween(c21, c21, Collections.<SimpleComposite>emptyList());
   }
 
   @Test(expected=IllegalArgumentException.class)
   public void nonExisting() {
-    Composites.allBetween(tree.e, new SimpleComposite("alien"));
+    Composites.allBetween(c11, new SimpleComposite("alien"));
   }
 
   @Test(expected=IllegalArgumentException.class)
   public void reversed() {
-    Composites.allBetween(tree.f, tree.e);
+    Composites.allBetween(c12, c11);
   }
 
   @Test
   public void neighbors() {
-    assertBetween(tree.e, tree.f, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.u, tree.y, asList(tree.v, tree.w, tree.x));
-    assertBetween(tree.v, tree.y, asList(tree.w, tree.x));
-    assertBetween(tree.u, tree.x, asList(tree.v, tree.w));
-    assertBetween(tree.v, tree.x, asList(tree.w));
+    assertBetween(c11, c12, Collections.<SimpleComposite>emptyList());
+    assertBetween(c3331, c3335, asList(c3332, c3333, c3334));
+    assertBetween(c3332, c3335, asList(c3333, c3334));
+    assertBetween(c3331, c3334, asList(c3332, c3333));
+    assertBetween(c3332, c3334, asList(c3333));
   }
 
   @Test
   public void down() {
-    assertBetween(tree.k, tree.t, asList(tree.l, tree.r, tree.s));
-    assertBetween(tree.k, tree.s, asList(tree.l, tree.r));
-    assertBetween(tree.l, tree.t, asList(tree.r, tree.s));
-    assertBetween(tree.l, tree.s, asList(tree.r));
+    assertBetween(c311, c3133, asList(c312, c3131, c3132));
+    assertBetween(c311, c3132, asList(c312, c3131));
+    assertBetween(c312, c3133, asList(c3131, c3132));
+    assertBetween(c312, c3132, asList(c3131));
   }
 
   @Test
   public void up() {
-    assertBetween(tree.e, tree.g, asList(tree.f));
-    assertBetween(tree.f, tree.g, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.f, tree.r, asList(tree.g, tree.c, tree.k, tree.l));
-    assertBetween(tree.f, tree.i, asList(tree.g, tree.c, tree.k, tree.l, tree.r, tree.s, tree.t, tree.m, tree.h));
-    assertBetween(tree.s, tree.p, asList(tree.t, tree.i, tree.o));
-    assertBetween(tree.s, tree.y, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v, tree.w, tree.x));
-    assertBetween(tree.s, tree.w, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v));
+    assertBetween(c11, c21, asList(c12));
+    assertBetween(c12, c21, Collections.<SimpleComposite>emptyList());
+    assertBetween(c12, c3131, asList(c21, c2, c311, c312));
+    assertBetween(c12, c32, asList(c21, c2, c311, c312, c3131, c3132, c3133, c313, c31));
+    assertBetween(c3132, c332, asList(c3133, c32, c331));
+    assertBetween(c3132, c3335, asList(c3133, c32, c331, c332, c3331, c3332, c3333, c3334));
+    assertBetween(c3132, c3333, asList(c3133, c32, c331, c332, c3331, c3332));
   }
 
   private void assertBetween(SimpleComposite left, SimpleComposite right, List<SimpleComposite> expected) {
