@@ -75,6 +75,7 @@ public abstract class AbstractObservableSet<ItemT> extends AbstractSet<ItemT> im
   @Override
   public final boolean remove(Object o) {
     if (!contains(o)) return false;
+    @SuppressWarnings("unchecked")
     ItemT item = (ItemT) o;
     doBeforeRemove(item);
     boolean success = false;

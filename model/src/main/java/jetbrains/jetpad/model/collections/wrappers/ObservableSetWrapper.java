@@ -73,7 +73,9 @@ public class ObservableSetWrapper<SourceItemT, TargetItemT> implements Observabl
   @Override
   public boolean contains(Object o) {
     if (o == null) return false;
-    return mySource.contains(myTtoS.apply((TargetItemT) o));
+    @SuppressWarnings("unchecked")
+    TargetItemT targetItem = (TargetItemT) o;
+    return mySource.contains(myTtoS.apply(targetItem));
   }
 
   @Override
@@ -120,13 +122,17 @@ public class ObservableSetWrapper<SourceItemT, TargetItemT> implements Observabl
 
   @Override
   public boolean remove(Object o) {
-    return mySource.remove(myTtoS.apply((TargetItemT) o));
+    @SuppressWarnings("unchecked")
+    TargetItemT targetItem = (TargetItemT) o;
+    return mySource.remove(myTtoS.apply(targetItem));
   }
 
   @Override
   public boolean containsAll(Collection<?> c) {
     for (Object o : c) {
-      if (!mySource.contains(myTtoS.apply((TargetItemT) o))) return false;
+      @SuppressWarnings("unchecked")
+      TargetItemT targetItem = (TargetItemT) o;
+      if (!mySource.contains(myTtoS.apply(targetItem))) return false;
     }
     return true;
   }
@@ -158,7 +164,9 @@ public class ObservableSetWrapper<SourceItemT, TargetItemT> implements Observabl
   public boolean removeAll(Collection<?> c) {
     boolean changed = false;
     for (Object o : c) {
-      if (mySource.remove(myTtoS.apply((TargetItemT) o))) {
+      @SuppressWarnings("unchecked")
+      TargetItemT targetItem = (TargetItemT) o;
+      if (mySource.remove(myTtoS.apply(targetItem))) {
         changed = true;
       }
     }

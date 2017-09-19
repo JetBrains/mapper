@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * Memory efficient implementation of a map based on an array.
- *
+ * <p>
  * It works better than a HashMap and TreeMap on small sized collections.
  */
 public class ListMap<K, V> {
@@ -35,14 +35,15 @@ public class ListMap<K, V> {
 
   public ListMap() {
   }
-  
+
   public boolean containsKey(K key) {
     return findByKey(key) >= 0;
   }
-  
+
   public V remove(K key) {
     int index = findByKey(key);
     if (index >= 0) {
+      @SuppressWarnings("unchecked")
       V value = (V) myData[index + 1];
       removeAt(index);
       return value;
@@ -50,7 +51,7 @@ public class ListMap<K, V> {
       return null;
     }
   }
-  
+
   public Set<K> keySet() {
     return new AbstractSet<K>() {
       @Override
@@ -69,11 +70,11 @@ public class ListMap<K, V> {
       }
     };
   }
-  
+
   public boolean isEmpty() {
     return size() == 0;
   }
-  
+
   public Collection<V> values() {
     return new AbstractCollection<V>() {
       @Override
@@ -119,6 +120,7 @@ public class ListMap<K, V> {
   public V put(K key, V value) {
     int index = findByKey(key);
     if (index >= 0) {
+      @SuppressWarnings("unchecked")
       V oldValue = (V) myData[index + 1];
       myData[index + 1] = value;
       return oldValue;
@@ -136,7 +138,9 @@ public class ListMap<K, V> {
     if (index == -1) {
       return null;
     }
-    return (V) myData[index + 1];    
+    @SuppressWarnings("unchecked")
+    V result = (V) myData[index + 1];
+    return result;
   }
 
   @Override
@@ -144,7 +148,9 @@ public class ListMap<K, V> {
     StringBuilder builder = new StringBuilder();
     builder.append("{");
     for (int i = 0; i < myData.length; i += 2) {
+      @SuppressWarnings("unchecked")
       K k = (K) myData[i];
+      @SuppressWarnings("unchecked")
       V v = (V) myData[i + 1];
       if (i != 0) {
         builder.append(",");
@@ -158,8 +164,9 @@ public class ListMap<K, V> {
 
   private <T> Iterator<T> mapIterator(final IteratorSpec spec) {
     return new Iterator<T>() {
-      int index = 0;
-      boolean nextCalled = false;
+      private int index = 0;
+      private boolean nextCalled = false;
+
       @Override
       public boolean hasNext() {
         return index < myData.length;
@@ -171,6 +178,7 @@ public class ListMap<K, V> {
           throw new NoSuchElementException();
         }
         nextCalled = true;
+        @SuppressWarnings("unchecked")
         T value = (T) spec.get(index);
         index += 2;
         return value;
@@ -187,9 +195,10 @@ public class ListMap<K, V> {
       }
     };
   }
-  
+
   private int findByKey(K key) {
     for (int i = 0; i < myData.length; i += 2) {
+      @SuppressWarnings("unchecked")
       K k = (K) myData[i];
       if (Objects.equals(key, k)) {
         return i;
@@ -211,14 +220,21 @@ public class ListMap<K, V> {
 
   public class Entry {
     private final int myIndex;
+
     private Entry(int index) {
       myIndex = index;
     }
+
     public K key() {
-      return (K) myData[myIndex];
+      @SuppressWarnings("unchecked")
+      K result = (K) myData[myIndex];
+      return result;
     }
+
     public V value() {
-      return (V) myData[myIndex + 1];
+      @SuppressWarnings("unchecked")
+      V result = (V) myData[myIndex + 1];
+      return result;
     }
   }
 

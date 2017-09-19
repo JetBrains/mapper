@@ -75,6 +75,7 @@ public class Listeners<ListenerT> {
     try {
       int size = myListenersCount;
       for (int i = 0; i < size; i++) {
+        @SuppressWarnings("unchecked")
         ListenerT l = (ListenerT) myListeners.get(i);
 
         if (isRemoved(l)) continue;
@@ -93,6 +94,7 @@ public class Listeners<ListenerT> {
   private boolean isRemoved(ListenerT l) {
     int size = myListeners.size();
     for (int i = myListenersCount; i < size; i++) {
+      @SuppressWarnings("unchecked")
       ListenerOp<ListenerT> op = (ListenerOp<ListenerT>) myListeners.get(i);
       if (!op.add && op.listener == l) return true;
     }
@@ -116,6 +118,7 @@ public class Listeners<ListenerT> {
       Object[] ops = opsList.toArray();
       opsList.clear();
       for (Object o : ops) {
+        @SuppressWarnings("unchecked")
         ListenerOp<ListenerT> op = (ListenerOp<ListenerT>) o;
         if (op.add) {
           myListeners.add(op.listener);
@@ -133,8 +136,8 @@ public class Listeners<ListenerT> {
   }
 
   private static class ListenerOp<ListenerT> {
-    final ListenerT listener;
-    final boolean add;
+    private final ListenerT listener;
+    private final boolean add;
 
     ListenerOp(ListenerT listener, boolean add) {
       this.listener = listener;

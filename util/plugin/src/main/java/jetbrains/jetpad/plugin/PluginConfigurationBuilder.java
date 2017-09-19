@@ -58,7 +58,9 @@ public class PluginConfigurationBuilder {
             context.put(ep, new ArrayList<ExtensionT>());
           }
 
-          ((List<ExtensionT>) context.get(ep)).addAll(exts);
+          @SuppressWarnings("unchecked")
+          List<ExtensionT> extensionList = (List<ExtensionT>) context.get(ep);
+          extensionList.addAll(exts);
 
           return this;
         }
@@ -71,7 +73,9 @@ public class PluginConfigurationBuilder {
         if (!context.containsKey(ep)) {
           return Collections.emptyList();
         }
-        return Collections.unmodifiableCollection((List<ExtensionT>) context.get(ep));
+        @SuppressWarnings("unchecked")
+        List<ExtensionT> extensionList = (List<ExtensionT>) context.get(ep);
+        return Collections.unmodifiableCollection(extensionList);
       }
 
       @Override
