@@ -19,66 +19,130 @@ import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class CompositesBetweenTest extends BaseTestCase {
-  private SimpleCompositesTree tree;
+
+  private SimpleComposite c;
+  private SimpleComposite e;
+  private SimpleComposite f;
+  private SimpleComposite g;
+  private SimpleComposite h;
+  private SimpleComposite i;
+  private SimpleComposite k;
+  private SimpleComposite l;
+  private SimpleComposite m;
+  private SimpleComposite o;
+  private SimpleComposite p;
+  private SimpleComposite r;
+  private SimpleComposite s;
+  private SimpleComposite t;
+  private SimpleComposite u;
+  private SimpleComposite v;
+  private SimpleComposite w;
+  private SimpleComposite x;
+  private SimpleComposite y;
 
   @Before
   public void init() {
-    tree = new SimpleCompositesTree();
+    SimpleCompositesTree tree = new SimpleCompositesTree();
+    c = tree.getC();
+    e = tree.getE();
+    f = tree.getF();
+    g = tree.getG();
+    h = tree.getH();
+    i = tree.getI();
+    k = tree.getK();
+    l = tree.getL();
+    m = tree.getM();
+    o = tree.getO();
+    p = tree.getP();
+    r = tree.getR();
+    s = tree.getS();
+    t = tree.getT();
+    u = tree.getU();
+    v = tree.getV();
+    w = tree.getW();
+    x = tree.getX();
+    y = tree.getY();
   }
 
   @Test
-  public void same() {
+  public void sameRoot() {
     SimpleComposite root = new SimpleComposite("root");
-    assertBetween(root, root, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.g, tree.g, Collections.<SimpleComposite>emptyList());
-  }
-
-  @Test(expected=IllegalArgumentException.class)
-  public void nonExisting() {
-    Composites.allBetween(tree.e, new SimpleComposite("alien"));
-  }
-
-  @Test(expected=IllegalArgumentException.class)
-  public void reversed() {
-    Composites.allBetween(tree.f, tree.e);
+    assertBetween(root, root, list());
   }
 
   @Test
-  public void neighbors() {
-    assertBetween(tree.e, tree.f, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.u, tree.y, asList(tree.v, tree.w, tree.x));
-    assertBetween(tree.v, tree.y, asList(tree.w, tree.x));
-    assertBetween(tree.u, tree.x, asList(tree.v, tree.w));
-    assertBetween(tree.v, tree.x, asList(tree.w));
+  public void sameLeaf() {
+    assertBetween(g, g, list());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nonExisting() {
+    Composites.allBetween(e, new SimpleComposite("alien"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void reversed() {
+    Composites.allBetween(f, e);
+  }
+
+  @Test
+  public void twoSiblings() {
+    assertConsecutiveNodes(e, f);
+  }
+
+  @Test
+  public void fiveSiblings() {
+    assertConsecutiveNodes(u, v, w, x, y);
   }
 
   @Test
   public void down() {
-    assertBetween(tree.k, tree.t, asList(tree.l, tree.r, tree.s));
-    assertBetween(tree.k, tree.s, asList(tree.l, tree.r));
-    assertBetween(tree.l, tree.t, asList(tree.r, tree.s));
-    assertBetween(tree.l, tree.s, asList(tree.r));
+    assertConsecutiveNodes(k, l, r, s, t);
   }
 
   @Test
-  public void up() {
-    assertBetween(tree.e, tree.g, asList(tree.f));
-    assertBetween(tree.f, tree.g, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.f, tree.r, asList(tree.g, tree.c, tree.k, tree.l));
-    assertBetween(tree.f, tree.i, asList(tree.g, tree.c, tree.k, tree.l, tree.r, tree.s, tree.t, tree.m, tree.h));
-    assertBetween(tree.s, tree.p, asList(tree.t, tree.i, tree.o));
-    assertBetween(tree.s, tree.y, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v, tree.w, tree.x));
-    assertBetween(tree.s, tree.w, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v));
+  public void cousins() {
+    assertConsecutiveNodes(e, f, g);
+  }
+
+  @Test
+  public void upSidewaysAndDown() {
+    assertBetween(f, c, list());
+    assertBetween(f, g, list());
+    assertBetween(f, k, list(g, c));
+    assertBetween(f, r, list(g, c, k, l));
+    assertBetween(f, i, list(g, c, k, l, r, s, t, m, h));
+  }
+
+  @Test
+  public void upAndDown() {
+    assertConsecutiveNodes(s, t, i, o, p, u, v, w, x, y);
+  }
+
+  private void assertConsecutiveNodes(SimpleComposite... nodes) {
+    List<SimpleComposite> nodeList = list(nodes);
+    for (int i = 0; i < nodeList.size(); i++) {
+      SimpleComposite left = nodeList.get(i);
+      for (int j = i + 1; j < nodeList.size(); j++) {
+        SimpleComposite right = nodeList.get(j);
+        List<SimpleComposite> expectedSubList = nodeList.subList(i + 1, j);
+        assertBetween(left, right, expectedSubList);
+      }
+    }
   }
 
   private void assertBetween(SimpleComposite left, SimpleComposite right, List<SimpleComposite> expected) {
-    assertEquals(expected, Composites.allBetween(left, right));
+    assertEquals("left: " + left + ", right: " + right, expected, Composites.allBetween(left, right));
   }
+
+  private List<SimpleComposite> list(SimpleComposite... simpleComposites) {
+    return Arrays.asList(simpleComposites);
+  }
+
 }
