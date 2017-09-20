@@ -1,3 +1,4 @@
+[![official JetBrains project](http://jb.gg/badges/official-plastic.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 #JetBrains Mappers MVC Framework
 To learn about framework, read https://github.com/JetBrains/jetpad-mapper/wiki/JetPad-Mappers
 
