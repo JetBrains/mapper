@@ -25,43 +25,66 @@ import static org.junit.Assert.assertSame;
 public class CompositesCommonAncestorTest extends BaseTestCase {
   private SimpleCompositesTree tree;
 
+  private SimpleComposite a;
+  private SimpleComposite c;
+  private SimpleComposite d;
+  private SimpleComposite e;
+  private SimpleComposite g;
+  private SimpleComposite h;
+  private SimpleComposite i;
+  private SimpleComposite m;
+  private SimpleComposite r;
+  private SimpleComposite t;
+  private SimpleComposite y;
+
   @Before
   public void init() {
     tree = new SimpleCompositesTree();
+    a = tree.getA();
+    c = tree.getC();
+    d = tree.getD();
+    e = tree.getE();
+    g = tree.getG();
+    h = tree.getH();
+    i = tree.getI();
+    m = tree.getM();
+    r = tree.getR();
+    t = tree.getT();
+    y = tree.getY();
   }
 
   @Test
   public void differentTrees() {
-    assertNull(Composites.commonAncestor(tree.c, new SimpleComposite("alien")));
+    assertNull(Composites.commonAncestor(c, new SimpleComposite("alien")));
   }
 
   @Test
   public void same() {
-    assertCommonAncestor(tree.a, tree.a, tree.a);
-    assertCommonAncestor(tree.d, tree.d, tree.d);
-    assertCommonAncestor(tree.y, tree.y, tree.y);
+    assertCommonAncestor(a, a, a);
+    assertCommonAncestor(d, d, d);
+    assertCommonAncestor(y, y, y);
   }
 
   @Test
   public void ancestor() {
-    assertCommonAncestor(tree.a, tree.h, tree.a);
-    assertCommonAncestor(tree.c, tree.g, tree.c);
-    assertCommonAncestor(tree.d, tree.m, tree.d);
-    assertCommonAncestor(tree.d, tree.r, tree.d);
+    assertCommonAncestor(a, h, a);
+    assertCommonAncestor(c, g, c);
+    assertCommonAncestor(d, m, d);
+    assertCommonAncestor(d, r, d);
   }
 
   @Test
   public void sameLevel() {
-    assertCommonAncestor(tree.c, tree.d, tree.a);
-    assertCommonAncestor(tree.i, tree.h, tree.d);
-    assertCommonAncestor(tree.r, tree.t, tree.m);
+    assertCommonAncestor(c, d, a);
+    assertCommonAncestor(i, h, d);
+    assertCommonAncestor(r, t, m);
   }
 
   @Test
   public void differentLevels() {
-    assertCommonAncestor(tree.e, tree.c, tree.a);
-    assertCommonAncestor(tree.m, tree.i, tree.d);
-    assertCommonAncestor(tree.t, tree.i, tree.d);
+    assertCommonAncestor(e, c, a);
+    assertCommonAncestor(m, i, d);
+    assertCommonAncestor(t, i, d);
   }
 
   private void assertCommonAncestor(SimpleComposite first, SimpleComposite second, SimpleComposite expected) {

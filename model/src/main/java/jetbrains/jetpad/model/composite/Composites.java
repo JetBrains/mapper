@@ -528,7 +528,7 @@ public final class Composites {
   }
 
   /**
-   * Returns a lists that includes all nodes that have some parent strictly between
+   * Returns a list that includes all nodes that have some parent strictly between
    * some parents of {@code from} and {@code from}.
    */
   public static <CompositeT extends NavComposite<CompositeT>>
