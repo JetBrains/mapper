@@ -15,10 +15,10 @@
  */
 package jetbrains.jetpad.model.composite;
 
-public class SimpleCompositesTree {
-  public SimpleComposite a, c, d, e, f, g, h, i, k, l, m, o, p, r, s, t, u, v, w, x, y;
+final class SimpleCompositesTree {
+  static final SimpleComposite a, c, d, e, f, g, h, i, k, l, m, o, p, r, s, t, u, v, w, x, y;
 
-  public SimpleCompositesTree() {
+  static {
     a = new SimpleComposite("a",
       new SimpleComposite("b",
         e = new SimpleComposite("e"),
@@ -44,4 +44,8 @@ public class SimpleCompositesTree {
             x = new SimpleComposite("x"),
             y = new SimpleComposite("y")))));
   }
+
+  private SimpleCompositesTree() {
+  }
+
 }
