@@ -2,6 +2,6 @@ package jetbrains.jetpad.base.annotation;
 
 public enum SuspiciousPattern {
 
-  PARAMETERLESS_GENERICS
+  UNSAFE_GENERICS
 
 }
