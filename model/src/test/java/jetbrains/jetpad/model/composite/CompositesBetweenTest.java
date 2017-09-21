@@ -52,33 +52,38 @@ public class CompositesBetweenTest extends BaseTestCase {
 
   @Test
   public void neighbors() {
-    assertBetween(tree.e, tree.f, Collections.<SimpleComposite>emptyList());
-    assertBetween(tree.u, tree.y, asList(tree.v, tree.w, tree.x));
-    assertBetween(tree.v, tree.y, asList(tree.w, tree.x));
-    assertBetween(tree.u, tree.x, asList(tree.v, tree.w));
-    assertBetween(tree.v, tree.x, asList(tree.w));
+    assertLine(tree.e, tree.f);
+    assertLine(tree.u, tree.v, tree.w, tree.x, tree.y);
   }
 
   @Test
   public void down() {
-    assertBetween(tree.k, tree.t, asList(tree.l, tree.r, tree.s));
-    assertBetween(tree.k, tree.s, asList(tree.l, tree.r));
-    assertBetween(tree.l, tree.t, asList(tree.r, tree.s));
-    assertBetween(tree.l, tree.s, asList(tree.r));
+    assertLine(tree.k, tree.l, tree.r, tree.s, tree.t);
   }
 
   @Test
   public void up() {
-    assertBetween(tree.e, tree.g, asList(tree.f));
-    assertBetween(tree.f, tree.g, Collections.<SimpleComposite>emptyList());
+    assertLine(tree.e, tree.f, tree.g);
     assertBetween(tree.f, tree.r, asList(tree.g, tree.c, tree.k, tree.l));
     assertBetween(tree.f, tree.i, asList(tree.g, tree.c, tree.k, tree.l, tree.r, tree.s, tree.t, tree.m, tree.h));
-    assertBetween(tree.s, tree.p, asList(tree.t, tree.i, tree.o));
-    assertBetween(tree.s, tree.y, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v, tree.w, tree.x));
-    assertBetween(tree.s, tree.w, asList(tree.t, tree.i, tree.o, tree.p, tree.u, tree.v));
+    assertLine(tree.s, tree.t, tree.i, tree.o, tree.p, tree.u, tree.v, tree.w, tree.x, tree.y);
   }
 
   private void assertBetween(SimpleComposite left, SimpleComposite right, List<SimpleComposite> expected) {
     assertEquals(expected, Composites.allBetween(left, right));
+  }
+
+  private void assertLine(SimpleComposite... nodes) {
+    List<SimpleComposite> line = asList(nodes);
+    int i = 0;
+    while (i != line.size() - 1) {
+      assertBetween(line.get(i), line.get(i), Collections.<SimpleComposite>emptyList());
+      int j = i + 1;
+      while (j != line.size()) {
+        assertBetween(line.get(i), line.get(j), line.subList(i + 1, j));
+        j++;
+      }
+      i++;
+    }
   }
 }
