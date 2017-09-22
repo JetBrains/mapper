@@ -27,7 +27,6 @@ import java.util.concurrent.CountDownLatch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@SuppressWarnings("NonJREEmulationClassesInClientCode")
 public class EdtManagerPoolTest extends BaseTestCase {
   private EdtManagerPool pool;
   private Set<EdtManager> managers = new HashSet<>();
