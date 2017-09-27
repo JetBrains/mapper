@@ -21,7 +21,7 @@ package jetbrains.jetpad.model.property;
  * In such cases the update() method is called by timer.
  */
 public abstract class UpdatableProperty<ValueT> extends BaseDerivedProperty<ValueT> {
-  public UpdatableProperty() {
+  protected UpdatableProperty() {
     super(null);
   }
 

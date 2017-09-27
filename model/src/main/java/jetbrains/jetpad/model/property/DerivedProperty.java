@@ -26,11 +26,11 @@ public abstract class DerivedProperty<ValueT> extends BaseDerivedProperty<ValueT
   private Registration[] myRegistrations;
   private ReadableProperty<?>[] myDeps;
 
-  public DerivedProperty(ReadableProperty<?>... deps) {
+  protected DerivedProperty(ReadableProperty<?>... deps) {
     this(null, deps);
   }
 
-  public DerivedProperty(ValueT initialValue, ReadableProperty<?>... deps) {
+  protected DerivedProperty(ValueT initialValue, ReadableProperty<?>... deps) {
     super(initialValue);
     myDeps = new ReadableProperty<?>[deps.length];
     System.arraycopy(deps, 0, myDeps, 0, deps.length);

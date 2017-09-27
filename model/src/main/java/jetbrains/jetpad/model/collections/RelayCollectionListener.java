@@ -3,7 +3,7 @@ package jetbrains.jetpad.model.collections;
 public abstract class RelayCollectionListener<SourceItemT, TargetItemT> implements CollectionListener<SourceItemT> {
   private CollectionListener<? super TargetItemT> myRelayTo;
 
-  public RelayCollectionListener(CollectionListener<? super TargetItemT> relayTo) {
+  protected RelayCollectionListener(CollectionListener<? super TargetItemT> relayTo) {
     myRelayTo = relayTo;
   }
 

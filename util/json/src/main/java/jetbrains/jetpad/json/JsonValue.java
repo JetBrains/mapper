@@ -16,7 +16,7 @@
 package jetbrains.jetpad.json;
 
 public abstract class JsonValue {
-  public JsonValue() {
+  protected JsonValue() {
   }
 
   public String toString(int indent) {
