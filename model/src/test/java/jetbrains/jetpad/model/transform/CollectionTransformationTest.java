@@ -336,7 +336,7 @@ public class CollectionTransformationTest {
   }
 
   private static class MyObject {
-    final Property<String> name = new ValueProperty<>(null);
+    private final Property<String> name = new ValueProperty<>(null);
 
     private MyObject(String name) {
       this.name.set(name);

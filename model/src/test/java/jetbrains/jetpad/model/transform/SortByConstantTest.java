@@ -29,10 +29,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SortByConstantTest {
-  ObservableList<String> items = new ObservableArrayList<>();
-  ObservableList<String> target = new ObservableArrayList<>();
+  private ObservableList<String> items = new ObservableArrayList<>();
+  private ObservableList<String> target = new ObservableArrayList<>();
 
-  Registration myReg;
+  private Registration myReg;
 
   @Before
   public void setup() {

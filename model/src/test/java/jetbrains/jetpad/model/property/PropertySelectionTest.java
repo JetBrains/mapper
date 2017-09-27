@@ -23,14 +23,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PropertySelectionTest {
-  C2 c2 = new C2();
-  ReadableProperty<Integer> selProp = Properties.select(c2.ref, new Function<C1, ReadableProperty<Integer>>() {
+  private C2 c2 = new C2();
+  private ReadableProperty<Integer> selProp = Properties.select(c2.ref, new Function<C1, ReadableProperty<Integer>>() {
     @Override
     public ReadableProperty<Integer> apply(C1 s) {
       return s.value;
     }
   }, 30);
-  boolean changed = false;
+  private boolean changed = false;
 
   private void addListener() {
     selProp.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
@@ -78,7 +78,7 @@ public class PropertySelectionTest {
   }
 
   class C1 {
-    ValueProperty<Integer> value = new ValueProperty<>();
+    private ValueProperty<Integer> value = new ValueProperty<>();
 
     C1(Integer v) {
       value.set(v);
@@ -86,6 +86,6 @@ public class PropertySelectionTest {
   }
 
   class C2 {
-    ValueProperty<C1> ref = new ValueProperty<>();
+    private ValueProperty<C1> ref = new ValueProperty<>();
   }
 }

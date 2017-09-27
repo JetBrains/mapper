@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 public class SelectTest {
   private ObservableCollection<Integer> from;
   private ObservableCollection<String> to;
-  Transformer<ObservableCollection<Integer>, ObservableCollection<String>> select;
+  private Transformer<ObservableCollection<Integer>, ObservableCollection<String>> select;
 
   @Before
   public void setup() {

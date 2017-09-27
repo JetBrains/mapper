@@ -195,8 +195,8 @@ public class MapperTest extends BaseTestCase {
   }
 
   private static class TestMapper extends Mapper<Object, Object> {
-    ObservableSet<Mapper<?,?>> children;
-    TestMapper child;
+    private ObservableSet<Mapper<?,?>> children;
+    private TestMapper child;
 
     TestMapper(Object source) {
       super(source, new Object());

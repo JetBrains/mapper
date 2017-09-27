@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 public class FilterListTest {
   private ObservableArrayList<String> from = new ObservableArrayList<>();
   private ObservableArrayList<String> to = new ObservableArrayList<>();
-  Transformer<ObservableCollection<String>,ObservableList<String>> filter = Transformers.listFilter(new Function<String, ReadableProperty<Boolean>>() {
+  private Transformer<ObservableCollection<String>,ObservableList<String>> filter = Transformers.listFilter(new Function<String, ReadableProperty<Boolean>>() {
     @Override
     public ReadableProperty<Boolean> apply(String s) {
       Boolean value;
