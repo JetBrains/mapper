@@ -14,4 +14,9 @@ public class TypedKeyListMap extends ListMap<TypedKey<?>, Object> implements Typ
     T result = (T) super.put(key, value);
     return result;
   }
+
+  @Override
+  public boolean contains(TypedKey<?> key) {
+    return containsKey(key);
+  }
 }

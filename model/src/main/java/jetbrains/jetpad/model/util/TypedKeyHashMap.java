@@ -16,4 +16,9 @@ public class TypedKeyHashMap extends HashMap<TypedKey<?>, Object> implements Typ
     T result = (T) super.put(key, value);
     return result;
   }
+
+  @Override
+  public boolean contains(TypedKey<?> key) {
+    return super.containsKey(key);
+  }
 }
