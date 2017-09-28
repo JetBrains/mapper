@@ -87,4 +87,22 @@ public class SynchronizersTest extends BaseTestCase {
     prop.set(4);
     assertEquals(Arrays.asList(1, 2, 3), handled);
   }
+
+  @Test
+  public void forPropsOneWay() {
+    final Property<Integer> integerProperty = new ValueProperty<>();
+    final Property<Number> numberProperty = new ValueProperty<>();
+
+    Mapper<Void, Void> mapper = new Mapper<Void, Void>(null, null) {
+      @Override
+      protected void registerSynchronizers(SynchronizersConfiguration conf) {
+        super.registerSynchronizers(conf);
+        conf.add(Synchronizers.forPropsOneWay(integerProperty, numberProperty));
+      }
+    };
+    mapper.attachRoot();
+
+    integerProperty.set(1);
+    assertEquals(numberProperty.get(), 1);
+  }
 }

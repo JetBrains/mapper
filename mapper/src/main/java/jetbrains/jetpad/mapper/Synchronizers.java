@@ -118,14 +118,14 @@ public final class Synchronizers {
   }
 
   public static <ValueT>
-  Synchronizer forPropsOneWay(final ReadableProperty<ValueT> source, final WritableProperty<ValueT> target) {
+  Synchronizer forPropsOneWay(final ReadableProperty<? extends ValueT> source, final WritableProperty<? super ValueT> target) {
     return new RegistrationSynchronizer() {
       @Override
       protected Registration doAttach(SynchronizerContext ctx) {
         target.set(source.get());
-        return source.addHandler(new EventHandler<PropertyChangeEvent<ValueT>>() {
+        return source.addHandler(new EventHandler<PropertyChangeEvent<? extends ValueT>>() {
           @Override
-          public void onEvent(PropertyChangeEvent<ValueT> event) {
+          public void onEvent(PropertyChangeEvent<? extends ValueT> event) {
             target.set(event.getNewValue());
           }
         });
