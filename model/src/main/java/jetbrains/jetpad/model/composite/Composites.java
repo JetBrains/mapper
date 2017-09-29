@@ -311,8 +311,7 @@ public final class Composites {
   /**
    * @return Lowest common ancestor for the given nodes or {@code null} when they have no common ancestors.
    */
-  public static <CompositeT extends Composite<CompositeT>>
-  CompositeT commonAncestor(CompositeT object1, CompositeT object2) {
+  public static <HasParentT extends HasParent<HasParentT>> HasParentT commonAncestor(HasParentT object1, HasParentT object2) {
     if (object1 == object2) {
       return object1;
     } else if (isDescendant(object1, object2)) {
@@ -321,12 +320,12 @@ public final class Composites {
       return object2;
     }
 
-    Stack<CompositeT> stack1 = new Stack<>();
-    Stack<CompositeT> stack2 = new Stack<>();
-    for (CompositeT c : ancestorsFrom(object1)) {
+    Stack<HasParentT> stack1 = new Stack<>();
+    Stack<HasParentT> stack2 = new Stack<>();
+    for (HasParentT c : ancestorsFrom(object1)) {
       stack1.push(c);
     }
-    for (CompositeT c : ancestorsFrom(object2)) {
+    for (HasParentT c : ancestorsFrom(object2)) {
       stack2.push(c);
     }
 
@@ -334,8 +333,8 @@ public final class Composites {
       return null;
     } else {
       do {
-        CompositeT pop1 = stack1.pop();
-        CompositeT pop2 = stack2.pop();
+        HasParentT pop1 = stack1.pop();
+        HasParentT pop2 = stack2.pop();
         if (pop1 != pop2) {
           return pop1.getParent();
         }
