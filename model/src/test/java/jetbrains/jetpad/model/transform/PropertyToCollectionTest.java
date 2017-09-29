@@ -26,9 +26,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PropertyToCollectionTest {
-  ValueProperty<Integer> from;
-  ObservableCollection<Integer> to;
-  Transformer<ReadableProperty<Integer>, ObservableCollection<Integer>> transformer;
+  private ValueProperty<Integer> from;
+  private ObservableCollection<Integer> to;
+  private Transformer<ReadableProperty<Integer>, ObservableCollection<Integer>> transformer;
 
   @Before
   public void setup() {

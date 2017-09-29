@@ -25,9 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SelectListTest {
-  ObservableList<Integer> from;
-  ObservableList<String> to;
-  Transformer<ObservableList<Integer>, ObservableList<String>> select;
+  private ObservableList<Integer> from;
+  private ObservableList<String> to;
+  private Transformer<ObservableList<Integer>, ObservableList<String>> select;
 
   @Before
   public void setup() {

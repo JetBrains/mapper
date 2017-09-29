@@ -181,7 +181,7 @@ public class FlattenListTest {
   }
 
   private class MyList {
-    ObservableArrayList<String> list = new ObservableArrayList<>();
+    private ObservableArrayList<String> list = new ObservableArrayList<>();
 
     private MyList() {
     }
