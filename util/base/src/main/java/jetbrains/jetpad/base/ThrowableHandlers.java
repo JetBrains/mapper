@@ -15,7 +15,6 @@
  */
 package jetbrains.jetpad.base;
 
-
 import jetbrains.jetpad.base.function.Consumer;
 
 import java.io.PrintStream;
@@ -29,7 +28,7 @@ import java.util.logging.Logger;
 
 public final class ThrowableHandlers {
   private static final Logger LOG = Logger.getLogger(ThrowableHandlers.class.getName());
-  public static boolean DEBUG = false;
+  public static final boolean DEBUG = false;
 
   // we can use ThreadLocal here because of our own emulation
   // at model-gwt jetbrains.jetpad.model.jre.java.lang.ThreadLocal
