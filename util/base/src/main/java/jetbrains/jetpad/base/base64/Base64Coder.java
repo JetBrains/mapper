@@ -23,35 +23,35 @@ public final class Base64Coder {
 
   public static String encode(byte[] bytes) {
     int blocksLen = bytes.length / 3;
-    StringBuilder result = new StringBuilder();
+    Encoder encoder = new Encoder();
     for (int i = 0; i < blocksLen; i++) {
       int base = i * 3;
       int b1 = bytes[base] & 0xFF;
       int b2 = bytes[base + 1] & 0xFF;
       int b3 = bytes[base + 2] & 0xFF;
 
-      result.append(ourTable.valueToCh(b1 >> 2));
-      result.append(ourTable.valueToCh(((b1 & 0x3) << 4) + (b2 >> 4)));
-      result.append(ourTable.valueToCh(((b2 & 0xF) << 2) + (b3 >> 6)));
-      result.append(ourTable.valueToCh(((b3 & 0x3F))));
+      encoder.appendTableValue(b1 >> 2);
+      encoder.appendTableValue(((b1 & 0x3) << 4) + (b2 >> 4));
+      encoder.appendTableValue(((b2 & 0xF) << 2) + (b3 >> 6));
+      encoder.appendTableValue(b3 & 0x3F);
     }
 
     int lastBlock = blocksLen * 3 - 1;
     if (bytes.length % 3 == 1) {
       int b = bytes[lastBlock + 1] & 0xFF;
-      result.append(ourTable.valueToCh(b >> 2));
-      result.append(ourTable.valueToCh((b & 0x3) << 4));
-      result.append("==");
+      encoder.appendTableValue(b >> 2);
+      encoder.appendTableValue((b & 0x3) << 4);
+      encoder.appendString("==");
     } else if (bytes.length % 3 == 2) {
       int b1 = bytes[lastBlock + 1] & 0xFF;
       int b2 = bytes[lastBlock + 2] & 0xFF;
-      result.append(ourTable.valueToCh(b1 >> 2));
-      result.append(ourTable.valueToCh(((b1 & 0x3) << 4) + (b2 >> 4)));
-      result.append(ourTable.valueToCh(((b2 & 0xF) << 2)));
-      result.append("=");
+      encoder.appendTableValue(b1 >> 2);
+      encoder.appendTableValue(((b1 & 0x3) << 4) + (b2 >> 4));
+      encoder.appendTableValue((b2 & 0xF) << 2);
+      encoder.appendString("=");
     }
 
-    return result.toString();
+    return encoder.getString();
   }
 
   public static byte[] decodeBytes(String s) {
@@ -93,4 +93,26 @@ public final class Base64Coder {
 
   private Base64Coder() {
   }
+
+  private static final class Encoder {
+
+    private final StringBuilder myResult = new StringBuilder();
+
+    private Encoder() {
+    }
+
+    private void appendTableValue(int val) {
+      myResult.append(ourTable.valueToCh(val));
+    }
+
+    private void appendString(String str) {
+      myResult.append(str);
+    }
+
+    private String getString() {
+      return myResult.toString();
+    }
+
+  }
+
 }
