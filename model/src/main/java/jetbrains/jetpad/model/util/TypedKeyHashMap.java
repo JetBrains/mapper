@@ -3,6 +3,10 @@ package jetbrains.jetpad.model.util;
 import java.util.HashMap;
 
 public class TypedKeyHashMap extends HashMap<TypedKey<?>, Object> implements TypedKeyContainer {
+
+  public TypedKeyHashMap() {
+  }
+
   @Override
   public <T> T get(TypedKey<T> key) {
     @SuppressWarnings("unchecked")
