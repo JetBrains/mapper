@@ -136,6 +136,34 @@ public class DoubleRectangle {
     return result;
   }
 
+  public DoubleSegment getLeftEdge() {
+    return new DoubleSegment(
+        origin,
+        new DoubleVector(getLeft(), getBottom())
+    );
+  }
+
+  public DoubleSegment getTopEdge() {
+    return new DoubleSegment(
+        origin,
+        new DoubleVector(getRight(), getTop())
+    );
+  }
+
+  public DoubleSegment getRightEdge() {
+    return new DoubleSegment(
+        new DoubleVector(getRight(), getTop()),
+        origin.add(dimension)
+    );
+  }
+
+  public DoubleSegment getBottomEdge() {
+    return new DoubleSegment(
+        new DoubleVector(getLeft(), getBottom()),
+        origin.add(dimension)
+    );
+  }
+
   public Iterable<DoubleSegment> getParts() {
     List<DoubleSegment> result = new ArrayList<>();
     result.add(new DoubleSegment(origin, origin.add(new DoubleVector(dimension.x, 0))));
@@ -163,4 +191,5 @@ public class DoubleRectangle {
   public String toString() {
     return "[rect " + origin + ", " + dimension + "]";
   }
+
 }
