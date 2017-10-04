@@ -25,22 +25,22 @@ public class DoubleRectangleEdgesTest {
   private static final DoubleRectangle RECTANGLE = new DoubleRectangle(LEFT_TOP, RIGHT_BOTTOM.subtract(LEFT_TOP));
 
   @Test
-  public void checkLeftEdge() throws Exception {
+  public void leftEdge() {
     assertEquals(LEFT_EDGE, RECTANGLE.getLeftEdge());
   }
 
   @Test
-  public void checkTopEdge() throws Exception {
+  public void topEdge() {
     assertEquals(TOP_EDGE, RECTANGLE.getTopEdge());
   }
 
   @Test
-  public void checkRightEdge() throws Exception {
+  public void rightEdge() {
     assertEquals(RIGHT_EDGE, RECTANGLE.getRightEdge());
   }
 
   @Test
-  public void checkBottomEdge() throws Exception {
+  public void bottomEdge() {
     assertEquals(BOTTOM_EDGE, RECTANGLE.getBottomEdge());
   }
 
