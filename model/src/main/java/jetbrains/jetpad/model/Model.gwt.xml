@@ -4,7 +4,9 @@
     "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd"
     >
 <module>
-  <source path=""/>
+  <source path="">
+    <exclude name="test/**"/>
+  </source>
   <inherits name="jetbrains.jetpad.base.Base"/>
   <inherits name="jetbrains.jetpad.geometry.Geometry"/>
 </module>

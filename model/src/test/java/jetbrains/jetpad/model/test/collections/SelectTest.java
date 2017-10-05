@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.jetpad.model.collections;
+package jetbrains.jetpad.model.test.collections;
 
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.function.Function;
+import jetbrains.jetpad.model.collections.CollectionAdapter;
+import jetbrains.jetpad.model.collections.CollectionItemEvent;
+import jetbrains.jetpad.model.collections.CollectionListener;
+import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableCollections;
 import jetbrains.jetpad.model.collections.list.ObservableList;
