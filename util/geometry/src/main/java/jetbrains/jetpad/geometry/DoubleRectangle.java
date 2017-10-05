@@ -152,24 +152,24 @@ public class DoubleRectangle {
 
   public DoubleSegment getRightEdge() {
     return new DoubleSegment(
-        new DoubleVector(getRight(), getTop()),
-        origin.add(dimension)
+        origin.add(dimension),
+        new DoubleVector(getRight(), getTop())
     );
   }
 
   public DoubleSegment getBottomEdge() {
     return new DoubleSegment(
-        new DoubleVector(getLeft(), getBottom()),
-        origin.add(dimension)
+        origin.add(dimension),
+        new DoubleVector(getLeft(), getBottom())
     );
   }
 
   public Iterable<DoubleSegment> getParts() {
     List<DoubleSegment> result = new ArrayList<>();
-    result.add(new DoubleSegment(origin, origin.add(new DoubleVector(dimension.x, 0))));
-    result.add(new DoubleSegment(origin, origin.add(new DoubleVector(0, dimension.y))));
-    result.add(new DoubleSegment(origin.add(dimension), origin.add(new DoubleVector(dimension.x, 0))));
-    result.add(new DoubleSegment(origin.add(dimension), origin.add(new DoubleVector(0, dimension.y))));
+    result.add(getTopEdge());
+    result.add(getLeftEdge());
+    result.add(getRightEdge());
+    result.add(getBottomEdge());
     return result;
   }
 
@@ -191,5 +191,4 @@ public class DoubleRectangle {
   public String toString() {
     return "[rect " + origin + ", " + dimension + "]";
   }
-
 }
