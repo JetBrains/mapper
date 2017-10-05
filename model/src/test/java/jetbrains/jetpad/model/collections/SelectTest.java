@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class SelectTest {
-  public static final int TEST_LIST_SIZE = 3;
+  private static final int TEST_LIST_SIZE = 3;
 
   @Test
   public void nonListenedList() {
@@ -252,11 +252,11 @@ public class SelectTest {
 
   private ObservableList<String> testList(ReadableProperty<Boolean> src, final ObservableList<String> selected) {
     return ObservableCollections.selectList(
-      src,
+        src,
         new Function<Boolean, ObservableList<? extends String>>() {
           @Override
           public ObservableList<String> apply(Boolean source) {
-            return source ? selected : null;
+            return source ? selected : ObservableCollections.<String>emptyList();
           }
         });
   }
@@ -264,11 +264,11 @@ public class SelectTest {
   private ObservableCollection<String> testCollection(ReadableProperty<Boolean> src,
       final ObservableCollection<String> selected) {
     return ObservableCollections.selectCollection(
-      src,
+        src,
         new Function<Boolean, ObservableCollection<? extends String>>() {
           @Override
           public ObservableCollection<String> apply(Boolean source) {
-            return source ? selected : null;
+            return source ? selected : ObservableCollections.<String>emptyList();
           }
         });
   }
