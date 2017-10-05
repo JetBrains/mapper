@@ -52,7 +52,7 @@ public class SynchronizersTest extends BaseTestCase {
     };
     mapper.attachRoot();
 
-    assertEquals(1, (int)runNum.get());
+    assertEquals(1, (int) runNum.get());
   }
 
   @Test
@@ -65,7 +65,7 @@ public class SynchronizersTest extends BaseTestCase {
       protected void registerSynchronizers(SynchronizersConfiguration conf) {
         super.registerSynchronizers(conf);
         conf.add(Synchronizers.forEventSource(
-          prop,
+            prop,
             new Consumer<PropertyChangeEvent<Integer>>() {
               @Override
               public void accept(PropertyChangeEvent<Integer> item) {
@@ -103,6 +103,6 @@ public class SynchronizersTest extends BaseTestCase {
     mapper.attachRoot();
 
     integerProperty.set(1);
-    assertEquals(numberProperty.get(), 1);
+    assertEquals(1, numberProperty.get());
   }
 }
