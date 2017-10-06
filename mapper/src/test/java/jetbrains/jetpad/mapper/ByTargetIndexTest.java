@@ -28,24 +28,24 @@ public class ByTargetIndexTest extends BaseTestCase {
   private Map<Item, Item> sourceToTarget = new HashMap<>();
 
   private Item item;
-  private Item hidden_item;
+  private Item hiddenItem;
   private Item child;
-  private Item hidden_child;
+  private Item hiddenChild;
   private ByTargetIndex finder;
 
   @Before
   public void init() {
     item = new Item();
     child = new Item();
-    hidden_child = new Item();
+    hiddenChild = new Item();
     item.observableChildren.add(child);
 
     MyItemMapper mapper = new MyItemMapper(item);
     mapper.attachRoot();
 
-    hidden_item = new Item();
-    hidden_item.observableChildren.add(hidden_child);
-    mapper.createChildProperty().set(new MyNotFindableItemMapper(hidden_item));
+    hiddenItem = new Item();
+    hiddenItem.observableChildren.add(hiddenChild);
+    mapper.createChildProperty().set(new MyNotFindableItemMapper(hiddenItem));
 
     finder = new ByTargetIndex(mapper.getMappingContext());
   }
@@ -53,7 +53,7 @@ public class ByTargetIndexTest extends BaseTestCase {
   @Test
   public void findMapper() {
     assertFound(child);
-    assertNotFound(hidden_child);
+    assertNotFound(hiddenChild);
   }
 
   @Test
@@ -63,7 +63,7 @@ public class ByTargetIndexTest extends BaseTestCase {
     assertNotFound(child);
 
     // no exception is thrown
-    hidden_item.observableChildren.remove(hidden_child);
+    hiddenItem.observableChildren.remove(hiddenChild);
   }
 
   @Test
@@ -74,7 +74,7 @@ public class ByTargetIndexTest extends BaseTestCase {
     assertFound(anotherChild);
 
     anotherChild = new Item();
-    hidden_child.observableChildren.add(anotherChild);
+    hiddenChild.observableChildren.add(anotherChild);
     assertNotFound(anotherChild);
   }
 
