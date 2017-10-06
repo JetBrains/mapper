@@ -17,38 +17,39 @@ package jetbrains.jetpad.geometry;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 
 public class VectorTest {
   @Test
   public void equals() {
-    assertEquals(new Vector(1, 2), new Vector(1, 2));
-    assertFalse(new Vector(1, 2).equals(new Vector(2, 1)));
+    assertThat(new Vector(1, 2), is(new Vector(1, 2)));
+    assertThat(new Vector(1, 2), is(not(new Vector(2, 1))));
   }
 
   @Test
   public void add() {
-    assertEquals(new Vector(2, 4), new Vector(1, 2).add(new Vector(1, 2)));
+    assertThat(new Vector(1, 2).add(new Vector(1, 2)), is(new Vector(2, 4)));
   }
 
   @Test
   public void sub() {
-    assertEquals(new Vector(-1, 0), new Vector(1, 2).sub(new Vector(2, 2)));
+    assertThat(new Vector(1, 2).sub(new Vector(2, 2)), is(new Vector(-1, 0)));
   }
 
   @Test
   public void negate() {
-    assertEquals(new Vector(-1, -2), new Vector(1, 2).negate());
+    assertThat(new Vector(1, 2).negate(), is(new Vector(-1, -2)));
   }
 
   @Test
   public void max() {
-    assertEquals(new Vector(2, 2), new Vector(1, 2).max(new Vector(2, 1)));
+    assertThat(new Vector(1, 2).max(new Vector(2, 1)), is(new Vector(2, 2)));
   }
 
   @Test
   public void min() {
-    assertEquals(new Vector(1, 1), new Vector(1, 2).min(new Vector(2, 1)));
+    assertThat(new Vector(1, 2).min(new Vector(2, 1)), is(new Vector(1, 1)));
   }
 }
