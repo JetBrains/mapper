@@ -30,14 +30,13 @@ import java.util.Collections;
 
 public class TransformingSynchronizerTest extends BaseTestCase {
   private ObservableList<String> source;
-  private MyMapper mapper;
   private ObservableList<String> target;
 
 
   private void init(String... items) {
     source = new ObservableArrayList<>();
     Collections.addAll(source, items);
-    mapper = new MyMapper(source);
+    MyMapper mapper = new MyMapper(source);
     mapper.attachRoot();
     target = mapper.getTarget();
   }
@@ -83,11 +82,11 @@ public class TransformingSynchronizerTest extends BaseTestCase {
       conf.add(new TransformingObservableCollectionRoleSynchronizer<>(this, getSource(),
           Transformers.<String, String, String, ObservableList<String>>sortBy(
               new Function<String, ReadableProperty<String>>() {
-          @Override
-          public ReadableProperty<String> apply(String s) {
-            return Properties.constant(s);
-          }
-        }), getTarget(), new MapperFactory<String, String>() {
+                @Override
+                public ReadableProperty<String> apply(String s) {
+                  return Properties.constant(s);
+                }
+              }), getTarget(), new MapperFactory<String, String>() {
         @Override
         public Mapper<? extends String, ? extends String> createMapper(String source) {
           return new Mapper<String, String>(source, source) {

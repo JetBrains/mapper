@@ -29,7 +29,6 @@ public class AsyncsPairTest extends BaseTestCase {
   private SimpleAsync<Integer> first = new SimpleAsync<>();
   private SimpleAsync<String> second = new SimpleAsync<>();
 
-  private Async<Pair<Integer, String>> pair;
   private Registration initReg;
   private Pair<Integer, String> result;
   private Throwable error;
@@ -40,7 +39,7 @@ public class AsyncsPairTest extends BaseTestCase {
   }
 
   private void initPair(Async<Integer> first, Async<String> second) {
-    pair = Asyncs.pair(first, second);
+    Async<Pair<Integer, String>> pair = Asyncs.pair(first, second);
     initReg = pair.onResult(
         new Consumer<Pair<Integer, String>>() {
           @Override

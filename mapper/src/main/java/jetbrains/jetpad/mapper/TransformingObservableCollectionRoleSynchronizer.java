@@ -35,7 +35,6 @@ class TransformingObservableCollectionRoleSynchronizer<
   private Transformer<? super SourceT, ObservableList<MappedT>> mySourceTransformer;
   private List<? super TargetT> myTarget;
 
-  private ObservableList<MappedT> mySourceList;
   private Registration myCollectionRegistration;
   private Transformation<? super SourceT, ObservableList<MappedT>> mySourceTransformation;
 
@@ -57,13 +56,13 @@ class TransformingObservableCollectionRoleSynchronizer<
   @Override
   protected void onAttach() {
     super.onAttach();
-    mySourceList = new ObservableArrayList<>();
-    mySourceTransformation = mySourceTransformer.transform(mySource, mySourceList);
-    new MapperUpdater().update(mySourceList);
+    ObservableList<MappedT> sourceList = new ObservableArrayList<>();
+    mySourceTransformation = mySourceTransformer.transform(mySource, sourceList);
+    new MapperUpdater().update(sourceList);
     for (Mapper<? extends MappedT, ? extends TargetT> m : getModifiableMappers()) {
       myTarget.add(m.getTarget());
     }
-    myCollectionRegistration = mySourceList.addListener(new CollectionAdapter<MappedT>() {
+    myCollectionRegistration = sourceList.addListener(new CollectionAdapter<MappedT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends MappedT> event) {
         Mapper<? extends MappedT, ? extends TargetT> mapper = createMapper(event.getNewItem());

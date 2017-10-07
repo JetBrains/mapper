@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 public class CompositesCommonAncestorTest extends BaseTestCase {
-  private SimpleCompositesTree tree;
 
   private SimpleComposite a;
   private SimpleComposite c;
@@ -39,7 +38,7 @@ public class CompositesCommonAncestorTest extends BaseTestCase {
 
   @Before
   public void init() {
-    tree = new SimpleCompositesTree();
+    SimpleCompositesTree tree = new SimpleCompositesTree();
     a = tree.getA();
     c = tree.getC();
     d = tree.getD();
