@@ -172,7 +172,8 @@ public final class Properties {
     };
   }
 
-  public static <SourceT, TargetT> ReadableProperty<TargetT> select(ReadableProperty<SourceT> source, Function<? super SourceT, ReadableProperty<TargetT>> fun) {
+  public static <SourceT, TargetT> ReadableProperty<TargetT> select(
+      ReadableProperty<SourceT> source, Function<? super SourceT, ReadableProperty<TargetT>> fun) {
     return select(source, fun, null);
   }
 
@@ -557,7 +558,7 @@ public final class Properties {
             somethingChanged();
           }
         });
-        myCollectionRegistration = collection.addListener(Properties.<ItemT>simpleAdapter(new Runnable() {
+        myCollectionRegistration = collection.addListener(Properties.simpleAdapter(new Runnable() {
           @Override
           public void run() {
             somethingChanged();
@@ -588,7 +589,7 @@ public final class Properties {
 
       @Override
       protected void doAddListeners() {
-        myCollectionRegistration = collection.addListener(Properties.<ItemT>simpleAdapter(new Runnable() {
+        myCollectionRegistration = collection.addListener(Properties.simpleAdapter(new Runnable() {
           @Override
           public void run() {
             somethingChanged();
@@ -627,7 +628,8 @@ public final class Properties {
     };
   }
 
-  public static <ValueT> ReadableProperty<ValueT> ifProp(final ReadableProperty<Boolean> cond, final ReadableProperty<ValueT> ifTrue, final ReadableProperty<ValueT> ifFalse) {
+  public static <ValueT> ReadableProperty<ValueT> ifProp(
+      final ReadableProperty<Boolean> cond, final ReadableProperty<ValueT> ifTrue, final ReadableProperty<ValueT> ifFalse) {
     return new DerivedProperty<ValueT>(cond, ifTrue, ifFalse) {
       @Override
       public ValueT doGet() {

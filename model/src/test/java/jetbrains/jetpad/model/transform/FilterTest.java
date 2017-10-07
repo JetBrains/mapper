@@ -34,18 +34,20 @@ import static org.junit.Assert.assertTrue;
 public class FilterTest {
   private ObservableCollection<String> from = new ObservableHashSet<>();
   private ObservableCollection<String> to = new ObservableHashSet<>();
-  private Transformer<ObservableCollection<String>, ObservableCollection<String>> filter = Transformers.filter(new Function<String, ReadableProperty<Boolean>>() {
-    @Override
-    public ReadableProperty<Boolean> apply(String s) {
-      Boolean value;
-      if ("null".equals(s)) {
-        value = null;
-      } else {
-        value = s.length() % 2 == 0;
+  private Transformer<ObservableCollection<String>, ObservableCollection<String>> filter = Transformers.filter(
+      new Function<String, ReadableProperty<Boolean>>() {
+        @Override
+        public ReadableProperty<Boolean> apply(String s) {
+          Boolean value;
+          if ("null".equals(s)) {
+            value = null;
+          } else {
+            value = s.length() % 2 == 0;
+          }
+          return Properties.constant(value);
+        }
       }
-      return Properties.constant(value);
-    }
-  });
+  );
 
   @Test
   public void filterReturnsNull() {

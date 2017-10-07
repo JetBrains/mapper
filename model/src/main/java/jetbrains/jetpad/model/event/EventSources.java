@@ -77,7 +77,8 @@ public final class EventSources {
     return new MappingEventSource<>(src, f);
   }
 
-  public static <EventT, ItemT> EventSource<EventT> selectList(final ObservableList<ItemT> list, final Function<ItemT, EventSource<? extends EventT>> selector) {
+  public static <EventT, ItemT> EventSource<EventT> selectList(
+      final ObservableList<ItemT> list, final Function<ItemT, EventSource<? extends EventT>> selector) {
     return new EventSource<EventT>() {
       @Override
       public Registration addHandler(final EventHandler<? super EventT> handler) {
