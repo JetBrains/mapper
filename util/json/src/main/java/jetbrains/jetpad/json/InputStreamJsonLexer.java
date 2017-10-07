@@ -55,7 +55,7 @@ class InputStreamJsonLexer extends JsonLexer {
   }
 
   private int readCurrent() {
-    int read = -1;
+    int read;
     try {
       read = myInputStream.read();
     } catch (IOException e) {
