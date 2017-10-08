@@ -284,7 +284,7 @@ public class CollectionTransformationTest {
   }
 
   @Test
-  public void firstNincreaseN() {
+  public void firstNIncreaseN() {
     fromList.add(new MyObject("a"));
     fromList.add(new MyObject("b"));
     fromList.add(new MyObject("c"));
@@ -299,7 +299,7 @@ public class CollectionTransformationTest {
   }
 
   @Test
-  public void firstNdecreaseN() {
+  public void firstNDecreaseN() {
     fromList.add(new MyObject("a"));
     fromList.add(new MyObject("b"));
     fromList.add(new MyObject("c"));
