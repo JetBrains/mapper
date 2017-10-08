@@ -903,14 +903,14 @@ public final class Transformers {
               throw new IllegalArgumentException("Null items are not allowed");
             }
             //noinspection ConstantConditions
-            Integer newItemPrio = getPriority.apply(item);
-            if (newItemPrio == null) {
+            Integer newItemPriority = getPriority.apply(item);
+            if (newItemPriority == null) {
               throw new IllegalArgumentException("Null priorities are not allowed, item=" + item);
-            } else if (newItemPrio > myHighestPriority) {
+            } else if (newItemPriority > myHighestPriority) {
               to.clear();
               to.add(item);
-              myHighestPriority = newItemPrio;
-            } else if (newItemPrio == myHighestPriority) {
+              myHighestPriority = newItemPriority;
+            } else if (newItemPriority == myHighestPriority) {
               to.add(item);
             }
           }
@@ -924,14 +924,14 @@ public final class Transformers {
           public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
             ItemT oldItem = event.getOldItem();
             //noinspection ConstantConditions
-            Integer oldItemPrio = getPriority.apply(oldItem);
-            if (oldItemPrio == null) {
+            Integer oldItemPriority = getPriority.apply(oldItem);
+            if (oldItemPriority == null) {
               throw new IllegalStateException("Old item priority unexpectedly got null, item=" + oldItem);
-            } else if (oldItemPrio > myHighestPriority) {
+            } else if (oldItemPriority > myHighestPriority) {
               // Can happen only in case of getPriority or concurrency issue
               throw new IllegalStateException("Abnormal state: found missed high-priority item " + oldItem
-                  + ", oldItemPrio=" + oldItemPrio + ", myHighestPriority=" + myHighestPriority);
-            } else if (oldItemPrio == myHighestPriority) {
+                  + ", oldItemPriority=" + oldItemPriority + ", myHighestPriority=" + myHighestPriority);
+            } else if (oldItemPriority == myHighestPriority) {
               to.remove(oldItem);
               if (to.isEmpty()) {
                 initToCollection();
