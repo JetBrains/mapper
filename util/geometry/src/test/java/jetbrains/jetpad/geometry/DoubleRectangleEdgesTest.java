@@ -2,10 +2,8 @@ package jetbrains.jetpad.geometry;
 
 import org.junit.Test;
 
-import java.util.Iterator;
-
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class DoubleRectangleEdgesTest {
 
@@ -49,14 +47,10 @@ public class DoubleRectangleEdgesTest {
 
   @Test
   public void getParts() {
-    Iterator<DoubleSegment> edges = RECTANGLE.getParts().iterator();
-
-    assertEquals(TOP_EDGE, edges.next());
-    assertEquals(LEFT_EDGE, edges.next());
-    assertEquals(RIGHT_EDGE, edges.next());
-    assertEquals(BOTTOM_EDGE, edges.next());
-
-    assertFalse(edges.hasNext());
+    assertEquals(
+        asList(TOP_EDGE, LEFT_EDGE, RIGHT_EDGE, BOTTOM_EDGE),
+        RECTANGLE.getParts()
+    );
   }
 
   private static DoubleSegment edge(DoubleVector start, DoubleVector end) {

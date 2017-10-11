@@ -17,8 +17,9 @@ package jetbrains.jetpad.geometry;
 
 import com.google.common.collect.Range;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class DoubleRectangle {
   public static DoubleRectangle span(DoubleVector leftTop, DoubleVector rightBottom) {
@@ -164,13 +165,8 @@ public class DoubleRectangle {
     );
   }
 
-  public Iterable<DoubleSegment> getParts() {
-    List<DoubleSegment> result = new ArrayList<>();
-    result.add(getTopEdge());
-    result.add(getLeftEdge());
-    result.add(getRightEdge());
-    result.add(getBottomEdge());
-    return result;
+  public List<DoubleSegment> getParts() {
+    return asList(getTopEdge(), getLeftEdge(), getRightEdge(), getBottomEdge());
   }
 
   @Override
