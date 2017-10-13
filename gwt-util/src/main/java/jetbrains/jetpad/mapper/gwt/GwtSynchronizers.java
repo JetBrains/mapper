@@ -23,7 +23,7 @@ import jetbrains.jetpad.mapper.SynchronizerContext;
 public final class GwtSynchronizers {
   public static Synchronizer forRegistration(final Supplier<HandlerRegistration> reg) {
     return new Synchronizer() {
-      HandlerRegistration myReg;
+      private HandlerRegistration myReg;
 
       @Override
       public void attach(SynchronizerContext ctx) {

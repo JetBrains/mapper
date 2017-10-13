@@ -33,7 +33,7 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
   private Registration myReg;
   private boolean myDisposed = false;
 
-  public final Property<Integer> index = new ValueProperty<>();
+  final Property<Integer> index = new ValueProperty<>();
 
   public ListItemProperty(ObservableList<ValueT> list, int index) {
     if (index < 0 || index >= list.size()) {
