@@ -247,7 +247,11 @@ public final class Asyncs {
         if (parallelData.decrementInProgressAndGet() == 0) {
           List<Throwable> exceptions = parallelData.getExceptions();
           if (!exceptions.isEmpty() && !alwaysSucceed) {
-            result.failure(new ThrowableCollectionException(exceptions));
+            if (exceptions.size() == 1) {
+              result.failure(exceptions.get(0));
+            } else {
+              result.failure(new ThrowableCollectionException(exceptions));
+            }
           } else {
             result.success(null);
           }
