@@ -24,10 +24,13 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static jetbrains.jetpad.base.AsyncMatchers.failed;
+import static jetbrains.jetpad.base.AsyncMatchers.failure;
+import static jetbrains.jetpad.base.AsyncMatchers.failureIs;
 import static jetbrains.jetpad.base.AsyncMatchers.result;
 import static jetbrains.jetpad.base.AsyncMatchers.voidSuccess;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -188,9 +191,17 @@ public class AsyncsTest {
 
   @Test
   public void parallelFailure() {
+    Exception exception = new RuntimeException();
     assertThat(
-        Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable())),
-        failed());
+        Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(exception)),
+        failure(sameInstance(exception)));
+  }
+
+  @Test
+  public void parallelFailureMultipleExceptions() {
+    assertThat(
+        Asyncs.parallel(Asyncs.constant(1), Asyncs.failure(new Throwable()), Asyncs.failure(new RuntimeException())),
+        failureIs(ThrowableCollectionException.class));
   }
 
   @Test
@@ -232,6 +243,7 @@ public class AsyncsTest {
     assertThat(
         Asyncs.untilSuccess(new Supplier<Async<Integer>>() {
           private int myCounter = 0;
+
           @Override
           public Async<Integer> get() {
             myCounter++;
