@@ -38,13 +38,13 @@ public class ByTargetIndexTest extends BaseTestCase {
     item = new Item();
     child = new Item();
     hiddenChild = new Item();
-    item.observableChildren.add(child);
+    item.getObservableChildren().add(child);
 
     MyItemMapper mapper = new MyItemMapper(item);
     mapper.attachRoot();
 
     hiddenItem = new Item();
-    hiddenItem.observableChildren.add(hiddenChild);
+    hiddenItem.getObservableChildren().add(hiddenChild);
     mapper.createChildProperty().set(new MyNotFindableItemMapper(hiddenItem));
 
     finder = new ByTargetIndex(mapper.getMappingContext());
@@ -58,31 +58,31 @@ public class ByTargetIndexTest extends BaseTestCase {
 
   @Test
   public void removeMapper() {
-    item.observableChildren.remove(child);
+    item.getObservableChildren().remove(child);
 
     assertNotFound(child);
 
     // no exception is thrown
-    hiddenItem.observableChildren.remove(hiddenChild);
+    hiddenItem.getObservableChildren().remove(hiddenChild);
   }
 
   @Test
   public void addMapper() {
     Item anotherChild = new Item();
-    child.observableChildren.add(anotherChild);
+    child.getObservableChildren().add(anotherChild);
 
     assertFound(anotherChild);
 
     anotherChild = new Item();
-    hiddenChild.observableChildren.add(anotherChild);
+    hiddenChild.getObservableChildren().add(anotherChild);
     assertNotFound(anotherChild);
   }
 
   @Test
   public void addThenRemoveMapper() {
     Item anotherChild = new Item();
-    child.observableChildren.add(anotherChild);
-    child.observableChildren.remove(anotherChild);
+    child.getObservableChildren().add(anotherChild);
+    child.getObservableChildren().remove(anotherChild);
 
     assertNotFound(anotherChild);
   }
@@ -92,7 +92,7 @@ public class ByTargetIndexTest extends BaseTestCase {
     finder.dispose();
 
     Item anotherChild = new Item();
-    child.observableChildren.add(anotherChild);
+    child.getObservableChildren().add(anotherChild);
 
     assertNotFound(anotherChild);
   }
