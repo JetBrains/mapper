@@ -12,9 +12,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 class CollectingListener implements CollectionListener<Integer>  {
-  List<CollectionItemEvent<?extends Integer>> addEvents = new ArrayList<>();
-  List<CollectionItemEvent<?extends Integer>> setEvents = new ArrayList<>();
-  List<CollectionItemEvent<?extends Integer>> removeEvents = new ArrayList<>();
+  private List<CollectionItemEvent<?extends Integer>> addEvents = new ArrayList<>();
+  private List<CollectionItemEvent<?extends Integer>> setEvents = new ArrayList<>();
+  private List<CollectionItemEvent<?extends Integer>> removeEvents = new ArrayList<>();
 
   @Override
   public void onItemAdded(CollectionItemEvent<? extends Integer> event) {
@@ -41,6 +41,18 @@ class CollectingListener implements CollectionListener<Integer>  {
     assertThat(addEvents, hasSize(addCount));
     assertThat(setEvents, hasSize(setCount));
     assertThat(removeEvents, hasSize(removeCount));
+  }
+
+  List<CollectionItemEvent<? extends Integer>> getAddEvents() {
+    return addEvents;
+  }
+
+  List<CollectionItemEvent<? extends Integer>> getSetEvents() {
+    return setEvents;
+  }
+
+  List<CollectionItemEvent<? extends Integer>> getRemoveEvents() {
+    return removeEvents;
   }
 
 }

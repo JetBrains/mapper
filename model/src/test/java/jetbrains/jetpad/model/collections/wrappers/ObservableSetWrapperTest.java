@@ -72,7 +72,7 @@ public class ObservableSetWrapperTest {
     source.add(15.0);
     assertThat(target, containsInAnyOrder(11, 16, 21, 31));
     listener.assertEvents(1, 0);
-    assertThat(listener.addEvents.get(0), is(addEvent(equalTo(16), equalTo(-1))));
+    assertThat(listener.getAddEvents().get(0), is(addEvent(equalTo(16), equalTo(-1))));
   }
 
   @Test
@@ -81,7 +81,7 @@ public class ObservableSetWrapperTest {
     assertThat(target, containsInAnyOrder(11, 15, 21, 31));
     assertThat(source, containsInAnyOrder(10.0, 14.0, 20.0, 30.0));
     listener.assertEvents(1, 0);
-    assertThat(listener.addEvents.get(0), is(addEvent(equalTo(15), equalTo(-1))));
+    assertThat(listener.getAddEvents().get(0), is(addEvent(equalTo(15), equalTo(-1))));
   }
 
   @Test
@@ -89,7 +89,7 @@ public class ObservableSetWrapperTest {
     source.remove(30.0);
     assertThat(target, containsInAnyOrder(11, 21));
     listener.assertEvents(0, 1);
-    assertThat(listener.removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(-1))));
+    assertThat(listener.getRemoveEvents().get(0), is(removeEvent(equalTo(31), equalTo(-1))));
   }
 
   @Test
@@ -98,7 +98,7 @@ public class ObservableSetWrapperTest {
     assertThat(target, containsInAnyOrder(11, 21));
     assertThat(source, containsInAnyOrder(10.0, 20.0));
     listener.assertEvents(0, 1);
-    assertThat(listener.removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(-1))));
+    assertThat(listener.getRemoveEvents().get(0), is(removeEvent(equalTo(31), equalTo(-1))));
   }
 
   @Test
