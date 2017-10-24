@@ -95,4 +95,28 @@ public class Vector {
   public String toString() {
     return "(" + x + ", " + y + ")";
   }
+
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
+
+  public int get(Axis axis) {
+    int value;
+    switch (axis) {
+      case X:
+        value = x;
+        break;
+      case Y:
+        value = y;
+        break;
+      default:
+        throw new UnsupportedOperationException("unknown axis: " + axis);
+    }
+    return value;
+  }
+
 }
