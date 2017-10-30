@@ -77,6 +77,7 @@ public final class AsyncMatchers {
         }
         return false;
       }
+
       @Override
       public void describeTo(Description description) {
         description.appendText("a failed async which failure ").appendDescriptionOf(failureMatcher);
