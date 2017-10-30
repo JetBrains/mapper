@@ -38,7 +38,8 @@ public final class AsyncMatchers {
               return false;
             }
           case FAILED:
-            mismatchDescription.appendText("failed with exception " + result.error);
+            mismatchDescription.appendText("failed with exception: ");
+            mismatchDescription.appendValue(result.error);
             return false;
           case UNFINISHED:
             mismatchDescription.appendText("isn't finished yet");
@@ -61,7 +62,8 @@ public final class AsyncMatchers {
         AsyncResult<?> result = getResult(item);
         switch (result.state) {
           case SUCCEEDED:
-            mismatchDescription.appendText("successful value " + result.value);
+            mismatchDescription.appendText("was a successful async with value: ");
+            mismatchDescription.appendValue(result.value);
             return false;
           case FAILED:
             if (failureMatcher.matches(result.error)) {
