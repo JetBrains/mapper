@@ -23,17 +23,6 @@ import jetbrains.jetpad.base.function.Consumer;
 @Deprecated
 public final class Asserts {
 
-  public static <T> void assertSuccessValue(T expected, Async<T> async) {
-    T value = getResultValue(async);
-    if (value == null) {
-      if (expected != null) {
-        throw new AssertionError("Expected: " + expected + ", but got: " + value);
-      }
-    } else if (!value.equals(expected)) {
-      throw new AssertionError("Expected: " + expected + ", but got: " + value);
-    }
-  }
-
   public static void assertFailure(Class<? extends Throwable> expected, Async<?> async) {
     AsyncResult<?> result = getResult(async);
     if (result.state != AsyncState.FAILED) {
