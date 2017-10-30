@@ -48,28 +48,28 @@ public class MapperTest extends BaseTestCase {
 
   @Test
   public void propertyChange() {
-    source.name.set("xyz");
+    source.getName().set("xyz");
 
     assertMapped();
   }
 
   @Test
   public void removeItemFromObservable() {
-    source.observableChildren.remove(0);
+    source.getObservableChildren().remove(0);
 
     assertMapped();
   }
 
   @Test
   public void addItemToObservable() {
-    source.observableChildren.add(0, new Item());
+    source.getObservableChildren().add(0, new Item());
 
     assertMapped();
   }
 
   @Test
   public void removeItemFromSimple() {
-    source.children.remove(0);
+    source.getChildren().remove(0);
     mapper.refreshSimpleRole();
 
     assertMapped();
@@ -77,7 +77,7 @@ public class MapperTest extends BaseTestCase {
 
   @Test
   public void addItemToSimple() {
-    source.children.add(new Item());
+    source.getChildren().add(new Item());
     mapper.refreshSimpleRole();
 
     assertMapped();
@@ -85,30 +85,30 @@ public class MapperTest extends BaseTestCase {
 
   @Test
   public void singleChildSet() {
-    source.singleChild.set(new Item());
+    source.getSingleChild().set(new Item());
 
     assertMapped();
   }
 
   @Test
   public void singleChildSetToNull() {
-    source.singleChild.set(new Item());
-    source.singleChild.set(null);
+    source.getSingleChild().set(new Item());
+    source.getSingleChild().set(null);
 
     assertMapped();
   }
 
   @Test
   public void rolesAreCleanedOnDetach() {
-    assertFalse(target.observableChildren.isEmpty());
-    assertFalse(target.children.isEmpty());
-    assertFalse(target.transformedChildren.isEmpty());
+    assertFalse(target.getObservableChildren().isEmpty());
+    assertFalse(target.getChildren().isEmpty());
+    assertFalse(target.getTransformedChildren().isEmpty());
 
     mapper.detachRoot();
 
-    assertTrue(target.observableChildren.isEmpty());
-    assertTrue(target.children.isEmpty());
-    assertTrue(target.transformedChildren.isEmpty());
+    assertTrue(target.getObservableChildren().isEmpty());
+    assertTrue(target.getChildren().isEmpty());
+    assertTrue(target.getTransformedChildren().isEmpty());
   }
 
   @Test
@@ -181,14 +181,14 @@ public class MapperTest extends BaseTestCase {
 
   private static Item createItemTree() {
     Item result = new Item();
-    result.name.set("xyz");
+    result.getName().set("xyz");
 
     for (int i = 0; i < 3; i++) {
       Item child = new Item();
-      child.name.set("child" + i);
-      result.observableChildren.add(child);
-      result.children.add(child);
-      result.transformedChildren.add(child);
+      child.getName().set("child" + i);
+      result.getObservableChildren().add(child);
+      result.getChildren().add(child);
+      result.getTransformedChildren().add(child);
     }
 
     return result;

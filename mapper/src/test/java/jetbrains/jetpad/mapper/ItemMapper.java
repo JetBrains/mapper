@@ -27,15 +27,15 @@ class ItemMapper extends Mapper<Item, Item> {
   @Override
   protected void registerSynchronizers(SynchronizersConfiguration conf) {
     conf.add(Synchronizers.forObservableRole(
-        this, getSource().observableChildren, getTarget().observableChildren, createMapperFactory()));
+        this, getSource().getObservableChildren(), getTarget().getObservableChildren(), createMapperFactory()));
     conf.add(Synchronizers.forObservableRole(
-        this, getSource().transformedChildren, Transformers.<Item>identityList(),
-        getTarget().transformedChildren, createMapperFactory()));
+        this, getSource().getTransformedChildren(), Transformers.<Item>identityList(),
+        getTarget().getTransformedChildren(), createMapperFactory()));
     conf.add(Synchronizers.forSingleRole(
-        this, getSource().singleChild, getTarget().singleChild, createMapperFactory()));
+        this, getSource().getSingleChild(), getTarget().getSingleChild(), createMapperFactory()));
     conf.add(mySimpleRole = Synchronizers.forSimpleRole(
-        this, getSource().children, getTarget().children, createMapperFactory()));
-    conf.add(Synchronizers.forPropsTwoWay(getSource().name, getTarget().name));
+        this, getSource().getChildren(), getTarget().getChildren(), createMapperFactory()));
+    conf.add(Synchronizers.forPropsTwoWay(getSource().getName(), getTarget().getName()));
   }
 
   public void refreshSimpleRole() {

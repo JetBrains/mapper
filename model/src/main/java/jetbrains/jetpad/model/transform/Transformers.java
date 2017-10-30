@@ -250,9 +250,9 @@ public final class Transformers {
       public Transformation<CollectionT, ObservableList<ItemT>> transform(
           final CollectionT from, final ObservableList<ItemT> to) {
         return new Transformation<CollectionT, ObservableList<ItemT>>() {
-          Registration myCollectionReg;
-          CollectionListener<ItemT> myCollectionListener;
-          Map<ItemT, Registration> myListeners = new HashMap<>();
+          private Registration myCollectionReg;
+          private CollectionListener<ItemT> myCollectionListener;
+          private Map<ItemT, Registration> myListeners = new HashMap<>();
 
           {
             myCollectionReg = from.addListener(myCollectionListener = new CollectionAdapter<ItemT>() {
@@ -372,8 +372,8 @@ public final class Transformers {
       public Transformation<CollectionT, ObservableList<ItemT>> transform(
           final CollectionT from, final ObservableList<ItemT> to) {
         return new Transformation<CollectionT, ObservableList<ItemT>>() {
-          Registration myCollectionReg;
-          CollectionListener<ItemT> myCollectionListener;
+          private Registration myCollectionReg;
+          private CollectionListener<ItemT> myCollectionListener;
 
           {
             myCollectionReg = from.addListener(myCollectionListener = new CollectionAdapter<ItemT>() {
@@ -1127,7 +1127,7 @@ public final class Transformers {
   public static <TargetT, SourceT extends TargetT, ItemT extends TargetT>
   Transformer<ObservableList<SourceT>, ObservableList<TargetT>> merge(final ObservableList<ItemT> items) {
     return new BaseTransformer<ObservableList<SourceT>, ObservableList<TargetT>>() {
-      int fromSize;
+      private int fromSize;
 
       @Override
       public Transformation<ObservableList<SourceT>, ObservableList<TargetT>> transform(ObservableList<SourceT> from) {

@@ -51,7 +51,7 @@ public final class Mappers {
         final Mapper<? extends SourceT, ? extends Target1T> m1 = f1.createMapper(source);
         final Mapper<? extends Target1T, ? extends Target2T> m2 = f2.createMapper(m1.getTarget());
         return new Mapper<SourceT, Target2T>(m1.getSource(), m2.getTarget()) {
-          ObservableList<Mapper<?, ?>> children = createChildList();
+          private ObservableList<Mapper<?, ?>> children = createChildList();
           {
             children.add(m1);
             children.add(m2);

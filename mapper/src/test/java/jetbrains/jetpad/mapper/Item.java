@@ -42,11 +42,11 @@ class Item {
     return true;
   }
 
-  final ObservableList<Item> observableChildren = new ObservableArrayList<>();
-  final List<Item> children = new ArrayList<>();
-  final ObservableList<Item> transformedChildren = new ObservableArrayList<>();
-  final Property<Item> singleChild = new ValueProperty<>();
-  final Property<String> name = new ValueProperty<>();
+  private final ObservableList<Item> observableChildren = new ObservableArrayList<>();
+  private final List<Item> children = new ArrayList<>();
+  private final ObservableList<Item> transformedChildren = new ObservableArrayList<>();
+  private final Property<Item> singleChild = new ValueProperty<>();
+  private final Property<String> name = new ValueProperty<>();
 
   Item() {
   }
@@ -63,4 +63,25 @@ class Item {
         && contentsEqual(transformedChildren, item.transformedChildren)
         && contentsEqual(singleChild.get(), item.singleChild.get());
   }
+
+  ObservableList<Item> getObservableChildren() {
+    return observableChildren;
+  }
+
+  List<Item> getChildren() {
+    return children;
+  }
+
+  ObservableList<Item> getTransformedChildren() {
+    return transformedChildren;
+  }
+
+  Property<Item> getSingleChild() {
+    return singleChild;
+  }
+
+  Property<String> getName() {
+    return name;
+  }
+
 }

@@ -73,7 +73,7 @@ public class ObservableListWrapperTest {
     source.add(1, 15.0);
     assertThat(target, contains(11, 16, 21, 31));
     listener.assertEvents(1, 0, 0);
-    assertThat(listener.addEvents.get(0), is(addEvent(equalTo(16), equalTo(1))));
+    assertThat(listener.getAddEvents().get(0), is(addEvent(equalTo(16), equalTo(1))));
   }
 
   @Test
@@ -82,7 +82,7 @@ public class ObservableListWrapperTest {
     assertThat(target, contains(11, 15, 21, 31));
     assertThat(source, contains(10.0, 14.0, 20.0, 30.0));
     listener.assertEvents(1, 0, 0);
-    assertThat(listener.addEvents.get(0), is(addEvent(equalTo(15), equalTo(1))));
+    assertThat(listener.getAddEvents().get(0), is(addEvent(equalTo(15), equalTo(1))));
   }
 
   @Test
@@ -90,7 +90,7 @@ public class ObservableListWrapperTest {
     source.set(0, 15.0);
     assertThat(target, contains(16, 21, 31));
     listener.assertEvents(0, 1, 0);
-    assertThat(listener.setEvents.get(0), is(setEvent(equalTo(11), equalTo(16), equalTo(0))));
+    assertThat(listener.getSetEvents().get(0), is(setEvent(equalTo(11), equalTo(16), equalTo(0))));
   }
 
   @Test
@@ -99,7 +99,7 @@ public class ObservableListWrapperTest {
     assertThat(target, contains(15, 21, 31));
     assertThat(source, contains(14.0, 20.0, 30.0));
     listener.assertEvents(0, 1, 0);
-    assertThat(listener.setEvents.get(0), is(setEvent(equalTo(11), equalTo(15), equalTo(0))));
+    assertThat(listener.getSetEvents().get(0), is(setEvent(equalTo(11), equalTo(15), equalTo(0))));
   }
 
   @Test
@@ -107,7 +107,7 @@ public class ObservableListWrapperTest {
     source.remove(2);
     assertThat(target, contains(11, 21));
     listener.assertEvents(0, 0, 1);
-    assertThat(listener.removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(2))));
+    assertThat(listener.getRemoveEvents().get(0), is(removeEvent(equalTo(31), equalTo(2))));
   }
 
   @Test
@@ -116,7 +116,7 @@ public class ObservableListWrapperTest {
     assertThat(target, contains(11, 21));
     assertThat(source, contains(10.0, 20.0));
     listener.assertEvents(0, 0, 1);
-    assertThat(listener.removeEvents.get(0), is(removeEvent(equalTo(31), equalTo(2))));
+    assertThat(listener.getRemoveEvents().get(0), is(removeEvent(equalTo(31), equalTo(2))));
   }
 
   @Test
