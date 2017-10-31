@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.geometry;
 
-public class DoubleVector {
+public class DoubleVector implements TwoDimensional<Double> {
   public static final DoubleVector ZERO = new DoubleVector(0.0, 0.0);
 
   public final double x;
@@ -89,5 +89,15 @@ public class DoubleVector {
   @Override
   public String toString() {
     return "(" + x + ", " + y + ")";
+  }
+
+  @Override
+  public Double getX() {
+    return x;
+  }
+
+  @Override
+  public Double getY() {
+    return y;
   }
 }

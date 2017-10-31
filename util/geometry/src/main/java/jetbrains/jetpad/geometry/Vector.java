@@ -15,7 +15,7 @@
  */
 package jetbrains.jetpad.geometry;
 
-public class Vector {
+public class Vector implements TwoDimensional<Integer> {
   public static final Vector ZERO = new Vector(0, 0);
 
   public final int x;
@@ -94,5 +94,15 @@ public class Vector {
   @Override
   public String toString() {
     return "(" + x + ", " + y + ")";
+  }
+
+  @Override
+  public Integer getX() {
+    return x;
+  }
+
+  @Override
+  public Integer getY() {
+    return y;
   }
 }
