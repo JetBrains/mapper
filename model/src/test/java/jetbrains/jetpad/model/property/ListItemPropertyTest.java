@@ -49,9 +49,9 @@ public class ListItemPropertyTest {
   private MatchingHandler<PropertyChangeEvent<Integer>> p2Handler = setTestHandler(p2);
   private MatchingHandler<PropertyChangeEvent<Integer>> p3Handler = setTestHandler(p3);
 
-  private MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.index);
-  private MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.index);
-  private MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.index);
+  private MatchingHandler<PropertyChangeEvent<Integer>> p1indexHandler = setTestHandler(p1.getIndex());
+  private MatchingHandler<PropertyChangeEvent<Integer>> p2indexHandler = setTestHandler(p2.getIndex());
+  private MatchingHandler<PropertyChangeEvent<Integer>> p3indexHandler = setTestHandler(p3.getIndex());
 
 
   @Test

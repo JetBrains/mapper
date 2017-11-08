@@ -33,7 +33,7 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
   private Registration myReg;
   private boolean myDisposed = false;
 
-  final Property<Integer> index = new ValueProperty<>();
+  private final Property<Integer> index = new ValueProperty<>();
 
   public ListItemProperty(ObservableList<ValueT> list, int index) {
     if (index < 0 || index >= list.size()) {
@@ -45,14 +45,14 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
     myReg = list.addListener(new CollectionAdapter<ValueT>() {
       @Override
       public void onItemAdded(CollectionItemEvent<? extends ValueT> event) {
-        if (event.getIndex() <= ListItemProperty.this.index.get()) {
-          ListItemProperty.this.index.set(ListItemProperty.this.index.get() + 1);
+        if (event.getIndex() <= ListItemProperty.this.getIndex().get()) {
+          ListItemProperty.this.index.set(ListItemProperty.this.getIndex().get() + 1);
         }
       }
 
       @Override
       public void onItemSet(CollectionItemEvent<? extends ValueT> event) {
-        if (event.getIndex() == ListItemProperty.this.index.get()) {
+        if (event.getIndex() == ListItemProperty.this.getIndex().get()) {
           final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<>(event.getOldItem(), event.getNewItem());
           myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
             @Override
@@ -65,9 +65,9 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
 
       @Override
       public void onItemRemoved(CollectionItemEvent<? extends ValueT> event) {
-        if (event.getIndex() < ListItemProperty.this.index.get()) {
-          ListItemProperty.this.index.set(ListItemProperty.this.index.get() - 1);
-        } else if (event.getIndex() == ListItemProperty.this.index.get()) {
+        if (event.getIndex() < ListItemProperty.this.getIndex().get()) {
+          ListItemProperty.this.index.set(ListItemProperty.this.getIndex().get() - 1);
+        } else if (event.getIndex() == ListItemProperty.this.getIndex().get()) {
           invalidate();
           final PropertyChangeEvent<ValueT> e = new PropertyChangeEvent<>(event.getOldItem(), null);
           myHandlers.fire(new ListenerCaller<EventHandler<? super PropertyChangeEvent<ValueT>>>() {
@@ -89,7 +89,7 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
   @Override
   public ValueT get() {
     if (isValid()) {
-      return myList.get(index.get());
+      return myList.get(getIndex().get());
     } else {
       return null;
     }
@@ -98,14 +98,14 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
   @Override
   public void set(ValueT value) {
     if (isValid()) {
-      myList.set(index.get(), value);
+      myList.set(getIndex().get(), value);
     } else {
       throw new IllegalStateException("Property points to an invalid item, can’t set");
     }
   }
 
   public boolean isValid() {
-    return index.get() != null;
+    return getIndex().get() != null;
   }
 
   private void invalidate() {
@@ -122,5 +122,9 @@ public final class ListItemProperty<ValueT> extends BaseReadableProperty<ValueT>
       myReg.dispose();
     }
     myDisposed = true;
+  }
+
+  public ReadableProperty<Integer> getIndex() {
+    return index;
   }
 }
