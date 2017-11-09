@@ -693,6 +693,77 @@ public final class Transformers {
     };
   }
 
+  public static <ItemT> Transformer<ObservableList<ItemT>, ObservableList<ItemT>> skipN(
+      final ReadableProperty<Integer> value) {
+    return new BaseTransformer<ObservableList<ItemT>, ObservableList<ItemT>>() {
+      @Override
+      public Transformation<ObservableList<ItemT>, ObservableList<ItemT>> transform(ObservableList<ItemT> from) {
+        return transform(from, new ObservableArrayList<ItemT>());
+      }
+
+      @Override
+      public Transformation<ObservableList<ItemT>, ObservableList<ItemT>> transform(
+          final ObservableList<ItemT> from, final ObservableList<ItemT> to) {
+        Registration fromReg = from.addListener(new CollectionListener<ItemT>() {
+          @Override
+          public void onItemAdded(CollectionItemEvent<? extends ItemT> event) {
+            int n = value.get();
+            if (from.size() <= n) return;
+            int addedIndex = event.getIndex();
+            if (addedIndex < n) {
+              to.add(0, from.get(n));
+            } else {
+              to.add(addedIndex - n, event.getNewItem());
+            }
+          }
+
+          @Override
+          public void onItemSet(CollectionItemEvent<? extends ItemT> event) {
+            int index = event.getIndex();
+            int n = value.get();
+            if (index < n) return;
+            to.set(index - n, event.getNewItem());
+          }
+
+          @Override
+          public void onItemRemoved(CollectionItemEvent<? extends ItemT> event) {
+            int n = value.get();
+            if (from.size() < n) return;
+            int removedIndex = event.getIndex();
+            if (removedIndex < n) {
+              to.remove(0);
+            } else {
+              to.remove(removedIndex - n);
+            }
+          }
+        });
+
+        Registration propReg = value.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
+          @Override
+          public void onEvent(PropertyChangeEvent<Integer> event) {
+            int n = event.getNewValue();
+            if (n < event.getOldValue()) {
+              for (int i = n; i < from.size() && i < event.getOldValue(); i++) {
+                to.add(0, from.get(i));
+              }
+            } else {
+              for (int i = event.getOldValue(); i < from.size() && i < n; i++) {
+                to.remove(0);
+              }
+            }
+          }
+        });
+
+        int n = value.get();
+        for (int i = n; i < from.size(); i++) {
+          to.add(from.get(i));
+        }
+
+        return new SimpleTransformation<>(from, to, new CompositeRegistration(fromReg, propReg));
+      }
+    };
+  }
+
   public static <ItemT>
   Transformer<ObservableList<ObservableList<? extends ItemT>>, ObservableList<ItemT>> flattenList() {
     return flattenList(Functions.<ObservableList<? extends ItemT>>identity());
