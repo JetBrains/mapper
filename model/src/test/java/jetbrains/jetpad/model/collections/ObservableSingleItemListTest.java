@@ -19,6 +19,7 @@ import jetbrains.jetpad.model.collections.list.ObservableSingleItemList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -44,5 +45,26 @@ public class ObservableSingleItemListTest {
     list.set(0, null);
     assertEquals(1, list.size());
     assertNull(list.getItem());
+  }
+
+  @Test
+  public void setItemToEmptyList() {
+    assertTrue(list.isEmpty());
+    list.setItem(0);
+    assertFalse(list.isEmpty());
+  }
+
+  @Test
+  public void simpleSetItem() {
+    list.add(0);
+    list.setItem(1);
+    assertEquals(1, (int) list.getItem());
+  }
+
+  @Test
+  public void clearEmptyList() {
+    assertTrue(list.isEmpty());
+    list.clear();
+    assertTrue(list.isEmpty());
   }
 }
