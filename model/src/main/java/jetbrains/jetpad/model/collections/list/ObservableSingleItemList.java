@@ -32,7 +32,11 @@ public class ObservableSingleItemList<ItemT> extends AbstractObservableList<Item
   }
 
   public void setItem(ItemT item) {
-    set(0, item);
+    if (myEmpty) {
+      add(item);
+    } else {
+      set(0, item);
+    }
   }
   
   @Override
