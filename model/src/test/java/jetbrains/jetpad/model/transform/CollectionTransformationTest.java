@@ -17,14 +17,18 @@ package jetbrains.jetpad.model.transform;
 
 import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Supplier;
+import jetbrains.jetpad.model.collections.CollectionItemEvent;
+import jetbrains.jetpad.model.collections.CollectionItemEvent.EventType;
 import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.list.ObservableSingleItemList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
 import jetbrains.jetpad.model.collections.set.ObservableSet;
+import jetbrains.jetpad.model.event.EventHandler;
 import jetbrains.jetpad.model.property.Properties;
 import jetbrains.jetpad.model.property.Property;
+import jetbrains.jetpad.model.property.PropertyChangeEvent;
 import jetbrains.jetpad.model.property.ReadableProperty;
 import jetbrains.jetpad.model.property.ValueProperty;
 import org.junit.Test;
@@ -47,8 +51,7 @@ public class CollectionTransformationTest {
 
   @Test
   public void filterInitial() {
-    from.add(new MyObject("a"));
-    from.add(new MyObject("b"));
+    fromSetAdd("a", "b");
 
     Transformers.filter(IS_A).transform(from, to);
 
@@ -69,8 +72,7 @@ public class CollectionTransformationTest {
 
   @Test
   public void listFilterInitial() {
-    fromList.add(new MyObject("a"));
-    fromList.add(new MyObject("b"));
+    fromListAdd("a", "b");
 
     Transformers.listFilter(IS_A).transform(fromList, toList);
 
@@ -92,9 +94,7 @@ public class CollectionTransformationTest {
 
   @Test
   public void sortInitial() {
-    from.add(new MyObject("a"));
-    from.add(new MyObject("c"));
-    from.add(new MyObject("b"));
+    fromSetAdd("a", "c", "b");
 
     createSortTransformer().transform(from, toList);
 
@@ -105,9 +105,7 @@ public class CollectionTransformationTest {
   public void sortHandling() {
     createSortTransformer().transform(from, toList);
 
-    from.add(new MyObject("a"));
-    from.add(new MyObject("c"));
-    from.add(new MyObject("b"));
+    fromSetAdd("a", "c", "b");
 
     assertEquals("[a, b, c]", toList.toString());
   }
@@ -148,9 +146,7 @@ public class CollectionTransformationTest {
   public void addFirstHandling() {
     Transformers.<MyObject, MyObject, MyObject>addFirst(new MyObject("z")).transform(fromList, toList);
 
-    fromList.add(new MyObject("a"));
-    fromList.add(new MyObject("c"));
-    fromList.add(new MyObject("b"));
+    fromListAdd("a", "c", "b");
 
     assertEquals("[z, a, c, b]", toList.toString());
   }
@@ -239,9 +235,7 @@ public class CollectionTransformationTest {
 
   @Test
   public void firstNInitial() {
-    fromList.add(new MyObject("a"));
-    fromList.add(new MyObject("b"));
-    fromList.add(new MyObject("c"));
+    fromListAdd("a", "b", "c");
 
     Transformers.<MyObject>firstN(Properties.constant(2)).transform(fromList, toList);
 
@@ -271,9 +265,7 @@ public class CollectionTransformationTest {
   
   @Test
   public void firstNRemove() {
-    fromList.add(new MyObject("a"));
-    fromList.add(new MyObject("b"));
-    fromList.add(new MyObject("c"));
+    fromListAdd("a", "b", "c");
 
     Transformers.<MyObject>firstN(Properties.constant(1)).transform(fromList, toList);
 
@@ -285,9 +277,7 @@ public class CollectionTransformationTest {
 
   @Test
   public void firstNIncreaseN() {
-    fromList.add(new MyObject("a"));
-    fromList.add(new MyObject("b"));
-    fromList.add(new MyObject("c"));
+    fromListAdd("a", "b", "c");
 
     ValueProperty<Integer> prop = new ValueProperty<>(1);
 
@@ -300,9 +290,7 @@ public class CollectionTransformationTest {
 
   @Test
   public void firstNDecreaseN() {
-    fromList.add(new MyObject("a"));
-    fromList.add(new MyObject("b"));
-    fromList.add(new MyObject("c"));
+    fromListAdd("a", "b", "c");
 
     ValueProperty<Integer> prop = new ValueProperty<>(2);
 
@@ -313,6 +301,152 @@ public class CollectionTransformationTest {
     assertEquals("[]", toList.toString());
   }
 
+  @Test
+  public void skipNInitial() {
+    fromListAdd("a", "b", "c");
+
+    ObservableList<MyObject> targetList = Transformers.<MyObject>skipN(Properties.constant(2)).transform(fromList).getTarget();
+
+    assertEquals("[c]", targetList.toString());
+  }
+
+  @Test
+  public void skipNAdd() {
+    ObservableList<MyObject> targetList = Transformers.<MyObject>skipN(Properties.constant(1)).transform(fromList).getTarget();
+
+    fromList.add(new MyObject("x"));
+    assertEquals("[]", targetList.toString());
+
+    fromList.add(new MyObject("y"));
+    assertEquals("[y]", targetList.toString());
+
+    fromList.add(0, new MyObject("z"));
+    assertEquals("[x, y]", targetList.toString());
+  }
+
+  @Test
+  public void skipNRemove() {
+    ObservableList<MyObject> targetList = Transformers.<MyObject>skipN(Properties.constant(1)).transform(fromList).getTarget();
+
+    fromList.add(new MyObject("a"));
+    fromList.remove(0);
+    assertEquals("[]", targetList.toString());
+
+    fromListAdd("a", "b", "c", "d");
+
+    fromList.remove(2);
+    assertEquals("[b, d]", targetList.toString());
+    fromList.remove(0);
+    assertEquals("[d]", targetList.toString());
+    fromList.remove(0);
+    assertEquals("[]", targetList.toString());
+  }
+
+  @Test
+  public void skipNSet() {
+    fromListAdd("a", "b", "c");
+
+    ObservableList<MyObject> targetList = Transformers.<MyObject>skipN(Properties.constant(1)).transform(fromList).getTarget();
+
+    fromList.set(1, new MyObject("B"));
+    assertEquals("[B, c]", targetList.toString());
+  }
+
+  @Test
+  public void skipNIncreaseDecrease() {
+    fromListAdd("a", "b", "c");
+
+    ValueProperty<Integer> prop = new ValueProperty<>(1);
+
+    ObservableList<MyObject> targetList = Transformers.<MyObject>skipN(prop).transform(fromList).getTarget();
+
+    prop.set(2);
+    assertEquals("[c]", targetList.toString());
+
+    prop.set(1);
+    assertEquals("[b, c]", targetList.toString());
+  }
+
+  @Test
+  public void skipNUpdatePropOnRemove() {
+    fromListAdd("a", "b", "c", "d");
+
+    final ValueProperty<Integer> prop = new ValueProperty<>(3);
+    fromList.addHandler(new EventHandler<CollectionItemEvent<? extends MyObject>>() {
+      @Override
+      public void onEvent(CollectionItemEvent<? extends MyObject> event) {
+        // Collection update hasn't reached the thransformation yet
+        assertEquals("[d]", toList.toString());
+        if (event.getType()== EventType.REMOVE) {
+          prop.set(prop.get() - 1);
+          assertEquals("[c, d]", toList.toString());
+        }
+      }
+    });
+
+    Transformers.<MyObject>skipN(prop).transform(fromList, toList);
+
+    fromList.addHandler(new EventHandler<CollectionItemEvent<? extends MyObject>>() {
+      @Override
+      public void onEvent(CollectionItemEvent<? extends MyObject> event) {
+        // Collection update has reached the thransformation already
+        assertEquals("[c]", toList.toString());
+        if (event.getType()== EventType.REMOVE) {
+          prop.set(prop.get() - 1);
+          assertEquals("[b, c]", toList.toString());
+        }
+      }
+    });
+
+    assertEquals("[d]", toList.toString());
+    fromList.remove(3);
+    assertEquals("[b, c]", toList.toString());
+  }
+
+  @Test
+  public void skipNAddToListOnPropUpdate() {
+    fromListAdd("a", "b", "c");
+
+    final ValueProperty<Integer> prop = new ValueProperty<>(2);
+
+    prop.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
+      @Override
+      public void onEvent(PropertyChangeEvent<Integer> event) {
+        // Property update hasn't reached the thransformation yet
+        assertEquals("[c]", toList.toString());
+        fromList.add(0, new MyObject("d"));
+        assertEquals("[b, c]", toList.toString());
+      }
+    });
+
+    Transformers.<MyObject>skipN(prop).transform(fromList, toList);
+
+    prop.addHandler(new EventHandler<PropertyChangeEvent<Integer>>() {
+      @Override
+      public void onEvent(PropertyChangeEvent<Integer> event) {
+        // Property update has reached the thransformation already
+        assertEquals("[a, b, c]", toList.toString());
+        fromList.add(0, new MyObject("f"));
+        assertEquals("[d, a, b, c]", toList.toString());
+      }
+    });
+
+    assertEquals("[c]", toList.toString());
+    prop.set(1);
+    assertEquals("[d, a, b, c]", toList.toString());
+  }
+
+  private void fromListAdd(String... items) {
+    for (String item: items){
+      fromList.add(new MyObject(item));
+    }
+  }
+
+  private void fromSetAdd(String... items) {
+    for (String item: items){
+      from.add(new MyObject(item));
+    }
+  }
 
   private Transformer<ObservableCollection<MyObject>, ObservableList<MyObject>> createSortTransformer() {
     return Transformers.sortBy(new Function<MyObject, ReadableProperty<String>>() {
