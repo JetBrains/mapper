@@ -29,11 +29,15 @@ public abstract class BaseId implements Serializable {
 
   private static final IdNames ourNames = new IdNames();
 
+  protected static  String generateId() {
+    return IdGenerator.nextBase62RandomId(22);
+  }
+
   private String myId;
 
   // generate 62 ^ 22 (~130 bits) of random readable ID
   protected BaseId() {
-    this(IdGenerator.nextBase62RandomId(22), null);
+    this(generateId(), null);
   }
 
   protected BaseId(String id) {
