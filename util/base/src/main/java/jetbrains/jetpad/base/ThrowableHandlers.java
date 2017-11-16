@@ -41,6 +41,14 @@ public final class ThrowableHandlers {
   };
 
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
+  private static final ThreadLocal<Boolean> LOGGING_ENABLED = new ThreadLocal<Boolean>() {
+    @Override
+    protected Boolean initialValue() {
+      return Boolean.TRUE;
+    }
+  };
+
+  @SuppressWarnings("NonJREEmulationClassesInClientCode")
   private static final ThreadLocal<MyEventSource> HANDLERS = new ThreadLocal<MyEventSource>() {
     @Override
     protected MyEventSource initialValue() {
@@ -50,6 +58,10 @@ public final class ThrowableHandlers {
 
   private final static Set<RuntimeException> LEAKS = Collections.newSetFromMap(new IdentityHashMap<RuntimeException, Boolean>());
 
+  public static void setLoggingEnabled(boolean enabled) {
+    LOGGING_ENABLED.set(enabled);
+  }
+  
   public static Registration addHandler(Consumer<? super Throwable> handler) {
     final Registration handlerReg = HANDLERS.get().addHandler(handler);
 
@@ -101,7 +113,7 @@ public final class ThrowableHandlers {
     }
 
     // ourForceProduction is used only in tests, where severe level is logged by default.
-    if (!FORCE_PRODUCTION.get()) {
+    if (!FORCE_PRODUCTION.get() && LOGGING_ENABLED.get()) {
       LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
     }
     handleError(t);
