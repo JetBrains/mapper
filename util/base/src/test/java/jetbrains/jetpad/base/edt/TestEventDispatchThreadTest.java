@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.base.Value;
@@ -27,12 +28,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static jetbrains.jetpad.base.AsyncMatchers.failed;
+import static jetbrains.jetpad.base.AsyncMatchers.unfinished;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncFulfilled;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncRejected;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.getDefaultSupplier;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 
 public class TestEventDispatchThreadTest extends BaseTestCase {
   private TestEventDispatchThread edt = new TestEventDispatchThread();
+  private Runnable flush = new Runnable() {
+    @Override
+    public void run() {
+      edt.executeUpdates();
+    }
+  };
 
   @Before
   public void setUp() {
@@ -184,5 +197,23 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
     edt.executeUpdates();
 
     assertEquals(Arrays.asList(1, 2), executionOrder);
+  }
+
+  @Test
+  public void fulfillAsync() {
+    assertAsyncFulfilled(edt, flush);
+  }
+
+  @Test
+  public void rejectAsync() {
+    assertAsyncRejected(edt, flush);
+  }
+
+  @Test
+  public void killFailsAsyncs() {
+    Async<Integer> async = edt.schedule(getDefaultSupplier());
+    assertThat(async, unfinished());
+    edt.kill();
+    assertThat(async, failed());
   }
 }

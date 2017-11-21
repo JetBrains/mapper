@@ -15,7 +15,9 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Supplier;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,10 +50,20 @@ public class ConcurrentTestEdt implements EventDispatchThread, EdtManager {
   }
 
   @Override
-  public void schedule(Runnable r) throws EdtException {
+  public Async<Void> schedule(Runnable r) throws EdtException {
     myLock.lock();
     try {
-      myEdt.schedule(r);
+      return myEdt.schedule(r);
+    } finally {
+      myLock.unlock();
+    }
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> schedule(Supplier<ResultT> s) throws EdtException {
+    myLock.lock();
+    try {
+      return myEdt.schedule(s);
     } finally {
       myLock.unlock();
     }

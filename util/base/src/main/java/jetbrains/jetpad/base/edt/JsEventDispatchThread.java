@@ -18,12 +18,13 @@ package jetbrains.jetpad.base.edt;
 import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 
 import java.util.logging.Logger;
 
-public final class JsEventDispatchThread implements EventDispatchThread {
+public final class JsEventDispatchThread extends DefaultAsyncEdt {
   private static final Logger LOG = Logger.getLogger(JsEventDispatchThread.class.getName());
 
   public static final JsEventDispatchThread INSTANCE = new JsEventDispatchThread();
@@ -37,13 +38,14 @@ public final class JsEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public void schedule(final Runnable r) {
+  protected <ResultT> Async<ResultT> asyncSchedule(final RunnableWithAsync<ResultT> runnableWithAsync) {
     Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
       @Override
       public void execute() {
-        doExecute(r);
+        doExecute(runnableWithAsync);
       }
     });
+    return runnableWithAsync;
   }
 
   @Override

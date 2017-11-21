@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.base.Value;
@@ -22,7 +23,7 @@ import jetbrains.jetpad.base.Value;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TestEventDispatchThread implements EventDispatchThread {
+public final class TestEventDispatchThread extends DefaultAsyncEdt {
   private final String myName;
   private final Runnable myThreadSafeChecker;
 
@@ -156,12 +157,28 @@ public final class TestEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public void schedule(Runnable r) {
-    schedule(0, r);
+  protected <ResultT> Async<ResultT> asyncSchedule(RunnableWithAsync<ResultT> runnableWithAsync) {
+    schedule(0, runnableWithAsync);
+    return runnableWithAsync;
   }
 
   @Override
   public Registration schedule(int delay, Runnable r) {
+    myThreadSafeChecker.run();
+    checkCanSchedule();
+    myModificationCount++;
+    final RunnableRecord record = new RunnableRecord(myCurrentTime + delay, RunnableWithAsync.fromRunnable(r));
+    myRecords.add(record);
+    return new Registration() {
+      @Override
+      protected void doRemove() {
+        myRecords.remove(record);
+      }
+    };
+  }
+
+
+  private Registration schedule(int delay, RunnableWithAsync<?> r) {
     myThreadSafeChecker.run();
     checkCanSchedule();
     myModificationCount++;
@@ -231,7 +248,14 @@ public final class TestEventDispatchThread implements EventDispatchThread {
     myThreadSafeChecker.run();
     checkCanStop();
     checkInsideTask();
+    failCurrentRecords();
     shutdown();
+  }
+
+  private void failCurrentRecords() {
+    for (RunnableRecord record : myRecords) {
+      record.myRunnable.fail();
+    }
   }
 
   private void shutdown() {
@@ -246,9 +270,9 @@ public final class TestEventDispatchThread implements EventDispatchThread {
 
   private static class RunnableRecord {
     private final int myTargetTime;
-    private final Runnable myRunnable;
+    private final RunnableWithAsync<?> myRunnable;
 
-    private RunnableRecord(int targetTime, Runnable runnable) {
+    private RunnableRecord(int targetTime, RunnableWithAsync<?> runnable) {
       myTargetTime = targetTime;
       myRunnable = runnable;
     }

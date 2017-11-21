@@ -15,9 +15,11 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Runnables;
 import jetbrains.jetpad.base.ThrowableHandlers;
 import jetbrains.jetpad.base.function.Consumer;
+import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.test.BaseTestCase;
 import jetbrains.jetpad.test.Slow;
 import org.junit.Assert;
@@ -27,6 +29,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncFulfilled;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncRejected;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.getDefaultSupplier;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.killAndAssertFailure;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -75,6 +81,46 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
       @Override
       public void accept(EdtManager edtManager) {
         edtManager.kill();
+      }
+    });
+  }
+
+  @Test
+  public void killFailsRunningAsyncs() {
+    scheduleInfiniteAndKill();
+  }
+
+  @Test
+  public void killFailsNotStartedAsyncs() {
+    scheduleInfiniteAndKill(getDefaultSupplier());
+  }
+
+  private void scheduleInfiniteAndKill(Supplier<?>... restTasks) {
+    ExecutorEdtManager manager = new ExecutorEdtManager("Manager");
+    final CountDownLatch runnableStartedLatch = new CountDownLatch(1);
+
+    Async<?>[] asyncs = new Async<?>[restTasks.length + 1];
+
+    asyncs[0] = scheduleInfiniteTask(manager, runnableStartedLatch);
+    for (int i = 0; i < restTasks.length; i++) {
+      asyncs[i + 1] = manager.schedule(restTasks[i]);
+    }
+    await(runnableStartedLatch);
+
+    killAndAssertFailure(manager, asyncs);
+  }
+
+  private Async<Integer> scheduleInfiniteTask(ExecutorEdtManager manager, final CountDownLatch runnableStartedLatch) {
+    return manager.schedule(new Supplier<Integer>() {
+      @Override
+      public Integer get() {
+        runnableStartedLatch.countDown();
+        try {
+          new CountDownLatch(1).await();
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+        return 42;
       }
     });
   }
@@ -130,5 +176,33 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
     other.interrupt();
 
     assertTrue(manager.isStopped());
+  }
+
+  @Test
+  public void asyncFulfilled() {
+    ExecutorEdtManager edtManager = new ExecutorEdtManager("EdtManager");
+    assertAsyncFulfilled(edtManager, awaitExecution(edtManager));
+  }
+
+  @Test
+  public void asyncRejected() {
+    ExecutorEdtManager edtManager = new ExecutorEdtManager("EdtManager");
+    assertAsyncRejected(edtManager, awaitExecution(edtManager));
+  }
+
+  private Runnable awaitExecution(final ExecutorEdtManager edtManager) {
+    return new Runnable() {
+      @Override
+      public void run() {
+        final CountDownLatch latch = new CountDownLatch(1);
+        edtManager.schedule(new Runnable() {
+          @Override
+          public void run() {
+            latch.countDown();
+          }
+        });
+        await(latch);
+      }
+    };
   }
 }

@@ -15,12 +15,15 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Supplier;
 
 public interface EventDispatchThread {
 
   long getCurrentTimeMillis();
-  void schedule(Runnable r) throws EdtException;
+  Async<Void> schedule(Runnable r) throws EdtException;
+  <ResultT> Async<ResultT> schedule(Supplier<ResultT> s) throws EdtException;
   Registration schedule(int delay, Runnable r) throws EdtException;
   Registration scheduleRepeating(int period, Runnable r) throws EdtException;
 }

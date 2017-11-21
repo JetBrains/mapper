@@ -15,6 +15,7 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
 
 import javax.swing.SwingUtilities;
@@ -22,7 +23,7 @@ import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public final class AwtEventDispatchThread implements EventDispatchThread {
+public final class AwtEventDispatchThread extends DefaultAsyncEdt {
   public static final AwtEventDispatchThread INSTANCE = new AwtEventDispatchThread();
 
   private AwtEventDispatchThread() {
@@ -34,8 +35,9 @@ public final class AwtEventDispatchThread implements EventDispatchThread {
   }
 
   @Override
-  public void schedule(Runnable r) {
-    SwingUtilities.invokeLater(r);
+  protected <ResultT> Async<ResultT> asyncSchedule(RunnableWithAsync<ResultT> runnableWithAsync) {
+    SwingUtilities.invokeLater(runnableWithAsync);
+    return runnableWithAsync;
   }
 
   @Override
