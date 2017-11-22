@@ -18,6 +18,7 @@ package jetbrains.jetpad.model.id;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -31,7 +32,7 @@ public final class BaseIdGenerator {
     if (args.length >= 1) {
       try {
         numIds = Integer.parseInt(args[0]);
-      } catch (Exception e) {
+      } catch (NumberFormatException ignored) {
         System.out.println(USAGE);
         return;
       }
@@ -43,7 +44,7 @@ public final class BaseIdGenerator {
     if (args.length >= 2) {
       try {
         out = new FileOutputStream(args[1]);
-      } catch (Exception e) {
+      } catch (FileNotFoundException ignored) {
         System.out.println(USAGE);
         return;
       }
@@ -71,5 +72,6 @@ public final class BaseIdGenerator {
   private BaseIdGenerator() {
   }
 
-  private static class MyId extends BaseId {}
+  private static class MyId extends BaseId {
+  }
 }
