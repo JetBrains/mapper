@@ -168,6 +168,11 @@ public final class EdtManagerPool implements EdtManagerFactory {
     }
 
     @Override
+    public <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) {
+      return myManager.getEdt().flatSchedule(s);
+    }
+
+    @Override
     public Registration schedule(int delay, Runnable runnable) {
       return myManager.getEdt().schedule(delay, runnable);
     }

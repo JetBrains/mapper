@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncFulfilled;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncRejected;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertFlatAsyncFulfilled;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.getDefaultSupplier;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.killAndAssertFailure;
 import static org.junit.Assert.assertFalse;
@@ -182,6 +183,12 @@ public class ExecutorEdtManagerTest extends BaseTestCase {
   public void asyncFulfilled() {
     ExecutorEdtManager edtManager = new ExecutorEdtManager("EdtManager");
     assertAsyncFulfilled(edtManager, awaitExecution(edtManager));
+  }
+
+  @Test
+  public void flatAsyncFulfilled() {
+    ExecutorEdtManager edtManager = new ExecutorEdtManager("EdtManager");
+    assertFlatAsyncFulfilled(edtManager, awaitExecution(edtManager));
   }
 
   @Test

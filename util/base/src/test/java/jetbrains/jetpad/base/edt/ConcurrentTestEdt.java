@@ -70,6 +70,16 @@ public class ConcurrentTestEdt implements EventDispatchThread, EdtManager {
   }
 
   @Override
+  public <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) throws EdtException {
+    myLock.lock();
+    try {
+      return myEdt.flatSchedule(s);
+    } finally {
+      myLock.unlock();
+    }
+  }
+
+  @Override
   public Registration schedule(int delay, Runnable r) throws EdtException {
     myLock.lock();
     try {

@@ -32,6 +32,7 @@ import static jetbrains.jetpad.base.AsyncMatchers.failed;
 import static jetbrains.jetpad.base.AsyncMatchers.unfinished;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncFulfilled;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncRejected;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertFlatAsyncFulfilled;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.getDefaultSupplier;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -202,6 +203,11 @@ public class TestEventDispatchThreadTest extends BaseTestCase {
   @Test
   public void fulfillAsync() {
     assertAsyncFulfilled(edt, flush);
+  }
+
+  @Test
+  public void fulfillFlatAsync() {
+    assertFlatAsyncFulfilled(edt, flush);
   }
 
   @Test

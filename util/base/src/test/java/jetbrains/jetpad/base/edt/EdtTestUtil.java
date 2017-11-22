@@ -43,6 +43,17 @@ final class EdtTestUtil {
     assertThat(async, result(is(VALUE)));
   }
 
+  static void assertFlatAsyncFulfilled(final EventDispatchThread edt, Runnable flush) {
+    Async<Integer> async = edt.flatSchedule(new Supplier<Async<Integer>>() {
+      @Override
+      public Async<Integer> get() {
+        return edt.schedule(getDefaultSupplier());
+      }
+    });
+    flush.run();
+    assertThat(async, result(is(VALUE)));
+  }
+
   static void assertAsyncRejected(final EventDispatchThread edt, final Runnable flush) {
     final Value<Async<Integer>> asyncValue = new Value<>();
     ThrowableHandlers.asInProduction(new Runnable() {

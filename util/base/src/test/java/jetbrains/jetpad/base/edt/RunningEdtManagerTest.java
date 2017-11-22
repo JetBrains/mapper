@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncFulfilled;
 import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncRejected;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertFlatAsyncFulfilled;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -64,6 +65,11 @@ public class RunningEdtManagerTest extends BaseTestCase {
   @Test
   public void asyncFulfill() {
     assertAsyncFulfilled(manager, EMPTY);
+  }
+
+  @Test
+  public void flatAsyncFulfill() {
+    assertFlatAsyncFulfilled(manager, EMPTY);
   }
 
   @Test

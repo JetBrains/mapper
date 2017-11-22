@@ -14,5 +14,10 @@ public abstract class DefaultAsyncEdt implements EventDispatchThread {
     return asyncSchedule(RunnableWithAsync.fromSupplier(s));
   }
 
+  @Override
+  public <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) throws EdtException {
+    return asyncSchedule(RunnableWithAsync.fromAsyncSupplier(s));
+  }
+
   protected abstract <ResultT> Async<ResultT> asyncSchedule(RunnableWithAsync<ResultT> runnableWithAsync);
 }

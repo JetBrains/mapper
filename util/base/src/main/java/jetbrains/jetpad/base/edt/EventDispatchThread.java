@@ -24,6 +24,7 @@ public interface EventDispatchThread {
   long getCurrentTimeMillis();
   Async<Void> schedule(Runnable r) throws EdtException;
   <ResultT> Async<ResultT> schedule(Supplier<ResultT> s) throws EdtException;
+  <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) throws EdtException;
   Registration schedule(int delay, Runnable r) throws EdtException;
   Registration scheduleRepeating(int period, Runnable r) throws EdtException;
 }

@@ -108,6 +108,15 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
+  public <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) {
+    try {
+      return myEdt.flatSchedule(s);
+    } catch (RejectedExecutionException e) {
+      throw new EdtException(e);
+    }
+  }
+
+  @Override
   public Async<Void> schedule(Runnable runnable) {
     try {
       return myEdt.schedule(runnable);
