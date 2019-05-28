@@ -80,12 +80,12 @@
     <repository>
       <id>repository.jetbrains.com</id>
       <name>repository.jetbrains.com-releases</name>
-      <url>http://repository.jetbrains.com/jetpad</url>
+      <url>https://repository.jetbrains.com/jetpad</url>
     </repository>
     <snapshotRepository>
       <id>repository.jetbrains.com</id>
       <name>repository.jetbrains.com-snapshots</name>
-      <url>http://repository.jetbrains.com/jetpad</url>
+      <url>https://repository.jetbrains.com/jetpad</url>
     </snapshotRepository>
   </distributionManagement>
 
