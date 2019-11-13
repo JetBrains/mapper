@@ -17,6 +17,7 @@ package jetbrains.jetpad.mapper;
 
 import com.google.common.collect.Iterators;
 import jetbrains.jetpad.base.ThrowableHandlers;
+import jetbrains.jetpad.model.collections.ObservableCollection;
 import jetbrains.jetpad.model.collections.list.ObservableArrayList;
 import jetbrains.jetpad.model.collections.list.ObservableList;
 import jetbrains.jetpad.model.collections.set.ObservableHashSet;
@@ -74,6 +75,7 @@ public abstract class Mapper<SourceT, TargetT> {
 
   private Object[] myParts = EMPTY_PARTS;
   private Mapper<?, ?> myParent;
+  private ObservableCollection<Mapper<?,?>> childrenContainer = createChildSet();
 
   /**
    * Construct a mapper with SourceT source and TargetT target
@@ -334,7 +336,15 @@ public abstract class Mapper<SourceT, TargetT> {
     return new ChildProperty<>();
   }
 
-  private void addChild(Mapper<?, ?> child) {
+  public void addChild(Mapper<?,?> mapper) {
+    childrenContainer.add(mapper);
+  }
+
+  public void removeChild(Mapper<?,?> mapper) {
+    childrenContainer.remove(mapper);
+  }
+
+  private void addChildInternal(Mapper<?, ?> child) {
     if (myState != State.ATTACHING_SYNCHRONIZERS && myState != State.ATTACHING_CHILDREN && myState != State.ATTACHED) {
       throw new IllegalStateException("State =  " + myState);
     }
@@ -345,7 +355,7 @@ public abstract class Mapper<SourceT, TargetT> {
     }
   }
 
-  private void removeChild(Mapper<?, ?> child) {
+  private void removeChildInternal(Mapper<?, ?> child) {
     child.detach();
     child.myParent = null;
   }
@@ -376,12 +386,12 @@ public abstract class Mapper<SourceT, TargetT> {
       MapperT oldValue = get();
       if (oldValue != null) {
         checkCanRemove(oldValue);
-        removeChild(oldValue);
+        removeChildInternal(oldValue);
       }
       super.set(value);
       if (value != null) {
         checkCanAdd(value);
-        addChild(value);
+        addChildInternal(value);
       }
     }
 
@@ -422,20 +432,20 @@ public abstract class Mapper<SourceT, TargetT> {
       if (isEmpty()) {
         addPart(this);
       }
-      addChild(item);
+      addChildInternal(item);
       super.beforeItemAdded(index, item);
     }
 
     @Override
     protected void beforeItemSet(int index, MapperT oldItem, MapperT newItem) {
-      removeChild(oldItem);
-      addChild(newItem);
+      removeChildInternal(oldItem);
+      addChildInternal(newItem);
       super.beforeItemSet(index, oldItem, newItem);
     }
 
     @Override
     protected void beforeItemRemoved(int index, MapperT item) {
-      removeChild(item);
+      removeChildInternal(item);
       super.beforeItemRemoved(index, item);
     }
 
@@ -469,13 +479,13 @@ public abstract class Mapper<SourceT, TargetT> {
       if (isEmpty()) {
         addPart(this);
       }
-      addChild(item);
+      addChildInternal(item);
       super.beforeItemAdded(item);
     }
 
     @Override
     protected void beforeItemRemoved(MapperT item) {
-      removeChild(item);
+      removeChildInternal(item);
       super.beforeItemRemoved(item);
     }
 
