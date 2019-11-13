@@ -17,8 +17,9 @@ package jetbrains.jetpad.geometry;
 
 import com.google.common.collect.Range;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class DoubleRectangle {
   public static DoubleRectangle span(DoubleVector leftTop, DoubleVector rightBottom) {
@@ -136,13 +137,36 @@ public class DoubleRectangle {
     return result;
   }
 
-  public Iterable<DoubleSegment> getParts() {
-    List<DoubleSegment> result = new ArrayList<>();
-    result.add(new DoubleSegment(origin, origin.add(new DoubleVector(dimension.x, 0))));
-    result.add(new DoubleSegment(origin, origin.add(new DoubleVector(0, dimension.y))));
-    result.add(new DoubleSegment(origin.add(dimension), origin.add(new DoubleVector(dimension.x, 0))));
-    result.add(new DoubleSegment(origin.add(dimension), origin.add(new DoubleVector(0, dimension.y))));
-    return result;
+  public DoubleSegment getLeftEdge() {
+    return new DoubleSegment(
+        origin,
+        new DoubleVector(getLeft(), getBottom())
+    );
+  }
+
+  public DoubleSegment getTopEdge() {
+    return new DoubleSegment(
+        origin,
+        new DoubleVector(getRight(), getTop())
+    );
+  }
+
+  public DoubleSegment getRightEdge() {
+    return new DoubleSegment(
+        origin.add(dimension),
+        new DoubleVector(getRight(), getTop())
+    );
+  }
+
+  public DoubleSegment getBottomEdge() {
+    return new DoubleSegment(
+        origin.add(dimension),
+        new DoubleVector(getLeft(), getBottom())
+    );
+  }
+
+  public List<DoubleSegment> getParts() {
+    return asList(getTopEdge(), getLeftEdge(), getRightEdge(), getBottomEdge());
   }
 
   @Override

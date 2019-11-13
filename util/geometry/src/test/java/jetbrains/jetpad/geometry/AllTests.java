@@ -21,7 +21,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     DistanceTest.class,
+    DoubleRectangleEdgesTest.class,
     DoubleRectangleIntersectionTest.class,
+    DoubleRectangleTest.class,
     DoubleSegmentIntersectionTest.class,
     DoubleVectorOperationsTest.class,
     RectanglesTest.class,
