@@ -33,38 +33,49 @@ public final class ThrowableHandlers {
   // we can use ThreadLocal here because of our own emulation
   // at model-gwt jetbrains.jetpad.model.jre.java.lang.ThreadLocal
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
-  private static ThreadLocal<Boolean> ourForceProduction = new ThreadLocal<Boolean>() {
+  private static final ThreadLocal<Boolean> FORCE_PRODUCTION = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
-      return false;
+      return Boolean.FALSE;
     }
   };
 
   @SuppressWarnings("NonJREEmulationClassesInClientCode")
-  private static ThreadLocal<MyEventSource> ourHandlers = new ThreadLocal<MyEventSource>() {
+  private static final ThreadLocal<Boolean> LOGGING_ENABLED = new ThreadLocal<Boolean>() {
+    @Override
+    protected Boolean initialValue() {
+      return Boolean.TRUE;
+    }
+  };
+
+  @SuppressWarnings("NonJREEmulationClassesInClientCode")
+  private static final ThreadLocal<MyEventSource> HANDLERS = new ThreadLocal<MyEventSource>() {
     @Override
     protected MyEventSource initialValue() {
       return new MyEventSource();
     }
   };
 
-  private final static Set<RuntimeException> ourLeaks = Collections.newSetFromMap(
-      new IdentityHashMap<RuntimeException, Boolean>());
+  private final static Set<RuntimeException> LEAKS = Collections.newSetFromMap(new IdentityHashMap<RuntimeException, Boolean>());
 
+  public static void setLoggingEnabled(boolean enabled) {
+    LOGGING_ENABLED.set(enabled);
+  }
+  
   public static Registration addHandler(Consumer<? super Throwable> handler) {
-    final Registration handlerReg = ourHandlers.get().addHandler(handler);
+    final Registration handlerReg = HANDLERS.get().addHandler(handler);
 
     final Value<Registration> leakReg = new Value<>();
     if (DEBUG) {
       final RuntimeException leakStacktrace = new RuntimeException("Potential leak");
-      synchronized (ourLeaks) {
-        ourLeaks.add(leakStacktrace);
+      synchronized (LEAKS) {
+        LEAKS.add(leakStacktrace);
       }
       leakReg.set(new Registration() {
         @Override
         protected void doRemove() {
-          synchronized (ourLeaks) {
-            ourLeaks.remove(leakStacktrace);
+          synchronized (LEAKS) {
+            LEAKS.remove(leakStacktrace);
           }
         }
       });
@@ -82,19 +93,18 @@ public final class ThrowableHandlers {
   }
 
   public static void asInProduction(Runnable r) {
-    if (ourForceProduction.get()) {
+    if (FORCE_PRODUCTION.get()) {
       throw new IllegalStateException();
     }
-    ourForceProduction.set(true);
+    FORCE_PRODUCTION.set(Boolean.TRUE);
     try {
       r.run();
     } finally {
-      ourForceProduction.set(false);
+      FORCE_PRODUCTION.set(Boolean.FALSE);
     }
   }
 
   public static void handle(Throwable t) {
-
     if (isInUnitTests(t)) {
       if (t instanceof RuntimeException) {
         throw (RuntimeException) t;
@@ -103,17 +113,15 @@ public final class ThrowableHandlers {
     }
 
     // ourForceProduction is used only in tests, where severe level is logged by default.
-    if (!ourForceProduction.get()) {
+    if (!FORCE_PRODUCTION.get() && LOGGING_ENABLED.get()) {
       LOG.log(Level.SEVERE, "Exception handled at ThrowableHandlers", t);
     }
-
     handleError(t);
-
-    ourHandlers.get().fire(t);
+    HANDLERS.get().fire(t);
   }
 
   private static boolean isInUnitTests(Throwable t) {
-    if (ourForceProduction.get()) {
+    if (FORCE_PRODUCTION.get()) {
       return false;
     }
     for (StackTraceElement e : t.getStackTrace()) {
@@ -125,13 +133,10 @@ public final class ThrowableHandlers {
   }
 
   static void handleError(Throwable t) {
-
     if (isClient(t)) {
       return;
     }
-
     Error error = getError(t);
-
     if (error != null) {
       throw error;
     }
@@ -167,15 +172,15 @@ public final class ThrowableHandlers {
   }
 
   static int getHandlersSize() {
-    return ourHandlers.get().size();
+    return HANDLERS.get().size();
   }
 
   public static boolean checkForLeaks(PrintStream stream) {
-    if (ourHandlers.get().size() == 0) {
+    if (HANDLERS.get().size() == 0) {
       return false;
     }
-    synchronized (ourLeaks) {
-      for (RuntimeException leak : ourLeaks) {
+    synchronized (LEAKS) {
+      for (RuntimeException leak : LEAKS) {
         leak.printStackTrace(stream);
       }
     }
