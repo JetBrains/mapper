@@ -22,9 +22,9 @@ import jetbrains.jetpad.base.function.Supplier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RunningEdtManager implements EdtManager, EventDispatchThread {
+public class RunningEdtManager extends DefaultAsyncEdt implements EdtManager {
   private String myName;
-  private List<Runnable> myTasks = new ArrayList<>();
+  private List<RunnableWithAsync<?>> myTasks = new ArrayList<>();
   private boolean myFinished = false;
   private boolean myExecuting = false;
   private boolean myFlushing = false;
@@ -54,6 +54,9 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   @Override
   public final void kill() {
     checkCanStop();
+    for (RunnableWithAsync<?> task : myTasks) {
+      task.fail();
+    }
     myTasks.clear();
     shutdown();
   }
@@ -65,12 +68,6 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
   @Override
   public long getCurrentTimeMillis() {
     return System.currentTimeMillis();
-  }
-
-  @Override
-  public final void schedule(Runnable r) {
-    checkCanSchedule();
-    doSchedule(r);
   }
 
   @Override
@@ -166,11 +163,17 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
     return myTasks.isEmpty();
   }
 
-  void addTaskToQueue(Runnable r) {
+  void addTaskToQueue(RunnableWithAsync<?> r) {
     myTasks.add(r);
   }
 
-  protected void doSchedule(Runnable r) {
+  @Override
+  protected final <ResultT> RunnableWithAsync<ResultT> asyncSchedule(RunnableWithAsync<ResultT> r) {
+    checkCanSchedule();
+    return doSchedule(r);
+  }
+
+  protected <ResultT> RunnableWithAsync<ResultT> doSchedule(RunnableWithAsync<ResultT> r) {
     if (myExecuting) {
       myTasks.add(r);
     } else {
@@ -182,6 +185,7 @@ public class RunningEdtManager implements EdtManager, EventDispatchThread {
         flush();
       }
     }
+    return r;
   }
 
   protected Registration doSchedule(int delay, Runnable r) {

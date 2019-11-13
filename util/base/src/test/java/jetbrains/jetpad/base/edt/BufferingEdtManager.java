@@ -24,8 +24,9 @@ public class BufferingEdtManager extends RunningEdtManager {
   }
 
   @Override
-  protected void doSchedule(Runnable r) {
+  protected <ResultT> RunnableWithAsync<ResultT> doSchedule(RunnableWithAsync<ResultT> r) {
     addTaskToQueue(r);
+    return r;
   }
 
   @Override

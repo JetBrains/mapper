@@ -15,16 +15,19 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
+import jetbrains.jetpad.base.Asyncs;
 import jetbrains.jetpad.base.Registration;
 
-public final class NullEventDispatchThread implements EventDispatchThread {
+public final class NullEventDispatchThread extends DefaultAsyncEdt {
   @Override
   public long getCurrentTimeMillis() {
     return 0L;
   }
 
   @Override
-  public void schedule(Runnable r) {
+  protected <ResultT> Async<ResultT> asyncSchedule(RunnableWithAsync<ResultT> runnableWithAsync) {
+    return Asyncs.constant(null);
   }
 
   @Override

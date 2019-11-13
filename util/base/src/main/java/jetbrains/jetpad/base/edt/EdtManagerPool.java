@@ -15,7 +15,9 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
+import jetbrains.jetpad.base.function.Supplier;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
@@ -156,8 +158,18 @@ public final class EdtManagerPool implements EdtManagerFactory {
     }
 
     @Override
-    public void schedule(Runnable runnable) {
-      myManager.getEdt().schedule(runnable);
+    public Async<Void> schedule(Runnable runnable) {
+      return myManager.getEdt().schedule(runnable);
+    }
+
+    @Override
+    public <ResultT> Async<ResultT> schedule(Supplier<ResultT> s) {
+      return myManager.getEdt().schedule(s);
+    }
+
+    @Override
+    public <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) {
+      return myManager.getEdt().flatSchedule(s);
     }
 
     @Override

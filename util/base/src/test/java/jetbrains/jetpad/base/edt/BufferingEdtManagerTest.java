@@ -15,7 +15,9 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Value;
+import jetbrains.jetpad.base.function.Supplier;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,5 +103,17 @@ public class BufferingEdtManagerTest extends BaseTestCase {
 
     assertEquals(new Integer(1), taskCompleted.get());
     assertTrue(manager.isStopped());
+  }
+
+  @Test
+  public void killFailsAsync() {
+    Async<Integer> async = manager.schedule(new Supplier<Integer>() {
+      @Override
+      public Integer get() {
+        return 42;
+      }
+    });
+
+    EdtTestUtil.killAndAssertFailure(manager, async);
   }
 }

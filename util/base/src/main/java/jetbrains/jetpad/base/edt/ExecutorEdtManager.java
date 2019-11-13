@@ -15,9 +15,13 @@
  */
 package jetbrains.jetpad.base.edt;
 
+import jetbrains.jetpad.base.Async;
 import jetbrains.jetpad.base.Registration;
 import jetbrains.jetpad.base.ThrowableHandlers;
+import jetbrains.jetpad.base.function.Supplier;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,6 +29,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public final class ExecutorEdtManager implements EdtManager, EventDispatchThread {
@@ -58,7 +63,7 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   @Override
   public void kill() {
     ensureCanShutdown();
-    myEdt.getExecutor().shutdownNow();
+    myEdt.kill();
     waitTermination();
   }
 
@@ -94,9 +99,27 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
   }
 
   @Override
-  public void schedule(Runnable runnable) {
+  public <ResultT> Async<ResultT> schedule(Supplier<ResultT> s) {
     try {
-      myEdt.schedule(runnable);
+      return myEdt.schedule(s);
+    } catch (RejectedExecutionException e) {
+      throw new EdtException(e);
+    }
+  }
+
+  @Override
+  public <ResultT> Async<ResultT> flatSchedule(Supplier<Async<ResultT>> s) {
+    try {
+      return myEdt.flatSchedule(s);
+    } catch (RejectedExecutionException e) {
+      throw new EdtException(e);
+    }
+  }
+
+  @Override
+  public Async<Void> schedule(Runnable runnable) {
+    try {
+      return myEdt.schedule(runnable);
     } catch (RejectedExecutionException e) {
       throw new EdtException(e);
     }
@@ -133,8 +156,10 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     return "ExecutorEdtManager@" + Integer.toHexString(hashCode()) + myThreadFactory.getPrintName();
   }
 
-  private static class ExecutorEdt implements EventDispatchThread {
+  private static class ExecutorEdt extends DefaultAsyncEdt {
     private final ScheduledExecutorService myExecutor;
+    private final ConcurrentMap<Integer, RunnableWithAsync<?>> myUnresolvedAsyncs = new ConcurrentHashMap<>();
+    private final AtomicInteger myCounter = new AtomicInteger(0);
 
     ExecutorEdt(ThreadFactory threadFactory) {
       myExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
@@ -146,8 +171,17 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     }
 
     @Override
-    public void schedule(Runnable r) {
-      myExecutor.submit(handleFailure(r));
+    protected <ResultT> Async<ResultT> asyncSchedule(final RunnableWithAsync<ResultT> task) {
+      final int i = myCounter.incrementAndGet();
+      myUnresolvedAsyncs.put(i, task);
+      myExecutor.submit(new Runnable() {
+        @Override
+        public void run() {
+          task.run();
+          myUnresolvedAsyncs.remove(i);
+        }
+      });
+      return task;
     }
 
     @Override
@@ -182,6 +216,13 @@ public final class ExecutorEdtManager implements EdtManager, EventDispatchThread
     @Override
     public String toString() {
       return "ExecutorEdt@" + Integer.toHexString(hashCode()) + " " + Thread.currentThread().getName();
+    }
+
+    private void kill() {
+      myExecutor.shutdownNow();
+      for (RunnableWithAsync<?> async : myUnresolvedAsyncs.values()) {
+        async.fail();
+      }
     }
   }
 

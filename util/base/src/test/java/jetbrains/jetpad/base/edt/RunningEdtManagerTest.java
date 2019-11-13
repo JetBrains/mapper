@@ -20,12 +20,19 @@ import jetbrains.jetpad.base.Value;
 import jetbrains.jetpad.test.BaseTestCase;
 import org.junit.Test;
 
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncFulfilled;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertAsyncRejected;
+import static jetbrains.jetpad.base.edt.EdtTestUtil.assertFlatAsyncFulfilled;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RunningEdtManagerTest extends BaseTestCase {
   private RunningEdtManager manager = new RunningEdtManager();
+  private static final Runnable EMPTY = new Runnable() {
+    @Override
+    public void run() { }
+  };
 
   @Test
   public void sequentialAddition() {
@@ -53,6 +60,21 @@ public class RunningEdtManagerTest extends BaseTestCase {
     });
     assertEquals("12345", result.toString());
     assertTrue(manager.isEmpty());
+  }
+
+  @Test
+  public void asyncFulfill() {
+    assertAsyncFulfilled(manager, EMPTY);
+  }
+
+  @Test
+  public void flatAsyncFulfill() {
+    assertFlatAsyncFulfilled(manager, EMPTY);
+  }
+
+  @Test
+  public void asyncReject() {
+    assertAsyncRejected(manager, EMPTY);
   }
 
   @Test
