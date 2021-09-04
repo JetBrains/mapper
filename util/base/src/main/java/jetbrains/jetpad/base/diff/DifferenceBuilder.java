@@ -16,6 +16,7 @@
 package jetbrains.jetpad.base.diff;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public final class DifferenceBuilder<ItemT> {
@@ -28,7 +29,7 @@ public final class DifferenceBuilder<ItemT> {
   }
 
   public List<DifferenceItem> build() {
-    List<DifferenceItem> result = new ArrayList<>();
+    List<DifferenceItem> result = new LinkedList<>();
 
     List<ItemT> sourceContent = mySourceList;
     List<ItemT> target = new ArrayList<>(myTargetList);
