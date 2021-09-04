@@ -21,6 +21,7 @@ import jetbrains.jetpad.base.function.Function;
 import jetbrains.jetpad.base.function.Predicate;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -374,7 +375,7 @@ public final class Composites {
   }
 
   static <ItemT> List<ItemT> toList(Iterable<ItemT> it) {
-    List<ItemT> result = new ArrayList<>();
+    List<ItemT> result = new LinkedList<>();
     for (ItemT i : it) {
       result.add(i);
     }
