@@ -16,6 +16,7 @@
 package jetbrains.jetpad.model.composite;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     return new TreePath<>(path);
   }
 
-  private List<Integer> myPath = new ArrayList<>();
+  private List<Integer> myPath = new LinkedList<>();
 
   public TreePath(CompositeT composite) {
     this(composite, null);
@@ -114,7 +115,7 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
     if (myPath.isEmpty()) {
       throw new IllegalStateException();
     }
-    return myPath.get(myPath.size() - 1);
+    return myPath.getLast();
   }
 
   public TreePath<CompositeT> getParent() {
@@ -122,7 +123,8 @@ public class TreePath<CompositeT extends Composite<CompositeT>> implements Compa
       throw new IllegalStateException();
     }
 
-    return new TreePath<>(myPath.subList(0, myPath.size() - 1));
+    ArrayList<Integer> treePathList = new ArrayList<>(myPath);
+    return new TreePath<>(treePathList.subList(0, treePathList.size() - 1));
   }
 
   public TreePath<CompositeT> getChild(int index) {

@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -280,7 +281,7 @@ public final class Asyncs {
 
   public static <ItemT> Async<List<ItemT>> composite(List<Async<ItemT>> asyncs) {
     final SimpleAsync<List<ItemT>> result = new SimpleAsync<>();
-    final SortedMap<Integer, ItemT> succeeded = new TreeMap<>();
+    final HashMap<Integer, ItemT> succeeded = new HashMap<>();
     final List<Throwable> exceptions = new ArrayList<>(0);
     final Value<Integer> inProgress = new Value<>(asyncs.size());
 

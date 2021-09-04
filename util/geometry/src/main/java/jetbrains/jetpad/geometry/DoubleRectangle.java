@@ -18,6 +18,7 @@ package jetbrains.jetpad.geometry;
 import com.google.common.collect.Range;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DoubleRectangle {
@@ -137,7 +138,7 @@ public class DoubleRectangle {
   }
 
   public Iterable<DoubleSegment> getParts() {
-    List<DoubleSegment> result = new ArrayList<>();
+    List<DoubleSegment> result = new LinkedList<>();
     result.add(new DoubleSegment(origin, origin.add(new DoubleVector(dimension.x, 0))));
     result.add(new DoubleSegment(origin, origin.add(new DoubleVector(0, dimension.y))));
     result.add(new DoubleSegment(origin.add(dimension), origin.add(new DoubleVector(dimension.x, 0))));

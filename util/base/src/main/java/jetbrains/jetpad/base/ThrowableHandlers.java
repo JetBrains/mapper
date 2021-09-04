@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -186,7 +187,7 @@ public final class ThrowableHandlers {
   }
 
   private static class MyEventSource {
-    private final List<Consumer<? super Throwable>> myHandlers = new ArrayList<>();
+    private final List<Consumer<? super Throwable>> myHandlers = new LinkedList<>();
 
     void fire(Throwable throwable) {
       for (Consumer<? super Throwable> handler : new ArrayList<>(myHandlers)) {
